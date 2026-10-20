@@ -37,13 +37,15 @@ At this size, local indexes and a bounded graph traversal are sufficient. A grap
 
 ## Layout and interaction
 
+The [design guide](design.md) is the standing interface standard. The interface uses a single control set above the explorer, a graph/list workspace, and a readable evidence panel. Light neutral interface surfaces frame the dark graph. Copy names actions and information directly. Observed browser results are recorded in the [verification record](verification.md).
+
 - `createGalaxyLayout` derives deterministic positions from the full snapshot, preserving positions when the visible set changes. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength.
 - Solid connections project claims; dashed connections connect paper projections to the claims they cite. Citation links are not additional biological relationships.
 - The HTML list, search results, and inspector provide entity and evidence selection without manipulating the canvas. The scene itself is hidden from the accessibility tree.
-- The renderer uses demand-based frames, bounded pixel density, camera reset, and reduced-motion-aware controls. Renderer errors and lost WebGL context switch to the list view.
+- The renderer uses demand-based frames, bounded pixel density, camera reset, and reduced-motion-aware controls. Hover, selection, camera focus, and zoom animate briefly and settle; materials and geometry are reused during feedback. User gestures interrupt camera transitions. Renderer errors and lost WebGL context switch to the list view.
 - Filters expose their active state and support clearing. An absent edge in the curated or filtered graph says nothing about whether a relationship exists in the wider literature.
 
-These behaviors are implemented in source. Browser QA, keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
+The graph/list/evidence flows and presentation refinements have browser coverage. Future refinements still need their own browser QA; do not infer their usability or smoothness from a passing build. Keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
 
 ## Data preparation
 

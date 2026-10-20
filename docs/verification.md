@@ -1,6 +1,6 @@
 # Development preview verification
 
-Checked on **2026-10-20** in the Codex cloud workspace. These results cover the current development starter, not a scientific release or a deployed service.
+Checked on **2026-10-20** in the Codex cloud workspace, including the simplified interface and motion refinement on `master`. These results cover the current development starter, not a scientific release or a deployed service.
 
 ## Application and data
 
@@ -12,7 +12,7 @@ Checked on **2026-10-20** in the Codex cloud workspace. These results cover the 
 | `npm run build` | TypeScript checks and Vite production build passed |
 | JSON Schema cross-check | The schema and actual dataset also validated with the environment's Python `jsonschema` library |
 
-The build warns about the lazy-loaded 3D chunk's size: approximately 938 kB minified / 248 kB gzip. The main application chunk is approximately 274 kB / 83 kB gzip. No frame-rate or real-device performance claim has been established.
+The build warns about the lazy-loaded 3D chunk's size: approximately 941 kB minified / 249 kB gzip. The main application chunk is approximately 272 kB / 83 kB gzip. No frame-rate or real-device performance claim has been established.
 
 ## Browser interactions
 
@@ -26,15 +26,21 @@ npm run dev
 python3 tools/browser-smoke.py --screenshots artifacts/browser
 ```
 
-- **Desktop, 1440 × 1000:** WebGL rendering, actual canvas-node picking, gene selection, source-link targets, claim and source-specific study context, search shortcut, apostrophe-normalized disease search, neighborhood display, no-result state, list/paper selection, keyboard activation, type filters, and dialog dismissal passed.
-- **Mobile emulation, 390 × 844:** responsive layout without horizontal overflow, reduced-motion preference, type filters, and entity inspection passed.
+- **Desktop, 1440 × 1000:** WebGL rendering, actual canvas-node picking, gene selection, all four publication-link targets, claim and source-specific study context, collapsed/inert disclosures, search shortcut and arrow/Enter/Escape navigation, apostrophe-normalized disease search, neighborhood display, no-result recovery, list/paper selection, keyboard activation, type filters, dialog dismissal, and zoom/reset controls passed.
+- **Mobile touch emulation, 390 × 844:** responsive layout without horizontal overflow, pinch guidance, tested control targets of at least 40 × 40 px, reduced-motion styling, type filters, and entity inspection passed. Selecting entities, searching, and filtering did not force page scrolling; explicit View evidence / Back to graph actions moved focus and the viewport.
 - **WebGL disabled, 1280 × 900:** the application switched to the HTML list; entity selection and original-evidence links remained usable.
+
+Overflow regressions also passed: keyboard navigation kept all eight results of a broad search visible, including wrapping from last to first. Changing entities after scrolling expanded study details reset only the inspector's internal scroll position. Neither action moved the document.
+
+Test-only instrumentation sampled rendering after the initial scene, zoom/reset, and reduced-motion interactions. Each 500 ms idle sample observed **0 animation-frame requests and 0 WebGL draw calls** after settling. This establishes idle behavior in the tested browser, not a frame-rate or battery-life benchmark. The instrumentation is confined to the browser test.
 
 The normal desktop and mobile runs produced no uncaught page errors. External publication links were checked for the intended URLs; the test did not visit publisher pages. These checks do not constitute a full assistive-technology or accessibility audit, a real mobile-device test, or a scientific review.
 
 ## Dependency checks
 
 Direct dependencies are exactly pinned. Resolution used `--before=2026-10-06T00:00:00.000Z`; installation used `npm ci --ignore-scripts`. The [dependency policy](../tools/security/dependency-policy.json) records this cutoff, and [.npmrc](../.npmrc) keeps lifecycle scripts disabled.
+
+The UX refinement changed no package manifests or lockfile and installed no dependencies. The local source/integrity/exact-pin check was rerun; the network-backed results below were recorded during the initial scaffold verification and were not rerun for these interface changes.
 
 | Check | Observed result |
 | --- | --- |

@@ -53,9 +53,13 @@ The [evidence policy](evidence-policy.md) and [data model](data-model.md) define
 
 ## Experience requirements
 
+Follow the standing [design guide](design.md) for every interface and copy change. Use a simple evidence-first workspace: one search field, one filter, one graph/list switch, and a readable finding panel. Prefer plain action labels and useful study information over promotional copy, decorative counters, or repeated navigation. Use light neutral interface surfaces around the dark graph and reserve accents for interaction and meaning.
+
 The scientific content must be available without interacting with a 3D canvas. Search, selection, filtering, and opening evidence should work using a keyboard. Use text and symbols as well as color, respect reduced-motion preferences, and avoid flashing or perpetual camera movement. On WebGL failure, retain the list and evidence panels.
 
 Keep labels and selection readable before adding decorative effects. Loading, invalid data, empty results, unsupported searches, and unavailable optional AI each need an explicit state. The app must show the dataset version and coverage limits.
+
+Use short, interruptible transitions for selection, details, and camera navigation. The scene should settle when interaction ends. Reduced-motion preferences require immediate state changes without nonessential animation. Keep focus and scrolling under user control, and preserve source-specific study context when progressively disclosing details.
 
 ## Out of scope for the first release
 

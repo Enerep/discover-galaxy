@@ -66,4 +66,22 @@ Use npm workspaces and one committed lockfile, exact direct versions, the offici
 
 The lockfile checker verifies registry sources, SHA-512 integrity, and direct pins; an optional metadata mode checks publication dates against the recorded cutoff. A separate Python checker compares exact resolved versions with pinned historical IOC feeds. Audit and IOC results are bounded checks, not proof that dependencies are free of malware. Follow the [npm security policy](npm-security.md) for dependency changes.
 
+## ADR-007 — Keep the interface simple and motion purposeful
+
+**Date:** 2026-10-20
+
+**Status:** Accepted
+
+Use the [design guide](design.md) as a standing implementation and review standard. The primary flow is search → select → inspect evidence → open the original study. Use a single control set, readable evidence, restrained light interface surfaces around the dark graph, plain functional copy, and progressive disclosure. Remove repeated navigation and promotional decoration rather than adding another layer of controls.
+
+Motion should clarify a state change, remain interruptible, and settle when interaction ends. Respect reduced-motion preferences and keep keyboard and touch flows complete. A cleaner interface must preserve source-specific context and visible development status. Browser checks must verify the implemented behavior before it is reported as complete.
+
+## ADR-008 — Use master as the default working branch
+
+**Date:** 2026-10-20
+
+**Status:** Accepted
+
+The repository's default branch is `master`, as explicitly specified by the user. Base work on the fetched `origin/master` and push `master` when authorized. Do not create or switch to `main`; use a feature branch only when explicitly requested. Preserve merged remote work and inspect branch state before editing or pushing.
+
 See the [architecture](architecture.md) for component boundaries and future extension points.

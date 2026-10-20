@@ -1,0 +1,144 @@
+import { useId, useLayoutEffect, useState } from 'react';
+import type { ReactNode, RefObject } from 'react';
+import { getClaimEvidence, getEntityClaims } from '../lib/dataset.ts';
+import type { Claim, Context, Entity, Snapshot, Source } from '../lib/types.ts';
+import { Icon, TYPE_LABELS } from './ui.tsx';
+
+function Disclosure({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  return (
+    <div className="disclosure">
+      <button className="disclosure-trigger" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
+        {label}<Icon name="down" size={16} />
+      </button>
+      <div id={id} className="disclosure-body" data-open={open} aria-hidden={!open} inert={!open}>
+        <div className="disclosure-inner">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function StudyContext({ context, className = '' }: { context: Context; className?: string }) {
+  return (
+    <dl className={`context-list ${className}`}>
+      {Object.entries(context).map(([key, value]) => (
+        <div key={key}>
+          <dt>{key.replaceAll('_', ' ')}</dt>
+          <dd>{value === null ? 'Not recorded' : Array.isArray(value) ? value.join(', ')
+            : typeof value === 'number' ? value.toLocaleString('en-US') : value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function authorLabel(source: Source) {
+  if (!source.authors.length) return 'Author not recorded';
+  if (source.authors.length === 1) return source.authors[0];
+  return `${source.authors[0].split(' ').at(-1)} et al.`;
+}
+
+function Finding({ snapshot, claim }: { snapshot: Snapshot; claim: Claim }) {
+  const evidence = getClaimEvidence(snapshot, claim.id);
+  const limitations = [...new Set([...claim.limitations, ...evidence.flatMap((item) => item.limitations)])];
+  return (
+    <section className="finding-content" key={claim.id} aria-label="Selected claim evidence">
+      <div className="finding-heading"><h3>Finding</h3><span className="draft-label">Draft</span></div>
+      <p className="finding-statement">{claim.statement}</p>
+      <p className="finding-summary">{claim.summary}</p>
+      {evidence.map((item) => {
+        const source = snapshot.sources.find(({ id }) => id === item.source_id);
+        return source ? (
+          <div className="source-card" key={item.id}>
+            <div className="source-meta"><Icon name="paper" size={16} /><span>Original paper</span><span>{source.year ?? 'Date unknown'}</span></div>
+            <a className="source-link" href={source.url} target="_blank" rel="noreferrer">
+              <span className="source-title">{source.title}</span>
+              <span className="source-action">Open paper <Icon name="external" size={14} /></span>
+            </a>
+            <p className="source-author">{authorLabel(source)} · {source.publication_type?.replaceAll('_', ' ') ?? 'Publication'}</p>
+          </div>
+        ) : null;
+      })}
+      <Disclosure label="Study details and limitations">
+        <div className="study-context">
+          <h4>Claim context</h4>
+          <StudyContext context={claim.context} />
+          {evidence.map((item) => {
+            const source = snapshot.sources.find(({ id }) => id === item.source_id);
+            return (
+              <section className="source-details" key={item.id}>
+                <h4>{source ? `${authorLabel(source)}${source.year ? ` · ${source.year}` : ''}` : 'Source context'}</h4>
+                <p>{item.finding}</p>
+                <p className="evidence-relation">Evidence relation: {item.relation}</p>
+                <StudyContext context={item.study_context} className="source-study-context" />
+                <p className="source-locator"><strong>Source location</strong>{item.locator}</p>
+              </section>
+            );
+          })}
+          <h4>Limitations</h4>
+          <ul className="limitations">{limitations.map((item) => <li key={item}>{item}</li>)}</ul>
+          <p className="review-note">Human scientific review is pending.</p>
+        </div>
+      </Disclosure>
+    </section>
+  );
+}
+
+interface Props {
+  snapshot: Snapshot;
+  selected: Entity;
+  selectedClaimId: string | null;
+  onSelectClaim: (id: string) => void;
+  visible: boolean;
+  onShowSelected: () => void;
+  onBack: () => void;
+  panelRef: RefObject<HTMLElement | null>;
+}
+
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef }: Props) {
+  const claims = getEntityClaims(snapshot, selected.id);
+  const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
+  useLayoutEffect(() => {
+    // A new record starts at its heading without moving the document on mobile.
+    if (panelRef.current) panelRef.current.scrollTop = 0;
+  }, [selected.id, panelRef]);
+  return (
+    <aside className="inspector" aria-label="Entity and evidence inspector" ref={panelRef}>
+      <button className="back-to-graph" onClick={onBack}><Icon name="back" size={16} />Back to graph</button>
+      <div className="sr-only" role="status">Selected {selected.label}. {claims.length} findings available.</div>
+      <div className="inspector-content" key={selected.id}>
+        <div className="entity-heading">
+          <span className={`entity-symbol ${selected.type}`}><Icon name={selected.type} size={22} /></span>
+          <span className="entity-type">{TYPE_LABELS[selected.type]}</span>
+        </div>
+        <h2 className={`selected-title ${selected.type === 'paper' ? 'paper-title' : ''}`} tabIndex={-1}>{selected.label}</h2>
+        {selected.description && <p className="entity-description">{selected.description.split(' · ')[0]}</p>}
+        {!visible && <button className="show-selected" onClick={onShowSelected}>Show in the current view <Icon name="arrow" size={14} /></button>}
+        <section className="findings">
+          <div className="section-heading"><h3>Findings</h3><span>{claims.length}</span></div>
+          {claims.length > 1 && (
+            <div className="claim-list" aria-label="Choose a finding">
+              {claims.map((claim) => (
+                <button className="claim-button" key={claim.id} aria-pressed={claim.id === active?.id}
+                  onClick={() => onSelectClaim(claim.id)}>
+                  <span>{String(claim.context.variant ?? claim.predicate.replaceAll('_', ' '))}</span>
+                  <Icon name="arrow" size={14} />
+                </button>
+              ))}
+            </div>
+          )}
+          {active ? <Finding key={active.id} snapshot={snapshot} claim={active} />
+            : <p className="no-findings">No findings for this record in the current dataset.</p>}
+        </section>
+        {selected.external_ids.length > 0 && (
+          <Disclosure label="Entity identifiers">
+            <dl className="context-list identifiers">
+              {selected.external_ids.map(({ namespace, value }) => <div key={`${namespace}:${value}`}><dt>{namespace}</dt><dd>{value}</dd></div>)}
+            </dl>
+          </Disclosure>
+        )}
+      </div>
+    </aside>
+  );
+}

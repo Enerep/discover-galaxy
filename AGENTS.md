@@ -6,6 +6,14 @@ Build Discovery Galaxy as an evidence-traceable scientific exploration tool. The
 
 This file is the canonical agent guide. [agent.md](agent.md) exists as a human-friendly pointer and must not acquire a competing set of instructions.
 
+## Branch policy
+
+**`master` is the default branch.** Fetch and start from `origin/master`, keep this work on `master`, and push `master` when the user authorizes a push. Do not create or switch to `main`. Use a separate feature branch only when the user explicitly requests one. Preserve remote changes and inspect the current branch before editing or pushing.
+
+## Design standard
+
+Read and apply [docs/design.md](docs/design.md) for every interface or copy change. The user's standing preference is a simple, clean application with smooth, purposeful animation and plain language. Keep the search → selection → original-study flow obvious. Use one set of controls, readable evidence, and progressive disclosure instead of repeated navigation, slogans, decorative counters, or fake AI features. Respect keyboard access and reduced motion, and keep draft scientific status visible without repeating it throughout the interface.
+
 ## Current repository state
 
 The React/Vite explorer is implemented in `apps/web/`, with a data adapter, JSON schema, runtime validator, native Node tests, 3D/list views, and source-linked evidence panels. `data/alzheimers/dataset.json` contains an eight-entity, four-claim **development** snapshot; all scientific records remain draft with no human reviewer. Source review and the full 20–50 entity MVP remain pending. No biomedical import pipeline, AI service, backend, or database exists. Update this section and the README when that changes. Never report a planned feature or proposed command as working.
@@ -22,6 +30,7 @@ The user explicitly requires care around Shai-Hulud and npm supply-chain attacks
 - Use one reproducible frontend dependency workflow and commit its lockfile with the scaffold. Do not mix package managers. Check compatible versions at implementation time.
 - Keep scientific data, rendering state, and presentation text separate. Layout coordinates and visual weights must not silently become scientific scores.
 - Preserve keyboard access, reduced motion, a searchable list alternative, and a usable WebGL failure state as the interface develops.
+- Apply the design guide during implementation and browser review, not only when writing a design document. Keep motion responsive and render the scene only while interaction or a short transition requires it.
 - Prefer small, reviewable changes. Update the relevant docs and milestone status as part of a behavior or contract change.
 
 ## Scientific integrity

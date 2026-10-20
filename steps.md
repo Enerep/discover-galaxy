@@ -33,6 +33,15 @@ The current starter has eight real, source-linked entities and four variant-scop
 
 Engineering can be exercised now; the reviewed-relationship criterion is still pending. Do not mark the whole milestone complete based only on structural validation or a working interface.
 
+### Explorer UX refinement
+
+- [x] Record [standing design requirements](docs/design.md) and make `master` the explicit default working branch in the agent guide.
+- [x] Simplify the workspace to one search field, one type filter, one Graph/List switch, and a readable evidence panel.
+- [x] Put original-paper links before detailed study metadata; preserve claim context and limitations in disclosures.
+- [x] Add keyboard search-result navigation, visible zoom/reset controls, and explicit mobile evidence/back navigation without automatic page scrolling.
+- [x] Smooth selection, camera movement, and disclosure transitions; honor reduced motion and verify that graph rendering settles at rest.
+- [x] Exercise the revised desktop, touch/mobile, and WebGL-fallback flows in browser checks. Scientific release criteria remain pending.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
 - [ ] Expand the reviewed snapshot to **20–50 entities total**, including any paper nodes. Include ABCA1 and TREM2 when their identifiers and selected relationships are verified.

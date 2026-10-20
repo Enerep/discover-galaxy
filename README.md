@@ -2,7 +2,7 @@
 
 **Explore humanity's scientific knowledge in 3D.**
 
-Discovery Galaxy is a planned interactive map of scientific evidence. Glowing objects represent biological entities and papers; connections let researchers inspect published relationships, compare findings, and formulate testable questions.
+Discovery Galaxy is an interactive map of scientific evidence in development. Glowing objects represent biological entities and papers; connections let researchers inspect published relationships. Comparing findings and formulating testable questions are planned next steps.
 
 The first version focuses on **Alzheimer's disease**, with **20–50 curated entities**. Its value comes from making evidence easy to follow: every scientific relationship and explanation must lead back to its sources.
 
@@ -10,11 +10,15 @@ The first version focuses on **Alzheimer's disease**, with **20–50 curated ent
 
 **The first development explorer is implemented.** It has a selectable 3D graph, alias-aware search, type filters, a synchronized entity list, an evidence inspector, source links, reduced-motion support, and a WebGL fallback. The local starter contains **8 entities and 4 source-scoped claims** about APOE, ABCA1, and TREM2.
 
+The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
+
 The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, conflict comparisons, research hypotheses, live upstream integrations, AI service, backend, or database yet.
 
 See the [starter dataset notes](data/alzheimers/README.md) for original references and lookup limits, and [steps.md](steps.md) for remaining acceptance criteria. The 20–50 entity MVP and its scientific release gates remain ahead.
 
 ## Run locally
+
+**`master` is the default branch.** Start from `origin/master` and push work to `master`; this repository does not use `main`.
 
 Use **Node.js 24** and **npm 11.9.x**. From the repository root:
 
@@ -50,7 +54,7 @@ In this cloud workspace, npm's default cache directory may be read-only. Use `ex
 
 The current starter implements steps 1–4 through selected genetic-association findings. Pathways, disagreement comparisons, and research questions remain planned. Including APOE, ABCA1, and TREM2 does not establish every possible connection between them. Gene, protein, and variant identities remain distinct.
 
-An accessible searchable list will expose the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
+A keyboard-operable searchable list exposes the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
 
 ## MVP boundaries
 
@@ -89,6 +93,7 @@ These resources help find and contextualize evidence. Database associations, met
 | --- | --- |
 | [steps.md](steps.md) | Ordered milestones, dependencies, and completion criteria |
 | [Product specification](docs/product.md) | Audience, user journeys, scope, and release criteria |
+| [Design guide](docs/design.md) | Simple workflows, clean presentation, plain language, and purposeful motion |
 | [Architecture](docs/architecture.md) | Data flow, technical boundaries, and planned layout |
 | [Data model](docs/data-model.md) | Entities, claims, evidence, sources, and dataset rules |
 | [Evidence policy](docs/evidence-policy.md) | Curation, uncertainty, disagreements, and AI grounding |
