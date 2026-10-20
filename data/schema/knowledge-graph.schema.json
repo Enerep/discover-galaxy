@@ -1,0 +1,866 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Discovery Galaxy curated knowledge snapshot",
+  "description": "Version 0.1.0. Structural contract for both development and reviewed release snapshots.",
+  "$comment": "Cross-record IDs, reciprocal evidence references, predicate endpoint types, source eligibility, and human/publication/reuse release gates are enforced by apps/web/src/lib/validate.ts. This schema does not establish scientific truth or permission to redistribute content.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "dataset_version": {
+      "$ref": "#/$defs/text"
+    },
+    "release_status": {
+      "enum": [
+        "development",
+        "released"
+      ]
+    },
+    "created_at": {
+      "$ref": "#/$defs/date"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "upstream_releases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/upstreamRelease"
+      },
+      "minItems": 1
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      },
+      "minItems": 1
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      },
+      "minItems": 1
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      },
+      "minItems": 1
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      },
+      "minItems": 1
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/conflict"
+      },
+      "minItems": 0
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hypothesis"
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "dataset_version",
+    "release_status",
+    "created_at",
+    "scope",
+    "upstream_releases",
+    "entities",
+    "claims",
+    "evidence",
+    "sources",
+    "conflicts",
+    "hypotheses"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "release_status": {
+            "const": "released"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "entities": {
+            "minItems": 20,
+            "maxItems": 50
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(?:T.*)?$",
+      "$comment": "Runtime validation also rejects impossible dates."
+    },
+    "nullableDate": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(?:T.*)?$",
+          "$comment": "Runtime validation also rejects impossible dates."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "$comment": "Runtime validation rejects embedded credentials."
+    },
+    "identifier": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/text"
+        },
+        "value": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "namespace",
+        "value"
+      ]
+    },
+    "context": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        ]
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "approved"
+          ]
+        },
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "date": {
+          "$ref": "#/$defs/nullableDate"
+        },
+        "rationale": {
+          "$ref": "#/$defs/text"
+        },
+        "human_reviewed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "reviewer",
+        "date",
+        "rationale"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "approved"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reviewer": {
+                "$ref": "#/$defs/text"
+              },
+              "date": {
+                "$ref": "#/$defs/date"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "disease": {
+          "$ref": "#/$defs/text"
+        },
+        "inclusion_criteria": {
+          "$ref": "#/$defs/text"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "disease",
+        "inclusion_criteria",
+        "limitations"
+      ]
+    },
+    "upstreamRelease": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "$ref": "#/$defs/text"
+        },
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accessed_at": {
+          "$ref": "#/$defs/date"
+        },
+        "source_url": {
+          "$ref": "#/$defs/url"
+        },
+        "reuse_terms_url": {
+          "$ref": "#/$defs/url"
+        },
+        "attribution": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "provider",
+        "release",
+        "accessed_at",
+        "source_url",
+        "reuse_terms_url",
+        "attribution"
+      ]
+    },
+    "entity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "type": {
+          "enum": [
+            "disease",
+            "gene",
+            "protein",
+            "drug",
+            "pathway",
+            "paper"
+          ]
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "external_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "minItems": 0
+        },
+        "description": {
+          "$ref": "#/$defs/text"
+        },
+        "description_claim_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "source_id": {
+          "$ref": "#/$defs/text"
+        },
+        "provenance_source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "label",
+        "aliases",
+        "external_ids",
+        "description_claim_ids",
+        "provenance_source_ids"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "paper"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "source_id"
+            ]
+          },
+          "else": {
+            "properties": {
+              "external_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "subject_id": {
+          "$ref": "#/$defs/text"
+        },
+        "object_id": {
+          "$ref": "#/$defs/text"
+        },
+        "predicate": {
+          "enum": [
+            "associated_with",
+            "encodes",
+            "participates_in",
+            "interacts_with",
+            "targets"
+          ]
+        },
+        "statement": {
+          "$ref": "#/$defs/text"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      },
+      "required": [
+        "id",
+        "subject_id",
+        "object_id",
+        "predicate",
+        "statement",
+        "context",
+        "evidence_ids",
+        "summary",
+        "limitations",
+        "review"
+      ]
+    },
+    "sourceMetric": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "value": {
+          "type": "number"
+        },
+        "provider": {
+          "$ref": "#/$defs/text"
+        },
+        "release": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "provider",
+        "release"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "claim_id": {
+          "$ref": "#/$defs/text"
+        },
+        "source_id": {
+          "$ref": "#/$defs/text"
+        },
+        "upstream_source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "relation": {
+          "enum": [
+            "supports",
+            "refutes",
+            "mixed",
+            "unclear"
+          ]
+        },
+        "finding": {
+          "$ref": "#/$defs/text"
+        },
+        "locator": {
+          "$ref": "#/$defs/text"
+        },
+        "study_context": {
+          "$ref": "#/$defs/context"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "source_metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceMetric"
+          },
+          "minItems": 0
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      },
+      "required": [
+        "id",
+        "claim_id",
+        "source_id",
+        "upstream_source_ids",
+        "relation",
+        "finding",
+        "locator",
+        "study_context",
+        "limitations",
+        "review"
+      ]
+    },
+    "reuse": {
+      "type": "object",
+      "properties": {
+        "terms_url": {
+          "$ref": "#/$defs/url"
+        },
+        "attribution": {
+          "$ref": "#/$defs/text"
+        },
+        "retained_content": {
+          "$ref": "#/$defs/text"
+        },
+        "date_checked": {
+          "$ref": "#/$defs/nullableDate"
+        },
+        "permission_status": {
+          "enum": [
+            "pending_review",
+            "permitted"
+          ]
+        }
+      },
+      "required": [
+        "terms_url",
+        "attribution",
+        "retained_content",
+        "date_checked",
+        "permission_status"
+      ]
+    },
+    "publicationStatus": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "not_checked",
+            "no_notice_found",
+            "corrected",
+            "retracted"
+          ]
+        },
+        "checked_at": {
+          "$ref": "#/$defs/nullableDate"
+        },
+        "notice_url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/url"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "checked_at",
+        "notice_url"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "no_notice_found",
+                  "corrected",
+                  "retracted"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "checked_at": {
+                "$ref": "#/$defs/date"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "kind": {
+          "enum": [
+            "publication",
+            "database_record"
+          ]
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "url": {
+          "$ref": "#/$defs/url"
+        },
+        "identifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "minItems": 0
+        },
+        "publication_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "year": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1500,
+              "maximum": 2200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retrieved_at": {
+          "$ref": "#/$defs/date"
+        },
+        "reuse": {
+          "$ref": "#/$defs/reuse"
+        },
+        "publication_status": {
+          "$ref": "#/$defs/publicationStatus"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "url",
+        "identifiers",
+        "authors",
+        "year",
+        "retrieved_at",
+        "reuse",
+        "publication_status"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "publication"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "publication_type"
+            ],
+            "properties": {
+              "publication_type": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "database_record"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "provider",
+              "release"
+            ],
+            "properties": {
+              "provider": {
+                "$ref": "#/$defs/text"
+              },
+              "release": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "conflict": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "comparison": {
+          "$ref": "#/$defs/text"
+        },
+        "context_differences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      },
+      "required": [
+        "id",
+        "claim_ids",
+        "evidence_ids",
+        "label",
+        "comparison",
+        "context_differences",
+        "review"
+      ]
+    },
+    "hypothesis": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/text"
+        },
+        "question": {
+          "$ref": "#/$defs/text"
+        },
+        "basis_claim_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "basis_evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "suggested_test": {
+          "$ref": "#/$defs/text"
+        },
+        "origin": {
+          "enum": [
+            "curated",
+            "ai_generated"
+          ]
+        },
+        "dataset_version": {
+          "$ref": "#/$defs/text"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      },
+      "required": [
+        "id",
+        "question",
+        "basis_claim_ids",
+        "basis_evidence_ids",
+        "assumptions",
+        "limitations",
+        "suggested_test",
+        "origin",
+        "dataset_version",
+        "review"
+      ]
+    }
+  }
+}

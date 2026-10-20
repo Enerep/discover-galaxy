@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-20T12:07:50.346324+00:00",
+  "lockfile_sha256": "12d064c6e613851f9c0ae0765727a61d522b13fb87c5c15f9398101a7f6b1afe",
+  "checked_package_entries": 68,
+  "scope": "Exact matches in the listed pinned feeds only; not a malware-free guarantee",
+  "feeds": [
+    {
+      "id": "datadog-shai-hulud-2",
+      "revision": "33e44afbb1b72f3da4f990096d216a44a28c7b72",
+      "url": "https://raw.githubusercontent.com/DataDog/indicators-of-compromise/33e44afbb1b72f3da4f990096d216a44a28c7b72/shai-hulud-2.0/consolidated_iocs.csv",
+      "sha256": "6e23c118af47e0282a735e6d35a11a7450e833b5891aaa24d1fa8cec231ddcc6",
+      "rows": 795,
+      "exact_indicators": 1091
+    },
+    {
+      "id": "wiz-shai-hulud-2",
+      "revision": "22752e7cc55ece6a053e3277b60b914e0260e65d",
+      "url": "https://raw.githubusercontent.com/wiz-sec-public/wiz-research-iocs/22752e7cc55ece6a053e3277b60b914e0260e65d/reports/shai-hulud-2-packages.csv",
+      "sha256": "c387da01db86108e43cafb756c901290631ceb98891db885e438e2fd239f1cd7",
+      "rows": 795,
+      "exact_indicators": 1089
+    },
+    {
+      "id": "wiz-keyv",
+      "revision": "22752e7cc55ece6a053e3277b60b914e0260e65d",
+      "url": "https://raw.githubusercontent.com/wiz-sec-public/wiz-research-iocs/22752e7cc55ece6a053e3277b60b914e0260e65d/reports/keyv-packages.csv",
+      "sha256": "138c7a54f25d90ae339f4de652c49bd663c0a8a4accbf921707178b0e90330a0",
+      "rows": 446,
+      "exact_indicators": 2317
+    }
+  ],
+  "matches": []
+}
