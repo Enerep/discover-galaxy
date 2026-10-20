@@ -1,8 +1,8 @@
 # Implementation steps
 
-**Current stage: M0 complete — documentation foundation. Next: M1, the first runnable vertical slice.**
+**Current stage: M0 complete; M1 engineering preview implemented, with scientific approval pending.**
 
-These milestones describe planned work, not implemented features. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. No application commands exist yet.
+Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
 ## M0 — Establish the foundation
 
@@ -17,19 +17,21 @@ These milestones describe planned work, not implemented features. Complete them 
 
 The smallest useful flow is: search → select an entity → inspect a relationship → open its original evidence.
 
-- [ ] Scaffold `apps/web/` with React, TypeScript, Vite, React Three Fiber, and compatible Drei helpers; record supported runtime versions and commit a lockfile.
-- [ ] Add the actual install, development, lint, typecheck, test, and production-build commands to the README.
-- [ ] Create the dataset adapter and a minimal validator from [docs/data-model.md](docs/data-model.md). Reject broken IDs and uncited published claims.
+- [x] Scaffold `apps/web/` with React, TypeScript, Vite, React Three Fiber, and native Three.js controls; record supported runtime versions and commit a lockfile. Drei is unnecessary for this slice.
+- [x] Add actual install, development, typecheck, test, and production-build commands to the README. Lint tooling has not been introduced.
+- [x] Create the dataset adapter, machine-readable schema, and validator from [docs/data-model.md](docs/data-model.md). Reject broken IDs and uncited claims, including during development.
 - [ ] Curate a small reviewed starter snapshot in `data/alzheimers/`, including Alzheimer's disease, APOE, and enough sourced relationships to demonstrate the flow. Verify every identifier, claim, citation, and redistribution condition before inclusion.
-- [ ] Render selectable nodes and relationships with a legend, restrained motion, and a clear selected state.
-- [ ] Add alias-aware local search, an entity panel, and a relationship/evidence panel.
-- [ ] Add a synchronized searchable list, keyboard access to selection and evidence, reduced-motion support, and a WebGL failure state.
-- [ ] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
-- [ ] Run the implemented checks and manually exercise the search-to-evidence flow.
+- [x] Render selectable nodes and relationships with a legend, restrained motion, and a clear selected state.
+- [x] Add alias-aware local search, an entity panel, and a relationship/evidence panel.
+- [x] Add a synchronized searchable list, keyboard access to selection and evidence, reduced-motion support, and a WebGL failure state.
+- [x] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
+- [x] Run the implemented checks and exercise the search-to-evidence flow in desktop/mobile browser tests, including WebGL failure. See [verification](docs/verification.md).
 
-The starter snapshot may contain fewer than 20 entities; it is a development milestone, not the full MVP release. If scientific curation is incomplete, use explicitly synthetic fixtures for internal development only and keep the public scientific demo unreleased.
+The current starter has eight real, source-linked entities and four variant-scoped association claims. They are explicitly **development drafts** from AI-assisted abstract lookup, not approved scientific content. Human review, reuse assessment, and correction/retraction checks are pending. Synthetic fixtures remain isolated in tests. Keep the public scientific demo unreleased until its review gates pass.
 
 **Done when:** a clean local setup runs with no external service credentials, and a user can search for Alzheimer's, select APOE, inspect a reviewed relationship, and open its cited evidence through either the graph or the list.
+
+Engineering can be exercised now; the reviewed-relationship criterion is still pending. Do not mark the whole milestone complete based only on structural validation or a working interface.
 
 ## M2 — Deliver the curated Alzheimer's explorer
 

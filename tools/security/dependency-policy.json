@@ -1,0 +1,6 @@
+{
+  "minimum_age_days": 14,
+  "resolution_cutoff": "2026-10-06T00:00:00.000Z",
+  "registry": "https://registry.npmjs.org/",
+  "notes": "Resolve updates with an explicit --before cutoff; inspect newer urgent security fixes individually. npm 11.9 does not support min-release-age."
+}

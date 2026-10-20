@@ -1,53 +1,59 @@
 # Architecture
 
-Status: design only. The repository currently contains project documentation; the application, dataset, validation tools, and services described here have not been implemented. See the [product scope](product.md) and [build steps](../steps.md).
+Status: M1 engineering is implemented as a local development preview. The starter's scientific records remain draft and await independent human review; there is no approved scientific release or deployment. See the [product scope](product.md), [build steps](../steps.md), and [starter data notes](../data/alzheimers/README.md).
 
-## Static explorer (M1–M3)
+## Current static explorer
 
-Build a React and TypeScript application with Vite. Use Three.js through React Three Fiber for the galaxy and Drei where it simplifies camera controls or labels. Keep graph selection, search, filters, and evidence inspection in ordinary React state shared with an accessible HTML view.
+The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.2, Three.js 0.186.1, and React Three Fiber 9.8.1. Native Three.js `OrbitControls` provides camera navigation; Drei is not installed. The root npm workspace manages `apps/web/` with an exact-version lockfile, Node 24, and npm 11.9.0. See the [dependency security policy](npm-security.md) before installing or updating packages.
 
-M1 loads a small reviewed, versioned JSON starter snapshot; M2 expands it to the 20–50 entity MVP target and adds filters. M3 adds reviewed disagreement comparisons and research questions. The static explorer needs no backend, database, external data API, or AI credential to run. Search includes canonical names and curated aliases. Selecting an entity exposes its relationships; selecting a relationship exposes the claim, supporting and challenging evidence, study context, and original references.
+The client imports a versioned JSON development snapshot with eight entities: one disease, three genes, and four paper projections. Four source-scoped association claims link to evidence and original publications. The source lookup was AI-assisted and limited to abstracts and bibliographic records; it is not a completed human scientific review. All claims and evidence are draft, reuse review is pending, and correction/retraction checks remain incomplete.
+
+Implemented views share React state for alias-aware search, entity-type filters, entity and claim selection, and evidence inspection. The scene is loaded lazily; original publication links, study context, limitations, and review status appear in the HTML inspector. The client requires no backend, database, live data API, or AI credential. Pathway content, disagreement comparisons, research-question cards, and live AI explanations remain planned.
 
 ```mermaid
 flowchart LR
-    Snapshot[Reviewed versioned JSON snapshot] --> Adapter[Dataset adapter and indexes]
+    Snapshot[Versioned draft development snapshot] --> Adapter[Typed dataset adapter and validator]
     Adapter --> State[Search, filters, selection]
     State --> Galaxy[React Three Fiber galaxy]
     State --> List[Accessible HTML graph list]
     State --> Inspector[Evidence and entity inspector]
-    State --> Questions[Reviewed research question cards]
 ```
 
-The diagram shows the static explorer through M3, not everything required in M1. The snapshot is the scientific source of truth for this version. The galaxy, list, inspector, and question cards are views of the same records. See the [data model](data-model.md) for the contract and [evidence policy](evidence-policy.md) for publication rules.
+The diagram shows the current application. The galaxy, list, and inspector are views of the same local records. A structural validation pass permits development use; it does not establish scientific validity. See the [data model](data-model.md) for schema `0.1.0` and the [evidence policy](evidence-policy.md) for publication rules.
 
 ## Component boundaries
 
 | Boundary | Responsibility |
 | --- | --- |
-| Dataset adapter | Load a specific snapshot, check its schema version, and expose entities, claims, evidence, sources, and questions through stable application types. |
-| Search and graph indexes | Resolve identifiers and aliases; derive adjacency and filter results without changing source records. |
+| Dataset adapter | Validate the imported snapshot and expose typed entities, claims, evidence, and sources. Invalid data produces a load-error state. |
+| Search and graph helpers | Normalize aliases and identifiers; derive linked claims, paper citations, and filtered results without changing source records. |
 | Explorer state | Own query, selected identifiers, active filters, and view mode; keep the canvas and HTML views synchronized. |
 | Galaxy scene | Render nodes, edges, labels, camera focus, and visible selection state. Keep scientific logic outside render components. |
-| Evidence inspector | Explain the selected claim with citations and relevant study context. Display curated disagreement without inventing a consensus score. |
-| Question cards | Display reviewed, explicitly labeled hypotheses with their motivating evidence and limitations. They are separate from established graph claims. |
+| Evidence inspector | Present the selected draft claim, source-linked notes, study context, limitations, original references, and review status. |
+
+M2 expands the scientifically reviewed dataset to 20–50 entities and adds verified pathway content and richer filtering. M3 adds reviewed disagreement comparisons and research-question cards. Those additions must remain separate from evidence-backed claims and must not invent a consensus score.
 
 At this size, local indexes and a bounded graph traversal are sufficient. A graph database, distributed processing, and microservices add little value before the exploration flow works. The adapter allows a future HTTP source to replace the local loader without coupling the UI to an upstream provider's response shape.
 
 ## Layout and interaction
 
-- Use a deterministic layout or saved positions so a given dataset remains recognizable across visits. A force layout may improve readability, but node distance, brightness, and centrality must not imply biological similarity, causality, or evidential strength without an explicit, documented mapping.
-- Treat edges as claims with predicates and evidence, not generic similarity lines. Any directional arrows must follow the recorded relationship semantics.
-- Provide an HTML list and inspector with keyboard navigation, visible focus, text labels, and entity-type labels that do not rely only on color. All evidence must be reachable without manipulating a 3D camera.
-- Respect reduced-motion preferences, provide camera reset, and bound animation work. Use the HTML exploration view if WebGL is unavailable or rendering fails.
-- Keep filtering effects visible. An absent edge in a filtered or curated snapshot says nothing about whether the relationship exists in the wider literature.
+- `createGalaxyLayout` derives deterministic positions from the full snapshot, preserving positions when the visible set changes. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength.
+- Solid connections project claims; dashed connections connect paper projections to the claims they cite. Citation links are not additional biological relationships.
+- The HTML list, search results, and inspector provide entity and evidence selection without manipulating the canvas. The scene itself is hidden from the accessibility tree.
+- The renderer uses demand-based frames, bounded pixel density, camera reset, and reduced-motion-aware controls. Renderer errors and lost WebGL context switch to the list view.
+- Filters expose their active state and support clearing. An absent edge in the curated or filtered graph says nothing about whether a relationship exists in the wider literature.
+
+These behaviors are implemented in source. Browser QA, keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
 
 ## Data preparation
 
-Introduce Python and NetworkX tooling in M2 for normalization, reference checks, bounded graph inspection, and reproducible exports. M1 curation can be manual, supported by the initial minimal validator. NetworkX is an analysis tool; connectivity does not establish a biological mechanism or validate a hypothesis.
+The current dataset is prepared manually and checked by the TypeScript validator used by both the client adapter and `tools/validate-data.ts`. Development validation checks structure, references, provenance fields, and claim/evidence consistency. Release validation additionally requires approved human reviews, reuse and publication-status checks, and the 20–50 entity release boundary. The current starter is intentionally blocked from release validation.
 
-Adapters for Open Targets, Reactome, and OpenAlex belong in this preparation boundary. Import only reviewed records into the published snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing an adapter; this document does not establish either.
+Introduce Python and NetworkX curation tooling in M2 for normalization, bounded graph inspection, and reproducible exports. The existing Python IOC checker is dependency-security tooling, not a scientific import pipeline. NetworkX connectivity will not establish a biological mechanism or validate a hypothesis.
 
-Do not call upstream scientific services from the rendering loop. A checked-in snapshot makes the first experience reproducible and keeps an upstream outage from breaking exploration.
+Planned adapters for Open Targets, Reactome, and OpenAlex belong in this preparation boundary; none is implemented. Import only reviewed records into a published scientific snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing each adapter.
+
+The client makes no upstream scientific API requests. The checked-in snapshot makes local exploration reproducible and independent of those services; opening an original external reference still requires network access.
 
 ## Later services, when needed
 
@@ -67,27 +73,32 @@ For optional AI, retrieve a bounded set of reviewed claim and evidence records o
 
 Keep provider keys on the server, outside version control and client bundles. Add timeouts, request size limits, rate limits, and an explicit error state when this service exists. Core graph exploration must remain usable when explanations are unavailable.
 
-## Proposed repository layout
+## Repository layout
 
-Only the documentation paths exist today. These implementation directories are proposals to create at their respective milestones:
+Current implementation paths:
 
 ```text
-apps/web/             React, TypeScript, Vite, scene, HTML views, dataset adapter
-data/alzheimers/       Reviewed snapshot, release metadata, curation notes
-tools/curation/        Python import, normalization, validation, and export tools
-services/api/         Optional later FastAPI service
+apps/web/             React app, scene, HTML views, adapter, validator, tests
+data/alzheimers/       Draft development snapshot and source-lookup notes
+data/schema/          Knowledge-graph JSON Schema
+tools/validate-data.ts Development and release-mode data validation CLI
+tools/security/       Lockfile policy, known-IOC checker, pinned feed manifest
 ```
 
-Choose supported runtime versions and pin dependency versions when scaffolding. Document actual setup commands in the README only after they have been run successfully in the repository.
+`tools/curation/` and `services/api/` remain proposed paths for later scientific-data tooling and server requirements. No backend, PostgreSQL instance, or AI service exists. The checked-in dependency policy records a 14-day resolution cutoff; `.npmrc` disables installation lifecycle scripts, and the lockfile checker verifies source URLs, integrity hashes, and direct version pins. These controls reduce exposure without certifying dependencies as malware-free.
 
-## Planned validation
+## Validation boundaries
 
-No checks below are implemented yet. Introduce them with the relevant code:
+Run the root project commands documented in [CONTRIBUTING.md](../CONTRIBUTING.md):
 
-1. Validate snapshot structure, unique identifiers, reference integrity, evidence and citation requirements, provenance, and the 20–50 entity release boundary.
-2. Check the primary flow: search for Alzheimer's disease, focus its neighborhood, select APOE when present in the reviewed snapshot, inspect a relationship, and open its original reference.
-3. Check aliases, empty search results, filters, keyboard access, reduced motion, and the WebGL fallback. Verify that the list and galaxy select the same records.
-4. Run TypeScript checks and the production build. Measure scene responsiveness on a documented device/browser with the full MVP snapshot before setting or reporting a performance budget.
-5. When AI is introduced, evaluate citation validity, claim grounding, abstention, and separation of hypotheses using reviewed answerable and unanswerable cases. Test service failure and fallback behavior.
+- `npm run validate:data` checks the development snapshot; warnings retain its pending-review status.
+- `npm run validate:release` exercises the stricter publication gate and must fail for the current draft snapshot.
+- `npm test` covers data-integrity and release-gate failures, alias search, and paper-to-claim lookup using isolated synthetic fixtures and the checked-in starter.
+- `npm run build` runs TypeScript checks before creating the production bundle.
+- `npm run check:dependencies` checks the lockfile's sources, integrity, and pins. Network-backed publication-date and pinned IOC checks are described in the [security policy](npm-security.md).
+
+Browser QA must exercise search → entity → claim → original reference through both views, plus keyboard access, no results, reduced motion, and renderer fallback. Automated data tests do not verify those interactions. Measure responsiveness on a documented device/browser before setting or reporting a performance budget.
+
+When AI is introduced, evaluate citation validity, claim grounding, abstention, hypothesis labeling, and service failure using reviewed answerable and unanswerable cases.
 
 Keep tests proportional to real failure modes. Dataset provenance and the user's evidence-reading journey matter more than snapshotting decorative scene details.

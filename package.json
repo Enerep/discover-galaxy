@@ -1,0 +1,19 @@
+{
+  "name": "discovery-galaxy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.9.0",
+  "engines": { "node": ">=24 <25", "npm": ">=11.9.0 <12" },
+  "workspaces": ["apps/web"],
+  "scripts": {
+    "dev": "npm run dev --workspace @discovery-galaxy/web --",
+    "build": "npm run typecheck && npm run build --workspace @discovery-galaxy/web",
+    "preview": "npm run preview --workspace @discovery-galaxy/web --",
+    "typecheck": "npm run typecheck --workspace @discovery-galaxy/web",
+    "test": "node --experimental-strip-types apps/web/src/lib/dataset.test.ts",
+    "validate:data": "node --experimental-strip-types tools/validate-data.ts",
+    "validate:release": "node --experimental-strip-types tools/validate-data.ts --release",
+    "check:dependencies": "node tools/security/check-lockfile.mjs"
+  }
+}

@@ -1,12 +1,14 @@
 # Scientific evidence policy
 
-Status: project policy for the planned Alzheimer's MVP. No scientific dataset has been curated or reviewed yet.
+Status: policy for the Alzheimer's explorer. An [eight-entity development starter](../data/alzheimers/README.md) has source lookup notes and draft claims, but no independent human scientific review has been recorded. The [validator and schema](data-model.md) are implemented; development validation passes, while the scientific release gate remains blocked.
 
 Discovery Galaxy helps researchers inspect published evidence and formulate testable questions. It does not establish causality, discover treatments, or provide clinical recommendations. A visually prominent object, short graph path, or AI explanation is not evidence of biological importance.
 
 ## What may appear in the graph
 
-Every displayed scientific relationship must resolve to a reviewed claim and its evidence records. Each evidence record must identify the source, describe the relevant finding, and preserve enough context to understand what was tested. Review approval means the record was checked, not that its assertion is true. Claims addressed only by refuting or unclear findings must be presented as challenged or undetermined, not as established positive relationships.
+Every displayed scientific relationship in an approved scientific release must resolve to an approved claim and its evidence records. Each evidence record must identify the source, describe the relevant finding, and preserve enough context to understand what was tested. Review approval means the record was checked, not that its assertion is true. Claims addressed only by refuting or unclear findings must be presented as challenged or undetermined, not as established positive relationships.
+
+An internal development demo may display source-checked draft claims to implement and inspect the interaction. Its snapshot must have `release_status: development`; the interface must clearly label the demo and draft content and expose review, source-access, reuse, and publication-status limitations. Drafts still need valid citations, identifiers, context, and resolvable references. They are implementation material, not an approved public scientific graph. Making code available in a repository does not promote the dataset to a scientific release or remove these labels.
 
 - Empirical claims must link to the original publication through a verified DOI, PubMed entry, or publisher URL. Record a verified locator, such as the abstract, section, figure, table, or passage actually inspected; do not claim to have reviewed inaccessible material.
 - Curated database assertions, such as pathway membership, must link to the specific upstream record and its release. Label them as curated assertions; trace empirical interpretations back to primary publications.
@@ -23,7 +25,7 @@ The full MVP release will contain 20–50 displayed entities, including any pape
 3. Inspect the relevant original source. Record identifiers, URLs, publication type, retrieval date, and the exact finding that bears on the claim. Do not invent missing identifiers or citations.
 4. Capture study design, organism, population or experimental model, tissue, variant or intervention, outcome, and limitations where relevant. Use explicit unknown values rather than guessing.
 5. Classify how each finding relates to the specific claim: `supports`, `refutes`, `mixed`, or `unclear`. A null result does not automatically refute a claim; examine power, methods, and comparability.
-6. Record an identified reviewer, review date, and rationale. Draft or unverified records stay outside the released graph. A recorded review is not a claim of external peer review or consensus.
+6. Keep records draft until an actual human scientific review is complete. Drafts may have null reviewer/date fields and may appear only in the labeled development demo. For scientific release, record approved status, an identified reviewer, review date, rationale, and `human_reviewed: true` for each claim, evidence record, conflict, and hypothesis. Do not invent a reviewer, treat AI-assisted source inspection as independent human review, or generate approval attestations automatically. A recorded review is not a claim of external peer review or consensus.
 7. Validate references, inspect citation links, check source reuse terms, and publish a versioned snapshot with its coverage and limitations.
 
 Data changes require a reviewable diff. Preserve upstream identifiers and release information so another person can reconstruct where a relationship came from. Track retractions and corrections when encountered; remove withdrawn support from active claims while preserving the audit history and explaining the change.
@@ -36,7 +38,7 @@ Use labels such as **conflicting evidence** or **context-dependent findings** wi
 
 ## Explanations and research questions
 
-The first usable graph should work with reviewed, deterministic summaries. AI generation is an optional later layer over the same approved evidence.
+The development graph uses deterministic, project-authored summaries, labeled draft until human review is complete. A scientific release must use approved summaries and evidence. AI generation is an optional later layer over that approved evidence; no live AI explanation service is currently implemented.
 
 - Every factual sentence in a generated explanation must cite supplied claim or evidence IDs that resolve to visible sources. A citation's existence is insufficient; its finding must support the sentence.
 - State uncertainty and study context. Distinguish association from causation, preclinical results from human evidence, and mechanism from treatment benefit.
@@ -56,8 +58,12 @@ Start with these upstream resources:
 | Reactome | Resolve curated biological pathways and membership records | [Reactome documentation](https://reactome.org/userguide) |
 | OpenAlex | Resolve literature metadata and identifiers | [OpenAlex documentation](https://docs.openalex.org/) |
 
-These are planning references. Current API contracts, authentication requirements, rate limits, release formats, and reuse terms have not been verified in this repository. Verify them before implementing an importer and record the applicable terms and attribution per source. Open metadata does not imply permission to redistribute paper full text. Store permitted metadata and source links; include excerpts only when their reuse is allowed.
+These remain planning references for future integrations. Current API contracts, authentication requirements, rate limits, release formats, and reuse terms for those integrations have not been verified in this repository. Verify them before implementing an importer and record the applicable terms and attribution per source. The starter instead records its individual NCBI, PubMed, and publisher lookups in the [source notes](../data/alzheimers/README.md). Those limited lookups do not complete reuse or correction/retraction review.
+
+Open metadata does not imply permission to redistribute paper full text. Retain only the material actually described in each source's `reuse.retained_content`; include excerpts only when their reuse is allowed. Record `reuse.permission_status: pending_review` and a null check date when a terms review is incomplete. Scientific release requires `permitted` and a recorded date following an actual review, not an automatic field change. Likewise, `publication_status.status: not_checked` means the correction/retraction check is outstanding, not that the publication has no notice.
 
 ## Release gate
 
-A dataset release must pass the validation rules in [the data model](data-model.md), have no displayed claim without reviewed evidence, and state its curation date, coverage, and known gaps. The interface must expose citations and limitations without requiring an AI service. Scientific review and citation inspection remain necessary even when structural validation passes.
+A scientific dataset release must pass the validation rules in [the data model](data-model.md), have no displayed claim without approved human-reviewed evidence, and state its curation date, coverage, and known gaps. It must meet the 20–50 entity MVP boundary, complete source reuse review, and record publication-status checks. The interface must expose citations and limitations without requiring an AI service.
+
+Release validation is enforced both by an explicit `{ release: true }` validator option and automatically for an envelope marked `released`. Development validation does not grant publication approval: the current eight-entity starter remains blocked by draft reviews, outstanding source checks, description warnings, and the smaller entity count. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a human review; scientific review and citation inspection remain necessary.

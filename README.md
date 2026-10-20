@@ -8,9 +8,36 @@ The first version focuses on **Alzheimer's disease**, with **20–50 curated ent
 
 ## Project status
 
-**Documentation foundation complete; application implementation has not started.** This repository currently contains the product specification, architecture, evidence policy, data contract, and build plan. There is no runnable app, curated dataset, live integration, or AI service yet.
+**The first development explorer is implemented.** It has a selectable 3D graph, alias-aware search, type filters, a synchronized entity list, an evidence inspector, source links, reduced-motion support, and a WebGL fallback. The local starter contains **8 entities and 4 source-scoped claims** about APOE, ABCA1, and TREM2.
 
-Start with [steps.md](steps.md) for the implementation sequence and acceptance criteria. The next milestone is a small, runnable graph explorer backed by reviewed local data.
+The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, conflict comparisons, research hypotheses, live upstream integrations, AI service, backend, or database yet.
+
+See the [starter dataset notes](data/alzheimers/README.md) for original references and lookup limits, and [steps.md](steps.md) for remaining acceptance criteria. The 20–50 entity MVP and its scientific release gates remain ahead.
+
+## Run locally
+
+Use **Node.js 24** and **npm 11.9.x**. From the repository root:
+
+```sh
+npm run check:dependencies
+npm ci --ignore-scripts
+npm run dev
+```
+
+Open the printed local address, normally `http://localhost:5173`. The explorer requires no service credentials. `npm run dev -- --port 5174` selects another port. Production output is written to `apps/web/dist/`.
+
+```sh
+npm test
+npm run validate:data
+npm run build
+npm run preview
+```
+
+`npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
+
+Dependency lifecycle scripts are disabled in [.npmrc](.npmrc); direct versions are exact and the lockfile is committed. Read the [npm security policy](docs/npm-security.md) before changing dependencies. Its checks include release dates, registry integrity, audit findings, and pinned Shai-Hulud indicators. Optional standard-library Python tooling runs the IOC comparison with `python3 tools/security/check-iocs.py`.
+
+In this cloud workspace, npm's default cache directory may be read-only. Use `export npm_config_cache=/tmp/discovery-galaxy-npm-cache` for the session if that occurs.
 
 ## The first experience
 
@@ -21,7 +48,7 @@ Start with [steps.md](steps.md) for the implementation sequence and acceptance c
 5. Compare findings where curators have identified a meaningful disagreement.
 6. Read clearly labeled research questions, including the evidence and assumptions behind them.
 
-APOE, ABCA1, and TREM2 are initial curation candidates, not a seed dataset or a statement that every possible connection between them is established. Gene, protein, and variant identities must remain distinct.
+The current starter implements steps 1–4 through selected genetic-association findings. Pathways, disagreement comparisons, and research questions remain planned. Including APOE, ABCA1, and TREM2 does not establish every possible connection between them. Gene, protein, and variant identities remain distinct.
 
 An accessible searchable list will expose the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
 
@@ -38,13 +65,13 @@ Broad disease coverage, automatic literature ingestion, automatic contradiction 
 | Layer | Initial choice | Why |
 | --- | --- | --- |
 | Interface | React, TypeScript, Vite | A small interactive app with a clear data contract |
-| 3D visualization | Three.js through React Three Fiber; Drei helpers | Integrates scene rendering and interaction with React |
+| 3D visualization | Three.js through React Three Fiber; native OrbitControls | Integrates the scene with React without an extra helper dependency |
 | Knowledge data | Versioned, reviewed JSON snapshot | Makes a 20–50 entity graph reproducible and inspectable |
 | Data tooling | Python and NetworkX, introduced with curation tooling | Validate graph structure and prepare snapshots offline |
 | API, when needed | Python and FastAPI | Support controlled retrieval and server-side AI calls |
 | Storage, when needed | PostgreSQL | Persist provenance and support updates beyond snapshots |
 
-This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direction, while introducing each component when it has a job to do. Package versions and setup commands will be added with the scaffold, after compatibility is checked.
+This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direction, while introducing each component when it has a job to do. The current client pins React 19.3.0, React Three Fiber 9.8.1, Three.js 0.186.1, Vite 8.3.2, and TypeScript 5.9.3. Python security checks are development tooling; biomedical import tooling remains planned.
 
 ## Scientific resources
 
@@ -65,6 +92,9 @@ These resources help find and contextualize evidence. Database associations, met
 | [Architecture](docs/architecture.md) | Data flow, technical boundaries, and planned layout |
 | [Data model](docs/data-model.md) | Entities, claims, evidence, sources, and dataset rules |
 | [Evidence policy](docs/evidence-policy.md) | Curation, uncertainty, disagreements, and AI grounding |
+| [npm security policy](docs/npm-security.md) | Script-disabled installs, exact versions, and known-IOC checks |
+| [Starter dataset](data/alzheimers/README.md) | Source lookups, provenance, and pending scientific review |
+| [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to make and validate changes |
 | [AGENTS.md](AGENTS.md) | Instructions for coding agents working in this repository |

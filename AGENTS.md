@@ -8,12 +8,16 @@ This file is the canonical agent guide. [agent.md](agent.md) exists as a human-f
 
 ## Current repository state
 
-Only planning and contributor documents exist. No application, dependencies, tests, import pipeline, dataset, or AI integration has been implemented. Update this section and the README when that changes. Never report a planned feature or proposed command as working.
+The React/Vite explorer is implemented in `apps/web/`, with a data adapter, JSON schema, runtime validator, native Node tests, 3D/list views, and source-linked evidence panels. `data/alzheimers/dataset.json` contains an eight-entity, four-claim **development** snapshot; all scientific records remain draft with no human reviewer. Source review and the full 20–50 entity MVP remain pending. No biomedical import pipeline, AI service, backend, or database exists. Update this section and the README when that changes. Never report a planned feature or proposed command as working.
+
+## Dependency security
+
+The user explicitly requires care around Shai-Hulud and npm supply-chain attacks. Follow [docs/npm-security.md](docs/npm-security.md). Keep `.npmrc` lifecycle scripts disabled, direct dependencies exactly pinned, and `package-lock.json` committed. Use `npm ci --ignore-scripts`; do not run remote scaffolders with `npx`, enable install hooks globally, or apply broad automatic fixes. Check registry sources, integrity, release age, current advisories, and pinned IOC feeds before accepting dependency changes. Audit or indicator checks do not guarantee benign packages. Current npm 11.9 lacks `min-release-age`; dependency updates require an explicit reviewed cutoff and metadata checks.
 
 ## Implementation approach
 
-- Start with a React + TypeScript + Vite client and Three.js via React Three Fiber. Use the planned dataset adapter rather than coupling UI components to upstream APIs.
-- Deliver a small vertical slice using a reviewed local JSON snapshot before introducing infrastructure. No AI key, Python server, or database should be required to explore the initial graph.
+- Use the React + TypeScript + Vite client and Three.js via React Three Fiber. Native OrbitControls currently avoid a Drei dependency. Use the existing dataset adapter rather than coupling UI components to upstream APIs.
+- Keep the small local-data vertical slice usable before introducing infrastructure. Development drafts must remain visibly labeled; scientific release requires actual human review. No AI key, Python server, or database is required to explore the initial graph.
 - Introduce Python/NetworkX for offline data work; add FastAPI/PostgreSQL only when the milestones and actual requirements justify them.
 - Use one reproducible frontend dependency workflow and commit its lockfile with the scaffold. Do not mix package managers. Check compatible versions at implementation time.
 - Keep scientific data, rendering state, and presentation text separate. Layout coordinates and visual weights must not silently become scientific scores.
@@ -43,7 +47,7 @@ Only planning and contributor documents exist. No application, dependencies, tes
 ## Validation and completion
 
 - Run checks appropriate to the change. Documentation changes need link and consistency review, not invented application test commands.
-- Once code exists, document and use the actual install, lint, typecheck, build, data-validation, and test commands. Add tests for consequential data rules and user flows rather than mirroring implementation details.
+- Use the actual commands: `npm test`, `npm run typecheck`, `npm run validate:data`, `npm run check:dependencies`, and `npm run build`. `npm run validate:release` must reject the current starter; never weaken review gates to make it pass. There is no lint command. Add tests for consequential data rules and user flows rather than mirroring implementation details.
 - Treat missing references, fabricated provenance, broken graph IDs, unsupported claims, and unlabeled hypotheses as release blockers.
 - Review new scientific content and fixtures. Structural examples must be clearly synthetic and excluded from the public scientific dataset.
 - State exactly what changed, which checks ran, and what remains unimplemented. Update [steps.md](steps.md) only for work actually completed.

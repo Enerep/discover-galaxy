@@ -1,0 +1,345 @@
+{
+  "schema_version": "0.1.0",
+  "dataset_version": "alzheimers-starter-0.1.0",
+  "created_at": "2026-10-20T00:00:00Z",
+  "release_status": "development",
+  "scope": {
+    "disease": "Alzheimer's disease",
+    "inclusion_criteria": "Small, source-linked development graph of selected human genetic association findings for APOE, ABCA1, and TREM2.",
+    "limitations": [
+      "Development data: AI-assisted abstract lookup is complete, but no independent human scientific review has been recorded.",
+      "This selective historical starter is not a systematic review, a current consensus statement, or a comprehensive map of Alzheimer's biology.",
+      "All claims and evidence remain draft; source reuse and correction/retraction checks must be completed before scientific release.",
+      "Associations are scoped to variants and study populations; they do not establish causation, individual risk, or treatment benefit.",
+      "Pathways, therapeutic targets, conflicting findings, and research hypotheses have not yet been curated."
+    ]
+  },
+  "upstream_releases": [
+    {
+      "provider": "NCBI Gene",
+      "release": null,
+      "accessed_at": "2026-10-20",
+      "source_url": "https://www.ncbi.nlm.nih.gov/gene/",
+      "reuse_terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "attribution": "Gene identity metadata: National Center for Biotechnology Information, National Library of Medicine."
+    },
+    {
+      "provider": "NLM MeSH",
+      "release": null,
+      "accessed_at": "2026-10-20",
+      "source_url": "https://id.nlm.nih.gov/mesh/D000544.html",
+      "reuse_terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "attribution": "Disease identifier: Medical Subject Headings, National Library of Medicine."
+    },
+    {
+      "provider": "PubMed and original publishers",
+      "release": null,
+      "accessed_at": "2026-10-20",
+      "source_url": "https://pubmed.ncbi.nlm.nih.gov/",
+      "reuse_terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "attribution": "Publication metadata: PubMed, National Library of Medicine; findings attributed to the cited study authors. No article text is redistributed."
+    }
+  ],
+  "entities": [
+    {
+      "id": "disease-alzheimers",
+      "type": "disease",
+      "label": "Alzheimer's disease",
+      "aliases": ["Alzheimer disease", "Alzheimers", "Alzheimer's", "Alzheimer’s disease", "AD"],
+      "external_ids": [{"namespace": "MeSH", "value": "D000544"}],
+      "description": "Alzheimer Disease · MeSH D000544",
+      "description_claim_ids": [],
+      "provenance_source_ids": ["source-mesh-alzheimers"]
+    },
+    {
+      "id": "gene-apoe",
+      "type": "gene",
+      "label": "APOE",
+      "aliases": ["apolipoprotein E"],
+      "external_ids": [{"namespace": "NCBIGene", "value": "348"}],
+      "description": "apolipoprotein E · human gene",
+      "description_claim_ids": [],
+      "provenance_source_ids": ["source-ncbi-apoe"]
+    },
+    {
+      "id": "gene-abca1",
+      "type": "gene",
+      "label": "ABCA1",
+      "aliases": ["ATP binding cassette subfamily A member 1"],
+      "external_ids": [{"namespace": "NCBIGene", "value": "19"}],
+      "description": "ATP binding cassette subfamily A member 1 · human gene",
+      "description_claim_ids": [],
+      "provenance_source_ids": ["source-ncbi-abca1"]
+    },
+    {
+      "id": "gene-trem2",
+      "type": "gene",
+      "label": "TREM2",
+      "aliases": ["triggering receptor expressed on myeloid cells 2"],
+      "external_ids": [{"namespace": "NCBIGene", "value": "54209"}],
+      "description": "triggering receptor expressed on myeloid cells 2 · human gene",
+      "description_claim_ids": [],
+      "provenance_source_ids": ["source-ncbi-trem2"]
+    },
+    {
+      "id": "paper-corder-1993",
+      "type": "paper",
+      "label": "Corder et al. · 1993",
+      "aliases": ["8346443", "APOE epsilon4 study"],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-corder-1993",
+      "provenance_source_ids": ["source-corder-1993"]
+    },
+    {
+      "id": "paper-corder-1994",
+      "type": "paper",
+      "label": "Corder et al. · 1994",
+      "aliases": ["7920638", "APOE epsilon2 study"],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-corder-1994",
+      "provenance_source_ids": ["source-corder-1994"]
+    },
+    {
+      "id": "paper-nordestgaard-2015",
+      "type": "paper",
+      "label": "Nordestgaard et al. · 2015",
+      "aliases": ["26079414", "ABCA1 N1800H study"],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-nordestgaard-2015",
+      "provenance_source_ids": ["source-nordestgaard-2015"]
+    },
+    {
+      "id": "paper-jonsson-2013",
+      "type": "paper",
+      "label": "Jonsson et al. · 2013",
+      "aliases": ["23150908", "TREM2 R47H study"],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-jonsson-2013",
+      "provenance_source_ids": ["source-jonsson-2013"]
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-apoe-e4-risk",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "In 42 late-onset Alzheimer's families studied in 1993, more APOE ε4 alleles were associated with higher disease risk and earlier onset.",
+      "context": {"organism": "Homo sapiens", "variant": "APOE ε4 allele count", "population": "42 families with late-onset Alzheimer's disease", "study_design": "Familial genetic association", "outcome": "Disease risk and age at onset", "intervention": null},
+      "evidence_ids": ["evidence-apoe-e4-corder-1993"],
+      "summary": "This historical family study connects APOE allele dosage to disease susceptibility; it does not predict an individual's outcome.",
+      "limitations": ["Selected families and an abstract-level lookup do not establish population-wide risk or causality."],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    },
+    {
+      "id": "claim-apoe-e2-risk",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "A 1994 study reported the lowest Alzheimer's risk among participants with the APOE ε2/ε3 genotype.",
+      "context": {"organism": "Homo sapiens", "variant": "APOE ε2/ε3 genotype", "population": "Case-control participants and members of 66 Alzheimer's families", "study_design": "Case-control and family genetic association", "outcome": "Late-onset Alzheimer's disease risk", "intervention": null},
+      "evidence_ids": ["evidence-apoe-e2-corder-1994"],
+      "summary": "The allele-specific result illustrates why APOE relationships must retain genotype context. It does not imply immunity to Alzheimer's disease.",
+      "limitations": ["This is a historical observational association, not a treatment effect or an individual risk estimate."],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    },
+    {
+      "id": "claim-abca1-n1800h-risk",
+      "subject_id": "gene-abca1",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "A 2015 general-population study associated the ABCA1 N1800H loss-of-function variant with higher Alzheimer's disease risk.",
+      "context": {"organism": "Homo sapiens", "variant": "ABCA1 N1800H; study genotype comparison AC versus AA", "population": "92,726 general-population participants in the AD analysis", "study_design": "Human genetic association", "outcome": "Alzheimer's disease hazard", "intervention": null},
+      "evidence_ids": ["evidence-abca1-nordestgaard-2015"],
+      "summary": "This finding concerns a particular rare variant. It is not evidence that every ABCA1 variant increases risk or that modifying ABCA1 treats disease.",
+      "limitations": ["The reported estimate was imprecise; the abstract gives a wide confidence interval. No intervention was tested."],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    },
+    {
+      "id": "claim-trem2-r47h-risk",
+      "subject_id": "gene-trem2",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "A 2013 study associated the rare TREM2 rs75932628-T variant, predicted to produce R47H, with Alzheimer's disease in Iceland and replication samples.",
+      "context": {"organism": "Homo sapiens", "variant": "rs75932628-T; predicted R47H substitution", "population": "Icelandic discovery and US, Norwegian, Dutch, and German replication samples", "study_design": "Sequencing, imputation, and case-control replication", "outcome": "Alzheimer's disease odds", "intervention": null},
+      "evidence_ids": ["evidence-trem2-jonsson-2013"],
+      "summary": "The association concerns a specific rare variant; a proposed inflammatory mechanism was not demonstrated by this association alone.",
+      "limitations": ["The sampled populations and rare-variant analysis limit generalization. Association does not establish a mechanism or therapeutic effect."],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence-apoe-e4-corder-1993",
+      "claim_id": "claim-apoe-e4-risk",
+      "source_id": "source-corder-1993",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The abstract reports increasing disease risk and decreasing mean onset age as APOE ε4 allele count increased in the sampled families.",
+      "locator": "PubMed abstract, PMID 8346443",
+      "study_context": {"study_design": "Familial genetic association", "organism": "Homo sapiens", "population": "Late-onset Alzheimer's families", "families": 42, "sample_size": null, "variant": "APOE ε4 allele count", "outcome": "Disease risk and age at onset", "tissue": null, "intervention": null},
+      "limitations": ["Only the abstract and bibliographic metadata were inspected. The family-based estimates are not individual predictions."],
+      "source_metrics": [],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    },
+    {
+      "id": "evidence-apoe-e2-corder-1994",
+      "claim_id": "claim-apoe-e2-risk",
+      "source_id": "source-corder-1994",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The abstract reports the lowest disease risk in ε2/ε3 participants and describes an ε2-associated reduction in risk.",
+      "locator": "Nature Genetics publisher abstract, DOI 10.1038/ng0694-180",
+      "study_context": {"study_design": "Case-control and family genetic association", "organism": "Homo sapiens", "population": "115 cases, 243 controls, and 150 affected plus 197 unaffected relatives in 66 families", "sample_size": null, "variant": "APOE ε2/ε3 genotype", "outcome": "Late-onset Alzheimer's disease risk", "tissue": null, "intervention": null},
+      "limitations": ["Only the publisher abstract was inspected. Case and family totals are not combined because participant overlap was not assessed."],
+      "source_metrics": [],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    },
+    {
+      "id": "evidence-abca1-nordestgaard-2015",
+      "claim_id": "claim-abca1-n1800h-risk",
+      "source_id": "source-nordestgaard-2015",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "For the AD analysis, the abstract reports a higher adjusted hazard for N1800H AC than AA, with a wide confidence interval.",
+      "locator": "Publisher abstract, Methods and Results, DOI 10.1016/j.jalz.2015.04.006",
+      "study_context": {"study_design": "Human general-population genetic association", "organism": "Homo sapiens", "population": "General-population participants", "sample_size": 92726, "variant": "ABCA1 N1800H; AC versus AA", "outcome": "Alzheimer's disease hazard", "tissue": null, "intervention": null},
+      "limitations": ["The abstract-level review cannot assess all confounding or ascertainment choices. A rare-variant association is not a treatment experiment."],
+      "source_metrics": [],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    },
+    {
+      "id": "evidence-trem2-jonsson-2013",
+      "claim_id": "claim-trem2-r47h-risk",
+      "source_id": "source-jonsson-2013",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The abstract reports an rs75932628-T association in the Icelandic analysis and in combined discovery and replication samples.",
+      "locator": "PubMed abstract, Methods and Results, PMID 23150908",
+      "study_context": {"study_design": "Sequencing, imputation, and case-control replication", "organism": "Homo sapiens", "population": "Icelandic discovery; replication in the United States, Norway, the Netherlands, and Germany", "sample_size": null, "sequenced_discovery_individuals": 2261, "variant": "rs75932628-T; predicted R47H substitution", "outcome": "Alzheimer's disease odds", "tissue": null, "intervention": null},
+      "limitations": ["Only the abstract and metadata were inspected. The 2,261 sequenced individuals are not the total case-control sample size."],
+      "source_metrics": [],
+      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+    }
+  ],
+  "sources": [
+    {
+      "id": "source-corder-1993",
+      "kind": "publication",
+      "title": "Gene dose of apolipoprotein E type 4 allele and the risk of Alzheimer's disease in late onset families",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/8346443/",
+      "identifiers": [{"namespace": "PMID", "value": "8346443"}, {"namespace": "DOI", "value": "10.1126/science.8346443"}],
+      "publication_type": "primary_research",
+      "authors": ["E H Corder", "A M Saunders", "W J Strittmatter", "D E Schmechel", "P C Gaskell", "G W Small", "A D Roses", "J L Haines", "M A Pericak-Vance"],
+      "year": 1993,
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "Corder and colleagues, Science, 1993; bibliographic metadata via PubMed/NLM.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-corder-1994",
+      "kind": "publication",
+      "title": "Protective effect of apolipoprotein E type 2 allele for late onset Alzheimer disease",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/7920638/",
+      "identifiers": [{"namespace": "PMID", "value": "7920638"}, {"namespace": "DOI", "value": "10.1038/ng0694-180"}],
+      "publication_type": "primary_research",
+      "authors": ["E H Corder", "A M Saunders", "N J Risch", "W J Strittmatter", "D E Schmechel", "P C Gaskell Jr", "J B Rimmler", "P A Locke", "P M Conneally", "K E Schmader", "G W Small", "A D Roses", "J L Haines", "M A Pericak-Vance"],
+      "year": 1994,
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.nature.com/nature-portfolio/about/permissions", "attribution": "Corder and colleagues, Nature Genetics, 1994.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": null, "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-nordestgaard-2015",
+      "kind": "publication",
+      "title": "Loss-of-function mutation in ABCA1 and risk of Alzheimer's disease and cerebrovascular disease",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26079414/",
+      "identifiers": [{"namespace": "PMID", "value": "26079414"}, {"namespace": "DOI", "value": "10.1016/j.jalz.2015.04.006"}],
+      "publication_type": "primary_research",
+      "authors": ["Liv Tybjærg Nordestgaard", "Anne Tybjærg-Hansen", "Børge G Nordestgaard", "Ruth Frikke-Schmidt"],
+      "year": 2015,
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://onlinelibrary.wiley.com/terms-and-conditions", "attribution": "Nordestgaard and colleagues, Alzheimer's & Dementia, 2015.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-jonsson-2013",
+      "kind": "publication",
+      "title": "Variant of TREM2 associated with the risk of Alzheimer's disease",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23150908/",
+      "identifiers": [{"namespace": "PMID", "value": "23150908"}, {"namespace": "DOI", "value": "10.1056/NEJMoa1211103"}],
+      "publication_type": "primary_research",
+      "authors": ["Thorlakur Jonsson", "Hreinn Stefansson", "Stacy Steinberg", "Ingileif Jonsdottir", "Palmi V Jonsson", "Jon Snaedal", "Sigurbjorn Bjornsson", "Johanna Huttenlocher", "Allan I Levey", "James J Lah", "Dan Rujescu", "Harald Hampel", "Ina Giegling", "Ole A Andreassen", "Knut Engedal", "Ingun Ulstein", "Srdjan Djurovic", "Carla Ibrahim-Verbaas", "Albert Hofman", "M Arfan Ikram", "Cornelia M van Duijn", "Unnur Thorsteinsdottir", "Augustine Kong", "Kari Stefansson"],
+      "year": 2013,
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "Jonsson and colleagues, New England Journal of Medicine, 2013; bibliographic metadata via PubMed/NLM.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-ncbi-apoe",
+      "kind": "database_record",
+      "title": "APOE apolipoprotein E [Homo sapiens (human)]",
+      "url": "https://www.ncbi.nlm.nih.gov/gene/348",
+      "identifiers": [{"namespace": "NCBIGene", "value": "348"}],
+      "publication_type": null,
+      "authors": [],
+      "year": null,
+      "provider": "NCBI Gene",
+      "release": "Accessed 2026-10-20; no database release version captured",
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "National Center for Biotechnology Information, National Library of Medicine.", "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-ncbi-abca1",
+      "kind": "database_record",
+      "title": "ABCA1 ATP binding cassette subfamily A member 1 [Homo sapiens (human)]",
+      "url": "https://www.ncbi.nlm.nih.gov/gene/19",
+      "identifiers": [{"namespace": "NCBIGene", "value": "19"}],
+      "publication_type": null,
+      "authors": [],
+      "year": null,
+      "provider": "NCBI Gene",
+      "release": "Accessed 2026-10-20; no database release version captured",
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "National Center for Biotechnology Information, National Library of Medicine.", "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-ncbi-trem2",
+      "kind": "database_record",
+      "title": "TREM2 triggering receptor expressed on myeloid cells 2 [Homo sapiens (human)]",
+      "url": "https://www.ncbi.nlm.nih.gov/gene/54209",
+      "identifiers": [{"namespace": "NCBIGene", "value": "54209"}],
+      "publication_type": null,
+      "authors": [],
+      "year": null,
+      "provider": "NCBI Gene",
+      "release": "Accessed 2026-10-20; no database release version captured",
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "National Center for Biotechnology Information, National Library of Medicine.", "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    },
+    {
+      "id": "source-mesh-alzheimers",
+      "kind": "database_record",
+      "title": "Alzheimer Disease — MeSH D000544",
+      "url": "https://id.nlm.nih.gov/mesh/D000544.html",
+      "identifiers": [{"namespace": "MeSH", "value": "D000544"}],
+      "publication_type": null,
+      "authors": [],
+      "year": null,
+      "provider": "NLM MeSH",
+      "release": "Accessed 2026-10-20; no MeSH release version captured",
+      "retrieved_at": "2026-10-20",
+      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "Medical Subject Headings, National Library of Medicine.", "retained_content": "Disease label, identifier, selected search aliases, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
+      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+    }
+  ],
+  "conflicts": [],
+  "hypotheses": []
+}
