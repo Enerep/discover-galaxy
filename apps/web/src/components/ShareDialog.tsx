@@ -10,16 +10,21 @@ interface Props {
   selected: Entity;
   claim?: Claim;
   captureGraph: () => HTMLCanvasElement | undefined;
+  shareUrl: string;
 }
 
-export function ShareDialog({ open, onClose, snapshot, selected, claim, captureGraph }: Props) {
+export function ShareDialog({ open, onClose, snapshot, selected, claim, captureGraph, shareUrl }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const linkInput = useRef<HTMLInputElement>(null);
   const titleId = useId();
   const [preview, setPreview] = useState<{ url: string; file: File; nativeShare: boolean } | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [attempt, setAttempt] = useState(0);
   const [sharing, setSharing] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'manual'>('idle');
+
+  useEffect(() => { setCopyStatus('idle'); }, [open, shareUrl]);
 
   useEffect(() => {
     if (open && !dialog.current?.open) dialog.current?.showModal();
@@ -68,6 +73,19 @@ export function ShareDialog({ open, onClose, snapshot, selected, claim, captureG
     } finally { setSharing(false); }
   }
 
+  async function copyLink() {
+    if (!shareUrl) return;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyStatus('copied');
+    } catch {
+      setCopyStatus('manual');
+      linkInput.current?.focus({ preventScroll: true });
+      linkInput.current?.select();
+    }
+  }
+
   return (
     <dialog className="data-dialog share-dialog" ref={dialog} aria-labelledby={titleId} onClose={onClose}>
       <button className="icon-button dialog-close" aria-label="Close sharing" onClick={onClose}><Icon name="close" /></button>
@@ -82,6 +100,16 @@ export function ShareDialog({ open, onClose, snapshot, selected, claim, captureG
       <div className="share-actions">
         {preview && <a className="primary-button" href={preview.url} download={preview.file.name}><Icon name="download" size={17} />Download PNG</a>}
         {preview?.nativeShare && <button className="secondary-button" onClick={() => void shareImage()} disabled={sharing}><Icon name="share" size={17} />{sharing ? 'Sharing…' : 'Share image'}</button>}
+      </div>
+      <div className="share-link">
+        <label htmlFor={`${titleId}-link`}>Link to this view</label>
+        <div className="share-link-field">
+          <input id={`${titleId}-link`} ref={linkInput} value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
+          <button className="secondary-button" onClick={() => void copyLink()} disabled={!shareUrl}>{copyStatus === 'copied' ? 'Copied' : 'Copy link'}</button>
+        </div>
+        <p className="copy-status" role="status">{!shareUrl ? 'Clear the search to create a shareable link.'
+          : copyStatus === 'copied' ? 'Link copied.' : copyStatus === 'manual' ? 'Copy the selected link to share this view.'
+          : 'Opens the same entity, finding, search, filter, and view.'}</p>
       </div>
     </dialog>
   );

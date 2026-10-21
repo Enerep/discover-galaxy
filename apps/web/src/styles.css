@@ -197,6 +197,12 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: #6c776f; border
 .share-preview > div { padding: 20px; }
 .share-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 .share-dialog .share-notice { color: #706447; }
+.share-link { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 24px; }
+.share-link label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 9px; }
+.share-link-field { display: flex; gap: 8px; }
+.share-link-field input { width: 100%; min-width: 0; height: 42px; color: var(--ink); border: 1px solid #cdd7cf; border-radius: 6px; padding: 0 12px; font-size: 13px; background: #fff; }
+.share-link-field button { min-width: 94px; flex-shrink: 0; }
+.share-dialog .copy-status { font-size: 12px; margin: 9px 0 0; }
 .load-error { max-width: 600px; margin: 15vh auto; padding: 24px; }
 .load-error h1 { font-size: 28px; font-weight: 500; }
 .load-error p { color: var(--muted); }

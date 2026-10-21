@@ -12,9 +12,13 @@ The first version focuses on **Alzheimer's disease**, with **20–50 curated ent
 
 The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
 
+Sharing supports a PNG of the graph and selected finding, with source references, dataset version, and draft status. Native image sharing is offered where supported; downloading works without it. Copied links restore the entity, finding, search, filter, and view, but not the camera position. Images are created in the browser without an upload service.
+
 The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, conflict comparisons, research hypotheses, live upstream integrations, AI service, backend, or database yet.
 
 See the [starter dataset notes](data/alzheimers/README.md) for original references and lookup limits, and [steps.md](steps.md) for remaining acceptance criteria. The 20–50 entity MVP and its scientific release gates remain ahead.
+
+The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first**, adding reviewed studies, genes, and pathways before applying the workflow to another disease. The [checkpoint plan](docs/checkpoints.md) defines the next AD curation packet and the later path to automated source collection.
 
 ## Run locally
 
@@ -92,6 +96,7 @@ These resources help find and contextualize evidence. Database associations, met
 | Document | Purpose |
 | --- | --- |
 | [steps.md](steps.md) | Ordered milestones, dependencies, and completion criteria |
+| [Checkpoint plan](docs/checkpoints.md) | Current sharing scope, the next AD evidence pass, and staged automation |
 | [Product specification](docs/product.md) | Audience, user journeys, scope, and release criteria |
 | [Design guide](docs/design.md) | Simple workflows, clean presentation, plain language, and purposeful motion |
 | [Architecture](docs/architecture.md) | Data flow, technical boundaries, and planned layout |

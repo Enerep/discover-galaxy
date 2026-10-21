@@ -4,6 +4,8 @@
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
+The [checkpoint plan](docs/checkpoints.md) identifies the immediate sharing checkpoint and the next AD curation packet. Coverage remains Alzheimer's-only; the next scientific milestone deepens AD evidence before adding another disease.
+
 ## M0 — Establish the foundation
 
 - [x] Define the Alzheimer's MVP and its limits in [README.md](README.md) and [docs/product.md](docs/product.md).
@@ -27,7 +29,7 @@ The smallest useful flow is: search → select an entity → inspect a relations
 - [x] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
 - [x] Run the implemented checks and exercise the search-to-evidence flow in desktop/mobile browser tests, including WebGL failure. See [verification](docs/verification.md).
 
-The current starter has eight real, source-linked entities and four variant-scoped association claims. They are explicitly **development drafts** from AI-assisted abstract lookup, not approved scientific content. Human review, reuse assessment, and correction/retraction checks are pending. Synthetic fixtures remain isolated in tests. Keep the public scientific demo unreleased until its review gates pass.
+The current starter has eight real, source-linked entities and four variant-scoped association claims. They are explicitly **development drafts** from AI-assisted abstract lookup, not approved scientific content. Human review, reuse assessment, and correction/retraction checks are pending. Synthetic fixtures remain isolated in tests. The owner has deployed the labeled development preview on Vercel; a scientific dataset release remains gated on review.
 
 **Done when:** a clean local setup runs with no external service credentials, and a user can search for Alzheimer's, select APOE, inspect a reviewed relationship, and open its cited evidence through either the graph or the list.
 
@@ -43,6 +45,8 @@ Engineering can be exercised now; the reviewed-relationship criterion is still p
 - [x] Exercise the revised desktop, touch/mobile, and WebGL-fallback flows in browser checks. Scientific release criteria remain pending.
 
 ## M2 — Deliver the curated Alzheimer's explorer
+
+Start with a review packet for the existing four claims and a bounded candidate-source coverage table. Keep discovered candidates separate from approved records and distinguish independent studies from follow-ups or reused cohorts. See [the next checkpoint](docs/checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
 
 - [ ] Expand the reviewed snapshot to **20–50 entities total**, including any paper nodes. Include ABCA1 and TREM2 when their identifiers and selected relationships are verified.
 - [ ] Add relevant pathways and other initial entity types where evidence warrants them; distinguish genes and proteins and preserve variant context. Separate variant nodes are deferred.
@@ -99,4 +103,4 @@ Start only when multi-user curation, larger queries, frequent updates, or anothe
 - [ ] Run the implemented data checks, typecheck, lint, relevant tests, and production build; record results.
 - [ ] Document the actual local setup and known limitations. Keep private keys and unreviewed data out of distributed assets.
 
-Publication and hosting are separate actions. No site or backend is deployed by this documentation milestone.
+Hosting and scientific release are separate actions. The owner reports a working Vercel development preview; no backend is implemented. A hosted preview does not complete the scientific release criteria above.

@@ -11,7 +11,7 @@
     "build": "npm run typecheck && npm run build --workspace @discovery-galaxy/web",
     "preview": "npm run preview --workspace @discovery-galaxy/web --",
     "typecheck": "npm run typecheck --workspace @discovery-galaxy/web",
-    "test": "node --experimental-strip-types apps/web/src/lib/dataset.test.ts",
+    "test": "node --experimental-strip-types --test apps/web/src/lib/dataset.test.ts apps/web/src/lib/share-state.test.ts",
     "validate:data": "node --experimental-strip-types tools/validate-data.ts",
     "validate:release": "node --experimental-strip-types tools/validate-data.ts --release",
     "check:dependencies": "node tools/security/check-lockfile.mjs"

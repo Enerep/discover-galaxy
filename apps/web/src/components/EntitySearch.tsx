@@ -75,7 +75,7 @@ export function EntitySearch({ query, matches, onQuery, onSelect }: Props) {
         <input ref={input} type="search" role="combobox" aria-label="Search entities"
           aria-autocomplete="list" aria-expanded={expanded} aria-controls={listId}
           aria-activedescendant={expanded ? `${listId}-${activeIndex}` : undefined}
-          placeholder="Search by name" autoComplete="off" spellCheck={false}
+          placeholder="Search by name" autoComplete="off" spellCheck={false} maxLength={256}
           value={query} onKeyDown={keyDown} onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}
           onChange={(event) => { onQuery(event.target.value); setActive(0); setOpen(true); }} />
         {query ? (

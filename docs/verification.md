@@ -2,11 +2,15 @@
 
 ## Sharing checkpoint — 2026-10-21
 
-The image-sharing changes passed the production build, all 11 existing data tests, and the dependency source/integrity/exact-pin check. No dependencies or scientific records changed.
+The image and link-sharing changes passed the production build, all 17 data/share-state tests, development-data validation, and the dependency source/integrity/exact-pin check. No dependencies or scientific records changed. The current application chunk is approximately 282 kB minified / 87 kB gzip; the lazy 3D chunk remains approximately 942 kB / 249 kB gzip and still produces the existing size warning.
 
 The browser smoke suite downloaded and decoded actual PNG files from the graph, a zoomed graph, the list, mobile touch emulation, and the WebGL fallback. Files had valid PNG headers, a width of 1200 px, sufficient height to retain the finding and references, and nonblank image content. Zooming changed the exported graph. The graph and list exports were visually inspected for the full finding, original citation, limitations, draft label, and dataset version.
 
 Dialog keyboard focus, Escape dismissal, mobile layout, download touch targets, supported native file-sharing invocation, and cancellation passed. Native sharing used a browser stub; an actual operating-system share sheet was not exercised. Rendering still settled after capture: the four 500 ms idle samples observed 0 frame requests and 0 WebGL draws.
+
+Shared-link checks passed for all five stored fields (entity, finding, query, filter, and view), fresh load/reload, hash navigation and browser Back, invalid entity/claim recovery, and unavailable WebGL. Clipboard invocation and denial were tested with browser stubs; denial left the full link selected for manual copying. Copied links stripped unrelated URL parameters. Six native Node tests additionally exercise Unicode queries, malformed fragments, duplicate keys, bounds, related paper claims, and URL canonicalization.
+
+An isolated browser regression forced PNG encoding to fail, confirmed the error/Retry state and retained sharing link, restored the encoder, then successfully retried and downloaded a real PNG. Closing returned focus to Share.
 
 The owner reports the Vercel preview is working. Its deployed URL and deployment logs were not independently inspected; source pushes do not establish deployment success.
 

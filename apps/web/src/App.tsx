@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import rawDataset from '../../../data/alzheimers/dataset.json';
 import { EntitySearch } from './components/EntitySearch.tsx';
@@ -8,6 +8,8 @@ import { Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getClaimEvidence, getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
 import { useReducedMotion } from './lib/useReducedMotion.ts';
+import { buildShareUrl, parseShareState } from './lib/share-state.ts';
+import type { ExplorerShareState } from './lib/share-state.ts';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const FILTERS: { value: EntityType | 'all'; label: string }[] = [
@@ -38,11 +40,16 @@ export default function App() {
 }
 
 function Explorer({ snapshot }: { snapshot: Snapshot }) {
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<EntityType | 'all'>('all');
-  const [selectedId, setSelectedId] = useState(() => snapshot.entities.find(({ id }) => id === 'gene-apoe')?.id ?? snapshot.entities[0].id);
-  const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
-  const [view, setView] = useState<'graph' | 'list'>('graph');
+  const defaultState = useMemo<ExplorerShareState>(() => ({
+    entityId: snapshot.entities.find(({ id }) => id === 'gene-apoe')?.id ?? snapshot.entities[0].id,
+    claimId: null, query: '', filter: 'all', view: 'graph',
+  }), [snapshot]);
+  const [initialState] = useState(() => parseShareState(new URL(window.location.href), snapshot) ?? defaultState);
+  const [query, setQuery] = useState(initialState.query);
+  const [filter, setFilter] = useState<EntityType | 'all'>(initialState.filter);
+  const [selectedId, setSelectedId] = useState(initialState.entityId);
+  const [selectedClaimId, setSelectedClaimId] = useState<string | null>(initialState.claimId);
+  const [view, setView] = useState<'graph' | 'list'>(initialState.view);
   const [resetKey, setResetKey] = useState(0);
   const [zoomStep, setZoomStep] = useState(0);
   const [webglFailed, setWebglFailed] = useState(false);
@@ -58,8 +65,29 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const selected = snapshot.entities.find(({ id }) => id === selectedId) ?? snapshot.entities[0];
   const related = getEntityClaims(snapshot, selected.id);
   const activeClaim = related.find(({ id }) => id === selectedClaimId) ?? related[0];
+  const shareUrl = useMemo(() => {
+    try {
+      return buildShareUrl(new URL(window.location.href), {
+        entityId: selected.id, claimId: activeClaim?.id ?? null, query, filter, view,
+      }, snapshot);
+    } catch { return ''; }
+  }, [snapshot, selected.id, activeClaim?.id, query, filter, view]);
   const paperCount = snapshot.entities.filter(({ type }) => type === 'paper').length;
   const filtered = !!query.trim() || filter !== 'all';
+
+  useEffect(() => {
+    const restore = () => {
+      if (window.location.hash === '#explorer') return;
+      const next = parseShareState(new URL(window.location.href), snapshot) ?? defaultState;
+      setQuery(next.query);
+      setFilter(next.filter);
+      setSelectedId(next.entityId);
+      setSelectedClaimId(next.claimId);
+      setView(webglFailed ? 'list' : next.view);
+    };
+    window.addEventListener('hashchange', restore);
+    return () => window.removeEventListener('hashchange', restore);
+  }, [snapshot, defaultState, webglFailed]);
 
   const graph = useMemo(() => {
     const ids = new Set(matches.map(({ id }) => id));
@@ -221,7 +249,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <button className="primary-button" onClick={() => aboutRef.current?.close()}>Close</button>
       </dialog>
       <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} snapshot={snapshot}
-        selected={selected} claim={activeClaim} captureGraph={captureGraph} />
+        selected={selected} claim={activeClaim} captureGraph={captureGraph} shareUrl={shareUrl} />
     </div>
   );
 }

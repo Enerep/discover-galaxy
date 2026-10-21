@@ -1,6 +1,6 @@
 # Architecture
 
-Status: M1 engineering is implemented as a local development preview. The starter's scientific records remain draft and await independent human review; there is no approved scientific release or deployment. See the [product scope](product.md), [build steps](../steps.md), and [starter data notes](../data/alzheimers/README.md).
+Status: M1 engineering is implemented as a development preview; the owner reports a working Vercel deployment. The starter's scientific records remain draft and await independent human review; there is no approved scientific release. See the [product scope](product.md), [build steps](../steps.md), [checkpoint plan](checkpoints.md), and [starter data notes](../data/alzheimers/README.md).
 
 ## Current static explorer
 
@@ -30,6 +30,7 @@ The diagram shows the current application. The galaxy, list, and inspector are v
 | Explorer state | Own query, selected identifiers, active filters, and view mode; keep the canvas and HTML views synchronized. |
 | Galaxy scene | Render nodes, edges, labels, camera focus, and visible selection state. Keep scientific logic outside render components. |
 | Evidence inspector | Present the selected draft claim, source-linked notes, study context, limitations, original references, and review status. |
+| Sharing | Capture the graph on demand, generate a cited PNG in the browser, and encode validated explorer state in a shareable URL fragment. |
 
 M2 expands the scientifically reviewed dataset to 20–50 entities and adds verified pathway content and richer filtering. M3 adds reviewed disagreement comparisons and research-question cards. Those additions must remain separate from evidence-backed claims and must not invent a consensus score.
 
@@ -47,6 +48,12 @@ The [design guide](design.md) is the standing interface standard. The interface 
 
 The graph/list/evidence flows and presentation refinements have browser coverage. Future refinements still need their own browser QA; do not infer their usability or smoothness from a passing build. Keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
 
+## Sharing
+
+Image export captures the current graph on demand and combines it with the selected entity, full finding, source references, dataset version, and explicit draft status. The image renderer uses local Canvas APIs; it does not fetch paper content or upload the image. List view and unavailable WebGL use an evidence card without pretending to capture a graph. Native file sharing is optional; PNG download remains available.
+
+Shared links encode entity and claim IDs, query, type filter, and Graph/List view in a URL fragment. Parsing validates those values against the current snapshot, so missing or obsolete records fall back safely. Camera orbit and zoom are not serialized. Copied links omit unrelated query parameters; they are references to the current dataset, not immutable copies of the scientific record. The PNG carries its dataset version for that distinction.
+
 ## Data preparation
 
 The current dataset is prepared manually and checked by the TypeScript validator used by both the client adapter and `tools/validate-data.ts`. Development validation checks structure, references, provenance fields, and claim/evidence consistency. Release validation additionally requires approved human reviews, reuse and publication-status checks, and the 20–50 entity release boundary. The current starter is intentionally blocked from release validation.
@@ -56,6 +63,8 @@ Introduce Python and NetworkX curation tooling in M2 for normalization, bounded 
 Planned adapters for Open Targets, Reactome, and OpenAlex belong in this preparation boundary; none is implemented. Import only reviewed records into a published scientific snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing each adapter.
 
 The client makes no upstream scientific API requests. The checked-in snapshot makes local exploration reproducible and independent of those services; opening an original external reference still requires network access.
+
+The next dataset pass remains AD-focused. Candidate collection, source comparison, human review, and versioned publication are separate stages; a future adapter may automate collection and validation without promoting candidates or recording human approval. Apply the workflow to another disease only after the AD evidence journey is reliable. The bounded next deliverable is described in [checkpoints](checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
 
 ## Later services, when needed
 

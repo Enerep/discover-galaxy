@@ -8,6 +8,7 @@ counters are injected into the test browser only; production has no QA hooks.
 import argparse
 from pathlib import Path
 import struct
+from urllib.parse import parse_qs, urlsplit, urlunsplit
 
 from playwright.sync_api import Locator, Page, expect, sync_playwright
 
@@ -121,6 +122,132 @@ def export_share_image(page: Page, label: str, screenshots: Path, *, touch: bool
     expect(dialog).not_to_be_visible()
     expect(trigger).to_be_focused()
     return png
+
+
+def assert_share_links(browser, base_url: str, screenshots: Path) -> None:
+    context = browser.new_context(viewport={"width": 1440, "height": 1000})
+    context.add_init_script("""
+        window.__copiedLink = null;
+        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+            writeText: async text => { window.__copiedLink = text; }
+        } });
+    """)
+    page = context.new_page()
+    errors: list[str] = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    parts = urlsplit(base_url)
+    # Unrelated URL parameters must not leak into the copied share link.
+    page.goto(urlunsplit((parts.scheme, parts.netloc, parts.path, "utm_source=preview&unrelated=omit-me", "")), wait_until="networkidle")
+    expect(page.locator(".selected-title")).to_have_text("APOE")
+    page.get_by_role("button", name="APOE ε2/ε3 genotype", exact=True).click()
+    page.get_by_role("button", name="List view", exact=True).click()
+    page.get_by_role("combobox", name="Filter by entity type").select_option("gene")
+    page.get_by_role("combobox", name="Search entities").fill("APOE")
+    page.get_by_role("button", name="Share", exact=True).click()
+    dialog = page.get_by_role("dialog", name="Share this view", exact=True)
+    field = dialog.get_by_role("textbox", name="Link to this view", exact=True)
+    expect(field).to_be_visible()
+    assert field.evaluate("element => element.readOnly")
+    link = field.input_value()
+    parsed = urlsplit(link)
+    assert parsed.scheme == parts.scheme and parsed.netloc == parts.netloc and parsed.path == parts.path
+    assert not parsed.query, "Unrelated query parameters must not enter a shared URL"
+    assert parse_qs(parsed.fragment) == {
+        "entity": ["gene-apoe"], "claim": ["claim-apoe-e2-risk"], "q": ["APOE"], "type": ["gene"], "view": ["list"]
+    }
+    dialog.get_by_role("button", name="Copy link", exact=True).click()
+    expect(dialog.get_by_role("button", name="Copied", exact=True)).to_be_visible()
+    expect(dialog.locator(".copy-status")).to_have_text("Link copied.")
+    assert page.evaluate("window.__copiedLink") == link
+    page.keyboard.press("Escape")
+
+    # Permission denial must leave a usable, selected manual-copy field.
+    page.evaluate("""Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+        writeText: async () => { throw new DOMException('Denied', 'NotAllowedError'); }
+    } })""")
+    page.get_by_role("button", name="Share", exact=True).click()
+    dialog.get_by_role("button", name="Copy link", exact=True).click()
+    expect(dialog.locator(".copy-status")).to_have_text("Copy the selected link to share this view.")
+    expect(field).to_be_focused()
+    assert field.evaluate("element => element.selectionStart === 0 && element.selectionEnd === element.value.length")
+    expect(dialog.get_by_role("alert")).to_have_count(0)
+    expect(dialog.get_by_role("img", name="Share image preview", exact=True)).to_be_visible(timeout=10000)
+    page.screenshot(path=str(screenshots / "share-link-dialog.png"), full_page=True)
+
+    restored = context.new_page()
+    restored.on("pageerror", lambda error: errors.append(str(error)))
+    restored.goto(link, wait_until="networkidle")
+
+    def expect_apoe_link_state() -> None:
+        expect(restored.locator(".selected-title")).to_have_text("APOE")
+        expect(restored.get_by_role("button", name="APOE ε2/ε3 genotype", exact=True)).to_have_attribute("aria-pressed", "true")
+        expect(restored.get_by_role("combobox", name="Search entities")).to_have_value("APOE")
+        expect(restored.get_by_role("combobox", name="Filter by entity type")).to_have_value("gene")
+        expect(restored.get_by_role("button", name="List view", exact=True)).to_have_attribute("aria-pressed", "true")
+        expect(restored.locator(".entity-row")).to_have_count(1)
+        expect(restored.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/7920638/")
+
+    expect_apoe_link_state()
+    restored.reload(wait_until="networkidle")
+    expect_apoe_link_state()
+    restored.evaluate("location.hash = 'entity=gene-trem2&claim=claim-trem2-r47h-risk'")
+    expect(restored.locator(".selected-title")).to_have_text("TREM2")
+    expect(restored.get_by_role("combobox", name="Search entities")).to_have_value("")
+    expect(restored.get_by_role("combobox", name="Filter by entity type")).to_have_value("all")
+    expect(restored.get_by_role("button", name="Graph view", exact=True)).to_have_attribute("aria-pressed", "true")
+    expect(restored.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/23150908/")
+    restored.go_back(wait_until="domcontentloaded")
+    expect_apoe_link_state()
+
+    # A claim belonging to another entity and unknown IDs cannot restore stale state.
+    for fragment in ["entity=gene-apoe&claim=claim-trem2-r47h-risk", "entity=does-not-exist"]:
+        restored.evaluate("fragment => { location.hash = fragment; }", fragment)
+        expect(restored.locator(".selected-title")).to_have_text("APOE")
+        expect(restored.get_by_role("combobox", name="Search entities")).to_have_value("")
+        expect(restored.get_by_role("combobox", name="Filter by entity type")).to_have_value("all")
+        expect(restored.get_by_role("button", name="Graph view", exact=True)).to_have_attribute("aria-pressed", "true")
+        expect(restored.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/8346443/")
+    restored.reload(wait_until="networkidle")
+    expect(restored.locator(".selected-title")).to_have_text("APOE")
+    assert not errors, errors
+    context.close()
+    print("PASS: share links restore entity, finding, query, filter, and view across reload/hash/back; invalid links fall back safely and denied clipboard supports manual copying.")
+
+
+def assert_export_retry(browser, base_url: str, screenshots: Path) -> None:
+    context = browser.new_context(viewport={"width": 1280, "height": 900})
+    context.add_init_script("""
+        window.__originalToBlob = HTMLCanvasElement.prototype.toBlob;
+        HTMLCanvasElement.prototype.toBlob = function(callback) { callback(null); };
+    """)
+    page = context.new_page()
+    errors: list[str] = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(base_url, wait_until="networkidle")
+    expect(page.locator("canvas")).to_be_visible()
+    page.get_by_role("button", name="Share", exact=True).click()
+    dialog = page.get_by_role("dialog", name="Share this view", exact=True)
+    expect(dialog.get_by_role("alert")).to_contain_text("Couldn’t create the image. Try again.")
+    expect(dialog.get_by_role("link", name="Download PNG", exact=True)).to_have_count(0)
+    expect(dialog.get_by_role("textbox", name="Link to this view", exact=True)).not_to_have_value("")
+    page.evaluate("() => { HTMLCanvasElement.prototype.toBlob = window.__originalToBlob; }")
+    dialog.get_by_role("button", name="Retry", exact=True).click()
+    preview = dialog.get_by_role("img", name="Share image preview", exact=True)
+    expect(preview).to_be_visible(timeout=10000)
+    assert preview.evaluate("image => image.complete && image.naturalWidth === 1200 && image.naturalHeight >= 800")
+    expect(dialog.get_by_role("alert")).to_have_count(0)
+    with page.expect_download() as pending_download:
+        dialog.get_by_role("link", name="Download PNG", exact=True).click()
+    destination = screenshots / "share-retried.png"
+    pending_download.value.save_as(destination)
+    png = destination.read_bytes()
+    assert png[:8] == b"\x89PNG\r\n\x1a\n" and len(png) > 12000
+    page.keyboard.press("Escape")
+    expect(dialog).not_to_be_visible()
+    expect(page.get_by_role("button", name="Share", exact=True)).to_be_focused()
+    assert not errors, errors
+    context.close()
+    print("PASS: PNG encoding failure shows Retry without losing the share link; retry creates a real downloadable PNG.")
 
 
 def run(base_url: str, executable: str, screenshots: Path) -> None:
@@ -373,6 +500,11 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(fallback_page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/23150908/")
         fallback_page.screenshot(path=str(screenshots / "webgl-fallback.png"), full_page=True)
         export_share_image(fallback_page, "webgl-fallback", screenshots)
+        fallback_page.goto(urlunsplit((*urlsplit(base_url)[:3], "", "entity=gene-trem2&claim=claim-trem2-r47h-risk")), wait_until="networkidle")
+        expect(fallback_page.locator(".fallback-notice")).to_be_visible()
+        expect(fallback_page.locator(".selected-title")).to_have_text("TREM2")
+        expect(fallback_page.get_by_role("button", name="List view", exact=True)).to_have_attribute("aria-pressed", "true")
+        expect(fallback_page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/23150908/")
         print("PASS: unavailable WebGL preserves list selection, original evidence, and PNG export.")
 
         native = browser.new_context(viewport={"width": 1280, "height": 900})
@@ -402,6 +534,8 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(native_dialog.get_by_role("alert")).to_have_count(0)
         expect(native_dialog).to_be_visible()
         print("PASS: supported native sharing receives a real PNG; cancelling the native sheet is not an error.")
+        assert_share_links(browser, base_url, screenshots)
+        assert_export_retry(browser, base_url, screenshots)
         browser.close()
 
 

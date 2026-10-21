@@ -13,6 +13,7 @@ The primary flow is **search → select an entity → read a finding → open th
 - Reveal study context and limitations on request, preserving their source-specific meaning. Simplifying the interface must not remove scientific context.
 - Keep the graph usable with touch, visible zoom/reset controls, and an equivalent keyboard-operable list.
 - Keep the user in control of focus and scrolling. Do not move the viewport while they type or filter. Prefer explicit mobile details and return-to-graph actions over surprise scrolling.
+- Keep sharing in one action area. Exported images must retain the finding's meaning, original source reference, dataset version, and draft status. Provide an evidence-card fallback when the graph cannot be captured.
 
 ## Visual language
 
