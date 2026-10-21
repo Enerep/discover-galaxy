@@ -12,6 +12,8 @@ The first version focuses on **Alzheimer's disease**, with **20–50 curated ent
 
 The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
 
+The appearance control offers Light, Dark, and System. System follows the operating system by default; explicit choices are remembered locally. Dark uses a `#1F1F24` page background. The graph stays dark in either theme, and exported citation cards keep their light background.
+
 Sharing supports a PNG of the graph and selected finding, with source references, dataset version, and draft status. Native image sharing is offered where supported; downloading works without it. Copied links restore the entity, finding, search, filter, and view, but not the camera position. Images are created in the browser without an upload service.
 
 The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, conflict comparisons, research hypotheses, live upstream integrations, AI service, backend, or database yet.

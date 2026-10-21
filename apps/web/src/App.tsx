@@ -4,6 +4,7 @@ import rawDataset from '../../../data/alzheimers/dataset.json';
 import { EntitySearch } from './components/EntitySearch.tsx';
 import { Inspector } from './components/Inspector.tsx';
 import { ShareDialog } from './components/ShareDialog.tsx';
+import { ThemeControl } from './components/ThemeControl.tsx';
 import { Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getClaimEvidence, getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
@@ -137,6 +138,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       <header className="app-header">
         <a className="brand" href="/" aria-label="Discovery Galaxy home"><Icon name="galaxy" size={29} /><span>Discovery Galaxy</span></a>
         <div className="header-actions">
+          <ThemeControl />
           <button className="data-status" aria-label="About the data" onClick={() => aboutRef.current?.showModal()}>
             <span className="draft-dot" />Draft dataset<Icon name="info" size={16} />
           </button>

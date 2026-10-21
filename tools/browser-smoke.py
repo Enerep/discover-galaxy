@@ -250,6 +250,206 @@ def assert_export_retry(browser, base_url: str, screenshots: Path) -> None:
     print("PASS: PNG encoding failure shows Retry without losing the share link; retry creates a real downloadable PNG.")
 
 
+def assert_text_contrast(control: Locator, *, pseudo: str | None = None, minimum: float = 4.5) -> None:
+    colors = control.evaluate("""(element, pseudo) => {
+        const parse = value => {
+            const values = value.match(/[\\d.]+/g).map(Number);
+            return [values[0], values[1], values[2], values[3] ?? 1];
+        };
+        const blend = (foreground, background) => foreground.slice(0, 3)
+            .map((value, index) => value * foreground[3] + background[index] * (1 - foreground[3]));
+        const ancestors = [];
+        for (let current = element; current; current = current.parentElement) ancestors.unshift(current);
+        let background = [255, 255, 255];
+        for (const ancestor of ancestors) background = blend(parse(getComputedStyle(ancestor).backgroundColor), background);
+        const foreground = blend(parse(getComputedStyle(element, pseudo).color), background);
+        const luminance = color => color.map(value => value / 255)
+            .map(value => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4)
+            .reduce((result, value, index) => result + value * [0.2126, 0.7152, 0.0722][index], 0);
+        const [low, high] = [luminance(foreground), luminance(background)].sort((a, b) => a - b);
+        return { foreground, background, ratio: (high + 0.05) / (low + 0.05) };
+    }""", pseudo)
+    assert colors["ratio"] >= minimum, f"Insufficient tested text contrast ({minimum} required): {colors}"
+
+
+def assert_themes(browser, base_url: str, screenshots: Path) -> None:
+    key = "discovery-galaxy:theme"
+    context = browser.new_context(viewport={"width": 1440, "height": 1000}, color_scheme="light")
+    context.add_init_script(RENDER_COUNTERS)
+    page = context.new_page()
+    errors: list[str] = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(base_url, wait_until="networkidle")
+    theme = page.get_by_role("combobox", name="Color theme", exact=True)
+    expect(theme).to_have_value("system")
+    expect(page.locator("html")).to_have_attribute("data-theme", "light")
+    expect(page.locator("canvas")).to_be_visible(timeout=10000)
+    assert page.evaluate("localStorage.getItem('discovery-galaxy:theme')") is None
+    page.screenshot(path=str(screenshots / "desktop-light.png"), full_page=True)
+
+    def assert_palette(mode: str) -> None:
+        expect(page.locator("html")).to_have_attribute("data-theme", mode)
+        expect(page.locator("html")).to_have_attribute("data-theme-preference", mode)
+        for selector in [".page-heading p", ".selected-title", ".finding-statement", ".finding-summary", ".source-title", ".source-meta", ".draft-label", ".claim-button", ".coverage-note"]:
+            assert_text_contrast(page.locator(selector).first)
+        assert_text_contrast(page.get_by_role("combobox", name="Search entities"))
+        assert_text_contrast(page.get_by_role("combobox", name="Search entities"), pseudo="::placeholder")
+        assert_text_contrast(page.get_by_role("combobox", name="Filter by entity type"))
+        assert_text_contrast(theme)
+        theme.focus()
+        focus = theme.evaluate("element => { const style = getComputedStyle(element); return { width: parseFloat(style.outlineWidth), style: style.outlineStyle, color: style.outlineColor }; }")
+        assert focus["width"] >= 2 and focus["style"] != "none", focus
+
+    # OS changes follow System, while explicit settings persist and take priority.
+    theme.select_option("dark")
+    assert_palette("dark")
+    assert page.evaluate("getComputedStyle(document.documentElement).backgroundColor") == "rgb(31, 31, 36)"
+    expect(page.locator('meta[name="theme-color"]')).to_have_attribute("content", "#1f1f24", ignore_case=True)
+    assert page.evaluate("localStorage.getItem('discovery-galaxy:theme')") == "dark"
+    assert_idle(page, "Graph after dark-mode change")
+    page.screenshot(path=str(screenshots / "desktop-dark.png"), full_page=True)
+    page.emulate_media(color_scheme="dark")
+    page.emulate_media(color_scheme="light")
+    expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+    theme.select_option("system")
+    expect(page.locator("html")).to_have_attribute("data-theme", "light")
+    page.emulate_media(color_scheme="dark")
+    expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+    theme.select_option("light")
+    assert_palette("light")
+    page.emulate_media(color_scheme="light")
+    page.emulate_media(color_scheme="dark")
+    expect(page.locator("html")).to_have_attribute("data-theme", "light")
+    page.reload(wait_until="networkidle")
+    expect(theme).to_have_value("light")
+    expect(page.locator("html")).to_have_attribute("data-theme", "light")
+
+    # Real same-origin storage events synchronize other tabs without changing
+    # the operating-system setting of either page.
+    other = context.new_page()
+    other.on("pageerror", lambda error: errors.append(str(error)))
+    other.goto(base_url, wait_until="networkidle")
+    expect(other.get_by_role("combobox", name="Color theme", exact=True)).to_have_value("light")
+    theme.select_option("dark")
+    expect(other.locator("html")).to_have_attribute("data-theme", "dark")
+    expect(other.get_by_role("combobox", name="Color theme", exact=True)).to_have_value("dark")
+    other.get_by_role("combobox", name="Color theme", exact=True).select_option("system")
+    expect(theme).to_have_value("system")
+    expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+    expect(other.locator("html")).to_have_attribute("data-theme", "light")
+    other.close()
+
+    # Theme is presentation state: changing it must preserve the research view.
+    page.get_by_role("button", name="TREM2", exact=True).click()
+    page.get_by_role("button", name="List view", exact=True).click()
+    page.get_by_role("combobox", name="Filter by entity type").select_option("gene")
+    page.get_by_role("combobox", name="Search entities").fill("TREM2")
+    theme.select_option("light")
+    theme.select_option("dark")
+    expect(page.locator(".selected-title")).to_have_text("TREM2")
+    expect(page.get_by_role("combobox", name="Search entities")).to_have_value("TREM2")
+    expect(page.get_by_role("combobox", name="Filter by entity type")).to_have_value("gene")
+    expect(page.get_by_role("button", name="List view", exact=True)).to_have_attribute("aria-pressed", "true")
+    expect(page.locator(".entity-row")).to_have_count(1)
+    assert_text_contrast(page.locator(".entity-row-text strong"))
+    assert_text_contrast(page.locator(".entity-row-text small"))
+    page.screenshot(path=str(screenshots / "list-dark.png"), full_page=True)
+    page.get_by_role("button", name="About the data").click()
+    about = page.get_by_role("dialog", name="About this dataset", exact=True)
+    for selector in ["h2", "p", "li", "dt", "dd"]:
+        assert_text_contrast(about.locator(selector).first)
+    page.keyboard.press("Escape")
+    page.get_by_role("button", name="Share", exact=True).click()
+    dialog = page.get_by_role("dialog", name="Share this view", exact=True)
+    preview = dialog.get_by_role("img", name="Share image preview", exact=True)
+    expect(preview).to_be_visible(timeout=10000)
+    for control in [dialog.locator("h2"), dialog.locator("p").first, dialog.get_by_role("textbox", name="Link to this view"), dialog.get_by_role("button", name="Copy link", exact=True), dialog.get_by_role("link", name="Download PNG", exact=True)]:
+        assert_text_contrast(control)
+    assert preview.evaluate("""async image => {
+        await image.decode();
+        const canvas = document.createElement('canvas'); canvas.width = 1; canvas.height = 1;
+        const context = canvas.getContext('2d'); context.drawImage(image, 0, 0);
+        return [...context.getImageData(0, 0, 1, 1).data].join(',') === '245,246,244,255';
+    }"""), "Share images intentionally keep their readable light citation-card palette"
+    page.screenshot(path=str(screenshots / "dialog-dark.png"), full_page=True)
+    page.keyboard.press("Escape")
+    export_share_image(page, "dark-list", screenshots)
+    assert not errors, errors
+    context.close()
+
+    # Withhold the application module: the head bootstrap must resolve the
+    # preference and browser chrome color before React is allowed to run.
+    bootstrap = browser.new_context(color_scheme="dark")
+    bootstrap.add_init_script("localStorage.setItem('discovery-galaxy:theme', 'invalid-value')")
+    bootstrap.route("**/src/main.tsx", lambda route: route.fulfill(status=200, content_type="application/javascript", body="/* application withheld by theme QA */"))
+    bootstrap.route("**/assets/index-*.js", lambda route: route.fulfill(status=200, content_type="application/javascript", body="/* application withheld by theme QA */"))
+    first_paint = bootstrap.new_page()
+    first_paint.goto(base_url, wait_until="networkidle")
+    expect(first_paint.locator("html")).to_have_attribute("data-theme", "dark")
+    expect(first_paint.locator("html")).to_have_attribute("data-theme-preference", "system")
+    assert first_paint.evaluate("getComputedStyle(document.documentElement).backgroundColor") == "rgb(31, 31, 36)"
+    expect(first_paint.locator('meta[name="theme-color"]')).to_have_attribute("content", "#1f1f24", ignore_case=True)
+    assert first_paint.locator("#root").inner_html() == ""
+    bootstrap.close()
+
+    blocked = browser.new_context(viewport={"width": 1280, "height": 900}, color_scheme="dark")
+    blocked.add_init_script("""Object.defineProperty(window, 'localStorage', { configurable: true,
+        get() { throw new DOMException('Storage disabled by test', 'SecurityError'); }
+    });""")
+    blocked_page = blocked.new_page()
+    blocked_errors: list[str] = []
+    blocked_page.on("pageerror", lambda error: blocked_errors.append(str(error)))
+    blocked_page.goto(base_url, wait_until="networkidle")
+    blocked_theme = blocked_page.get_by_role("combobox", name="Color theme", exact=True)
+    expect(blocked_theme).to_have_value("system")
+    expect(blocked_page.locator("html")).to_have_attribute("data-theme", "dark")
+    blocked_theme.select_option("light")
+    expect(blocked_page.locator("html")).to_have_attribute("data-theme", "light")
+    blocked_page.reload(wait_until="networkidle")
+    expect(blocked_theme).to_have_value("system")
+    expect(blocked_page.locator("html")).to_have_attribute("data-theme", "dark")
+    assert not blocked_errors, blocked_errors
+    blocked.close()
+
+    mobile = browser.new_context(viewport={"width": 360, "height": 800}, color_scheme="dark", reduced_motion="reduce", is_mobile=True, has_touch=True)
+    mobile_page = mobile.new_page()
+    mobile_errors: list[str] = []
+    mobile_page.on("pageerror", lambda error: mobile_errors.append(str(error)))
+    mobile_page.goto(base_url, wait_until="networkidle")
+    mobile_theme = mobile_page.get_by_role("combobox", name="Color theme", exact=True)
+    expect(mobile_theme).to_have_value("system")
+    expect(mobile_page.locator("html")).to_have_attribute("data-theme", "dark")
+    assert_touch_target(mobile_theme)
+    assert mobile_page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+    for selector in [".brand", ".data-status", ".theme-control"]:
+        box = mobile_page.locator(selector).bounding_box()
+        assert box is not None and box["x"] >= 0 and box["x"] + box["width"] <= 360, (selector, box)
+    mobile_theme.select_option("light")
+    expect(mobile_page.locator("html")).to_have_attribute("data-theme", "light")
+    mobile_theme.select_option("dark")
+    expect(mobile_page.locator("html")).to_have_attribute("data-theme", "dark")
+    mobile_page.screenshot(path=str(screenshots / "mobile-360-dark.png"), full_page=True)
+    assert not mobile_errors, mobile_errors
+    mobile.close()
+
+    fallback = browser.new_context(viewport={"width": 1280, "height": 900}, color_scheme="dark")
+    fallback.add_init_script("""
+        const original = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+            return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+        };
+    """)
+    fallback_page = fallback.new_page()
+    fallback_page.goto(base_url, wait_until="networkidle")
+    expect(fallback_page.locator("html")).to_have_attribute("data-theme", "dark")
+    expect(fallback_page.locator(".fallback-notice")).to_be_visible()
+    assert_text_contrast(fallback_page.locator(".fallback-notice"))
+    assert_text_contrast(fallback_page.locator(".entity-row-text strong").first)
+    fallback_page.screenshot(path=str(screenshots / "fallback-dark.png"), full_page=True)
+    fallback.close()
+    print("PASS: light/dark/system themes, pre-App initialization, persistence, OS and cross-tab changes, blocked storage, view preservation, tested text contrast, 360px touch layout, dark dialogs/list/fallback, and light PNG palette.")
+
+
 def run(base_url: str, executable: str, screenshots: Path) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -536,6 +736,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         print("PASS: supported native sharing receives a real PNG; cancelling the native sheet is not an error.")
         assert_share_links(browser, base_url, screenshots)
         assert_export_retry(browser, base_url, screenshots)
+        assert_themes(browser, base_url, screenshots)
         browser.close()
 
 

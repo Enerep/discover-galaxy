@@ -1,5 +1,17 @@
 # Development preview verification
 
+## Appearance checkpoint — 2026-10-21
+
+The Light / Dark / System implementation passed the production build, all 21 existing data/share-state/review-packet tests, review-packet freshness, and the dependency source/integrity/exact-pin check. No dependencies or scientific records changed. The main application chunk is approximately 285 kB minified / 87 kB gzip; the existing 3D chunk size warning remains.
+
+Focused browser checks passed for default System behavior, explicit Light/Dark selection, reload persistence, operating-system changes, real cross-tab storage events, invalid stored preferences, and blocked storage. With the app module withheld, the head script still set the correct initial dark background and browser theme color. The dark page background is exactly `#1F1F24`.
+
+Switching themes preserved the entity, finding, query, filter, and view. Sampled body/evidence/control text and placeholders met 4.5:1 contrast in both themes, and keyboard focus remained visible. Browser checks also covered the 360 px touch header, dark List mode, evidence/sharing dialogs, and unavailable WebGL. Exported PNGs retained their light citation-card palette. The graph settled after switching: a 500 ms idle sample observed 0 frame requests and 0 WebGL draws.
+
+Desktop and mobile screenshots were visually inspected. These checks cover the documented headless Chromium environment and sampled states, not a complete accessibility audit or a real-device browser matrix.
+
+The full revised smoke suite also passed the existing graph/evidence/search/mobile/fallback, PNG export, native-sharing cancellation, copy-link restoration, and export-Retry flows. All five idle samples recorded 0 frame requests and 0 WebGL draws.
+
 ## Sharing checkpoint — 2026-10-21
 
 The sharing and review-preparation checkpoint passed the production build, all 21 data/share-state/review-packet tests, development-data validation, and the dependency source/integrity/exact-pin check. No dependencies or scientific records changed. The current application chunk is approximately 282 kB minified / 87 kB gzip; the lazy 3D chunk remains approximately 942 kB / 249 kB gzip and still produces the existing size warning.

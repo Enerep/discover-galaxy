@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f5f6f4" />
+    <script>
+      // Resolve before the app loads, including when local storage is blocked.
+      (() => {
+        let preference = 'system';
+        try {
+          const value = localStorage.getItem('discovery-galaxy:theme');
+          if (value === 'light' || value === 'dark' || value === 'system') preference = value;
+        } catch {}
+        const theme = preference === 'system'
+          ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : preference;
+        const color = theme === 'dark' ? '#1f1f24' : '#f5f6f4';
+        const root = document.documentElement;
+        root.dataset.theme = theme;
+        root.dataset.themePreference = preference;
+        root.style.colorScheme = theme;
+        root.style.backgroundColor = color;
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', color);
+      })();
+    </script>
     <meta name="description" content="Explore an evidence-linked Alzheimer's research graph. A development preview of Discovery Galaxy." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Discovery Galaxy — Alzheimer's Explorer</title>

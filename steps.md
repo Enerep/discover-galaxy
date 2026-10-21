@@ -4,7 +4,7 @@
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
-The [checkpoint plan](docs/checkpoints.md) identifies the immediate sharing checkpoint and the next AD curation packet. Coverage remains Alzheimer's-only; the next scientific milestone deepens AD evidence before adding another disease.
+The [checkpoint plan](docs/checkpoints.md) records sharing and appearance work, then the next AD evidence pass. Coverage remains Alzheimer's-only; the next scientific milestone reviews the existing packet and deepens AD evidence before adding another disease.
 
 ## M0 — Establish the foundation
 
@@ -50,6 +50,11 @@ Engineering can be exercised now; the reviewed-relationship criterion is still p
 - [x] Offer native image sharing where available and preserve a download option.
 - [x] Copy validated links that restore the entity, finding, query, filter, and view; test reload, navigation, invalid links, and clipboard denial.
 - [x] Generate a reproducible AD review packet for the four existing findings without changing their draft status.
+
+### Appearance
+
+- [x] Verify Light, Dark, and System controls, local preference persistence, operating-system changes, and the `#1F1F24` dark background.
+- [x] Check readable evidence, controls, dialogs, mobile layout, and sharing in both themes without resetting the current view; record observed results in [verification](docs/verification.md).
 
 ## M2 — Deliver the curated Alzheimer's explorer
 

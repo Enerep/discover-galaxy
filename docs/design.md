@@ -17,12 +17,14 @@ The primary flow is **search → select an entity → read a finding → open th
 
 ## Visual language
 
-Use light, neutral interface surfaces around the dark graph. Mint is an interaction accent, not a coating for every surface. Let spacing, typography, and alignment establish hierarchy.
+Offer Light, Dark, and System in one appearance control. Light uses neutral surfaces; Dark uses **`#1F1F24`** as the page background with slightly lighter surfaces. System is the default and follows the operating-system preference; remember an explicit choice locally. Mint is an interaction accent, not a coating for every surface. Let spacing, typography, and alignment establish hierarchy.
 
 - Use familiar system typography. Body text should generally be 14–16 px; supporting metadata should remain at least 11–12 px.
 - Give primary controls and touch targets approximately 40–44 px of usable height. Small icons still need accessible names and adequate hit areas.
 - Keep lines, borders, shadows, badges, and cards restrained. Group information with spacing before adding another container.
-- Use color with text or shape. Maintain visible focus and sufficient contrast on both light surfaces and the graph.
+- Use color with text or shape. Maintain visible focus and sufficient contrast in both themes and on the graph.
+- Define interface colors through semantic tokens. Check text, controls, hover/selection states, dialogs, and unavailable-data states in both themes; a dark background alone is not a complete dark mode.
+- Keep the graph dark and preserve the meaning of node and edge colors across themes. Exported evidence images retain a light citation card for readable sharing, independent of the interface theme.
 - Keep the active filter, selection, empty state, and data-review status easy to find.
 - Remove decoration that competes with reading: artificial collection numbers, repeated headings, marketing cards, and unrelated navigation.
 - Keep decorative stars quiet and noninteractive. Spatial distance, size, brightness, and animation never imply evidence strength.
@@ -70,5 +72,6 @@ Before calling an interface refinement complete:
 4. Check hover, selection, zoom, reset, and disclosure transitions; verify reduced-motion behavior and that the scene becomes idle.
 5. Confirm development data remains clearly labeled and source-specific context remains available.
 6. Record observed results separately from intended design. A typecheck does not establish good interaction or animation performance.
+7. Check Light, Dark, and System, including saved preference, operating-system changes, narrow screens, and readable evidence/sharing dialogs. Switching appearance must not reset the current research view.
 
 The current scientific dataset remains a development starter. A cleaner presentation does not make its records scientifically approved or complete the MVP release gates.

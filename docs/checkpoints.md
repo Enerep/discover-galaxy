@@ -1,27 +1,29 @@
 # Checkpoints
 
-## Current checkpoint: share the development explorer
+## Current checkpoint: sharing and appearance
 
 The app still covers **Alzheimer's disease only**: one disease, three genes, four papers, and four draft claims. Multiple sources deepen a disease's coverage; adding another disease is a separate step. No upstream scientific API or automatic import pipeline is connected.
 
 The owner reports a working Vercel deployment. Its URL and deployment logs have not been independently checked for this checkpoint. Hosting the development preview does not change the dataset's review status.
 
-This checkpoint adds image export and reproducible links without expanding the scientific dataset. Its acceptance criteria are:
+Image export and reproducible links are implemented. The appearance refinement adds Light, Dark, and System without expanding the scientific dataset. Acceptance criteria are:
 
 - Export the current graph and selected finding to a PNG with the original source reference, dataset version, and visible draft status; retain the full finding rather than shortening its scientific meaning.
 - Export a useful evidence card from the list or when WebGL is unavailable. Do not substitute a decorative graph for an unavailable capture.
 - Offer native image sharing where supported and a PNG download elsewhere. Creating an image does not upload it or send it to anyone.
 - Copy a link that restores the selected entity and finding, search, type filter, and Graph/List view. Camera orbit and zoom are not stored.
 - Keep search text in the URL fragment and strip unrelated URL parameters from copied links. Handle unknown or obsolete record IDs safely.
+- Offer one Light / Dark / System control, default to the operating system, and remember explicit choices locally. Use `#1F1F24` as the dark page background.
+- Preserve the current research view when changing appearance. Keep evidence, controls, dialogs, and mobile layouts readable in both themes; retain graph color meaning and light exported citation cards.
 - Check desktop and mobile flows, keyboard operation, reduced motion, export failure, and unavailable WebGL. Record observed results in [verification](verification.md); a build alone does not complete these checks.
 
 ## Next checkpoint: deepen the Alzheimer's evidence
 
-Keep the next content pass focused on AD. First review the existing APOE, ABCA1, and TREM2 records, then build toward the **20–50 entity** release target, including displayed paper nodes. Add genes and pathways when they create a useful, supported route from an entity to its original evidence.
+Keep the next content pass focused on AD: review the four existing APOE, ABCA1, and TREM2 findings, stage a bounded set of candidate AD sources, then add reviewed genes, pathways, and papers toward the **20–50 entity** release target. Add relationships only when they create a useful, supported route to original evidence.
 
 | Work | Concrete result | Acceptance boundary |
 | --- | --- | --- |
-| Review the starter | A claim-by-claim review packet for the four current findings | Actual named human review, inspected source locations, reuse assessment, and correction/retraction checks; pending items stay pending |
+| Review the starter packet | Recorded reviews or explicit unresolved issues for the four current findings | Actual named human review, inspected source locations, reuse assessment, and correction/retraction checks; pending items stay pending |
 | Find candidate sources | A bounded list of original studies and authoritative pathway records for AD | Candidates remain separate from approved graph records; preserve database versions, identifiers, and retrieval dates |
 | Assess source coverage | A table connecting each proposed claim to its studies and study contexts | Distinguish independent studies from repeated metadata, follow-ups, reviews, and reused cohorts; publication count is not evidence strength |
 | Add reviewed content | Versioned additions toward 20–50 entities and at least one useful pathway journey | Every relationship has a scoped claim, source-specific evidence, limitations, and eligible review status |
