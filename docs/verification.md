@@ -1,5 +1,17 @@
 # Development preview verification
 
+## Sharing checkpoint — 2026-10-21
+
+The image-sharing changes passed the production build, all 11 existing data tests, and the dependency source/integrity/exact-pin check. No dependencies or scientific records changed.
+
+The browser smoke suite downloaded and decoded actual PNG files from the graph, a zoomed graph, the list, mobile touch emulation, and the WebGL fallback. Files had valid PNG headers, a width of 1200 px, sufficient height to retain the finding and references, and nonblank image content. Zooming changed the exported graph. The graph and list exports were visually inspected for the full finding, original citation, limitations, draft label, and dataset version.
+
+Dialog keyboard focus, Escape dismissal, mobile layout, download touch targets, supported native file-sharing invocation, and cancellation passed. Native sharing used a browser stub; an actual operating-system share sheet was not exercised. Rendering still settled after capture: the four 500 ms idle samples observed 0 frame requests and 0 WebGL draws.
+
+The owner reports the Vercel preview is working. Its deployed URL and deployment logs were not independently inspected; source pushes do not establish deployment success.
+
+## Initial explorer verification — 2026-10-20
+
 Checked on **2026-10-20** in the Codex cloud workspace, including the simplified interface and motion refinement on `master`. These results cover the current development starter, not a scientific release or a deployed service.
 
 ## Application and data

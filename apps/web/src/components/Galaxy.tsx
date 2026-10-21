@@ -44,6 +44,8 @@ export interface GalaxyProps {
   citationLinks?: CitationLink[];
   layoutEntities?: Entity[];
   onUnavailable?: () => void;
+  /** Copy the current camera view on demand without retaining the drawing buffer. */
+  onCaptureReady?: (capture: (() => HTMLCanvasElement) | null) => void;
 }
 
 function Unavailable() {
@@ -278,6 +280,27 @@ function Stars() {
   </points>;
 }
 
+function Capture({ onReady }: { onReady: GalaxyProps['onCaptureReady'] }) {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    if (!onReady) return;
+    onReady(() => {
+      if (gl.getContext().isContextLost()) throw new Error('The graph is unavailable. Switch to the list and try again.');
+      const copy = document.createElement('canvas');
+      copy.width = gl.domElement.width;
+      copy.height = gl.domElement.height;
+      const context = copy.getContext('2d');
+      if (!context || !copy.width || !copy.height) throw new Error('Unable to capture the graph in this browser.');
+      // Read in the same task as rendering: preserveDrawingBuffer stays disabled.
+      gl.render(scene, camera);
+      context.drawImage(gl.domElement, 0, 0);
+      return copy;
+    });
+    return () => onReady(null);
+  }, [gl, scene, camera, onReady]);
+  return null;
+}
+
 function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep = 0, onUnavailable }: {
   selectedId: string | null;
   positions: Map<string, Position>;
@@ -393,6 +416,7 @@ function Scene(props: GalaxyProps) {
   const glow = useMemo(makeGlow, []);
   useEffect(() => () => glow.dispose(), [glow]);
   return <>
+    <Capture onReady={props.onCaptureReady} />
     <Navigation selectedId={selectedId} positions={positions} reducedMotion={props.reducedMotion} resetKey={props.resetKey} zoomStep={props.zoomStep} onUnavailable={props.onUnavailable} />
     <Stars />
     {claims.map((claim, index) => {

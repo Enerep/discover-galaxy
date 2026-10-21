@@ -23,6 +23,8 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
     disease: <><circle cx="12" cy="12" r="8" /><path d="M8 12h8M12 8v8" /></>,
     plus: <path d="M5 12h14M12 5v14" />,
     minus: <path d="M5 12h14" />,
+    share: <><path d="M12 16V3m-5 5 5-5 5 5M5 13v8h14v-8" /></>,
+    download: <><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4" /></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"

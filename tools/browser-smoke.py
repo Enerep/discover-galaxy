@@ -7,6 +7,7 @@ counters are injected into the test browser only; production has no QA hooks.
 
 import argparse
 from pathlib import Path
+import struct
 
 from playwright.sync_api import Locator, Page, expect, sync_playwright
 
@@ -65,6 +66,61 @@ def assert_touch_target(control: Locator) -> None:
     box = control.bounding_box()
     assert box is not None
     assert box["width"] >= 40 and box["height"] >= 40, f"Small touch target: {box}"
+
+
+def export_share_image(page: Page, label: str, screenshots: Path, *, touch: bool = False) -> bytes:
+    trigger = page.get_by_role("button", name="Share", exact=True)
+    trigger.tap() if touch else trigger.click()
+    dialog = page.get_by_role("dialog", name="Share this view", exact=True)
+    expect(dialog).to_be_visible()
+    preview = dialog.get_by_role("img", name="Share image preview", exact=True)
+    expect(preview).to_be_visible(timeout=10000)
+    assert preview.evaluate("image => image.complete && image.naturalWidth === 1200 && image.naturalHeight >= 800")
+    # Decode the real PNG preview and sample its pixels. A blank WebGL capture
+    # must not pass merely because an image element or download link exists.
+    image_pixels = preview.evaluate("""async image => {
+        await image.decode();
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(image, 0, 0);
+        const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+        const colors = new Set();
+        let visible = 0;
+        for (let pixel = 0; pixel < data.length; pixel += 64) {
+            if (data[pixel + 3]) visible += 1;
+            colors.add(`${data[pixel]},${data[pixel + 1]},${data[pixel + 2]}`);
+        }
+        return { colors: colors.size, visible };
+    }""")
+    assert image_pixels["visible"] > 10000, image_pixels
+    assert image_pixels["colors"] > 40, image_pixels
+    download_control = dialog.get_by_role("link", name="Download PNG", exact=True)
+    expect(download_control).to_be_visible()
+    if touch:
+        assert_touch_target(download_control)
+    with page.expect_download() as pending_download:
+        download_control.tap() if touch else download_control.click()
+    download = pending_download.value
+    assert download.suggested_filename.endswith(".png")
+    destination = screenshots / f"share-{label}.png"
+    download.save_as(destination)
+    png = destination.read_bytes()
+    assert png[:8] == b"\x89PNG\r\n\x1a\n", "The downloaded file is not a PNG"
+    assert png[12:16] == b"IHDR"
+    width, height = struct.unpack(">II", png[16:24])
+    assert width == 1200 and height >= 800, (width, height)
+    assert len(png) > 12000, "The share image unexpectedly contains very little content"
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+    dialog_box = dialog.bounding_box()
+    assert dialog_box is not None
+    assert dialog_box["x"] >= 0 and dialog_box["x"] + dialog_box["width"] <= page.viewport_size["width"] + 1
+    page.screenshot(path=str(screenshots / f"share-{label}-dialog.png"), full_page=True)
+    page.keyboard.press("Escape")
+    expect(dialog).not_to_be_visible()
+    expect(trigger).to_be_focused()
+    return png
 
 
 def run(base_url: str, executable: str, screenshots: Path) -> None:
@@ -233,8 +289,16 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
             page.wait_for_timeout(150)
             assert page.evaluate("window.__browserQA.draws") > before, f"{name} did not render"
         assert_idle(page, "Graph after zoom and reset")
+        graph_image = export_share_image(page, "graph", screenshots)
+        page.get_by_role("button", name="Zoom in", exact=True).click()
+        page.wait_for_timeout(900)
+        zoomed_image = export_share_image(page, "graph-zoomed", screenshots)
+        assert graph_image != zoomed_image, "Changing camera zoom must change the exported graph image"
+        assert_idle(page, "Graph after image capture")
+        page.get_by_role("button", name="List view", exact=True).click()
+        export_share_image(page, "list", screenshots)
         assert not errors, errors
-        print("PASS: desktop canvas picking, source URLs, disclosures, keyboard search, filters, list, dialog, zoom and reset.")
+        print("PASS: desktop canvas picking, source URLs, disclosures, keyboard search, filters, list, dialogs, zoom, and graph/list PNG exports.")
 
         mobile = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce", is_mobile=True, has_touch=True)
         mobile.add_init_script(RENDER_COUNTERS)
@@ -287,6 +351,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(mobile_page.locator(".graph-card")).to_be_focused()
         assert mobile_page.evaluate("window.scrollY") < evidence_scroll
         assert mobile_page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        export_share_image(mobile_page, "mobile", screenshots, touch=True)
         assert not mobile_errors, mobile_errors
         print("PASS: mobile touch targets, reduced motion, stable scrolling on selection, explicit evidence navigation, and list filters.")
 
@@ -307,7 +372,36 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(fallback_page.locator(".selected-title")).to_have_text("TREM2")
         expect(fallback_page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/23150908/")
         fallback_page.screenshot(path=str(screenshots / "webgl-fallback.png"), full_page=True)
-        print("PASS: unavailable WebGL preserves list selection and original evidence.")
+        export_share_image(fallback_page, "webgl-fallback", screenshots)
+        print("PASS: unavailable WebGL preserves list selection, original evidence, and PNG export.")
+
+        native = browser.new_context(viewport={"width": 1280, "height": 900})
+        native.add_init_script("""
+            window.__nativeShare = { mode: 'success', calls: [] };
+            Object.defineProperty(navigator, 'canShare', { configurable: true, value: data =>
+                data.files?.length === 1 && data.files[0].type === 'image/png' });
+            Object.defineProperty(navigator, 'share', { configurable: true, value: async data => {
+                if (window.__nativeShare.mode === 'cancel') throw new DOMException('Cancelled', 'AbortError');
+                window.__nativeShare.calls.push({ type: data.files[0].type, size: data.files[0].size, name: data.files[0].name });
+            } });
+        """)
+        native_page = native.new_page()
+        native_page.goto(base_url, wait_until="networkidle")
+        expect(native_page.locator("canvas")).to_be_visible()
+        native_page.get_by_role("button", name="Share", exact=True).click()
+        native_dialog = native_page.get_by_role("dialog", name="Share this view", exact=True)
+        native_control = native_dialog.get_by_role("button", name="Share image", exact=True)
+        expect(native_control).to_be_visible(timeout=10000)
+        native_control.click()
+        expect(native_control).to_be_enabled()
+        shared = native_page.evaluate("window.__nativeShare.calls")
+        assert len(shared) == 1 and shared[0]["type"] == "image/png" and shared[0]["size"] > 12000
+        native_page.evaluate("window.__nativeShare.mode = 'cancel'")
+        native_control.click()
+        expect(native_control).to_be_enabled()
+        expect(native_dialog.get_by_role("alert")).to_have_count(0)
+        expect(native_dialog).to_be_visible()
+        print("PASS: supported native sharing receives a real PNG; cancelling the native sheet is not an error.")
         browser.close()
 
 

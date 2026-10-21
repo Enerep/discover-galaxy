@@ -1,8 +1,9 @@
-import { Component, lazy, Suspense, useMemo, useRef, useState } from 'react';
+import { Component, lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import rawDataset from '../../../data/alzheimers/dataset.json';
 import { EntitySearch } from './components/EntitySearch.tsx';
 import { Inspector } from './components/Inspector.tsx';
+import { ShareDialog } from './components/ShareDialog.tsx';
 import { Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getClaimEvidence, getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
@@ -45,6 +46,10 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const [resetKey, setResetKey] = useState(0);
   const [zoomStep, setZoomStep] = useState(0);
   const [webglFailed, setWebglFailed] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const graphCapture = useRef<(() => HTMLCanvasElement) | null>(null);
+  const receiveCapture = useCallback((capture: (() => HTMLCanvasElement) | null) => { graphCapture.current = capture; }, []);
+  const captureGraph = useCallback(() => graphCapture.current?.(), []);
   const aboutRef = useRef<HTMLDialogElement>(null);
   const graphRef = useRef<HTMLElement>(null);
   const inspectorRef = useRef<HTMLElement>(null);
@@ -114,8 +119,8 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       <div className="workspace">
         <main className="explorer" id="explorer" tabIndex={-1}>
           <div className="page-heading">
-            <h1>Alzheimer’s disease</h1>
-            <p>Search or choose a gene to read its studies.</p>
+            <div><h1>Alzheimer’s disease</h1><p>Search or choose a gene to read its studies.</p></div>
+            <button className="secondary-button share-trigger" onClick={() => setShareOpen(true)}><Icon name="share" size={17} />Share</button>
           </div>
           <div className="explorer-tools">
             <EntitySearch query={query} matches={matches} onQuery={setQuery} onSelect={selectEntity} />
@@ -154,7 +159,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
                       <Galaxy entities={graph.entities} layoutEntities={snapshot.entities} claims={graph.claims}
                         selectedId={selectedId} selectedClaimId={activeClaim?.id ?? null} onSelect={selectEntity}
                         onSelectClaim={selectClaim} reducedMotion={reducedMotion} resetKey={resetKey} zoomStep={zoomStep}
-                        onUnavailable={unavailable} citationLinks={graph.citationLinks} />
+                        onUnavailable={unavailable} citationLinks={graph.citationLinks} onCaptureReady={receiveCapture} />
                     </Suspense>
                   </SceneBoundary>
                   <div className="camera-controls" aria-label="Graph controls">
@@ -215,6 +220,8 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <dl className="context-list"><div><dt>Dataset</dt><dd>{snapshot.dataset_version}</dd></div><div><dt>Source lookup</dt><dd>{snapshot.created_at.slice(0, 10)}</dd></div></dl>
         <button className="primary-button" onClick={() => aboutRef.current?.close()}>Close</button>
       </dialog>
+      <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} snapshot={snapshot}
+        selected={selected} claim={activeClaim} captureGraph={captureGraph} />
     </div>
   );
 }
