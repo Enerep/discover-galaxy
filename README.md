@@ -43,6 +43,15 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
 
+The [AD review packet](data/alzheimers/review-packet.md) collects the four current findings, original citations, study context, and outstanding source checks for review. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+
+```sh
+npm run curation:check
+npm run --silent curation:packet > data/alzheimers/review-packet.md
+```
+
+Record actual scientific reviews in the source dataset, then regenerate; do not edit the packet as a separate review record. This tooling makes no API requests and does not change the graph.
+
 Dependency lifecycle scripts are disabled in [.npmrc](.npmrc); direct versions are exact and the lockfile is committed. Read the [npm security policy](docs/npm-security.md) before changing dependencies. Its checks include release dates, registry integrity, audit findings, and pinned Shai-Hulud indicators. Optional standard-library Python tooling runs the IOC comparison with `python3 tools/security/check-iocs.py`.
 
 In this cloud workspace, npm's default cache directory may be read-only. Use `export npm_config_cache=/tmp/discovery-galaxy-npm-cache` for the session if that occurs.
@@ -104,6 +113,7 @@ These resources help find and contextualize evidence. Database associations, met
 | [Evidence policy](docs/evidence-policy.md) | Curation, uncertainty, disagreements, and AI grounding |
 | [npm security policy](docs/npm-security.md) | Script-disabled installs, exact versions, and known-IOC checks |
 | [Starter dataset](data/alzheimers/README.md) | Source lookups, provenance, and pending scientific review |
+| [AD review packet](data/alzheimers/review-packet.md) | Current findings, source-specific context, and outstanding review tasks |
 | [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to make and validate changes |

@@ -58,6 +58,8 @@ Shared links encode entity and claim IDs, query, type filter, and Graph/List vie
 
 The current dataset is prepared manually and checked by the TypeScript validator used by both the client adapter and `tools/validate-data.ts`. Development validation checks structure, references, provenance fields, and claim/evidence consistency. Release validation additionally requires approved human reviews, reuse and publication-status checks, and the 20–50 entity release boundary. The current starter is intentionally blocked from release validation.
 
+The offline `tools/curation/review-packet.ts` reads that snapshot through the same validator and renders a deterministic Markdown review extract. It preserves claim and source-specific study context, original citations, limitations, and actual review/reuse/publication-status fields. `npm run curation:check` detects a stale committed packet. The generator makes no network requests, changes no scientific records, and creates no review attestations.
+
 Introduce Python and NetworkX curation tooling in M2 for normalization, bounded graph inspection, and reproducible exports. The existing Python IOC checker is dependency-security tooling, not a scientific import pipeline. NetworkX connectivity will not establish a biological mechanism or validate a hypothesis.
 
 Planned adapters for Open Targets, Reactome, and OpenAlex belong in this preparation boundary; none is implemented. Import only reviewed records into a published scientific snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing each adapter.
@@ -93,10 +95,11 @@ apps/web/             React app, scene, HTML views, adapter, validator, tests
 data/alzheimers/       Draft development snapshot and source-lookup notes
 data/schema/          Knowledge-graph JSON Schema
 tools/validate-data.ts Development and release-mode data validation CLI
+tools/curation/        Deterministic AD review-packet generator and tests
 tools/security/       Lockfile policy, known-IOC checker, pinned feed manifest
 ```
 
-`tools/curation/` and `services/api/` remain proposed paths for later scientific-data tooling and server requirements. No backend, PostgreSQL instance, or AI service exists. The checked-in dependency policy records a 14-day resolution cutoff; `.npmrc` disables installation lifecycle scripts, and the lockfile checker verifies source URLs, integrity hashes, and direct version pins. These controls reduce exposure without certifying dependencies as malware-free.
+Scientific import adapters and `services/api/` remain planned. No backend, PostgreSQL instance, or AI service exists. The checked-in dependency policy records a 14-day resolution cutoff; `.npmrc` disables installation lifecycle scripts, and the lockfile checker verifies source URLs, integrity hashes, and direct version pins. These controls reduce exposure without certifying dependencies as malware-free.
 
 ## Validation boundaries
 

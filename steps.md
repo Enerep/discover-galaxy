@@ -44,6 +44,13 @@ Engineering can be exercised now; the reviewed-relationship criterion is still p
 - [x] Smooth selection, camera movement, and disclosure transitions; honor reduced motion and verify that graph rendering settles at rest.
 - [x] Exercise the revised desktop, touch/mobile, and WebGL-fallback flows in browser checks. Scientific release criteria remain pending.
 
+### Sharing and review preparation
+
+- [x] Export the current graph and selected finding as a cited PNG; provide an evidence card in List mode or without WebGL.
+- [x] Offer native image sharing where available and preserve a download option.
+- [x] Copy validated links that restore the entity, finding, query, filter, and view; test reload, navigation, invalid links, and clipboard denial.
+- [x] Generate a reproducible AD review packet for the four existing findings without changing their draft status.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
 Start with a review packet for the existing four claims and a bounded candidate-source coverage table. Keep discovered candidates separate from approved records and distinguish independent studies from follow-ups or reused cohorts. See [the next checkpoint](docs/checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).

@@ -29,7 +29,9 @@ Keep the next content pass focused on AD. First review the existing APOE, ABCA1,
 
 Candidate discovery should begin with the existing genes and the pathway questions their reviewed sources actually support. A candidate's name, a database hit, or a generated summary does not establish a relationship. Keep genes, proteins, and variant contexts distinct. Curate disagreements only when study contexts support a meaningful comparison.
 
-The next reviewable deliverable is **one AD curation packet**, followed by a small reviewed dataset diff. A candidate list alone does not expand the released graph or satisfy M2.
+A [generated AD review packet](../data/alzheimers/review-packet.md) now collects the four existing findings and their outstanding checks. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a reproducible replacement. It performs no source lookup or scientific review.
+
+The next reviewable deliverable is the **scientific review of that packet and a bounded candidate-source coverage table**, followed by a small reviewed dataset diff. A generated extract or candidate list alone does not expand the released graph or satisfy M2.
 
 ## Then: automate collection, preserve review
 
