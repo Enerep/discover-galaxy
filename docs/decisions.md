@@ -84,4 +84,14 @@ Motion should clarify a state change, remain interruptible, and settle when inte
 
 The repository's default branch is `master`, as explicitly specified by the user. Base work on the fetched `origin/master` and push `master` when authorized. Do not create or switch to `main`; use a feature branch only when explicitly requested. Preserve merged remote work and inspect branch state before editing or pushing.
 
+## ADR-009 — License original software and documentation under MIT
+
+**Date:** 2026-10-22
+
+**Status:** Accepted
+
+Use the standard [MIT License](../LICENSE) for original software and project-authored documentation, with the copyright notice naming Discovery Galaxy contributors. This permits use, modification, redistribution, and commercial use while requiring retention of the copyright and permission notice.
+
+Third-party dependencies, scientific datasets, and publications retain their own terms. Software licensing does not establish source reuse permission, scientific review, or an approved dataset release. Keep those requirements in the source records and evidence policy.
+
 See the [architecture](architecture.md) for component boundaries and future extension points.

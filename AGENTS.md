@@ -22,6 +22,8 @@ The React/Vite explorer is implemented in `apps/web/`, with a data adapter, JSON
 
 ## Dependency security
 
+Original software and project-authored documentation use the root [MIT License](LICENSE). Preserve its copyright and permission notice. Third-party dependencies, scientific datasets, and publications retain their own terms; selecting MIT does not complete source reuse checks or scientific approval.
+
 The user explicitly requires care around Shai-Hulud and npm supply-chain attacks. Follow [docs/npm-security.md](docs/npm-security.md). Keep `.npmrc` lifecycle scripts disabled, direct dependencies exactly pinned, and `package-lock.json` committed. Use `npm ci --ignore-scripts`; do not run remote scaffolders with `npx`, enable install hooks globally, or apply broad automatic fixes. Check registry sources, integrity, release age, current advisories, and pinned IOC feeds before accepting dependency changes. Audit or indicator checks do not guarantee benign packages. Current npm 11.9 lacks `min-release-age`; dependency updates require an explicit reviewed cutoff and metadata checks.
 
 ## Implementation approach

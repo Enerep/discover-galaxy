@@ -52,4 +52,4 @@ An optional reproducible smoke test is available as `python3 tools/browser-smoke
 
 ## Repository hygiene
 
-Commit source and reproducibility files, including the existing `package-lock.json`. Keep secrets, downloaded raw datasets, local environments, and generated output out of version control. Track source attribution and licensing alongside curated data; the project has not yet selected a software license.
+Commit source and reproducibility files, including the existing `package-lock.json`. Keep secrets, downloaded raw datasets, local environments, and generated output out of version control. Original software and project-authored documentation use the [MIT License](LICENSE); retain applicable copyright and license notices. Track third-party attribution and licensing alongside dependencies and curated data; the software license does not replace their terms or approve scientific reuse.

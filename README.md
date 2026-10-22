@@ -129,8 +129,13 @@ These resources help find and contextualize evidence. Database associations, met
 | [Curation tools](tools/curation/README.md) | Bounded OpenAlex metadata intake and its staging boundary |
 | [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |
+| [LICENSE](LICENSE) | MIT license for original software and project documentation |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to make and validate changes |
 | [AGENTS.md](AGENTS.md) | Instructions for coding agents working in this repository |
 | [agent.md](agent.md) | Entry point pointing to the canonical agent instructions |
 
-No software license or third-party dataset redistribution permission is assumed. Choose a project license before distributing a release, and track imported material's terms separately.
+## License
+
+The project's original software and project-authored documentation are licensed under the [MIT License](LICENSE), copyright 2026 Discovery Galaxy contributors. You may use, modify, redistribute, and commercially use that material while retaining the copyright and license notice.
+
+Third-party dependencies, scientific datasets, and cited publications retain their own terms; the software license does not grant rights to redistribute them or complete pending source reuse checks. Follow the recorded source attribution and reuse status in the [starter dataset notes](data/alzheimers/README.md) and [evidence policy](docs/evidence-policy.md).

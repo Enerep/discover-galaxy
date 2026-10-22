@@ -119,7 +119,8 @@ Start only when multi-user curation, larger queries, frequent updates, or anothe
 
 - [ ] Meet the MVP acceptance criteria in [docs/product.md](docs/product.md).
 - [ ] Complete a scientific review of all exposed claims, summaries, disagreements, and questions.
-- [ ] Verify source terms and attribution; choose the repository's software license.
+- [x] Choose the [MIT License](LICENSE) for original software and project-authored documentation.
+- [ ] Verify scientific source terms and attribution separately from the software license.
 - [ ] Verify keyboard/list access, reduced motion, WebGL fallback, search, and reference links.
 - [ ] Run the implemented data checks, typecheck, lint, relevant tests, and production build; record results.
 - [ ] Document the actual local setup and known limitations. Keep private keys and unreviewed data out of distributed assets.

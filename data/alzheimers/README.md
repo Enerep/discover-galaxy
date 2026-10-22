@@ -26,6 +26,8 @@ The APOE claims retain distinct genotype contexts; a lower-risk ε2/ε3 finding 
 
 ## Retained material and reuse
 
+The project's [MIT software license](../../LICENSE) does not grant new rights to third-party scientific material or complete the source reuse checks below. Dataset provenance, attribution, and each source's recorded reuse status remain applicable.
+
 Retained material is limited to bibliographic facts, identifiers, links, and short project-authored paraphrases. No abstracts, article bodies, figures, tables, or downloaded publisher payloads are included.
 
 The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wiley terms](https://onlinelibrary.wiley.com/terms-and-conditions) were inspected on the lookup date. NCBI's access does not grant blanket rights to third-party article text. Publisher-specific permissions are **pending review**; an attempted Nature permissions-page lookup was unavailable. No permission grant or article-text redistribution license is asserted. Each source records the relevant terms URL and review state.

@@ -86,4 +86,4 @@ AI is optional for these criteria. Its eventual value must come from clearer, gr
 
 ## Decisions still to make during implementation
 
-Choose compatible package/runtime versions, the exact curated entity list and references, scientific review ownership, the software license, and eventual hosting. Select an AI provider and persistent infrastructure only if their milestones are undertaken. These choices do not block creating the first local vertical slice.
+Choose compatible package/runtime versions, the exact curated entity list and references, scientific review ownership, and eventual hosting. Original software and project documentation use the [MIT License](../LICENSE); source-specific data reuse remains a separate review. Select an AI provider and persistent infrastructure only if their milestones are undertaken. These choices do not block creating the first local vertical slice.
