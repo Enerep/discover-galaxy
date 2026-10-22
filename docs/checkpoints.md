@@ -1,14 +1,16 @@
 # Checkpoints
 
-## Current checkpoint: prepare the Alzheimer's evidence expansion
+## Current checkpoint: source-checked pathways in the explorer
 
-The [candidate-source coverage packet](../data/alzheimers/candidate-coverage.md) stages six original publications and two human Reactome pathway records, grouped into three source-reading questions. It records lookup dates, indexed-excerpt versus page access, unknown study context, pending publication/reuse checks, and unresolved database releases. Its validator checks source identity and baseline references; a generated extract does not approve the interpretation or add graph records.
+Snapshot **alzheimers-source-checked-0.2.0** has **21 entities and 19 cited draft claims**. It adds separately identified proteins, TYROBP/NR1H2/NR1H3/RXRA genes, two human Reactome pathways and a TREM2–DAP12 binding annotation. [Dataset changes](../data/alzheimers/CHANGELOG.md) record actual inspected locations, entry versions, terms checks and unknown release provenance. The original four human association findings retain their scopes.
 
-This selective, AI-assisted lookup is separate from the OpenAlex API adapter. No successful live OpenAlex response or Reactome release lookup is claimed. The current public graph remains eight entities and four draft claims. The next concrete handoff is a human review of the existing packet and relevant original candidate sources, followed by a small, separately reviewable dataset diff.
+The interface uses **Source-checked draft**. Users can follow a finding's **View …** action from a gene to its protein, then a pathway and another participant. Protein/pathway filters and distinct database-record labels support this through graph, list, keyboard, touch and WebGL fallback. The owner deferred independent scientific review to a future milestone; it is not a blocker for this development track, and no independent approval or human attestation is fabricated.
+
+The [candidate-source coverage packet](../data/alzheimers/candidate-coverage.md) now retains six original publications outside the graph, grouped into three reading questions. The two prior pathway candidates entered through the separately source-checked dataset diff. This selective lookup is separate from the OpenAlex adapter; no successful live API request or exact Reactome release capture is claimed.
 
 ## Implemented foundation: compare the evidence behind a connection
 
-The app still covers **Alzheimer's disease only**: one disease, three genes, four papers, and four draft claims. This checkpoint changes the research workflow, not the scientific snapshot. It helps a reader inspect what two findings actually studied before interpreting them together.
+The app covers **Alzheimer's disease only**. Comparison helps a reader inspect what two findings or annotations actually describe before interpreting them together.
 
 The owner reports a working Vercel deployment. Sharing and Light / Dark / System are part of the existing foundation. The current checkpoint's observed checks belong in [verification](verification.md); hosting and interface completion do not change the dataset's review status.
 
@@ -26,21 +28,21 @@ The intended product value is a traceable path from a connection to the evidence
 
 ## Next checkpoint: deepen the Alzheimer's evidence
 
-Keep the next content pass focused on AD: review the four existing APOE, ABCA1, and TREM2 findings, stage a bounded set of candidate AD sources, then add reviewed genes, pathways, and papers toward the **20–50 entity** release target. Add relationships only when they create a useful, supported route to original evidence.
+The development snapshot meets the **20–50 entity size target**. Next, inspect selected original papers from the staged list at assay level and add precise, cited draft findings when the source supports them. Prioritize useful connections across lipid handling and microglial signaling rather than adding nodes for their count.
 
 | Work | Concrete result | Acceptance boundary |
 | --- | --- | --- |
-| Review the starter packet | Recorded reviews or explicit unresolved issues for the four current findings | Actual named human review, inspected source locations, reuse assessment, and correction/retraction checks; pending items stay pending |
-| Find candidate sources | A bounded list of original studies and authoritative pathway records for AD | Candidates remain separate from approved graph records; preserve database versions, identifiers, and retrieval dates |
-| Assess source coverage | A table connecting each proposed claim to its studies and study contexts | Distinguish independent studies from repeated metadata, follow-ups, reviews, and reused cohorts; publication count is not evidence strength |
-| Add reviewed content | Versioned additions toward 20–50 entities and at least one useful pathway journey | Every relationship has a scoped claim, source-specific evidence, limitations, and eligible review status |
+| Extract original experiments | Assay-specific statements, inspected locators, model/variant context and explicit unknowns | Metadata or an article title does not establish an experimental finding; retain actual source-access limits |
+| Verify provenance | Exact Reactome release/member-event provenance, source reuse and publication-status checks where obtainable | Missing release and notice checks stay explicit; never infer their completion from a reachable page |
+| Assess source coverage | A table connecting proposed claims to experiments and their contexts | Distinguish repeated metadata, follow-ups, shared cohorts and comparable experiments; counts are not evidence strength |
+| Add source-checked content | A small versioned draft diff connecting a useful research journey | Every relationship has source-linked evidence, context, limits and accurate source-check status |
 | Verify the expanded snapshot | Data validation, citation inspection, browser checks, and a recorded coverage statement | Never mark scientific release complete using structural checks alone |
 
 Candidate discovery should begin with the existing genes and the pathway questions their reviewed sources actually support. A candidate's name, a database hit, or a generated summary does not establish a relationship. Keep genes, proteins, and variant contexts distinct. Curate disagreements only when study contexts support a meaningful comparison.
 
-A [generated AD review packet](../data/alzheimers/review-packet.md) now collects the four existing findings and their outstanding checks. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a reproducible replacement. It performs no source lookup or scientific review.
+A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 19 findings and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
 
-The bounded [candidate-source coverage table](../data/alzheimers/candidate-coverage.md) is prepared; `npm run curation:coverage:check` checks its references and freshness against the starter. The next reviewable deliverable is the **scientific review of the starter and selected candidate sources**, followed by a small reviewed dataset diff. A generated extract or candidate list alone does not expand the released graph or satisfy M2.
+`npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. The next concrete deliverable is an **experiment-level source extract and a small draft dataset diff**. Independent scientific review remains a future milestone; generated packets do not create its attestations.
 
 ## Then: automate collection, preserve review
 

@@ -1,14 +1,14 @@
 # Architecture
 
-Status: M1 engineering is implemented as a development preview; the owner reports a working Vercel deployment. The starter's scientific records remain draft and await independent human review; there is no approved scientific release. See the [product scope](product.md), [build steps](../steps.md), [checkpoint plan](checkpoints.md), and [starter data notes](../data/alzheimers/README.md).
+Status: the 21-entity **Source-checked draft** explorer is implemented; the owner reports a working Vercel deployment. Independent scientific review is deferred to a future milestone and does not block development work. See [product scope](product.md), [build steps](../steps.md), [checkpoints](checkpoints.md), and [dataset notes](../data/alzheimers/README.md).
 
 ## Current static explorer
 
 The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.2, Three.js 0.186.1, and React Three Fiber 9.8.1. Native Three.js `OrbitControls` provides camera navigation; Drei is not installed. The root npm workspace manages `apps/web/` with an exact-version lockfile, Node 24, and npm 11.9.0. See the [dependency security policy](npm-security.md) before installing or updating packages.
 
-The client imports a versioned JSON development snapshot with eight entities: one disease, three genes, and four paper projections. Four source-scoped association claims link to evidence and original publications. The source lookup was AI-assisted and limited to abstracts and bibliographic records; it is not a completed human scientific review. All claims and evidence are draft, reuse review is pending, and correction/retraction checks remain incomplete.
+The client imports snapshot `alzheimers-source-checked-0.2.0`: one disease, seven genes, seven distinct proteins, two pathways and four papers. Its 19 claims/evidence records combine four original association findings with canonical gene/product mappings, curated pathway participation and TREM2–DAP12 binding. Source locators and context distinguish experimental studies from database assertions. All records remain draft; source-specific checks and unknowns are preserved. [Dataset changes](../data/alzheimers/CHANGELOG.md) record the inspected material and provenance.
 
-Implemented views share React state for alias-aware search, entity-type filters, entity and claim selection, and evidence inspection. The scene is loaded lazily; original publication links, study context, limitations, and review status appear in the HTML inspector. Two-finding comparison uses those same source records and exports a complete Markdown reading brief. The client requires no backend, database, live data API, or AI credential. Pathway content, curated disagreement records, research-question cards, and live AI explanations remain planned.
+Implemented views share React state for alias-aware search, all current entity-type filters, entity/claim selection and evidence inspection. The scene loads lazily. The inspector distinguishes **Original paper / Open paper** from **Database annotation / Open record** and lets users follow a claim's other entity without losing the finding or graph/list mode. Two-finding comparison exports a cited Markdown brief. The client requires no backend, database, live scientific API, or AI credential. Curated disagreement records, research-question cards, and live AI explanations remain planned.
 
 ```mermaid
 flowchart LR
@@ -34,7 +34,7 @@ The diagram shows the current application. The galaxy, list, and inspector are v
 | Finding comparison | Align two findings' recorded context and preserve source-specific values, limitations, review fields, and publication identities in the view and Markdown brief. |
 | Sharing | Capture the graph on demand, generate a cited PNG in the browser, and encode validated explorer state in a shareable URL fragment. |
 
-M2 expands the scientifically reviewed dataset to 20–50 entities and adds verified pathway content and richer filtering. M3 adds reviewed disagreement comparisons and research-question cards. Those additions must remain separate from evidence-backed claims and must not invent a consensus score.
+The development snapshot meets M2's 20–50 entity size target and includes typed pathway journeys. Further work deepens original-study evidence and source provenance; independent scientific review is a future milestone. M3 adds justified disagreement comparisons and research-question cards, separate from evidence-backed claims and without invented consensus scores.
 
 At this size, local indexes and a bounded graph traversal are sufficient. A graph database, distributed processing, and microservices add little value before the exploration flow works. The adapter allows a future HTTP source to replace the local loader without coupling the UI to an upstream provider's response shape.
 
@@ -42,11 +42,12 @@ At this size, local indexes and a bounded graph traversal are sufficient. A grap
 
 The [design guide](design.md) is the standing interface standard. The interface uses a single control set above the explorer, a graph/list workspace, and a readable evidence panel. Light or dark neutral interface surfaces frame the dark graph. Copy names actions and information directly. Observed browser results are recorded in the [verification record](verification.md).
 
-- `createGalaxyLayout` derives deterministic positions from the full snapshot, preserving positions when the visible set changes. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength.
+- `createGalaxyLayout` derives deterministic type-based rings from the full snapshot, preserving positions when the visible set changes. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength. Narrow views prioritize the main anchors and current selection; labels wrap and stay within the canvas where possible.
 - Solid connections project claims; dashed connections connect paper projections to the claims they cite. Citation links are not additional biological relationships.
 - The HTML list, search results, and inspector provide entity and evidence selection without manipulating the canvas. The scene itself is hidden from the accessibility tree.
 - The renderer uses demand-based frames, bounded pixel density, camera reset, and reduced-motion-aware controls. Hover, selection, camera focus, and zoom animate briefly and settle; materials and geometry are reused during feedback. User gestures interrupt camera transitions. Renderer errors and lost WebGL context switch to the list view.
 - Filters expose their active state and support clearing. An absent edge in the curated or filtered graph says nothing about whether a relationship exists in the wider literature.
+- Following **View …** keeps the current claim, clears filters that would hide the target, preserves graph/list mode and focuses the target's heading without scrolling the document. Labels retain direction: a protein is **Encoded by** its gene; a pathway lists a **Participant**.
 
 The graph/list/evidence flows and presentation refinements have browser coverage. Future refinements still need their own browser QA; do not infer their usability or smoothness from a passing build. Keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
 
@@ -66,7 +67,7 @@ Shared links encode entity and claim IDs, query, type filter, and Graph/List vie
 
 ## Data preparation
 
-The current dataset is prepared manually and checked by the TypeScript validator used by both the client adapter and `tools/validate-data.ts`. Development validation checks structure, references, provenance fields, and claim/evidence consistency. Release validation additionally requires approved human reviews, reuse and publication-status checks, and the 20–50 entity release boundary. The current starter is intentionally blocked from release validation.
+The dataset is prepared through explicit source inspection and a versioned manual diff, checked by the TypeScript validator used by the client and CLI. Development validation checks structure, references, provenance fields and claim/evidence consistency. The separate future scientific-release gate retains approved-review, reuse, publication-status and size requirements. The current source-checked draft deliberately does not claim those approvals.
 
 The offline `tools/curation/review-packet.ts` reads that snapshot through the same validator and renders a deterministic Markdown review extract. It preserves claim and source-specific study context, original citations, limitations, and actual review/reuse/publication-status fields. `npm run curation:check` detects a stale committed packet. The generator makes no network requests, changes no scientific records, and creates no review attestations.
 

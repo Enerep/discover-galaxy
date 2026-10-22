@@ -8,7 +8,7 @@ The first version focuses on **Alzheimer's disease**, with a release target of *
 
 ## Project status
 
-**The first development explorer is implemented.** It has a selectable 3D graph, alias-aware search, type filters, a synchronized entity list, an evidence inspector, source links, reduced-motion support, and a WebGL fallback. The local starter contains **8 entities and 4 source-scoped claims** about APOE, ABCA1, and TREM2.
+**The source-checked explorer contains 21 entities and 19 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and four papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
 The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
 
@@ -20,11 +20,13 @@ Pasting the website link into a compatible social app uses a separate **1200 × 
 
 **Compare findings** opens two findings side by side with their original citations, study populations, variants, endpoints, limitations, and review status. Recorded fields are labeled matching, different, or missing; those labels do not determine agreement, contradiction, or study independence. A downloadable Markdown brief keeps the complete context and dataset version. Reading prompts identify source checks to make, not verified research gaps or new hypotheses.
 
-The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, reviewed disagreement records, research hypotheses, AI service, backend, or database yet. The client still reads its local snapshot and makes no upstream scientific API requests.
+The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the additions are seven gene–protein mappings, seven pathway-participation annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
 
-See the [starter dataset notes](data/alzheimers/README.md) for original references and lookup limits, and [steps.md](steps.md) for remaining acceptance criteria. The 20–50 entity MVP and its scientific release gates remain ahead.
+Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. There are no curated disagreement records, research hypotheses, AI service, backend, or database yet. The client reads its local snapshot and makes no upstream scientific API requests.
 
-The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first**, adding reviewed studies, genes, and pathways before applying the workflow to another disease. The [checkpoint plan](docs/checkpoints.md) prioritizes evidence comparison and staged source collection over simply adding more connections.
+See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.
+
+The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first**, with scoped evidence and useful pathway journeys before applying the workflow to another disease. The [checkpoint plan](docs/checkpoints.md) prioritizes evidence comparison and source inspection.
 
 ## Run locally
 
@@ -49,7 +51,7 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
 
-The [AD review packet](data/alzheimers/review-packet.md) collects the four current findings, original citations, study context, and outstanding source checks for review. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 19 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check
@@ -66,7 +68,7 @@ npm run --silent curation:intake -- --limit 20
 
 Its output is unreviewed staging material, not graph evidence. It excludes abstracts and full text, retains retrieval/query provenance, and does not create claims or review approvals. Live network availability and observed checks belong in the [verification record](docs/verification.md); offline normalization does not verify a live API request.
 
-A separate [candidate-source coverage packet](data/alzheimers/candidate-coverage.md) now stages **six publications and two Reactome pathway records** around ABCA1–ApoE lipid handling, TREM2–APOE interactions, and TREM2 model comparisons. It records actual lookup limits, missing context, reading questions, and checks needed before proposing graph claims. This selective, AI-assisted source lookup is separate from the OpenAlex adapter; it does not expand or approve the current graph. Edit its [source JSON](data/alzheimers/candidate-coverage.json), then regenerate and check:
+A separate [candidate-source coverage packet](data/alzheimers/candidate-coverage.md) keeps **six publications** in staging around ABCA1–ApoE lipid handling, TREM2–APOE interactions, and TREM2 model comparisons. The two earlier pathway candidates now have separately checked draft annotations in the explorer. The remaining papers need assay-level source extraction before adding empirical findings. The packet records lookup limits and reading checks; it is separate from the OpenAlex adapter and never imports or approves content. Edit its [source JSON](data/alzheimers/candidate-coverage.json), then regenerate and check:
 
 ```sh
 npm run --silent curation:coverage > data/alzheimers/candidate-coverage.md
@@ -84,9 +86,10 @@ In this cloud workspace, npm's default cache directory may be read-only. Use `ex
 3. Inspect its recorded relationships in the evidence panel.
 4. Open a relationship to see the claim, study context, limitations, and original references.
 5. Choose **Compare findings** to inspect two findings' source-specific context and download a cited reading brief.
-6. In later content milestones, inspect reviewed disagreements and clearly labeled research questions with their evidence and assumptions.
+6. Follow **View APOE protein**, then its cholesterol-regulation connection; inspect the original Reactome record or follow another participant such as ABCA1.
+7. In later content milestones, inspect justified disagreements and clearly labeled research questions with their evidence and assumptions.
 
-The current starter implements steps 1–5 through selected genetic-association findings. Pathways, curated disagreements, and research questions remain planned. Including APOE, ABCA1, and TREM2 does not establish every possible connection between them. Gene, protein, and variant identities remain distinct.
+The current explorer implements steps 1–6. The TREM2 protein → DAP12 signaling route is also available. Curated disagreements and research questions remain planned. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
 
 A keyboard-operable searchable list exposes the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
 
@@ -133,9 +136,10 @@ These resources help find and contextualize evidence. Database associations, met
 | [Data model](docs/data-model.md) | Entities, claims, evidence, sources, and dataset rules |
 | [Evidence policy](docs/evidence-policy.md) | Curation, uncertainty, disagreements, and AI grounding |
 | [npm security policy](docs/npm-security.md) | Script-disabled installs, exact versions, and known-IOC checks |
-| [Starter dataset](data/alzheimers/README.md) | Source lookups, provenance, and pending scientific review |
+| [Dataset notes](data/alzheimers/README.md) | Source checks, pathway scope, provenance, and access limits |
+| [Dataset change log](data/alzheimers/CHANGELOG.md) | Versioned content additions and inspection locations |
 | [AD review packet](data/alzheimers/review-packet.md) | Current findings, source-specific context, and outstanding review tasks |
-| [Candidate-source coverage](data/alzheimers/candidate-coverage.md) | Eight staged sources, reading questions, provenance, and checks before a dataset diff |
+| [Candidate-source coverage](data/alzheimers/candidate-coverage.md) | Six staged publications, reading questions, provenance, and checks before a dataset diff |
 | [Curation tools](tools/curation/README.md) | Bounded OpenAlex metadata intake and its staging boundary |
 | [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |

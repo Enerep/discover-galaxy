@@ -16,10 +16,11 @@ The initial audience is biomedical researchers, research trainees, and scientifi
 
 1. Open a restrained galaxy view with a visible search field, legend, and list-view option.
 2. Search for “Alzheimer's disease” or a curated alias and focus the disease neighborhood.
-3. Select APOE or another reviewed entity. See its type, identifiers, description, and connected claims.
+3. Select APOE or another source-checked entity. See its type, identifiers, description, and connected claims.
 4. Select a relationship. Read the exact claim, evidence, study context, source references, and limitations.
 5. Choose **Compare findings**. Read the two source records side by side, inspect recorded context differences and unknowns, then download a cited brief for further reading.
-6. In later content milestones, explore reviewed pathways, curated disagreements, and research questions with explicit premises and uncertainty.
+6. Follow the finding's **View …** action from gene to protein to a cited pathway and another participant. Distinguish database annotations from original studies.
+7. In later content milestones, inspect justified disagreements and research questions with explicit premises and uncertainty.
 
 Search is local entity/alias lookup in the first version. Unsupported searches explain that the curated dataset has limited coverage; they do not invent entities or trigger an unbounded AI answer.
 
@@ -53,6 +54,8 @@ Alzheimer's disease, APOE, ABCA1, and TREM2 are curation priorities. Other genes
 - Keep model-generated text visually identifiable and linked to the reviewed evidence it used.
 
 The [evidence policy](evidence-policy.md) and [data model](data-model.md) define the detailed rules.
+
+The current 21-entity explorer is a **Source-checked draft**. Independent scientific review is a future milestone, as requested by the owner, and does not block source-checked development. Gene/product mappings, curated pathway participation and experimental findings retain different meanings. Exact source-check provenance and limits remain accessible; the interface must not imply an independent approval that has not occurred.
 
 Comparison labels describe recorded values only: matching, different, or missing. The APOE ε4 and ε2/ε3 findings concern different variant contexts; the interface must not turn that difference into a contradiction. Likewise, TREM2's 2,261 sequenced discovery individuals remain a source-specific subset, while its total sample-size field stays unrecorded. Repeated source IDs, PMIDs, or DOIs can expose repeated references; different citations do not establish independent cohorts. Reading prompts identify source checks to make and are not reviewed hypotheses or proof of a research gap.
 

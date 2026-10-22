@@ -8,7 +8,7 @@ These command-line tools prepare material for review. They do not promote record
 
 ## Candidate-source coverage
 
-The checked-in [reading plan](../../data/alzheimers/candidate-coverage.json) stages eight manually selected sources around the existing gene anchors. It contains bibliographic metadata and project-authored screening notes, not abstracts, paper text, graph claims, or scientific approvals. Actual page access is distinguished from indexed excerpts. Unknown experiment-level context, publication checks, permissions, and database releases stay explicit.
+The checked-in [reading plan](../../data/alzheimers/candidate-coverage.json) stages six manually selected publications around the existing gene anchors. The two earlier pathway candidates entered snapshot 0.2.0 through a separate source-checked draft diff; see the [change log](../../data/alzheimers/CHANGELOG.md). The plan contains bibliographic metadata and project-authored screening notes, not abstracts, paper text, graph claims, or scientific approvals. Actual page access is distinguished from indexed excerpts. Unknown experiment-level context, publication checks, permissions, and database releases stay explicit.
 
 ```sh
 npm run --silent curation:coverage > data/alzheimers/candidate-coverage.md
@@ -17,7 +17,7 @@ npm run curation:coverage:check
 
 The [generated coverage table](../../data/alzheimers/candidate-coverage.md) includes the current snapshot's pending review states and links three reading questions to candidate sources. Its validator rejects unresolved or duplicate identities, records already in the snapshot, mismatched baseline versions, unsupported extra content, invalid dates/URLs, and attempted scientific/reuse approval or promotion. It requires each candidate to have a reading question. It does not inspect sources, check source accuracy, infer contradictions, assess independence, import content, or fetch data. `npm test` includes its contract tests.
 
-This targeted lookup is **separate from the OpenAlex adapter below**. Neither a retrieved web page nor this coverage validator establishes that the API adapter completed a live request. Before adding pathway assertions, capture the exact Reactome release/member-event provenance and resolve gene/protein identities. A human reviewer must inspect original methods/results and record real claim/evidence reviews in a separate dataset diff.
+This targeted lookup is **separate from the OpenAlex adapter below**. Neither a retrieved web page nor this coverage validator establishes that the API adapter completed a live request. Draft pathway annotations may retain an explicitly unknown release with inspected record/participant locators and access dates; do not claim an immutable upstream snapshot. Resolve gene/protein/state meanings and inspect original sources before adding experimental claims. Independent scientific review is a deferred future milestone; no tooling may fabricate its attestations.
 
 ## OpenAlex candidate intake
 

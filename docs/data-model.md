@@ -1,6 +1,6 @@
 # Knowledge graph data model
 
-Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). The [development starter](../data/alzheimers/dataset.json) contains eight entities, four draft claims, four draft evidence records, and eight sources. It passes development validation and is blocked from scientific release. No API or database is implemented. Treat contract changes as versioned changes.
+Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.2.0** contains 21 entities, 19 draft claims/evidence records, and 22 sources; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
 
 ## Model boundaries
 
@@ -30,6 +30,8 @@ Internal IDs are stable project identifiers. External identifiers retain their n
 A published snapshot is immutable. Corrections produce a new version and a change note describing affected records. Store provider payloads separately from the browser snapshot when retaining them is permitted; record retrieval parameters and checksums for reproducibility. The frontend must not call upstream providers to reconstruct a released graph.
 
 Development validation permits source-checked draft records with explicit warnings so the search-to-evidence interaction can be built before scientific review is complete. The interface must retain a clear development label and the draft, source-access, reuse, and publication-status limitations. This exception does not permit fabricated records, missing citations, broken references, or automatic scientific approval. A development snapshot may contain fewer than 20 entities.
+
+The owner's current track is the hosted **Source-checked draft** explorer. It can expand using inspected sources while independent review remains a future milestone. New 0.2.0 source checks explicitly identify the AI checker and keep `status: draft` / `human_reviewed: false`; they are not independent approvals. Reactome source records retain access-date context with an explicit unknown database release. That is usable development provenance, not a claim to have captured an immutable upstream release. Canonical protein nodes preserve compartment/complex/modified-state scope on the relevant evidence.
 
 `validateDataset(input, { release: true })` applies the public scientific release gate regardless of the envelope's current status. An envelope marked `released` automatically invokes the same gate, including when loaded through the normal adapter. Changing the label therefore cannot bypass review requirements.
 
@@ -69,7 +71,7 @@ Do not turn graph paths into new claims automatically. Parallel claims with diff
 
 An approved review validates the record and interpretation, not the truth of the assertion. The reviewed summary and visible relationship state must distinguish supported, contested, challenged, and undetermined interpretations. A claim with only refuting or unclear findings cannot appear as an established positive relationship.
 
-The same review object is used for claims, evidence, conflicts, and hypotheses. Drafts may retain `reviewer: null` and `date: null`; the current starter does so rather than inventing a human reviewer. Approved records require an identified reviewer and date. Scientific release additionally requires `human_reviewed: true` on every such record, recording an actual human scientific review. An AI-assisted source lookup is not that review, and no automated process may manufacture the attestation. Structural validation checks that these fields are present; it cannot verify the reviewer's identity, independence, or judgment.
+The same review object is used for claims, evidence, conflicts, and hypotheses. The original four findings retain null reviewer/date fields; new 0.2.0 drafts name their AI source checker, check date, rationale and `human_reviewed: false`. Approved records require an identified reviewer and date. The future scientific-release contract additionally requires a real `human_reviewed: true` attestation; an automated process must never manufacture it. Structural checks cannot verify a reviewer's identity, independence or judgment.
 
 ## Evidence
 

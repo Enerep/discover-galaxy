@@ -15,6 +15,7 @@ The primary flow is **search → select an entity → read a finding → open th
 - Keep the user in control of focus and scrolling. Do not move the viewport while they type or filter. Prefer explicit mobile details and return-to-graph actions over surprise scrolling.
 - Keep sharing in one action area. Exported images must retain the finding's meaning, original source reference, dataset version, and draft status. Provide an evidence-card fallback when the graph cannot be captured.
 - Open comparison from a finding. Keep two original statements and citations visible, align study-context fields, and reveal detailed provenance and reading prompts on request. Preserve the underlying selection, filters, and view.
+- Let readers follow a finding to its other entity with **View …**, preserving the chosen finding and graph/list mode. Clear filters that would hide that destination, move keyboard focus to its heading without scrolling the page, and keep the original source link before this navigation.
 
 ## Visual language
 
@@ -27,12 +28,15 @@ Offer Light, Dark, and System in one appearance control. Light uses neutral surf
 - Define interface colors through semantic tokens. Check text, controls, hover/selection states, dialogs, and unavailable-data states in both themes; a dark background alone is not a complete dark mode.
 - Keep the graph dark and preserve the meaning of node and edge colors across themes. Exported evidence images retain a light citation card for readable sharing, independent of the interface theme.
 - Keep the active filter, selection, empty state, and data-review status easy to find.
+- Distinguish genes, proteins and pathways in filters, labels, icons and the legend. Use separate stable layout rings and compact labels; narrow graphs emphasize the main gene anchors and the selected/hovered entity. Never crop a selected label at the canvas edge.
 - Remove decoration that competes with reading: artificial collection numbers, repeated headings, marketing cards, and unrelated navigation.
 - Keep decorative stars quiet and noninteractive. Spatial distance, size, brightness, and animation never imply evidence strength.
 
 ## Copy
 
 Name the action or information directly. Use short labels and concrete nouns; explain only what helps someone make the next choice.
+
+Use **Source-checked draft** as the dataset status (short **Draft** on narrow headers). It describes the actual limited source checks, not independent scientific approval. Independent review is a future milestone, not a repeated interface warning or a blocker for development work. Keep exact inspection limits, reuse/publication status, and review provenance available in the data dialog and source disclosures. Label **Database annotation / Open record** separately from **Original paper / Open paper**.
 
 | Avoid | Prefer |
 | --- | --- |

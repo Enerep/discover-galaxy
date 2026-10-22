@@ -1,6 +1,6 @@
 # Implementation steps
 
-**Current stage: M0 complete; M1 engineering preview implemented, with scientific approval pending.**
+**Current stage: the 21-entity Source-checked draft explorer is implemented; independent scientific review is a future milestone.**
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
@@ -22,18 +22,18 @@ The smallest useful flow is: search → select an entity → inspect a relations
 - [x] Scaffold `apps/web/` with React, TypeScript, Vite, React Three Fiber, and native Three.js controls; record supported runtime versions and commit a lockfile. Drei is unnecessary for this slice.
 - [x] Add actual install, development, typecheck, test, and production-build commands to the README. Lint tooling has not been introduced.
 - [x] Create the dataset adapter, machine-readable schema, and validator from [docs/data-model.md](docs/data-model.md). Reject broken IDs and uncited claims, including during development.
-- [ ] Curate a small reviewed starter snapshot in `data/alzheimers/`, including Alzheimer's disease, APOE, and enough sourced relationships to demonstrate the flow. Verify every identifier, claim, citation, and redistribution condition before inclusion.
+- [x] Curate a source-checked development snapshot in `data/alzheimers/`, with valid identities, cited relationships, source context and recorded reuse/publication-status checks or explicit unresolved fields.
 - [x] Render selectable nodes and relationships with a legend, restrained motion, and a clear selected state.
 - [x] Add alias-aware local search, an entity panel, and a relationship/evidence panel.
 - [x] Add a synchronized searchable list, keyboard access to selection and evidence, reduced-motion support, and a WebGL failure state.
 - [x] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
 - [x] Run the implemented checks and exercise the search-to-evidence flow in desktop/mobile browser tests, including WebGL failure. See [verification](docs/verification.md).
 
-The current starter has eight real, source-linked entities and four variant-scoped association claims. They are explicitly **development drafts** from AI-assisted abstract lookup, not approved scientific content. Human review, reuse assessment, and correction/retraction checks are pending. Synthetic fixtures remain isolated in tests. The owner has deployed the labeled development preview on Vercel; a scientific dataset release remains gated on review.
+The current snapshot has 21 source-linked entities and 19 draft claims, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
 
-**Done when:** a clean local setup runs with no external service credentials, and a user can search for Alzheimer's, select APOE, inspect a reviewed relationship, and open its cited evidence through either the graph or the list.
+**Done when:** a clean local setup runs with no service credentials, and a user can search for Alzheimer's, select APOE, inspect a source-checked draft relationship, and open its cited evidence through graph or list. Independent scientific approval belongs to the future release milestone.
 
-Engineering can be exercised now; the reviewed-relationship criterion is still pending. Do not mark the whole milestone complete based only on structural validation or a working interface.
+The source-checked development journey is usable now; structural checks never manufacture scientific approval.
 
 ### Explorer UX refinement
 
@@ -71,22 +71,24 @@ This work provides a reading and curation workflow. It does not add reviewed cla
 - [x] Stage a bounded, source-linked reading list: six publications and two Reactome pathway records, with lookup dates, actual access limits, and unknown context preserved.
 - [x] Generate a [candidate-source coverage table](data/alzheimers/candidate-coverage.md) connecting three reading questions to existing finding context and candidate studies without asserting support or independence.
 - [x] Validate identities, baseline references, freshness, and the unreviewed/outside-graph boundary; keep article content and approval attestations out of the packet.
-- [ ] Have an actual human scientific reviewer inspect the existing findings and selected original candidate sources, resolve study context and source checks, then prepare a small reviewed dataset diff.
+- [x] Expand through a separately source-checked dataset diff: 21 entities, distinct gene/protein identities, two pathways, and recorded database assertions.
+- [ ] Later scientific-release milestone: record an actual independent scientific review and resolve remaining source/release checks. This is deferred, not a blocker for source-checked development.
 
-Candidate preparation does not expand the explorer, capture an upstream database release, establish live API access, or complete the 20–50 entity milestone.
+The two pathway candidates now have source-checked draft annotations in 0.2.0; six publications remain staged. No live adapter request or exact Reactome release is claimed. The entity-count target is met; other MVP criteria remain separate.
 
 ## M2 — Deliver the curated Alzheimer's explorer
 
-Start with a review packet for the existing four claims and a bounded candidate-source coverage table. Keep discovered candidates separate from approved records and distinguish independent studies from follow-ups or reused cohorts. See [the next checkpoint](docs/checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
+Continue from the 19-finding source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [the next checkpoint](docs/checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
 
-- [ ] Expand the reviewed snapshot to **20–50 entities total**, including any paper nodes. Include ABCA1 and TREM2 when their identifiers and selected relationships are verified.
-- [ ] Add relevant pathways and other initial entity types where evidence warrants them; distinguish genes and proteins and preserve variant context. Separate variant nodes are deferred.
-- [ ] Record source releases or retrieval dates, attribution, curation history, study context, and review status for each included claim.
-- [ ] Add filters by entity type and relationship/evidence attributes without hiding the active filter state.
-- [ ] Display concise curator-written explanations with claim-linked references and limitations.
+- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 21 total, with scope and original references retained.
+- [x] Add two human Reactome pathways and seven distinct proteins with source-linked participation and state context; variant nodes remain deferred.
+- [x] Record access dates, observed entry versions where obtained, attribution, source context and actual check status. Exact Reactome release provenance remains unresolved.
+- [x] Expose all current entity types in one filter, with active state visible.
+- [ ] Add relationship/evidence filters when a concrete research task requires them.
+- [x] Display scoped, source-linked statements, summaries and limitations; distinguish database annotations from original papers.
 - [ ] Introduce Python/NetworkX tooling for reproducible validation and snapshot preparation; document its actual setup and commands.
-- [ ] Validate IDs, references, evidence links, eligible review states, source coverage, and the snapshot version.
-- [ ] Add focused tests for data rules, alias search, selection, and evidence navigation; check the production build.
+- [x] Validate IDs, references, evidence links, draft states, source coverage and snapshot version.
+- [x] Exercise typed pathway journeys, alias search, selection, connection navigation and the production build; record observed coverage in verification.
 
 **Done when:** the complete curated snapshot works offline after app assets are loaded, all public scientific relationships have reviewed evidence and traceable citations, and the same content is available through the list view.
 
