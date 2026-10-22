@@ -1,5 +1,13 @@
 # Development preview verification
 
+## Social link preview checkpoint — 2026-10-22, local commit
+
+The production build and all 37 existing tests passed. The new standard-library `python3 tools/social-preview.py check` verified canonical/Open Graph/Twitter metadata in the built initial HTML, matching absolute HTTPS page/image URLs for `discover-galaxy-web.vercel.app`, and the shipped 1200 × 630 PNG. The card is approximately 174 kB; its source SVG and optional renderer are committed. No npm dependencies, lockfile entries, application bundles, or scientific records changed. The existing lazy-3D chunk size warning remains.
+
+Focused browser checks against the local production-preview server confirmed that metadata is present with JavaScript disabled and the image responds with `image/png` and the committed bytes. Chromium decoded the actual image at 1200 × 630 with nonblank, opaque content; both the full-size card and a 600 × 315 thumbnail were visually inspected. Light/dark initial appearance still resolved correctly with the application module blocked. These are local HTTP/browser checks; no social-platform preview cache or post-deployment result is claimed.
+
+The dependency source/integrity/exact-pin check, review-packet freshness check, and local Markdown link review passed. The full application browser suite was not rerun for this static metadata/asset change; its previous checkpoint results remain below. [Social preview maintenance](social-preview.md) records domain updates, asset regeneration, and external cache limits.
+
 ## Candidate intake checkpoint — local commits only
 
 The combined suite passes 37 tests, including seven OpenAlex intake tests. The adapter and its tests passed a separate strict TypeScript check. A real CLI run against the explicitly synthetic archived fixture produced an `offline_input` packet with a processing timestamp, unknown original retrieval time, duplicate metadata grouped for inspection, and every candidate marked `unreviewed` / `not_in_graph`. The fixture and staged output are not imported by the client. Local `data/staging/` output is ignored by Git.

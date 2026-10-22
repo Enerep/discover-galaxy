@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Discovery Galaxy</title>
+  <desc id="description">Explore Alzheimer's research and trace findings to original studies. A development preview with draft scientific data. The illustration shows the current APOE, ABCA1, and TREM2 neighborhood.</desc>
+  <defs>
+    <radialGradient id="field">
+      <stop stop-color="#b7edd6" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#b7edd6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow">
+      <stop stop-color="#b7edd6" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#b7edd6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#1f1f24"/>
+  <circle cx="922" cy="302" r="290" fill="url(#field)"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <circle cx="78" cy="82" r="5" fill="#b7edd6"/>
+    <text x="96" y="89" font-size="21" fill="#b7edd6">Alzheimer’s explorer</text>
+    <g fill="#f5f6f4" font-size="86" font-weight="700" letter-spacing="-3">
+      <text x="68" y="220">Discovery</text>
+      <text x="68" y="313">Galaxy</text>
+    </g>
+    <g fill="#c5c5ce" font-size="25">
+      <text x="72" y="382">Explore Alzheimer’s research.</text>
+      <text x="72" y="420">Trace findings to original studies.</text>
+    </g>
+    <g fill="none" stroke="#44474b" stroke-width="1.5">
+      <path d="M923 290 L752 146 M923 290 L1090 216 M923 290 L825 457"/>
+      <circle cx="923" cy="290" r="110" stroke-dasharray="2 12"/>
+    </g>
+    <g fill="#e5a976">
+      <circle cx="752" cy="146" r="13"/>
+      <circle cx="1090" cy="216" r="13"/>
+      <circle cx="825" cy="457" r="13"/>
+    </g>
+    <g fill="#f5f6f4" font-size="22" font-weight="600" text-anchor="middle">
+      <text x="752" y="115">APOE</text>
+      <text x="1090" y="185">ABCA1</text>
+      <text x="825" y="501">TREM2</text>
+    </g>
+    <circle cx="923" cy="290" r="90" fill="url(#glow)"/>
+    <circle cx="923" cy="290" r="39" fill="#b7edd6"/>
+    <circle cx="923" cy="290" r="47" fill="none" stroke="#b7edd6" stroke-opacity=".25"/>
+    <g fill="#f5f6f4" font-size="22" font-weight="600" text-anchor="middle">
+      <text x="923" y="369">Alzheimer’s</text>
+      <text x="923" y="397">disease</text>
+    </g>
+    <path d="M72 540 H1128" stroke="#3b3b43"/>
+    <text x="72" y="579" font-size="18" fill="#aaaab5">discover-galaxy-web.vercel.app</text>
+    <text x="1128" y="579" font-size="18" fill="#aaaab5" text-anchor="end">Development preview · Draft data</text>
+  </g>
+</svg>

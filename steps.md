@@ -49,6 +49,7 @@ Engineering can be exercised now; the reviewed-relationship criterion is still p
 - [x] Export the current graph and selected finding as a cited PNG; provide an evidence card in List mode or without WebGL.
 - [x] Offer native image sharing where available and preserve a download option.
 - [x] Copy validated links that restore the entity, finding, query, filter, and view; test reload, navigation, invalid links, and clipboard denial.
+- [x] Add a static social-link thumbnail and crawler-visible Open Graph/Twitter metadata for the public Vercel address; verify the production artifacts separately from social-platform caches.
 - [x] Generate a reproducible AD review packet for the four existing findings without changing their draft status.
 
 ### Appearance
