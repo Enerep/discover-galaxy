@@ -94,9 +94,10 @@ interface Props {
   onShowSelected: () => void;
   onBack: () => void;
   panelRef: RefObject<HTMLElement | null>;
+  onCompare: () => void;
 }
 
-export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef }: Props) {
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
   useLayoutEffect(() => {
@@ -117,6 +118,7 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
         {!visible && <button className="show-selected" onClick={onShowSelected}>Show in the current view <Icon name="arrow" size={14} /></button>}
         <section className="findings">
           <div className="section-heading"><h3>Findings</h3><span>{claims.length}</span></div>
+          {active && snapshot.claims.length > 1 && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
           {claims.length > 1 && (
             <div className="claim-list" aria-label="Choose a finding">
               {claims.map((claim) => (

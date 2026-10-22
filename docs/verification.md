@@ -1,5 +1,15 @@
 # Development preview verification
 
+## Evidence comparison checkpoint — local commits only
+
+The comparison implementation passed the production build, all 30 current data/share-state/comparison/review-packet tests, development-data validation, and review-packet freshness. The scientific dataset remains the same eight entities and four draft claims. No dependencies were added. The main application chunk is approximately 300 kB minified / 91 kB gzip; the existing 3D chunk size warning remains.
+
+The full browser suite passed on the final source. New checks compare the two APOE findings without classifying them as a conflict; preserve claim scope separately from source-specific study context; verify all four original publication targets across pairs; and retain unknown sample size plus TREM2's separate 2,261 sequenced-discovery-individual count. Downloaded Markdown preserves full statements, citations, limitations, dataset version, and actual review fields.
+
+Light/dark, 360 px touch layout, keyboard table scrolling, dialog dismissal/focus restoration, unchanged explorer selection/search/filter, and unavailable WebGL passed. Existing search/evidence/theme/sharing/retry flows passed as well. All six idle samples observed 0 frame requests and 0 WebGL draws. Desktop/mobile comparison screenshots were visually inspected. These remain headless Chromium checks, not an assistive-technology or real-device audit.
+
+Comparison labels describe recorded fields only. Unknowns do not become matches; participant counts are not pooled; repeated PMID/DOI/source identities do not become independent evidence. Development records marked approved without an explicit human-review flag remain pending in comparisons and exported briefs. Curated disagreements, scientific hypotheses, and new approved graph content remain unimplemented.
+
 ## Appearance checkpoint — 2026-10-21
 
 The Light / Dark / System implementation passed the production build, all 21 existing data/share-state/review-packet tests, review-packet freshness, and the dependency source/integrity/exact-pin check. No dependencies or scientific records changed. The main application chunk is approximately 285 kB minified / 87 kB gzip; the existing 3D chunk size warning remains.

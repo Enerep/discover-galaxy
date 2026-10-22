@@ -7,6 +7,7 @@ counters are injected into the test browser only; production has no QA hooks.
 
 import argparse
 from pathlib import Path
+import re
 import struct
 from urllib.parse import parse_qs, urlsplit, urlunsplit
 
@@ -381,8 +382,8 @@ def assert_themes(browser, base_url: str, screenshots: Path) -> None:
     # preference and browser chrome color before React is allowed to run.
     bootstrap = browser.new_context(color_scheme="dark")
     bootstrap.add_init_script("localStorage.setItem('discovery-galaxy:theme', 'invalid-value')")
-    bootstrap.route("**/src/main.tsx", lambda route: route.fulfill(status=200, content_type="application/javascript", body="/* application withheld by theme QA */"))
-    bootstrap.route("**/assets/index-*.js", lambda route: route.fulfill(status=200, content_type="application/javascript", body="/* application withheld by theme QA */"))
+    bootstrap.route("**/src/main.tsx*", lambda route: route.fulfill(status=200, content_type="application/javascript", body="/* application withheld by theme QA */"))
+    bootstrap.route("**/assets/index-*.js*", lambda route: route.fulfill(status=200, content_type="application/javascript", body="/* application withheld by theme QA */"))
     first_paint = bootstrap.new_page()
     first_paint.goto(base_url, wait_until="networkidle")
     expect(first_paint.locator("html")).to_have_attribute("data-theme", "dark")
@@ -448,6 +449,149 @@ def assert_themes(browser, base_url: str, screenshots: Path) -> None:
     fallback_page.screenshot(path=str(screenshots / "fallback-dark.png"), full_page=True)
     fallback.close()
     print("PASS: light/dark/system themes, pre-App initialization, persistence, OS and cross-tab changes, blocked storage, view preservation, tested text contrast, 360px touch layout, dark dialogs/list/fallback, and light PNG palette.")
+
+
+def assert_comparisons(browser, base_url: str, screenshots: Path) -> None:
+    context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+    context.add_init_script(RENDER_COUNTERS)
+    page = context.new_page()
+    errors: list[str] = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(base_url, wait_until="networkidle")
+    expect(page.locator(".selected-title")).to_have_text("APOE")
+    trigger = page.get_by_role("button", name="Compare findings", exact=True)
+    trigger.focus()
+    before_scroll = page.evaluate("window.scrollY")
+    page.keyboard.press("Enter")
+    dialog = page.get_by_role("dialog", name="Compare findings", exact=True)
+    expect(dialog).to_be_visible()
+    first = dialog.get_by_role("combobox", name="Finding A", exact=True)
+    second = dialog.get_by_role("combobox", name="Finding B", exact=True)
+    expect(first).to_have_value("claim-apoe-e4-risk")
+    expect(second).to_have_value("claim-apoe-e2-risk")
+    expect(dialog.locator(".comparison-finding")).to_have_count(2)
+    expect(dialog).to_contain_text("APOE ε4 allele count")
+    expect(dialog).to_contain_text("APOE ε2/ε3 genotype")
+    variant = dialog.get_by_role("rowheader", name=re.compile(r"^Variant\b")).locator("..")
+    expect(variant.locator(".context-status")).to_have_attribute("data-state", "different")
+    assert "conflicting evidence" not in dialog.inner_text().lower()
+    assert "independen" in dialog.inner_text().lower()
+    urls = set(dialog.locator('a[href^="https://pubmed.ncbi.nlm.nih.gov/"]').evaluate_all("links => links.map(link => link.href)"))
+    assert urls == {"https://pubmed.ncbi.nlm.nih.gov/8346443/", "https://pubmed.ncbi.nlm.nih.gov/7920638/"}, urls
+    assert first.locator('option[value="claim-apoe-e2-risk"]').evaluate("option => option.disabled")
+    assert second.locator('option[value="claim-apoe-e4-risk"]').evaluate("option => option.disabled")
+    page.screenshot(path=str(screenshots / "comparison-apoe-light.png"), full_page=True)
+
+    # Keep TREM2's sequenced discovery count separate from total sample size.
+    second.select_option("claim-trem2-r47h-risk")
+    first.select_option("claim-abca1-n1800h-risk")
+    sample = dialog.get_by_role("rowheader", name=re.compile(r"^Sample size\b")).locator("..")
+    expect(sample).to_contain_text("92,726")
+    expect(sample).to_contain_text("Not recorded")
+    sequenced = dialog.get_by_role("rowheader", name=re.compile(r"^Sequenced discovery individuals\b")).locator("..")
+    expect(sequenced).to_contain_text("2,261")
+    expect(sequenced).to_contain_text("Not recorded")
+    population = dialog.get_by_role("rowheader", name=re.compile(r"^Population\b")).locator("..")
+    expect(population).to_contain_text("Claim scope")
+    expect(population).to_contain_text("92,726 general-population participants in the AD analysis")
+    expect(population).to_contain_text("General-population participants")
+    urls = set(dialog.locator('a[href^="https://pubmed.ncbi.nlm.nih.gov/"]').evaluate_all("links => links.map(link => link.href)"))
+    assert urls == {"https://pubmed.ncbi.nlm.nih.gov/26079414/", "https://pubmed.ncbi.nlm.nih.gov/23150908/"}, urls
+    download = dialog.get_by_role("link", name="Download comparison", exact=True)
+    expect(download).to_be_visible()
+    with page.expect_download() as pending_download:
+        download.click()
+    assert pending_download.value.suggested_filename.endswith(".md")
+    destination = screenshots / "comparison-abca1-trem2.md"
+    pending_download.value.save_as(destination)
+    brief = destination.read_text()
+    for text in ["alzheimers-starter-0.1.0", "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
+                 "https://pubmed.ncbi.nlm.nih.gov/26079414/", "https://pubmed.ncbi.nlm.nih.gov/23150908/",
+                 "Draft comparison", "Study-specific context", "independence"]:
+        assert text in brief, text
+    assert "- sample size: 92726" in brief
+    trem2_brief = brief.split("## TREM2", 1)[1]
+    assert "- sample size: Not recorded" in trem2_brief
+    assert "- sequenced discovery individuals: 2261" in trem2_brief
+    assert "Evidence limitations" in trem2_brief and "Evidence review: draft" in trem2_brief
+    page.keyboard.press("Escape")
+    expect(dialog).not_to_be_visible()
+    expect(trigger).to_be_focused()
+    assert abs(page.evaluate("window.scrollY") - before_scroll) <= 2
+    expect(page.locator(".selected-title")).to_have_text("APOE")
+    expect(page.get_by_role("button", name="APOE ε4 allele count", exact=True)).to_have_attribute("aria-pressed", "true")
+    expect(page.get_by_role("combobox", name="Search entities")).to_have_value("")
+    expect(page.get_by_role("combobox", name="Filter by entity type")).to_have_value("all")
+    expect(page.get_by_role("button", name="Graph view", exact=True)).to_have_attribute("aria-pressed", "true")
+    assert_idle(page, "Graph after comparison")
+
+    page.get_by_role("combobox", name="Color theme", exact=True).select_option("dark")
+    trigger.click()
+    expect(dialog).to_be_visible()
+    assert_text_contrast(dialog.locator(".comparison-summary"))
+    assert_text_contrast(dialog.get_by_role("combobox", name="Finding A", exact=True))
+    page.screenshot(path=str(screenshots / "comparison-dark.png"), full_page=True)
+    page.keyboard.press("Escape")
+    assert not errors, errors
+    context.close()
+
+    mobile = browser.new_context(viewport={"width": 360, "height": 844}, reduced_motion="reduce", is_mobile=True, has_touch=True, color_scheme="dark")
+    mobile_page = mobile.new_page()
+    mobile_errors: list[str] = []
+    mobile_page.on("pageerror", lambda error: mobile_errors.append(str(error)))
+    mobile_page.goto(base_url, wait_until="networkidle")
+    mobile_page.get_by_role("button", name="TREM2", exact=True).tap()
+    mobile_trigger = mobile_page.get_by_role("button", name="Compare findings", exact=True)
+    mobile_trigger.scroll_into_view_if_needed()
+    assert_touch_target(mobile_trigger)
+    mobile_scroll = mobile_page.evaluate("window.scrollY")
+    mobile_trigger.tap()
+    mobile_dialog = mobile_page.get_by_role("dialog", name="Compare findings", exact=True)
+    expect(mobile_dialog).to_be_visible()
+    expect(mobile_dialog.get_by_role("combobox", name="Finding A", exact=True)).to_have_value("claim-trem2-r47h-risk")
+    mobile_page.screenshot(path=str(screenshots / "comparison-mobile-360-dark.png"))
+    for label in ["Finding A", "Finding B"]:
+        control = mobile_dialog.get_by_role("combobox", name=label, exact=True)
+        assert_touch_target(control)
+        assert control.evaluate("element => parseFloat(getComputedStyle(element).fontSize) >= 16")
+    table = mobile_dialog.locator(".comparison-table-wrap")
+    assert table.evaluate("element => element.scrollWidth > element.clientWidth")
+    table.focus()
+    expect(table).to_be_focused()
+    mobile_page.keyboard.press("ArrowRight")
+    mobile_page.wait_for_timeout(160)
+    assert table.evaluate("element => element.scrollLeft > 0")
+    assert mobile_page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+    bounds = mobile_dialog.bounding_box()
+    assert bounds is not None and bounds["x"] >= 0 and bounds["x"] + bounds["width"] <= 360
+    # Full-page screenshots resize mobile emulation and can move document scroll;
+    # capture the real viewport before checking dialog dismissal behavior.
+    mobile_page.screenshot(path=str(screenshots / "comparison-mobile-table-360-dark.png"))
+    mobile_page.keyboard.press("Escape")
+    expect(mobile_trigger).to_be_focused()
+    assert abs(mobile_page.evaluate("window.scrollY") - mobile_scroll) <= 2
+    assert not mobile_errors, mobile_errors
+    mobile.close()
+
+    fallback = browser.new_context(viewport={"width": 1280, "height": 900})
+    fallback.add_init_script("""
+        const original = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+            if (kind.startsWith('webgl')) return null;
+            return original.call(this, kind, ...args);
+        };
+    """)
+    fallback_page = fallback.new_page()
+    fallback_page.goto(base_url, wait_until="networkidle")
+    expect(fallback_page.locator(".fallback-notice")).to_be_visible()
+    fallback_page.get_by_role("button", name="Compare findings", exact=True).click()
+    fallback_dialog = fallback_page.get_by_role("dialog", name="Compare findings", exact=True)
+    expect(fallback_dialog).to_be_visible()
+    expect(fallback_dialog.get_by_role("combobox", name="Finding B", exact=True)).to_have_value("claim-apoe-e2-risk")
+    expect(fallback_dialog.get_by_role("link", name="Download comparison", exact=True)).to_be_visible()
+    fallback_page.screenshot(path=str(screenshots / "comparison-fallback.png"), full_page=True)
+    fallback.close()
+    print("PASS: comparison preserves variant/source scope and unknown samples, downloads a cited draft brief, keeps explorer state, supports keyboard/mobile/dark/WebGL fallback, and returns focus without page scrolling.")
 
 
 def run(base_url: str, executable: str, screenshots: Path) -> None:
@@ -737,6 +881,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         assert_share_links(browser, base_url, screenshots)
         assert_export_retry(browser, base_url, screenshots)
         assert_themes(browser, base_url, screenshots)
+        assert_comparisons(browser, base_url, screenshots)
         browser.close()
 
 

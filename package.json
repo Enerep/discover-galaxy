@@ -11,7 +11,7 @@
     "build": "npm run typecheck && npm run build --workspace @discovery-galaxy/web",
     "preview": "npm run preview --workspace @discovery-galaxy/web --",
     "typecheck": "npm run typecheck --workspace @discovery-galaxy/web",
-    "test": "node --experimental-strip-types --test apps/web/src/lib/dataset.test.ts apps/web/src/lib/share-state.test.ts tools/curation/review-packet.test.ts",
+    "test": "node --experimental-strip-types --test apps/web/src/lib/dataset.test.ts apps/web/src/lib/share-state.test.ts apps/web/src/lib/compare-evidence.test.ts tools/curation/review-packet.test.ts",
     "curation:packet": "node --experimental-strip-types tools/curation/review-packet.ts",
     "curation:check": "node --experimental-strip-types tools/curation/review-packet.ts --check",
     "validate:data": "node --experimental-strip-types tools/validate-data.ts",

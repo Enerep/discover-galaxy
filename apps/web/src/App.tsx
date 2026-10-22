@@ -5,6 +5,7 @@ import { EntitySearch } from './components/EntitySearch.tsx';
 import { Inspector } from './components/Inspector.tsx';
 import { ShareDialog } from './components/ShareDialog.tsx';
 import { ThemeControl } from './components/ThemeControl.tsx';
+import { EvidenceComparison } from './components/EvidenceComparison.tsx';
 import { Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getClaimEvidence, getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
@@ -55,6 +56,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const [zoomStep, setZoomStep] = useState(0);
   const [webglFailed, setWebglFailed] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [comparisonIds, setComparisonIds] = useState<[string, string] | null>(null);
   const graphCapture = useRef<(() => HTMLCanvasElement) | null>(null);
   const receiveCapture = useCallback((capture: (() => HTMLCanvasElement) | null) => { graphCapture.current = capture; }, []);
   const captureGraph = useCallback(() => graphCapture.current?.(), []);
@@ -75,6 +77,19 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   }, [snapshot, selected.id, activeClaim?.id, query, filter, view]);
   const paperCount = snapshot.entities.filter(({ type }) => type === 'paper').length;
   const filtered = !!query.trim() || filter !== 'all';
+
+  function openComparison() {
+    if (!activeClaim) return;
+    const other = snapshot.claims.find((claim) => claim.id !== activeClaim.id && claim.subject_id === activeClaim.subject_id)
+      ?? snapshot.claims.find((claim) => claim.id !== activeClaim.id);
+    if (other) setComparisonIds([activeClaim.id, other.id]);
+  }
+  function changeComparison(side: 0 | 1, id: string) {
+    setComparisonIds((current) => {
+      if (!current || current[1 - side] === id || !snapshot.claims.some((claim) => claim.id === id)) return current;
+      return side === 0 ? [id, current[1]] : [current[0], id];
+    });
+  }
 
   useEffect(() => {
     const restore = () => {
@@ -238,7 +253,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
         <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
-          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} />
+          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} />
       </div>
 
       <dialog className="data-dialog" ref={aboutRef} aria-labelledby="data-title">
@@ -252,6 +267,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       </dialog>
       <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} snapshot={snapshot}
         selected={selected} claim={activeClaim} captureGraph={captureGraph} shareUrl={shareUrl} />
+      <EvidenceComparison snapshot={snapshot} claimIds={comparisonIds} onChange={changeComparison} onClose={() => setComparisonIds(null)} />
     </div>
   );
 }
