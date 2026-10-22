@@ -93,14 +93,20 @@ function makeGlow(): CanvasTexture {
   return texture;
 }
 
-function makeLabel(entity: Entity): { texture: CanvasTexture; aspect: number } {
+function makeLabel(entity: Entity): { texture: CanvasTexture; aspect: number; lines: number } {
   const canvas = document.createElement('canvas');
   const font = `${entity.type === 'paper' ? 500 : 600} ${entity.type === 'paper' ? 44 : 50}px system-ui, sans-serif`;
   const label = entity.label.length > 35 ? `${entity.label.slice(0, 33)}…` : entity.label;
+  const lines = entity.type === 'pathway' ? label.split(' ').reduce<string[]>((result, word) => {
+    const last = result.at(-1);
+    if (last && `${last} ${word}`.length <= 18) result[result.length - 1] = `${last} ${word}`;
+    else result.push(word);
+    return result;
+  }, []) : [label];
   const measuringContext = canvas.getContext('2d');
   if (measuringContext) measuringContext.font = font;
-  canvas.width = Math.max(160, Math.ceil(measuringContext?.measureText(label).width ?? 600) + 36);
-  canvas.height = 80;
+  canvas.width = Math.max(160, ...lines.map((line) => Math.ceil(measuringContext?.measureText(line).width ?? 600) + 36));
+  canvas.height = 80 * lines.length;
   const context = canvas.getContext('2d');
   if (context) {
     context.font = font;
@@ -109,20 +115,21 @@ function makeLabel(entity: Entity): { texture: CanvasTexture; aspect: number } {
     context.shadowColor = '#080c0d';
     context.shadowBlur = 12;
     context.fillStyle = '#e7eeed';
-    context.fillText(label, canvas.width / 2, 40);
+    lines.forEach((line, index) => context.fillText(line, canvas.width / 2, 40 + index * 80));
   }
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
-  return { texture, aspect: canvas.width / canvas.height };
+  return { texture, aspect: canvas.width / canvas.height, lines: lines.length };
 }
 
-function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion }: {
+function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion, compactLabels }: {
   entity: Entity;
   position: Position;
   selected: boolean;
   onSelect: (id: string) => void;
   glow: CanvasTexture;
   reducedMotion: boolean;
+  compactLabels: boolean;
 }) {
   const { gl, camera, size, invalidate } = useThree();
   const hovered = useRef(false);
@@ -135,9 +142,11 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion 
   const labelSprite = useRef<Sprite>(null);
   const label = useMemo(() => makeLabel(entity), [entity]);
   const worldPosition = useMemo(() => new Vector3(...position), [position]);
+  const labelPosition = useMemo(() => new Vector3(), []);
+  const showCompactLabel = compactLabels || (entity.type === 'gene' && ['gene-apoe', 'gene-abca1', 'gene-trem2'].includes(entity.id));
   const colors = useMemo(() => ({ normal: new Color(ENTITY_COLORS[entity.type]), selected: new Color('#f0fff8') }), [entity.type]);
   const radius = entity.type === 'disease' ? 0.34 : entity.type === 'paper' ? 0.14 : 0.23;
-  const initial = useRef({ scale: selected ? 1.1 : 1, glow: selected ? 0.85 : 0.37, ring: selected ? 0.75 : 0, color: selected ? '#f0fff8' : ENTITY_COLORS[entity.type], labelOpacity: selected ? 1 : size.width < 520 && entity.type === 'paper' ? 0 : 0.85 });
+  const initial = useRef({ scale: selected ? 1.1 : 1, glow: selected ? 0.85 : 0.37, ring: selected ? 0.75 : 0, color: selected ? '#f0fff8' : ENTITY_COLORS[entity.type], labelOpacity: selected ? 1 : size.width < 520 && !showCompactLabel ? 0 : 0.85 });
 
   useEffect(() => () => { label.texture.dispose(); gl.domElement.style.cursor = 'grab'; }, [label, gl]);
   useLayoutEffect(() => invalidate(), [selected, reducedMotion, size.width, invalidate]);
@@ -174,12 +183,20 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion 
     hitArea.current?.scale.setScalar(Math.max(radius * 1.5, worldPerPixel * 20));
     if (labelSprite.current) {
       const compact = size.width < 520;
-      const height = worldPerPixel * (entity.type === 'paper' ? 22 : 24);
+      const height = worldPerPixel * (entity.type === 'paper' ? 22 : 24) * label.lines;
       labelSprite.current.scale.set(height * label.aspect, height, 1);
-      // On narrow canvases, keep the disease name clear of the nearby genes.
-      labelSprite.current.position.y = (compact && entity.type === 'disease' ? 1 : -1) * (radius + height * 0.7);
+      // Clamp visible labels inside the canvas while retaining their depth.
+      const labelY = (entity.type === 'pathway' || (compact && entity.type === 'disease') ? 1 : -1) * (radius + height * 0.7);
+      labelPosition.copy(worldPosition);
+      labelPosition.y += labelY;
+      labelPosition.project(camera);
+      const halfWidth = Math.min(size.width / 2 - 8, height / worldPerPixel * label.aspect / 2);
+      const margin = (halfWidth + 8) / Math.max(size.width, 1) * 2;
+      if (Math.abs(labelPosition.x) < 1.25) labelPosition.x = Math.max(-1 + margin, Math.min(1 - margin, labelPosition.x));
+      labelPosition.unproject(camera).sub(worldPosition);
+      labelSprite.current.position.copy(labelPosition);
       const material = labelSprite.current.material as SpriteMaterial;
-      const opacity = compact && entity.type === 'paper' && !emphasis ? 0 : emphasis ? 1 : 0.85;
+      const opacity = compact && !showCompactLabel && !emphasis ? 0 : emphasis ? 1 : 0.85;
       material.opacity = approach(material.opacity, opacity, alpha);
       labelSprite.current.visible = material.opacity > 0.001;
       labelSprite.current.raycast = labelSprite.current.visible ? Sprite.prototype.raycast : ignoreRaycast;
@@ -431,7 +448,7 @@ function Scene(props: GalaxyProps) {
     })}
     {entities.map((entity) => {
       const position = positions.get(entity.id);
-      return position ? <EntityNode key={entity.id} entity={entity} position={position} selected={selectedId === entity.id} onSelect={onSelect} glow={glow} reducedMotion={props.reducedMotion} /> : null;
+      return position ? <EntityNode key={entity.id} entity={entity} position={position} selected={selectedId === entity.id} onSelect={onSelect} glow={glow} reducedMotion={props.reducedMotion} compactLabels={entities.length <= 8} /> : null;
     })}
   </>;
 }

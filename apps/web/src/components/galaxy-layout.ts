@@ -18,20 +18,28 @@ export function createGalaxyLayout(entities: Entity[]): Map<string, Position> {
   const sorted = [...entities].sort((a, b) => a.id.localeCompare(b.id));
   const diseases = sorted.filter((entity) => entity.type === 'disease');
   const papers = sorted.filter((entity) => entity.type === 'paper');
-  const biological = sorted.filter((entity) => entity.type !== 'disease' && entity.type !== 'paper');
+  const genes = sorted.filter((entity) => entity.type === 'gene');
+  const proteins = sorted.filter((entity) => entity.type === 'protein');
+  const pathways = sorted.filter((entity) => entity.type === 'pathway');
 
   diseases.forEach((entity, index) => {
     positions.set(entity.id, [index * 1.4, 0, index * -0.35]);
   });
 
-  biological.forEach((entity, index) => {
-    const angle = (index / Math.max(biological.length, 1)) * Math.PI * 2 + Math.PI / 2;
-    positions.set(entity.id, [Math.cos(angle) * 3.25, Math.sin(angle) * 2.65, Math.sin(angle * 2) * 0.7]);
-  });
+  function ring(group: Entity[], width: number, height: number, phase = 0) {
+    group.forEach((entity, index) => {
+      const angle = index / Math.max(group.length, 1) * Math.PI * 2 + Math.PI / 2 + phase;
+      positions.set(entity.id, [Math.cos(angle) * width, Math.sin(angle) * height, Math.sin(angle * 2) * 0.7]);
+    });
+  }
+  ring(genes, 2.7, 2.35);
+  ring(proteins, 4.6, 3.45, 0.09);
+  ring(pathways, 6.1, 2.8, Math.PI / 2);
+  ring(sorted.filter(({ type }) => type === 'drug'), 4.1, 2.8, Math.PI / 4);
 
   papers.forEach((entity, index) => {
     const angle = (index / Math.max(papers.length, 1)) * Math.PI * 2 + Math.PI / 4;
-    positions.set(entity.id, [Math.cos(angle) * 5.45, Math.sin(angle) * 3.8, -0.9 + Math.sin(angle * 2) * 0.4]);
+    positions.set(entity.id, [Math.cos(angle) * 6.35, Math.sin(angle) * 4.4, -0.9 + Math.sin(angle * 2) * 0.4]);
   });
 
   return positions;

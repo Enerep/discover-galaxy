@@ -51,7 +51,7 @@ function sourceBlocks(source: Source): TextBlock[] {
   const identifiers = source.identifiers.map(({ namespace, value }) => `${namespace}: ${value}`).join(' · ');
   return [
     { text: source.title, size: 17, lineHeight: 25, color: '#294e39', weight: 500, gap: 8 },
-    { text: `${authors} · ${source.year ?? 'Year not recorded'}`, size: 14, lineHeight: 21, color: '#52675b', gap: 6 },
+    { text: source.kind === 'publication' ? `${authors} · ${source.year ?? 'Year not recorded'}` : `${source.provider ?? 'Database'} · ${source.release ?? 'Version not recorded'}`, size: 14, lineHeight: 21, color: '#52675b', gap: 6 },
     ...(identifiers ? [{ text: identifiers, size: 13, lineHeight: 20, color: '#52675b', gap: 6 }] : []),
     { text: source.url, size: 14, lineHeight: 21, color: '#235e4a', gap: 24 },
   ];
@@ -113,7 +113,7 @@ export async function renderShareImage(options: ShareImageOptions): Promise<Blob
   context.fillStyle = '#78613e';
   context.font = `400 16px ${FONT}`;
   context.textAlign = 'right';
-  context.fillText('Draft · scientific review pending', WIDTH - PAD, 37);
+  context.fillText('Source-checked draft', WIDTH - PAD, 37);
   context.textAlign = 'left';
   context.strokeStyle = '#dce2dc';
   context.beginPath(); context.moveTo(PAD, 87); context.lineTo(WIDTH - PAD, 87); context.stroke();

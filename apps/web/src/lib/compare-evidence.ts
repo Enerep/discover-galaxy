@@ -155,7 +155,7 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
       'Context labels compare recorded fields only; they do not determine whether findings agree or conflict.',
       'Matching text does not establish comparable studies, pooled cohorts, independent replication, or research novelty.',
       ...(columns.some(({ claim, evidence }) => !humanReviewed(claim.review) || evidence.some(({ evidence: item }) => !humanReviewed(item.review)))
-        ? ['Scientific review is pending for one or both selected findings.'] : []),
+        ? ['One or both findings retain draft source status.'] : []),
     ],
   };
 }

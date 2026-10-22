@@ -28,7 +28,7 @@ test('development data remains usable without being mistaken for a public scient
   const snapshot = syntheticFixture();
   const development = validateDataset(snapshot);
   assert.equal(development.valid, true);
-  assert.ok(development.warnings.some((warning) => warning.includes('independent human review')));
+  assert.ok(development.warnings.some((warning) => warning.includes('retain draft status')));
   const release = validateDataset(snapshot, { release: true });
   assert.equal(release.valid, false);
   assert.ok(release.errors.some((error) => error.includes('approved human scientific review')));
@@ -97,10 +97,35 @@ test('paper projections expose cited claims without creating biological relation
   assert.deepEqual(getEntityClaims(snapshot, 'unknown'), []);
 });
 
-test('the checked-in starter is structurally valid but remains blocked from scientific release', async () => {
+test('the source-checked snapshot preserves typed pathway journeys and remains a development draft', async () => {
   const snapshot: unknown = JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8'));
   assert.equal(validateDataset(snapshot).valid, true);
   assert.equal(validateDataset(snapshot, { release: true }).valid, false);
+  const data = loadDataset(snapshot);
+  assert(data.entities.length >= 20 && data.entities.length <= 50);
+  for (const key of ['apoe', 'abca1', 'trem2', 'tyrobp', 'nr1h2', 'nr1h3', 'rxra']) {
+    const gene = data.entities.find(({ id }) => id === `gene-${key}`)!;
+    const protein = data.entities.find(({ id }) => id === `protein-${key}`)!;
+    assert.equal(gene.type, 'gene');
+    assert.equal(protein.type, 'protein');
+    const encoding = data.claims.find(({ subject_id, object_id, predicate }) => subject_id === gene.id && object_id === protein.id && predicate === 'encodes')!;
+    assert(encoding);
+    const pathwayClaims = getEntityClaims(data, protein.id).filter(({ predicate }) => predicate === 'participates_in');
+    assert(pathwayClaims.length > 0);
+    for (const claim of pathwayClaims) {
+      assert.equal(data.entities.find(({ id }) => id === claim.object_id)?.type, 'pathway');
+      const evidence = getClaimEvidence(data, claim.id);
+      assert.equal(evidence.length, 1);
+      assert.equal(data.sources.find(({ id }) => id === evidence[0].source_id)?.kind, 'database_record');
+      assert.equal(claim.context.assertion_type, 'curated database annotation');
+      assert.equal(claim.context.organism, 'Homo sapiens');
+      assert.equal(claim.review.status, 'draft');
+      assert.notEqual(claim.review.human_reviewed, true);
+    }
+  }
+  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.conflicts.length, 0);
+  assert.equal(data.hypotheses.length, 0);
 });
 
 test('optional metadata cannot smuggle malformed values past the typed adapter', () => {

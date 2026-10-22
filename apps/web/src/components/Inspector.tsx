@@ -34,12 +34,23 @@ function StudyContext({ context, className = '' }: { context: Context; className
 }
 
 function authorLabel(source: Source) {
+  if (source.kind === 'database_record') return source.provider ?? 'Database';
   if (!source.authors.length) return 'Author not recorded';
   if (source.authors.length === 1) return source.authors[0];
   return `${source.authors[0].split(' ').at(-1)} et al.`;
 }
 
-function Finding({ snapshot, claim }: { snapshot: Snapshot; claim: Claim }) {
+function connectionLabel(snapshot: Snapshot, claim: Claim, selected: Entity): string {
+  if (claim.context.variant) return String(claim.context.variant);
+  const isSubject = claim.subject_id === selected.id;
+  const other = snapshot.entities.find(({ id }) => id === (isSubject ? claim.object_id : claim.subject_id));
+  const label = claim.predicate === 'encodes' ? isSubject ? 'Encodes' : 'Encoded by'
+    : claim.predicate === 'participates_in' ? isSubject ? 'Part of' : 'Participant'
+      : claim.predicate === 'interacts_with' ? 'Interacts with' : 'Associated with';
+  return `${label} · ${other?.label ?? ''}`;
+}
+
+function Finding({ snapshot, claim, selected, onFollow }: { snapshot: Snapshot; claim: Claim; selected: Entity; onFollow: (entityId: string, claimId: string) => void }) {
   const evidence = getClaimEvidence(snapshot, claim.id);
   const limitations = [...new Set([...claim.limitations, ...evidence.flatMap((item) => item.limitations)])];
   return (
@@ -51,15 +62,23 @@ function Finding({ snapshot, claim }: { snapshot: Snapshot; claim: Claim }) {
         const source = snapshot.sources.find(({ id }) => id === item.source_id);
         return source ? (
           <div className="source-card" key={item.id}>
-            <div className="source-meta"><Icon name="paper" size={16} /><span>Original paper</span><span>{source.year ?? 'Date unknown'}</span></div>
+            <div className="source-meta"><Icon name={source.kind === 'publication' ? 'paper' : 'pathway'} size={16} /><span>{source.kind === 'publication' ? 'Original paper' : 'Database annotation'}</span><span>{source.kind === 'publication' ? source.year ?? 'Date unknown' : source.provider}</span></div>
             <a className="source-link" href={source.url} target="_blank" rel="noreferrer">
               <span className="source-title">{source.title}</span>
-              <span className="source-action">Open paper <Icon name="external" size={14} /></span>
+              <span className="source-action">{source.kind === 'publication' ? 'Open paper' : 'Open record'} <Icon name="external" size={14} /></span>
             </a>
-            <p className="source-author">{authorLabel(source)} · {source.publication_type?.replaceAll('_', ' ') ?? 'Publication'}</p>
+            <p className="source-author">{source.kind === 'publication' ? `${authorLabel(source)} · ${source.publication_type?.replaceAll('_', ' ') ?? 'Publication'}` : source.release}</p>
           </div>
         ) : null;
       })}
+      <div className="connection-navigation" aria-label="Follow this connection">
+        {[...new Set([claim.subject_id, claim.object_id])].filter((id) => id !== selected.id).map((id) => {
+          const entity = snapshot.entities.find((item) => item.id === id)!;
+          return <button key={id} className="connection-link" aria-label={`View ${entity.label}`} onClick={() => onFollow(id, claim.id)}>
+            <Icon name={entity.type} size={16} /><span>View {entity.label}<small>{TYPE_LABELS[entity.type]}</small></span><Icon name="arrow" size={15} />
+          </button>;
+        })}
+      </div>
       <Disclosure label="Study details and limitations">
         <div className="study-context">
           <h4>Claim context</h4>
@@ -73,12 +92,16 @@ function Finding({ snapshot, claim }: { snapshot: Snapshot; claim: Claim }) {
                 <p className="evidence-relation">Evidence relation: {item.relation}</p>
                 <StudyContext context={item.study_context} className="source-study-context" />
                 <p className="source-locator"><strong>Source location</strong>{item.locator}</p>
+                {source && <>
+                  <p className="source-locator"><strong>Source check</strong>{item.review.rationale}</p>
+                  <p className="source-locator"><strong>Reuse</strong>{source.reuse.permission_status === 'permitted' ? 'Recorded metadata reuse permitted.' : 'Assessment pending.'} {source.reuse.attribution} <a href={source.reuse.terms_url} target="_blank" rel="noreferrer">Source terms <Icon name="external" size={12} /></a></p>
+                  {source.kind === 'publication' && <p className="source-locator"><strong>Publication status</strong>{source.publication_status.status === 'not_checked' ? 'Correction/retraction check not recorded.' : source.publication_status.status.replaceAll('_', ' ')}</p>}
+                </>}
               </section>
             );
           })}
           <h4>Limitations</h4>
           <ul className="limitations">{limitations.map((item) => <li key={item}>{item}</li>)}</ul>
-          <p className="review-note">Human scientific review is pending.</p>
         </div>
       </Disclosure>
     </section>
@@ -95,9 +118,10 @@ interface Props {
   onBack: () => void;
   panelRef: RefObject<HTMLElement | null>;
   onCompare: () => void;
+  onFollow: (entityId: string, claimId: string) => void;
 }
 
-export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare }: Props) {
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
   useLayoutEffect(() => {
@@ -124,13 +148,13 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
               {claims.map((claim) => (
                 <button className="claim-button" key={claim.id} aria-pressed={claim.id === active?.id}
                   onClick={() => onSelectClaim(claim.id)}>
-                  <span>{String(claim.context.variant ?? claim.predicate.replaceAll('_', ' '))}</span>
+                  <span>{connectionLabel(snapshot, claim, selected)}</span>
                   <Icon name="arrow" size={14} />
                 </button>
               ))}
             </div>
           )}
-          {active ? <Finding key={active.id} snapshot={snapshot} claim={active} />
+          {active ? <Finding key={active.id} snapshot={snapshot} claim={active} selected={selected} onFollow={onFollow} />
             : <p className="no-findings">No findings for this record in the current dataset.</p>}
         </section>
         {selected.external_ids.length > 0 && (

@@ -148,13 +148,13 @@ test('approved development records without explicit human review remain pending 
   }
   const accepted = loadDataset(fixture);
   const pending = buildEvidenceComparison(accepted, FIRST, SECOND);
-  assert.ok(pending.notices.some((notice) => notice.includes('Scientific review is pending')));
+  assert.ok(pending.notices.some((notice) => notice.includes('draft source status')));
   const brief = buildComparisonBrief(accepted, FIRST, SECOND);
   assert.match(brief, /Claim review: approved; human reviewed: false/);
   assert.match(brief, /Evidence review: approved; human reviewed: false/);
-  assert.match(brief, /Scientific review is pending/);
+  assert.match(brief, /draft source status/);
   for (const record of [...claims, ...evidence]) record.review.human_reviewed = true;
-  assert.ok(!buildEvidenceComparison(loadDataset(fixture), FIRST, SECOND).notices.some((notice) => notice.includes('Scientific review is pending')));
+  assert.ok(!buildEvidenceComparison(loadDataset(fixture), FIRST, SECOND).notices.some((notice) => notice.includes('draft source status')));
   assert.match(buildComparisonBrief(fixture, FIRST, SECOND), /Claim review: approved; human reviewed: true/);
   assert.match(buildComparisonBrief(fixture, FIRST, SECOND), /Evidence review: approved; human reviewed: true/);
 });

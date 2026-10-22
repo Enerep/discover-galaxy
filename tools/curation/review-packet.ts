@@ -33,7 +33,7 @@ export function renderReviewPacket(snapshot: Snapshot): string {
   const claims = [...snapshot.claims].sort((a, b) => a.id.localeCompare(b.id, 'en'));
   const sources = [...snapshot.sources].sort((a, b) => a.id.localeCompare(b.id, 'en'));
   const lines = [
-    '# Alzheimer’s starter review packet', '',
+    '# Alzheimer’s source-review packet', '',
     'Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.',
     'Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.', '',
     `- **Dataset:** ${text(snapshot.dataset_version)}`,

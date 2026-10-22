@@ -3,18 +3,18 @@
 Generated from candidate-coverage.json and the current snapshot. Edit the JSON, then regenerate. This is a reading plan: candidates are unreviewed, outside the graph, and do not establish support for any existing or proposed claim.
 
 - **Prepared:** 2026-10-22
-- **Baseline snapshot:** alzheimers-starter-0.1.0
-- **Staged sources:** 8 (6 publications, 2 pathway records)
-- **Selection:** Targeted, AI-assisted web lookup of original publications and human Reactome records around the starter's APOE, ABCA1, and TREM2 anchors. This is a selective reading list, not a systematic search or an OpenAlex API import.
+- **Baseline snapshot:** alzheimers-source-checked-0.2.0
+- **Staged sources:** 6 (6 publications, 0 pathway records)
+- **Selection:** Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.
 
 ## Limits
 
-- All candidates are unreviewed and outside the public graph. No source count establishes independent experiments, replication, or evidence strength.
+- The six publication candidates remain unreviewed and outside the graph. The two earlier pathway candidates were added separately as source-checked draft annotations in snapshot 0.2.0, not approved scientific records.
 - Inspection was limited to the locations recorded per source. Search-indexed excerpts may be stale; several direct PubMed/PMC opens returned challenges. No full paper, supplement, figure, or table was reviewed.
 - Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.
 - Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.
-- Genes in the current graph are search anchors. Protein interactions require separately resolved protein identities; mouse experiments must not become human gene or clinical-effect claims.
-- These are source-reading questions, not novel research hypotheses or curated contradictions. The 20–50 entity release and human scientific review remain pending.
+- Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.
+- These are source-reading questions, not novel research hypotheses or curated contradictions. The 21-entity development snapshot meets the size target; scientific release remains a separate future milestone.
 
 ## Existing findings and recorded review status
 
@@ -22,10 +22,25 @@ The [starter review packet](review-packet.md) contains the complete findings and
 
 | Existing claim | Original source | Claim review | Evidence review | Human review recorded for claim and all evidence |
 | --- | --- | --- | --- | --- |
+| claim-abca1-cholesterol-pathway | [source-reactome-abca1-protein](https://reactome.org/content/detail/R-HSA-194209) | draft | draft | No |
+| claim-abca1-encodes | [source-reactome-abca1-protein](https://reactome.org/content/detail/R-HSA-194209) | draft | draft | No |
 | claim-abca1-n1800h-risk | [26079414](https://pubmed.ncbi.nlm.nih.gov/26079414/) | draft | draft | No |
+| claim-apoe-cholesterol-pathway | [source-reactome-apoe-expression](https://reactome.org/content/detail/R-HSA-9031512) | draft | draft | No |
 | claim-apoe-e2-risk | [7920638](https://pubmed.ncbi.nlm.nih.gov/7920638/) | draft | draft | No |
 | claim-apoe-e4-risk | [8346443](https://pubmed.ncbi.nlm.nih.gov/8346443/) | draft | draft | No |
+| claim-apoe-encodes | [source-uniprot-apoe](https://rest.uniprot.org/uniprotkb/P02649.txt) | draft | draft | No |
+| claim-nr1h2-cholesterol-pathway | [source-reactome-nr1h2-protein](https://reactome.org/content/detail/R-HSA-375500) | draft | draft | No |
+| claim-nr1h2-encodes | [source-reactome-nr1h2-protein](https://reactome.org/content/detail/R-HSA-375500) | draft | draft | No |
+| claim-nr1h3-cholesterol-pathway | [source-reactome-nr1h3-protein](https://reactome.org/content/detail/R-HSA-8854957) | draft | draft | No |
+| claim-nr1h3-encodes | [source-reactome-nr1h3-protein](https://reactome.org/content/detail/R-HSA-8854957) | draft | draft | No |
+| claim-rxra-cholesterol-pathway | [source-reactome-rxra-protein](https://reactome.org/content/detail/R-HSA-381319) | draft | draft | No |
+| claim-rxra-encodes | [source-uniprot-rxra](https://rest.uniprot.org/uniprotkb/P19793.txt) | draft | draft | No |
+| claim-trem2-dap12-binding | [source-reactome-trem2-dap12](https://reactome.org/content/detail/R-HSA-210300) | draft | draft | No |
+| claim-trem2-dap12-pathway | [source-reactome-trem2-protein](https://reactome.org/content/detail/R-HSA-197664) | draft | draft | No |
+| claim-trem2-encodes | [source-uniprot-trem2](https://rest.uniprot.org/uniprotkb/Q9NZC2.txt) | draft | draft | No |
 | claim-trem2-r47h-risk | [23150908](https://pubmed.ncbi.nlm.nih.gov/23150908/) | draft | draft | No |
+| claim-tyrobp-dap12-pathway | [source-reactome-tyrobp-state](https://reactome.org/content/detail/R-HSA-210010) | draft | draft | No |
+| claim-tyrobp-encodes | [source-uniprot-tyrobp](https://rest.uniprot.org/uniprotkb/O43914.txt) | draft | draft | No |
 
 ## Reading questions and source coverage
 
@@ -37,13 +52,12 @@ What do the ABCA1 experiments measure about ApoE lipid handling, and how would t
 
 **Current graph anchors:** gene-abca1; gene-apoe. These remain their recorded entity types.
 
-**Existing finding context:** claim-abca1-n1800h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk
+**Existing finding context:** claim-abca1-n1800h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk; claim-apoe-cholesterol-pathway; claim-abca1-cholesterol-pathway
 
 | Candidate source | Kind | Recorded model | Recorded readout |
 | --- | --- | --- | --- |
 | [Wahrle et al. (2004)](https://pubmed.ncbi.nlm.nih.gov/15269217/) | primary\_publication | Abca1 genotype comparisons; primary astrocyte cultures | CNS ApoE levels and secreted-particle lipidation |
 | [Hirsch-Reinshagen et al. (2004)](https://pubmed.ncbi.nlm.nih.gov/15269218/) | primary\_publication | ABCA1-deficient astrocytes and microglia; species needs source extraction | Lipid efflux to ApoE and brain ApoE metabolism |
-| [Reactome R-HSA-9029569](https://reactome.org/content/detail/R-HSA-9029569) | pathway\_record | Curated pathway record; not an AD experiment | Cholesterol transport/efflux gene regulation |
 
 **Before proposing a graph claim:**
 
@@ -57,13 +71,12 @@ Which experiments address TREM2–APOE protein interactions or microglial transc
 
 **Current graph anchors:** gene-trem2; gene-apoe. These remain their recorded entity types.
 
-**Existing finding context:** claim-trem2-r47h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk
+**Existing finding context:** claim-trem2-r47h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk; claim-trem2-dap12-binding; claim-trem2-dap12-pathway
 
 | Candidate source | Kind | Recorded model | Recorded readout |
 | --- | --- | --- | --- |
 | [Yeh et al. (2016)](https://pubmed.ncbi.nlm.nih.gov/27477018/) | primary\_publication | Protein binding, heterologous cells, knockout microglia, and human variant-carrier macrophages; resolve each assay separately | Apolipoprotein binding and uptake of lipoprotein-associated amyloid-beta |
 | [Krasemann et al. (2017)](https://pubmed.ncbi.nlm.nih.gov/28930663/) | primary\_publication | Multiple neurodegeneration models; extract AD-specific experiments separately | Microglial transcriptional phenotype |
-| [Reactome R-HSA-2424491](https://reactome.org/content/detail/R-HSA-2424491) | pathway\_record | Curated immune-signaling pathway; not AD-specific | DAP12 signaling |
 
 **Before proposing a graph claim:**
 
@@ -139,38 +152,6 @@ Do the two 2015 TREM2 model studies address comparable perturbations, cell popul
 - **Publication status:** not_checked; absence of a notice has not been established
 - **Reuse:** pending_review · [terms](https://www.ncbi.nlm.nih.gov/home/about/policies/) · checked Not extracted
 - **Terms observation:** Not extracted
-
-### candidate-reactome-cholesterol-efflux
-
-[NR1H3 & NR1H2 regulate gene expression linked to cholesterol transport and efflux](https://reactome.org/content/detail/R-HSA-9029569)
-
-- **Citation:** Reactome R-HSA-9029569
-- **Identifiers:** reactome: R-HSA-9029569
-- **Provider / release:** Reactome / Not captured; access date is not a release
-- **Inspected:** 2026-10-22 · page · [location](https://reactome.org/content/detail/R-HSA-9029569)
-- **Locator / access limits:** Pathway identity, species and indexed summary; member-event provenance and database release not extracted.
-- **Recorded organisms:** Homo sapiens; not an exhaustive assay-level species extraction
-- **Sample size:** Not extracted; do not pool experiment-level counts
-- **Review / graph:** unreviewed / not_in_graph
-- **Publication status:** not_applicable; database revision provenance still needs checking
-- **Reuse:** pending_review · [terms](https://reactome.org/license) · checked 2026-10-22
-- **Terms observation:** Reactome distinguishes CC0 database data from CC BY 4.0 illustrations. Only record metadata and project-authored notes are retained; no artwork or source text is copied.
-
-### candidate-reactome-dap12
-
-[DAP12 signaling](https://reactome.org/content/detail/R-HSA-2424491)
-
-- **Citation:** Reactome R-HSA-2424491
-- **Identifiers:** reactome: R-HSA-2424491
-- **Provider / release:** Reactome / Not captured; access date is not a release
-- **Inspected:** 2026-10-22 · page · [location](https://reactome.org/content/detail/R-HSA-2424491)
-- **Locator / access limits:** Pathway identity and species; TREM2 protein lookup R-HSA-197664 provides a navigation anchor, not an extracted membership assertion.
-- **Recorded organisms:** Homo sapiens; not an exhaustive assay-level species extraction
-- **Sample size:** Not extracted; do not pool experiment-level counts
-- **Review / graph:** unreviewed / not_in_graph
-- **Publication status:** not_applicable; database revision provenance still needs checking
-- **Reuse:** pending_review · [terms](https://reactome.org/license) · checked 2026-10-22
-- **Terms observation:** CC0 database data; illustrations have separate CC BY 4.0 terms. No illustrations or source text are retained.
 
 ### candidate-wahrle-2004
 

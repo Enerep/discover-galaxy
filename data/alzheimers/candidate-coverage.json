@@ -1,15 +1,15 @@
 {
   "schema_version": "candidate-coverage-1",
-  "dataset_version": "alzheimers-starter-0.1.0",
+  "dataset_version": "alzheimers-source-checked-0.2.0",
   "prepared_at": "2026-10-22",
-  "selection_method": "Targeted, AI-assisted web lookup of original publications and human Reactome records around the starter's APOE, ABCA1, and TREM2 anchors. This is a selective reading list, not a systematic search or an OpenAlex API import.",
+  "selection_method": "Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.",
   "limitations": [
-    "All candidates are unreviewed and outside the public graph. No source count establishes independent experiments, replication, or evidence strength.",
+    "The six publication candidates remain unreviewed and outside the graph. The two earlier pathway candidates were added separately as source-checked draft annotations in snapshot 0.2.0, not approved scientific records.",
     "Inspection was limited to the locations recorded per source. Search-indexed excerpts may be stale; several direct PubMed/PMC opens returned challenges. No full paper, supplement, figure, or table was reviewed.",
     "Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.",
     "Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.",
-    "Genes in the current graph are search anchors. Protein interactions require separately resolved protein identities; mouse experiments must not become human gene or clinical-effect claims.",
-    "These are source-reading questions, not novel research hypotheses or curated contradictions. The 20–50 entity release and human scientific review remain pending."
+    "Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.",
+    "These are source-reading questions, not novel research hypotheses or curated contradictions. The 21-entity development snapshot meets the size target; scientific release remains a separate future milestone."
   ],
   "candidates": [
     {
@@ -18,7 +18,10 @@
       "citation": "Wahrle et al. (2004)",
       "title": "ABCA1 is required for normal central nervous system ApoE levels and for lipidation of astrocyte-secreted apoE",
       "url": "https://pubmed.ncbi.nlm.nih.gov/15269217/",
-      "identifiers": { "pmid": "15269217", "doi": "10.1074/jbc.M407963200" },
+      "identifiers": {
+        "pmid": "15269217",
+        "doi": "10.1074/jbc.M407963200"
+      },
       "year": 2004,
       "provider": "PubMed",
       "release": null,
@@ -29,7 +32,9 @@
         "accessed_at": "2026-10-22"
       },
       "context": {
-        "organisms": ["Mus musculus"],
+        "organisms": [
+          "Mus musculus"
+        ],
         "model": "Abca1 genotype comparisons; primary astrocyte cultures",
         "readout": "CNS ApoE levels and secreted-particle lipidation",
         "sample_size": null
@@ -50,7 +55,10 @@
       "citation": "Hirsch-Reinshagen et al. (2004)",
       "title": "Deficiency of ABCA1 impairs apolipoprotein E metabolism in brain",
       "url": "https://pubmed.ncbi.nlm.nih.gov/15269218/",
-      "identifiers": { "pmid": "15269218", "doi": "10.1074/jbc.M407962200" },
+      "identifiers": {
+        "pmid": "15269218",
+        "doi": "10.1074/jbc.M407962200"
+      },
       "year": 2004,
       "provider": "PubMed",
       "release": null,
@@ -82,7 +90,10 @@
       "citation": "Wang et al. (2015)",
       "title": "TREM2 lipid sensing sustains the microglial response in an Alzheimer's disease model",
       "url": "https://pubmed.ncbi.nlm.nih.gov/25728668/",
-      "identifiers": { "pmid": "25728668", "doi": "10.1016/j.cell.2015.01.049" },
+      "identifiers": {
+        "pmid": "25728668",
+        "doi": "10.1016/j.cell.2015.01.049"
+      },
       "year": 2015,
       "provider": "PubMed",
       "release": null,
@@ -93,7 +104,9 @@
         "accessed_at": "2026-10-22"
       },
       "context": {
-        "organisms": ["Mus musculus"],
+        "organisms": [
+          "Mus musculus"
+        ],
         "model": "Trem2 deficiency in the 5XFAD model; other assays need extraction",
         "readout": "Microglial response and lipid sensing",
         "sample_size": null
@@ -114,7 +127,10 @@
       "citation": "Jay et al. (2015)",
       "title": "TREM2 deficiency eliminates TREM2+ inflammatory macrophages and ameliorates pathology in Alzheimer's disease mouse models",
       "url": "https://pubmed.ncbi.nlm.nih.gov/25732305/",
-      "identifiers": { "pmid": "25732305", "doi": "10.1084/jem.20142322" },
+      "identifiers": {
+        "pmid": "25732305",
+        "doi": "10.1084/jem.20142322"
+      },
       "year": 2015,
       "provider": "PubMed",
       "release": null,
@@ -125,7 +141,10 @@
         "accessed_at": "2026-10-22"
       },
       "context": {
-        "organisms": ["Mus musculus", "Homo sapiens"],
+        "organisms": [
+          "Mus musculus",
+          "Homo sapiens"
+        ],
         "model": "Trem2-deficient AD mouse models; human AD tissue observations are a separate component",
         "readout": "Plaque-associated myeloid cells, inflammation, amyloid and tau pathology",
         "sample_size": null
@@ -146,7 +165,10 @@
       "citation": "Yeh et al. (2016)",
       "title": "TREM2 Binds to Apolipoproteins, Including APOE and CLU/APOJ, and Thereby Facilitates Uptake of Amyloid-Beta by Microglia",
       "url": "https://pubmed.ncbi.nlm.nih.gov/27477018/",
-      "identifiers": { "pmid": "27477018", "doi": "10.1016/j.neuron.2016.06.015" },
+      "identifiers": {
+        "pmid": "27477018",
+        "doi": "10.1016/j.neuron.2016.06.015"
+      },
       "year": 2016,
       "provider": "PubMed",
       "release": null,
@@ -178,7 +200,10 @@
       "citation": "Krasemann et al. (2017)",
       "title": "The TREM2-APOE Pathway Drives the Transcriptional Phenotype of Dysfunctional Microglia in Neurodegenerative Diseases",
       "url": "https://pubmed.ncbi.nlm.nih.gov/28930663/",
-      "identifiers": { "pmid": "28930663", "doi": "10.1016/j.immuni.2017.08.008" },
+      "identifiers": {
+        "pmid": "28930663",
+        "doi": "10.1016/j.immuni.2017.08.008"
+      },
       "year": 2017,
       "provider": "PubMed",
       "release": null,
@@ -203,79 +228,27 @@
       "publication_status": "not_checked",
       "review_status": "unreviewed",
       "graph_status": "not_in_graph"
-    },
-    {
-      "id": "candidate-reactome-cholesterol-efflux",
-      "kind": "pathway_record",
-      "citation": "Reactome R-HSA-9029569",
-      "title": "NR1H3 & NR1H2 regulate gene expression linked to cholesterol transport and efflux",
-      "url": "https://reactome.org/content/detail/R-HSA-9029569",
-      "identifiers": { "reactome": "R-HSA-9029569" },
-      "year": null,
-      "provider": "Reactome",
-      "release": null,
-      "inspection": {
-        "url": "https://reactome.org/content/detail/R-HSA-9029569",
-        "method": "page",
-        "locator": "Pathway identity, species and indexed summary; member-event provenance and database release not extracted.",
-        "accessed_at": "2026-10-22"
-      },
-      "context": {
-        "organisms": ["Homo sapiens"],
-        "model": "Curated pathway record; not an AD experiment",
-        "readout": "Cholesterol transport/efflux gene regulation",
-        "sample_size": null
-      },
-      "reuse": {
-        "terms_url": "https://reactome.org/license",
-        "terms_checked_at": "2026-10-22",
-        "observed_terms": "Reactome distinguishes CC0 database data from CC BY 4.0 illustrations. Only record metadata and project-authored notes are retained; no artwork or source text is copied.",
-        "permission_status": "pending_review"
-      },
-      "publication_status": "not_applicable",
-      "review_status": "unreviewed",
-      "graph_status": "not_in_graph"
-    },
-    {
-      "id": "candidate-reactome-dap12",
-      "kind": "pathway_record",
-      "citation": "Reactome R-HSA-2424491",
-      "title": "DAP12 signaling",
-      "url": "https://reactome.org/content/detail/R-HSA-2424491",
-      "identifiers": { "reactome": "R-HSA-2424491" },
-      "year": null,
-      "provider": "Reactome",
-      "release": null,
-      "inspection": {
-        "url": "https://reactome.org/content/detail/R-HSA-2424491",
-        "method": "page",
-        "locator": "Pathway identity and species; TREM2 protein lookup R-HSA-197664 provides a navigation anchor, not an extracted membership assertion.",
-        "accessed_at": "2026-10-22"
-      },
-      "context": {
-        "organisms": ["Homo sapiens"],
-        "model": "Curated immune-signaling pathway; not AD-specific",
-        "readout": "DAP12 signaling",
-        "sample_size": null
-      },
-      "reuse": {
-        "terms_url": "https://reactome.org/license",
-        "terms_checked_at": "2026-10-22",
-        "observed_terms": "CC0 database data; illustrations have separate CC BY 4.0 terms. No illustrations or source text are retained.",
-        "permission_status": "pending_review"
-      },
-      "publication_status": "not_applicable",
-      "review_status": "unreviewed",
-      "graph_status": "not_in_graph"
     }
   ],
   "questions": [
     {
       "id": "reading-abca1-apoe-lipids",
       "question": "What do the ABCA1 experiments measure about ApoE lipid handling, and how would that relate to the scoped human association findings?",
-      "anchor_entity_ids": ["gene-abca1", "gene-apoe"],
-      "existing_claim_ids": ["claim-abca1-n1800h-risk", "claim-apoe-e4-risk", "claim-apoe-e2-risk"],
-      "candidate_ids": ["candidate-wahrle-2004", "candidate-hirsch-reinshagen-2004", "candidate-reactome-cholesterol-efflux"],
+      "anchor_entity_ids": [
+        "gene-abca1",
+        "gene-apoe"
+      ],
+      "existing_claim_ids": [
+        "claim-abca1-n1800h-risk",
+        "claim-apoe-e4-risk",
+        "claim-apoe-e2-risk",
+        "claim-apoe-cholesterol-pathway",
+        "claim-abca1-cholesterol-pathway"
+      ],
+      "candidate_ids": [
+        "candidate-wahrle-2004",
+        "candidate-hirsch-reinshagen-2004"
+      ],
       "checks": [
         "Extract species, genotype, cell preparation, assay and experiment-specific counts; separate ApoE protein lipidation from APOE genotype associations.",
         "Assess model/material overlap between the two 2004 publications; distinct DOIs do not establish independent replication.",
@@ -285,9 +258,21 @@
     {
       "id": "reading-trem2-apoe-interaction",
       "question": "Which experiments address TREM2–APOE protein interactions or microglial transcription, and which proposed pathway relationships would each support?",
-      "anchor_entity_ids": ["gene-trem2", "gene-apoe"],
-      "existing_claim_ids": ["claim-trem2-r47h-risk", "claim-apoe-e4-risk", "claim-apoe-e2-risk"],
-      "candidate_ids": ["candidate-yeh-2016", "candidate-krasemann-2017", "candidate-reactome-dap12"],
+      "anchor_entity_ids": [
+        "gene-trem2",
+        "gene-apoe"
+      ],
+      "existing_claim_ids": [
+        "claim-trem2-r47h-risk",
+        "claim-apoe-e4-risk",
+        "claim-apoe-e2-risk",
+        "claim-trem2-dap12-binding",
+        "claim-trem2-dap12-pathway"
+      ],
+      "candidate_ids": [
+        "candidate-yeh-2016",
+        "candidate-krasemann-2017"
+      ],
       "checks": [
         "Separate binding, cellular uptake and transcriptional endpoints. Extract assay-specific organism, protein form, variant, model and controls.",
         "Distinguish protein-level interactions from gene associations and human risk from experimental perturbations; resolve canonical protein identities before adding nodes.",
@@ -297,9 +282,16 @@
     {
       "id": "reading-trem2-model-context",
       "question": "Do the two 2015 TREM2 model studies address comparable perturbations, cell populations, disease stages and outcomes?",
-      "anchor_entity_ids": ["gene-trem2"],
-      "existing_claim_ids": ["claim-trem2-r47h-risk"],
-      "candidate_ids": ["candidate-wang-2015", "candidate-jay-2015"],
+      "anchor_entity_ids": [
+        "gene-trem2"
+      ],
+      "existing_claim_ids": [
+        "claim-trem2-r47h-risk"
+      ],
+      "candidate_ids": [
+        "candidate-wang-2015",
+        "candidate-jay-2015"
+      ],
       "checks": [
         "Extract mouse line, genetic background, age, sex, disease stage, cell markers and brain region per experiment before comparing outcomes.",
         "Distinguish microglial response, macrophage classification, amyloid/tau readouts and human tissue observations; do not infer a contradiction from abstract wording.",

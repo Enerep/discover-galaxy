@@ -55,17 +55,17 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
         <summary>Scope, limitations, and review</summary>
         <dl className="context-list">
           {Object.entries(claim.context).map(([key, value]) => <div key={key}><dt>{key.replaceAll('_', ' ')}</dt><dd>{display(value)}</dd></div>)}
-          <div><dt>Scientific review</dt><dd>{claim.review.status === 'approved' && claim.review.human_reviewed ? 'Human review recorded' : 'Human review pending'}</dd></div>
+          <div><dt>Source status</dt><dd>{claim.review.status === 'approved' && claim.review.human_reviewed ? 'Human review recorded' : 'Source-checked draft'}</dd></div>
           <div><dt>Reviewer / date</dt><dd>{claim.review.reviewer ?? 'Not recorded'} / {claim.review.date ?? 'Not recorded'}</dd></div>
         </dl>
         {evidence.map(({ evidence: item, source }) => <section key={item.id}>
           <h4>{citation(source)}</h4>
           <p>{item.finding}</p>
           <p>Source location: {item.locator}</p>
-          <p>{item.review.status === 'approved' && item.review.human_reviewed ? 'Evidence review recorded.' : 'Evidence review pending.'} {source.reuse.permission_status === 'permitted' ? 'Reuse permitted.' : 'Reuse assessment pending.'}</p>
-          <p>{source.publication_status.status === 'not_checked' ? 'Correction/retraction check pending.'
+          <p>{item.review.status === 'approved' && item.review.human_reviewed ? 'Evidence review recorded.' : 'Draft source check.'} {source.reuse.permission_status === 'permitted' ? 'Reuse permitted.' : 'Reuse assessment pending.'}</p>
+          {source.kind === 'publication' && <p>{source.publication_status.status === 'not_checked' ? 'Correction/retraction check pending.'
             : source.publication_status.status === 'retracted' ? 'Retraction recorded.'
-              : source.publication_status.status === 'corrected' ? 'Correction recorded.' : `No notice found at the recorded check (${source.publication_status.checked_at ?? 'date not recorded'}).`}</p>
+              : source.publication_status.status === 'corrected' ? 'Correction recorded.' : `No notice found at the recorded check (${source.publication_status.checked_at ?? 'date not recorded'}).`}</p>}
         </section>)}
         <ul>{limitations.map((item) => <li key={item}>{item}</li>)}</ul>
       </details>

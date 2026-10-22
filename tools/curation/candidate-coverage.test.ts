@@ -99,7 +99,11 @@ test('malformed dates, identifiers, non-human pathway records and credential-bea
     (copy: typeof packet) => { copy.candidates[0].url = 'https://reader:secret@example.org/paper'; },
     (copy: typeof packet) => { copy.candidates[0].inspection.url = 'https://example.org/paper?api_key=synthetic'; },
     (copy: typeof packet) => { copy.candidates[0].identifiers.doi = 'not-a-doi'; },
-    (copy: typeof packet) => { copy.candidates.find(({ kind }) => kind === 'pathway_record')!.identifiers.reactome = 'R-MMU-2424491'; },
+    (copy: typeof packet) => {
+      // Synthetic invalid record, isolated from the six real publication candidates.
+      Object.assign(copy.candidates[0], { kind: 'pathway_record', identifiers: { reactome: 'R-MMU-2424491' },
+        url: 'https://reactome.org/content/detail/R-MMU-2424491', year: null, provider: 'Reactome', publication_status: 'not_applicable' });
+    },
     (copy: typeof packet) => { copy.candidates[0].reuse.observed_terms = 'Undated permission assertion'; },
   ]) {
     const changed = structuredClone(packet);

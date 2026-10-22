@@ -1,8 +1,10 @@
-# Alzheimer's development snapshot
+# Alzheimer's source-checked snapshot
 
-`dataset.json` is an **eight-entity development starter**, not a released scientific dataset. It contains one disease, three human genes, four paper projections, and four source-scoped association claims. Every claim and evidence record remains **draft**. An AI-assisted source lookup is not an independent human scientific review.
+`dataset.json` is **alzheimers-source-checked-0.2.0**: 21 entities, 19 claims, 19 evidence records, and 22 sources. It contains one disease, seven human genes, seven distinct human proteins, two pathways, and four paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
-## What was inspected
+The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. New data are canonical gene/product mappings and attributed Reactome annotations, not new empirical AD-risk findings. The four original studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Original study lookups retained from 0.1.0
 
 | Record | Original evidence and locator | Lookup limits |
 | --- | --- | --- |
@@ -22,7 +24,7 @@ Source lookup date: **2026-10-20**. Bibliographic metadata was cross-checked aga
 
 Gene identity was checked against indexed NCBI Gene records. Some direct NCBI page opens returned browser challenges, so no complete database payload or database release was captured. Disease identity and aliases were checked against NLM MeSH. These records establish names and identity, not the scientific association claims.
 
-The APOE claims retain distinct genotype contexts; a lower-risk ε2/ε3 finding and a higher-risk ε4 finding are not labeled as a contradiction. Variants are claim context, not separate gene or protein nodes. No mouse-to-human orthology assumption, pathway claim, therapeutic claim, confidence percentage, conflict comparison, or research hypothesis was added.
+The APOE claims retain distinct genotype contexts; a lower-risk ε2/ε3 finding and a higher-risk ε4 finding are not labeled as a contradiction. Variants remain claim context. The 0.2.0 additions use human gene/product identities and specific curated pathway records; they do not assume mouse-to-human equivalence or add therapeutic claims, confidence percentages, conflicts, or hypotheses.
 
 ## Retained material and reuse
 
@@ -32,16 +34,22 @@ Retained material is limited to bibliographic facts, identifiers, links, and sho
 
 The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wiley terms](https://onlinelibrary.wiley.com/terms-and-conditions) were inspected on the lookup date. NCBI's access does not grant blanket rights to third-party article text. Publisher-specific permissions are **pending review**; an attempted Nature permissions-page lookup was unavailable. No permission grant or article-text redistribution license is asserted. Each source records the relevant terms URL and review state.
 
-## Before scientific release
+## Continue the source-checked explorer
 
-The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), prepares the next AD reading pass: six publications and two pathway records around the existing gene anchors. It preserves source access limits and unresolved context. It is not imported by the client and does not establish support for the existing claims. Use `npm run curation:coverage:check` to verify its references and generated output.
+The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), keeps six publications ready for the next AD source pass. The two earlier pathway candidates were added through the separately checked dataset diff in 0.2.0. The remaining papers need assay-level extraction; their metadata is not experimental graph evidence. Use `npm run curation:coverage:check` to verify the packet's references and generated output.
 
-Use the [generated review packet](review-packet.md) to inspect all four current findings, their source-specific context, and the eight source records in one place. Run `npm run curation:check` from the repository root to verify the extract is current. Actual review attestations belong in `dataset.json`; regenerate the packet after source-record changes. Generation performs structural checks only and does not complete any item below.
+Use the [generated source-review packet](review-packet.md) for all 19 findings, their source-specific context and 22 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
+
+Further draft additions require actual source inspection, scoped context and limitations, identifiers, locators, and source reuse assessment. Keep unknowns explicit and record a new dataset version. Do not add automatic approval attestations or promote staged metadata into experimental evidence.
+
+## Future scientific release
+
+Independent scientific review is a future milestone. The existing release contract retains these additional requirements:
 
 1. Record a named human scientific reviewer and review date for every claim and evidence record.
 2. Review the full relevant methods and results, including study comparability and source limitations.
 3. Check correction/retraction notices and record the check date. The current `not_checked` status must not be interpreted as absence of a notice.
 4. Complete source reuse and attribution review for the material actually distributed.
-5. Validate the contract and references, expand to the 20–50 entity MVP target, and publish a new immutable dataset version.
+5. Validate the contract and references, complete the remaining MVP capabilities, and publish a new immutable scientific dataset version; the development snapshot already meets the 20–50 entity size target.
 
-The development graph is suitable for implementing the search-to-evidence interaction. Its existence does not complete the scientific approval gate in [steps.md](../../steps.md) or the [evidence policy](../../docs/evidence-policy.md).
+The development graph supports source exploration now. Its size and source checks do not themselves complete the future scientific-release gate in [steps.md](../../steps.md) or the [evidence policy](../../docs/evidence-policy.md).

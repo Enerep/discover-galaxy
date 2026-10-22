@@ -20,6 +20,8 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
     info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7v1" /></>,
     paper: <><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7" /></>,
     gene: <><path d="M7 3c0 8 10 10 10 18M17 3C17 11 7 13 7 21M8 5h8M8 19h8M9 9h6M9 15h6" /></>,
+    protein: <><path d="M7 5h9a3 3 0 0 1 0 6H8a4 4 0 0 0 0 8h9" /><circle cx="5" cy="5" r="2" /><circle cx="19" cy="19" r="2" /></>,
+    pathway: <><path d="m7 6 10 2M18 10l-7 7M6 7l3 10" /><circle cx="5" cy="5" r="2" /><circle cx="19" cy="8" r="2" /><circle cx="10" cy="19" r="2" /></>,
     disease: <><circle cx="12" cy="12" r="8" /><path d="M8 12h8M12 8v8" /></>,
     plus: <path d="M5 12h14M12 5v14" />,
     minus: <path d="M5 12h14" />,

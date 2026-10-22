@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import rawDataset from '../../../data/alzheimers/dataset.json';
 import { EntitySearch } from './components/EntitySearch.tsx';
@@ -16,6 +16,7 @@ import type { ExplorerShareState } from './lib/share-state.ts';
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const FILTERS: { value: EntityType | 'all'; label: string }[] = [
   { value: 'all', label: 'All types' }, { value: 'gene', label: 'Genes' },
+  { value: 'protein', label: 'Proteins' }, { value: 'pathway', label: 'Pathways' },
   { value: 'disease', label: 'Diseases' }, { value: 'paper', label: 'Papers' },
 ];
 
@@ -63,6 +64,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const aboutRef = useRef<HTMLDialogElement>(null);
   const graphRef = useRef<HTMLElement>(null);
   const inspectorRef = useRef<HTMLElement>(null);
+  const focusConnection = useRef(false);
   const reducedMotion = useReducedMotion();
   const matches = useMemo(() => searchEntities(snapshot, query, filter), [snapshot, query, filter]);
   const selected = snapshot.entities.find(({ id }) => id === selectedId) ?? snapshot.entities[0];
@@ -77,6 +79,12 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   }, [snapshot, selected.id, activeClaim?.id, query, filter, view]);
   const paperCount = snapshot.entities.filter(({ type }) => type === 'paper').length;
   const filtered = !!query.trim() || filter !== 'all';
+
+  useLayoutEffect(() => {
+    if (!focusConnection.current) return;
+    inspectorRef.current?.querySelector<HTMLElement>('.selected-title')?.focus({ preventScroll: true });
+    focusConnection.current = false;
+  }, [selectedId]);
 
   function openComparison() {
     if (!activeClaim) return;
@@ -136,6 +144,13 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     if (!getEntityClaims(snapshot, selectedId).some((item) => item.id === id)) setSelectedId(claim.subject_id);
     setSelectedClaimId(id);
   }
+  function followConnection(entityId: string, claimId: string) {
+    focusConnection.current = true;
+    setQuery('');
+    setFilter('all');
+    setSelectedId(entityId);
+    setSelectedClaimId(claimId);
+  }
   function clearFilters() { setQuery(''); setFilter('all'); }
   function unavailable() { setWebglFailed(true); setView('list'); }
   function moveTo(target: HTMLElement | null, focus: HTMLElement | null = target) {
@@ -155,7 +170,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <div className="header-actions">
           <ThemeControl />
           <button className="data-status" aria-label="About the data" onClick={() => aboutRef.current?.showModal()}>
-            <span className="draft-dot" />Draft dataset<Icon name="info" size={16} />
+            <span className="draft-dot" /><span className="status-full">Source-checked draft</span><span className="status-compact">Draft</span><Icon name="info" size={16} />
           </button>
           <a className="project-link" href="https://github.com/Enerep/discover-galaxy" target="_blank" rel="noreferrer">GitHub <Icon name="external" size={14} /></a>
         </div>
@@ -164,7 +179,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       <div className="workspace">
         <main className="explorer" id="explorer" tabIndex={-1}>
           <div className="page-heading">
-            <div><h1>Alzheimer’s disease</h1><p>Search or choose a gene to read its studies.</p></div>
+            <div><h1>Alzheimer’s disease</h1><p>Explore genes, proteins, pathways, and their evidence.</p></div>
             <button className="secondary-button share-trigger" onClick={() => setShareOpen(true)}><Icon name="share" size={17} />Share</button>
           </div>
           <div className="explorer-tools">
@@ -194,7 +209,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
               {!matches.length ? (
                 <div className="empty-state" role="status">
                   <Icon name="search" size={28} /><h2>No matches</h2>
-                  <p>Try a gene name or clear the filters.</p>
+                  <p>Try an entity name or clear the filters.</p>
                   <button className="primary-button" onClick={clearFilters}>Show all entities</button>
                 </div>
               ) : view === 'graph' ? (
@@ -233,7 +248,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
             </div>
 
             <footer className="graph-legend" aria-label="Graph legend">
-              <div className="entity-legend"><span><i className="type-dot gene" />Gene</span><span><i className="type-dot disease" />Disease</span><span><i className="type-dot paper" />Paper</span></div>
+              <div className="entity-legend">
+                {(['gene', 'protein', 'pathway', 'disease', 'paper'] as const).map((type) => <span key={type}><i className={`type-dot ${type}`} />{TYPE_LABELS[type]}</span>)}
+              </div>
               <div className="edge-legend"><span><i />Claim</span><span><i className="citation-line" />Citation</span></div>
             </footer>
           </section>
@@ -248,12 +265,12 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
             <span><strong>{selected.label}</strong><small>{related.length} {related.length === 1 ? 'finding' : 'findings'}</small></span>
             <button className="primary-button" onClick={openEvidence}>View evidence<Icon name="arrow" size={14} /></button>
           </div>
-          <p className="coverage-note">Selected studies; scientific review pending.</p>
+          <p className="coverage-note">Selected studies and database annotations.</p>
         </main>
 
         <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
-          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} />
+          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection} />
       </div>
 
       <dialog className="data-dialog" ref={aboutRef} aria-labelledby="data-title">
@@ -261,7 +278,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <h2 id="data-title">About this dataset</h2>
         <p>{snapshot.scope.inclusion_criteria}</p>
         <ul>{snapshot.scope.limitations.map((item) => <li key={item}>{item}</li>)}</ul>
-        <p>Source notes were prepared with AI assistance from abstracts and bibliographic records. All scientific records are drafts awaiting human review.</p>
+        <p>Source-checked draft. Each finding links to its source and records what was inspected. Study results and curated database annotations retain their own scope.</p>
         <dl className="context-list"><div><dt>Dataset</dt><dd>{snapshot.dataset_version}</dd></div><div><dt>Source lookup</dt><dd>{snapshot.created_at.slice(0, 10)}</dd></div></dl>
         <button className="primary-button" onClick={() => aboutRef.current?.close()}>Close</button>
       </dialog>

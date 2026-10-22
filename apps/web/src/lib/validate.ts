@@ -230,9 +230,9 @@ export function validateDataset(input: unknown, { release = false }: { release?:
   });
   if (isRelease && (snapshot.entities.length < 20 || snapshot.entities.length > 50)) fail('entities', 'MVP public release must contain 20–50 displayed entities');
   if (!isRelease) {
-    warnings.unshift('Development snapshot: not approved for scientific or public release.');
+    warnings.unshift('Development snapshot: draft scientific records; see the recorded source checks and limitations.');
     const drafts = [...snapshot.claims, ...snapshot.evidence, ...snapshot.conflicts, ...snapshot.hypotheses].filter(({ review }) => review.status === 'draft').length;
-    if (drafts) warnings.push(`${drafts} scientific records await independent human review.`);
+    if (drafts) warnings.push(`${drafts} scientific records retain draft status.`);
     if (snapshot.sources.some(({ reuse }) => reuse.permission_status === 'pending_review')) warnings.push('Source reuse terms await review; no full-text publication content is licensed by this dataset.');
     if (snapshot.sources.some(({ publication_status }) => publication_status.status === 'not_checked')) warnings.push('Retraction and correction status has not been independently checked for every source.');
   }

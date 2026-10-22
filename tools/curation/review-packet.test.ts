@@ -13,7 +13,8 @@ test('the packet is deterministic and cannot silently modify scientific review s
   assert.equal(JSON.stringify(snapshot), before);
   assert.match(packet, /Release status:\*\* development/);
   assert.equal((packet.match(/\*\*Review status:\*\* draft/g) ?? []).length, snapshot.claims.length + snapshot.evidence.length);
-  assert.equal((packet.match(/\*\*Reviewer:\*\* Not recorded/g) ?? []).length, snapshot.claims.length + snapshot.evidence.length);
+  const unrecorded = [...snapshot.claims, ...snapshot.evidence].filter(({ review }) => review.reviewer === null).length;
+  assert.equal((packet.match(/\*\*Reviewer:\*\* Not recorded/g) ?? []).length, unrecorded);
   assert.doesNotMatch(packet, /\*\*Review status:\*\* approved/);
   assert.match(packet, /does not inspect publications, establish study independence, or grant scientific approval/);
 });
@@ -51,7 +52,7 @@ test('every source retains pending reuse and publication-status checks without f
     assert.ok(packet.includes(source.retrieved_at));
     assert.ok(packet.includes(source.reuse.terms_url));
   }
-  assert.equal((packet.match(/\*\*Reuse permission status:\*\* pending\\_review/g) ?? []).length, snapshot.sources.length);
+  assert.equal((packet.match(/\*\*Reuse permission status:\*\* pending\\_review/g) ?? []).length, snapshot.sources.filter(({ reuse }) => reuse.permission_status === 'pending_review').length);
   assert.equal((packet.match(/\*\*Reuse checked:\*\* Not recorded/g) ?? []).length, snapshot.sources.filter(({ reuse }) => reuse.date_checked === null).length);
   assert.equal((packet.match(/\*\*Publication status checked:\*\* Not recorded/g) ?? []).length, snapshot.sources.filter(({ publication_status }) => publication_status.checked_at === null).length);
   for (const source of snapshot.sources) {

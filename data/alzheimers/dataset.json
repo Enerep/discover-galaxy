@@ -1,17 +1,18 @@
 {
   "schema_version": "0.1.0",
-  "dataset_version": "alzheimers-starter-0.1.0",
-  "created_at": "2026-10-20T00:00:00Z",
+  "dataset_version": "alzheimers-source-checked-0.2.0",
+  "created_at": "2026-10-22",
   "release_status": "development",
   "scope": {
     "disease": "Alzheimer's disease",
-    "inclusion_criteria": "Small, source-linked development graph of selected human genetic association findings for APOE, ABCA1, and TREM2.",
+    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, and curated cholesterol-regulation and DAP12 pathway records.",
     "limitations": [
-      "Development data: AI-assisted abstract lookup is complete, but no independent human scientific review has been recorded.",
-      "This selective historical starter is not a systematic review, a current consensus statement, or a comprehensive map of Alzheimer's biology.",
-      "All claims and evidence remain draft; source reuse and correction/retraction checks must be completed before scientific release.",
-      "Associations are scoped to variants and study populations; they do not establish causation, individual risk, or treatment benefit.",
-      "Pathways, therapeutic targets, conflicting findings, and research hypotheses have not yet been curated."
+      "Source-checked draft: original study abstracts/metadata and specific database annotations were inspected at the recorded locations; this is not a comprehensive literature review.",
+      "The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
+      "Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.",
+      "Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.",
+      "Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.",
+      "No curated contradictions, therapeutic claims or novel research hypotheses are included. Missing connections describe coverage, not research gaps."
     ]
   },
   "upstream_releases": [
@@ -38,6 +39,22 @@
       "source_url": "https://pubmed.ncbi.nlm.nih.gov/",
       "reuse_terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
       "attribution": "Publication metadata: PubMed, National Library of Medicine; findings attributed to the cited study authors. No article text is redistributed."
+    },
+    {
+      "provider": "Reactome",
+      "release": null,
+      "accessed_at": "2026-10-22",
+      "source_url": "https://reactome.org/content/detail/R-HSA-9029569",
+      "reuse_terms_url": "https://reactome.org/license",
+      "attribution": "Reactome Pathway Database, CC0 data. Specific records/locators and access dates are retained; exact database release is unresolved. No artwork copied."
+    },
+    {
+      "provider": "UniProt",
+      "release": "Individual entries updated 2026-09-02: P02649 v280, Q9NZC2 v187, O43914 v196, P19793 v263",
+      "accessed_at": "2026-10-22",
+      "source_url": "https://rest.uniprot.org/uniprotkb/P02649.txt",
+      "reuse_terms_url": "https://rest.uniprot.org/help/license",
+      "attribution": "The UniProt Consortium, UniProtKB, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Project-authored summaries; no sequence/source prose retained."
     }
   ],
   "entities": [
@@ -45,81 +62,432 @@
       "id": "disease-alzheimers",
       "type": "disease",
       "label": "Alzheimer's disease",
-      "aliases": ["Alzheimer disease", "Alzheimers", "Alzheimer's", "Alzheimer’s disease", "AD"],
-      "external_ids": [{"namespace": "MeSH", "value": "D000544"}],
+      "aliases": [
+        "Alzheimer disease",
+        "Alzheimers",
+        "Alzheimer's",
+        "Alzheimer’s disease",
+        "AD"
+      ],
+      "external_ids": [
+        {
+          "namespace": "MeSH",
+          "value": "D000544"
+        }
+      ],
       "description": "Alzheimer Disease · MeSH D000544",
       "description_claim_ids": [],
-      "provenance_source_ids": ["source-mesh-alzheimers"]
+      "provenance_source_ids": [
+        "source-mesh-alzheimers"
+      ]
     },
     {
       "id": "gene-apoe",
       "type": "gene",
       "label": "APOE",
-      "aliases": ["apolipoprotein E"],
-      "external_ids": [{"namespace": "NCBIGene", "value": "348"}],
+      "aliases": [
+        "apolipoprotein E"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBIGene",
+          "value": "348"
+        }
+      ],
       "description": "apolipoprotein E · human gene",
       "description_claim_ids": [],
-      "provenance_source_ids": ["source-ncbi-apoe"]
+      "provenance_source_ids": [
+        "source-ncbi-apoe"
+      ]
     },
     {
       "id": "gene-abca1",
       "type": "gene",
       "label": "ABCA1",
-      "aliases": ["ATP binding cassette subfamily A member 1"],
-      "external_ids": [{"namespace": "NCBIGene", "value": "19"}],
+      "aliases": [
+        "ATP binding cassette subfamily A member 1"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBIGene",
+          "value": "19"
+        }
+      ],
       "description": "ATP binding cassette subfamily A member 1 · human gene",
       "description_claim_ids": [],
-      "provenance_source_ids": ["source-ncbi-abca1"]
+      "provenance_source_ids": [
+        "source-ncbi-abca1"
+      ]
     },
     {
       "id": "gene-trem2",
       "type": "gene",
       "label": "TREM2",
-      "aliases": ["triggering receptor expressed on myeloid cells 2"],
-      "external_ids": [{"namespace": "NCBIGene", "value": "54209"}],
+      "aliases": [
+        "triggering receptor expressed on myeloid cells 2"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBIGene",
+          "value": "54209"
+        }
+      ],
       "description": "triggering receptor expressed on myeloid cells 2 · human gene",
       "description_claim_ids": [],
-      "provenance_source_ids": ["source-ncbi-trem2"]
+      "provenance_source_ids": [
+        "source-ncbi-trem2"
+      ]
     },
     {
       "id": "paper-corder-1993",
       "type": "paper",
       "label": "Corder et al. · 1993",
-      "aliases": ["8346443", "APOE epsilon4 study"],
+      "aliases": [
+        "8346443",
+        "APOE epsilon4 study"
+      ],
       "external_ids": [],
       "description_claim_ids": [],
       "source_id": "source-corder-1993",
-      "provenance_source_ids": ["source-corder-1993"]
+      "provenance_source_ids": [
+        "source-corder-1993"
+      ]
     },
     {
       "id": "paper-corder-1994",
       "type": "paper",
       "label": "Corder et al. · 1994",
-      "aliases": ["7920638", "APOE epsilon2 study"],
+      "aliases": [
+        "7920638",
+        "APOE epsilon2 study"
+      ],
       "external_ids": [],
       "description_claim_ids": [],
       "source_id": "source-corder-1994",
-      "provenance_source_ids": ["source-corder-1994"]
+      "provenance_source_ids": [
+        "source-corder-1994"
+      ]
     },
     {
       "id": "paper-nordestgaard-2015",
       "type": "paper",
       "label": "Nordestgaard et al. · 2015",
-      "aliases": ["26079414", "ABCA1 N1800H study"],
+      "aliases": [
+        "26079414",
+        "ABCA1 N1800H study"
+      ],
       "external_ids": [],
       "description_claim_ids": [],
       "source_id": "source-nordestgaard-2015",
-      "provenance_source_ids": ["source-nordestgaard-2015"]
+      "provenance_source_ids": [
+        "source-nordestgaard-2015"
+      ]
     },
     {
       "id": "paper-jonsson-2013",
       "type": "paper",
       "label": "Jonsson et al. · 2013",
-      "aliases": ["23150908", "TREM2 R47H study"],
+      "aliases": [
+        "23150908",
+        "TREM2 R47H study"
+      ],
       "external_ids": [],
       "description_claim_ids": [],
       "source_id": "source-jonsson-2013",
-      "provenance_source_ids": ["source-jonsson-2013"]
+      "provenance_source_ids": [
+        "source-jonsson-2013"
+      ]
+    },
+    {
+      "id": "protein-apoe",
+      "type": "protein",
+      "label": "APOE protein",
+      "aliases": [
+        "Apolipoprotein E",
+        "P02649",
+        "APOE gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P02649"
+        }
+      ],
+      "description": "Human protein · UniProt P02649",
+      "description_claim_ids": [
+        "claim-apoe-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-apoe"
+      ]
+    },
+    {
+      "id": "protein-abca1",
+      "type": "protein",
+      "label": "ABCA1 protein",
+      "aliases": [
+        "Phospholipid-transporting ATPase ABCA1",
+        "O95477",
+        "ABCA1 gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "O95477"
+        }
+      ],
+      "description": "Human protein · UniProt O95477",
+      "description_claim_ids": [
+        "claim-abca1-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-reactome-abca1-protein"
+      ]
+    },
+    {
+      "id": "protein-trem2",
+      "type": "protein",
+      "label": "TREM2 protein",
+      "aliases": [
+        "Triggering receptor expressed on myeloid cells 2",
+        "Q9NZC2",
+        "TREM2 gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "Q9NZC2"
+        }
+      ],
+      "description": "Human protein · UniProt Q9NZC2",
+      "description_claim_ids": [
+        "claim-trem2-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-trem2"
+      ]
+    },
+    {
+      "id": "gene-tyrobp",
+      "type": "gene",
+      "label": "TYROBP",
+      "aliases": [
+        "DAP12",
+        "KARAP"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "7305"
+        }
+      ],
+      "description": "Human gene · NCBI Gene 7305",
+      "description_claim_ids": [
+        "claim-tyrobp-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-tyrobp"
+      ]
+    },
+    {
+      "id": "protein-tyrobp",
+      "type": "protein",
+      "label": "DAP12 protein",
+      "aliases": [
+        "TYRO protein tyrosine kinase-binding protein",
+        "O43914",
+        "TYROBP gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "O43914"
+        }
+      ],
+      "description": "Human protein · UniProt O43914",
+      "description_claim_ids": [
+        "claim-tyrobp-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-tyrobp"
+      ]
+    },
+    {
+      "id": "gene-nr1h2",
+      "type": "gene",
+      "label": "NR1H2",
+      "aliases": [
+        "LXRB",
+        "LXR beta",
+        "LXRβ"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "7376"
+        }
+      ],
+      "description": "Human gene · NCBI Gene 7376",
+      "description_claim_ids": [
+        "claim-nr1h2-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-reactome-nr1h2-protein"
+      ]
+    },
+    {
+      "id": "protein-nr1h2",
+      "type": "protein",
+      "label": "LXRβ protein",
+      "aliases": [
+        "Oxysterols receptor LXR-beta",
+        "P55055",
+        "NR1H2 gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P55055"
+        }
+      ],
+      "description": "Human protein · UniProt P55055",
+      "description_claim_ids": [
+        "claim-nr1h2-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-reactome-nr1h2-protein"
+      ]
+    },
+    {
+      "id": "gene-nr1h3",
+      "type": "gene",
+      "label": "NR1H3",
+      "aliases": [
+        "LXRA",
+        "LXR alpha",
+        "LXRα"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "10062"
+        }
+      ],
+      "description": "Human gene · NCBI Gene 10062",
+      "description_claim_ids": [
+        "claim-nr1h3-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-reactome-nr1h3-protein"
+      ]
+    },
+    {
+      "id": "protein-nr1h3",
+      "type": "protein",
+      "label": "LXRα protein",
+      "aliases": [
+        "Oxysterols receptor LXR-alpha",
+        "Q13133",
+        "NR1H3 gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "Q13133"
+        }
+      ],
+      "description": "Human protein · UniProt Q13133",
+      "description_claim_ids": [
+        "claim-nr1h3-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-reactome-nr1h3-protein"
+      ]
+    },
+    {
+      "id": "gene-rxra",
+      "type": "gene",
+      "label": "RXRA",
+      "aliases": [
+        "NR2B1",
+        "RXR alpha",
+        "RXRα"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "6256"
+        }
+      ],
+      "description": "Human gene · NCBI Gene 6256",
+      "description_claim_ids": [
+        "claim-rxra-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-rxra"
+      ]
+    },
+    {
+      "id": "protein-rxra",
+      "type": "protein",
+      "label": "RXRα protein",
+      "aliases": [
+        "Retinoic acid receptor RXR-alpha",
+        "P19793",
+        "RXRA gene product"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P19793"
+        }
+      ],
+      "description": "Human protein · UniProt P19793",
+      "description_claim_ids": [
+        "claim-rxra-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-rxra"
+      ]
+    },
+    {
+      "id": "pathway-cholesterol-efflux",
+      "type": "pathway",
+      "label": "Cholesterol transport and efflux",
+      "aliases": [
+        "NR1H3 & NR1H2 regulate gene expression linked to cholesterol transport and efflux",
+        "R-HSA-9029569"
+      ],
+      "external_ids": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-9029569"
+        }
+      ],
+      "description": "Curated human pathway",
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-reactome-cholesterol-efflux"
+      ]
+    },
+    {
+      "id": "pathway-dap12",
+      "type": "pathway",
+      "label": "DAP12 signaling",
+      "aliases": [
+        "R-HSA-2424491"
+      ],
+      "external_ids": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2424491"
+        }
+      ],
+      "description": "Curated human pathway",
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-reactome-dap12"
+      ]
     }
   ],
   "claims": [
@@ -129,11 +497,27 @@
       "object_id": "disease-alzheimers",
       "predicate": "associated_with",
       "statement": "In 42 late-onset Alzheimer's families studied in 1993, more APOE ε4 alleles were associated with higher disease risk and earlier onset.",
-      "context": {"organism": "Homo sapiens", "variant": "APOE ε4 allele count", "population": "42 families with late-onset Alzheimer's disease", "study_design": "Familial genetic association", "outcome": "Disease risk and age at onset", "intervention": null},
-      "evidence_ids": ["evidence-apoe-e4-corder-1993"],
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 allele count",
+        "population": "42 families with late-onset Alzheimer's disease",
+        "study_design": "Familial genetic association",
+        "outcome": "Disease risk and age at onset",
+        "intervention": null
+      },
+      "evidence_ids": [
+        "evidence-apoe-e4-corder-1993"
+      ],
       "summary": "This historical family study connects APOE allele dosage to disease susceptibility; it does not predict an individual's outcome.",
-      "limitations": ["Selected families and an abstract-level lookup do not establish population-wide risk or causality."],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "limitations": [
+        "Selected families and an abstract-level lookup do not establish population-wide risk or causality."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
     },
     {
       "id": "claim-apoe-e2-risk",
@@ -141,11 +525,27 @@
       "object_id": "disease-alzheimers",
       "predicate": "associated_with",
       "statement": "A 1994 study reported the lowest Alzheimer's risk among participants with the APOE ε2/ε3 genotype.",
-      "context": {"organism": "Homo sapiens", "variant": "APOE ε2/ε3 genotype", "population": "Case-control participants and members of 66 Alzheimer's families", "study_design": "Case-control and family genetic association", "outcome": "Late-onset Alzheimer's disease risk", "intervention": null},
-      "evidence_ids": ["evidence-apoe-e2-corder-1994"],
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε2/ε3 genotype",
+        "population": "Case-control participants and members of 66 Alzheimer's families",
+        "study_design": "Case-control and family genetic association",
+        "outcome": "Late-onset Alzheimer's disease risk",
+        "intervention": null
+      },
+      "evidence_ids": [
+        "evidence-apoe-e2-corder-1994"
+      ],
       "summary": "The allele-specific result illustrates why APOE relationships must retain genotype context. It does not imply immunity to Alzheimer's disease.",
-      "limitations": ["This is a historical observational association, not a treatment effect or an individual risk estimate."],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "limitations": [
+        "This is a historical observational association, not a treatment effect or an individual risk estimate."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
     },
     {
       "id": "claim-abca1-n1800h-risk",
@@ -153,11 +553,27 @@
       "object_id": "disease-alzheimers",
       "predicate": "associated_with",
       "statement": "A 2015 general-population study associated the ABCA1 N1800H loss-of-function variant with higher Alzheimer's disease risk.",
-      "context": {"organism": "Homo sapiens", "variant": "ABCA1 N1800H; study genotype comparison AC versus AA", "population": "92,726 general-population participants in the AD analysis", "study_design": "Human genetic association", "outcome": "Alzheimer's disease hazard", "intervention": null},
-      "evidence_ids": ["evidence-abca1-nordestgaard-2015"],
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "ABCA1 N1800H; study genotype comparison AC versus AA",
+        "population": "92,726 general-population participants in the AD analysis",
+        "study_design": "Human genetic association",
+        "outcome": "Alzheimer's disease hazard",
+        "intervention": null
+      },
+      "evidence_ids": [
+        "evidence-abca1-nordestgaard-2015"
+      ],
       "summary": "This finding concerns a particular rare variant. It is not evidence that every ABCA1 variant increases risk or that modifying ABCA1 treats disease.",
-      "limitations": ["The reported estimate was imprecise; the abstract gives a wide confidence interval. No intervention was tested."],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "limitations": [
+        "The reported estimate was imprecise; the abstract gives a wide confidence interval. No intervention was tested."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
     },
     {
       "id": "claim-trem2-r47h-risk",
@@ -165,11 +581,455 @@
       "object_id": "disease-alzheimers",
       "predicate": "associated_with",
       "statement": "A 2013 study associated the rare TREM2 rs75932628-T variant, predicted to produce R47H, with Alzheimer's disease in Iceland and replication samples.",
-      "context": {"organism": "Homo sapiens", "variant": "rs75932628-T; predicted R47H substitution", "population": "Icelandic discovery and US, Norwegian, Dutch, and German replication samples", "study_design": "Sequencing, imputation, and case-control replication", "outcome": "Alzheimer's disease odds", "intervention": null},
-      "evidence_ids": ["evidence-trem2-jonsson-2013"],
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "rs75932628-T; predicted R47H substitution",
+        "population": "Icelandic discovery and US, Norwegian, Dutch, and German replication samples",
+        "study_design": "Sequencing, imputation, and case-control replication",
+        "outcome": "Alzheimer's disease odds",
+        "intervention": null
+      },
+      "evidence_ids": [
+        "evidence-trem2-jonsson-2013"
+      ],
       "summary": "The association concerns a specific rare variant; a proposed inflammatory mechanism was not demonstrated by this association alone.",
-      "limitations": ["The sampled populations and rare-variant analysis limit generalization. Association does not establish a mechanism or therapeutic effect."],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "limitations": [
+        "The sampled populations and rare-variant analysis limit generalization. Association does not establish a mechanism or therapeutic effect."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
+    },
+    {
+      "id": "claim-apoe-encodes",
+      "subject_id": "gene-apoe",
+      "object_id": "protein-apoe",
+      "predicate": "encodes",
+      "statement": "The human APOE gene encodes Apolipoprotein E (P02649).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "348",
+        "protein_accession": "P02649"
+      },
+      "evidence_ids": [
+        "evidence-apoe-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-abca1-encodes",
+      "subject_id": "gene-abca1",
+      "object_id": "protein-abca1",
+      "predicate": "encodes",
+      "statement": "The human ABCA1 gene encodes Phospholipid-transporting ATPase ABCA1 (O95477).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "19",
+        "protein_accession": "O95477"
+      },
+      "evidence_ids": [
+        "evidence-abca1-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-trem2-encodes",
+      "subject_id": "gene-trem2",
+      "object_id": "protein-trem2",
+      "predicate": "encodes",
+      "statement": "The human TREM2 gene encodes Triggering receptor expressed on myeloid cells 2 (Q9NZC2).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "54209",
+        "protein_accession": "Q9NZC2"
+      },
+      "evidence_ids": [
+        "evidence-trem2-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-tyrobp-encodes",
+      "subject_id": "gene-tyrobp",
+      "object_id": "protein-tyrobp",
+      "predicate": "encodes",
+      "statement": "The human TYROBP gene encodes TYRO protein tyrosine kinase-binding protein (O43914).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "7305",
+        "protein_accession": "O43914"
+      },
+      "evidence_ids": [
+        "evidence-tyrobp-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-nr1h2-encodes",
+      "subject_id": "gene-nr1h2",
+      "object_id": "protein-nr1h2",
+      "predicate": "encodes",
+      "statement": "The human NR1H2 gene encodes Oxysterols receptor LXR-beta (P55055).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "7376",
+        "protein_accession": "P55055"
+      },
+      "evidence_ids": [
+        "evidence-nr1h2-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-nr1h3-encodes",
+      "subject_id": "gene-nr1h3",
+      "object_id": "protein-nr1h3",
+      "predicate": "encodes",
+      "statement": "The human NR1H3 gene encodes Oxysterols receptor LXR-alpha (Q13133).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "10062",
+        "protein_accession": "Q13133"
+      },
+      "evidence_ids": [
+        "evidence-nr1h3-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-rxra-encodes",
+      "subject_id": "gene-rxra",
+      "object_id": "protein-rxra",
+      "predicate": "encodes",
+      "statement": "The human RXRA gene encodes Retinoic acid receptor RXR-alpha (P19793).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "6256",
+        "protein_accession": "P19793"
+      },
+      "evidence_ids": [
+        "evidence-rxra-encodes"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-apoe-cholesterol-pathway",
+      "subject_id": "protein-apoe",
+      "object_id": "pathway-cholesterol-efflux",
+      "predicate": "participates_in",
+      "statement": "Reactome includes APOE protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "Secreted APOE output of a curated expression event",
+        "pathway_id": "R-HSA-9029569"
+      },
+      "evidence_ids": [
+        "evidence-apoe-cholesterol-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-abca1-cholesterol-pathway",
+      "subject_id": "protein-abca1",
+      "object_id": "pathway-cholesterol-efflux",
+      "predicate": "participates_in",
+      "statement": "Reactome includes ABCA1 protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "ABCA1 at the plasma membrane",
+        "pathway_id": "R-HSA-9029569"
+      },
+      "evidence_ids": [
+        "evidence-abca1-cholesterol-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-nr1h2-cholesterol-pathway",
+      "subject_id": "protein-nr1h2",
+      "object_id": "pathway-cholesterol-efflux",
+      "predicate": "participates_in",
+      "statement": "Reactome includes LXRβ protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "NR1H2-containing nuclear-receptor complexes",
+        "pathway_id": "R-HSA-9029569"
+      },
+      "evidence_ids": [
+        "evidence-nr1h2-cholesterol-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-nr1h3-cholesterol-pathway",
+      "subject_id": "protein-nr1h3",
+      "object_id": "pathway-cholesterol-efflux",
+      "predicate": "participates_in",
+      "statement": "Reactome includes LXRα protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "NR1H3-containing nuclear-receptor complexes",
+        "pathway_id": "R-HSA-9029569"
+      },
+      "evidence_ids": [
+        "evidence-nr1h3-cholesterol-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-rxra-cholesterol-pathway",
+      "subject_id": "protein-rxra",
+      "object_id": "pathway-cholesterol-efflux",
+      "predicate": "participates_in",
+      "statement": "Reactome includes RXRα protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "RXRA in NR1H2/NR1H3 receptor complexes",
+        "pathway_id": "R-HSA-9029569"
+      },
+      "evidence_ids": [
+        "evidence-rxra-cholesterol-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-trem2-dap12-pathway",
+      "subject_id": "protein-trem2",
+      "object_id": "pathway-dap12",
+      "predicate": "participates_in",
+      "statement": "Reactome includes TREM2 protein in its human DAP12 signaling pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "TREM2 in DAP12-receptor signaling complexes",
+        "pathway_id": "R-HSA-2424491"
+      },
+      "evidence_ids": [
+        "evidence-trem2-dap12-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "The annotation concerns specified protein states and complexes, not all possible protein activities.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-tyrobp-dap12-pathway",
+      "subject_id": "protein-tyrobp",
+      "object_id": "pathway-dap12",
+      "predicate": "participates_in",
+      "statement": "Reactome includes DAP12 protein in its human DAP12 signaling pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "TYROBP phosphorylated at Y91/Y102 in membrane signaling complexes",
+        "pathway_id": "R-HSA-2424491"
+      },
+      "evidence_ids": [
+        "evidence-tyrobp-dap12-pathway"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "The annotation concerns specified protein states and complexes, not all possible protein activities.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-trem2-dap12-binding",
+      "subject_id": "protein-trem2",
+      "object_id": "protein-tyrobp",
+      "predicate": "interacts_with",
+      "statement": "Reactome records binding between human TREM2 and the DAP12 adaptor dimer.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "TREM2 and DAP12 dimer at the plasma membrane",
+        "record_id": "R-HSA-210300"
+      },
+      "evidence_ids": [
+        "evidence-trem2-dap12-binding"
+      ],
+      "summary": "Follow the cited record for the annotation and its source context.",
+      "limitations": [
+        "Curated binding assertion; the primary experiment was not re-extracted in this pass.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
     }
   ],
   "evidence": [
@@ -181,10 +1041,27 @@
       "relation": "supports",
       "finding": "The abstract reports increasing disease risk and decreasing mean onset age as APOE ε4 allele count increased in the sampled families.",
       "locator": "PubMed abstract, PMID 8346443",
-      "study_context": {"study_design": "Familial genetic association", "organism": "Homo sapiens", "population": "Late-onset Alzheimer's families", "families": 42, "sample_size": null, "variant": "APOE ε4 allele count", "outcome": "Disease risk and age at onset", "tissue": null, "intervention": null},
-      "limitations": ["Only the abstract and bibliographic metadata were inspected. The family-based estimates are not individual predictions."],
+      "study_context": {
+        "study_design": "Familial genetic association",
+        "organism": "Homo sapiens",
+        "population": "Late-onset Alzheimer's families",
+        "families": 42,
+        "sample_size": null,
+        "variant": "APOE ε4 allele count",
+        "outcome": "Disease risk and age at onset",
+        "tissue": null,
+        "intervention": null
+      },
+      "limitations": [
+        "Only the abstract and bibliographic metadata were inspected. The family-based estimates are not individual predictions."
+      ],
       "source_metrics": [],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
     },
     {
       "id": "evidence-apoe-e2-corder-1994",
@@ -194,10 +1071,26 @@
       "relation": "supports",
       "finding": "The abstract reports the lowest disease risk in ε2/ε3 participants and describes an ε2-associated reduction in risk.",
       "locator": "Nature Genetics publisher abstract, DOI 10.1038/ng0694-180",
-      "study_context": {"study_design": "Case-control and family genetic association", "organism": "Homo sapiens", "population": "115 cases, 243 controls, and 150 affected plus 197 unaffected relatives in 66 families", "sample_size": null, "variant": "APOE ε2/ε3 genotype", "outcome": "Late-onset Alzheimer's disease risk", "tissue": null, "intervention": null},
-      "limitations": ["Only the publisher abstract was inspected. Case and family totals are not combined because participant overlap was not assessed."],
+      "study_context": {
+        "study_design": "Case-control and family genetic association",
+        "organism": "Homo sapiens",
+        "population": "115 cases, 243 controls, and 150 affected plus 197 unaffected relatives in 66 families",
+        "sample_size": null,
+        "variant": "APOE ε2/ε3 genotype",
+        "outcome": "Late-onset Alzheimer's disease risk",
+        "tissue": null,
+        "intervention": null
+      },
+      "limitations": [
+        "Only the publisher abstract was inspected. Case and family totals are not combined because participant overlap was not assessed."
+      ],
       "source_metrics": [],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
     },
     {
       "id": "evidence-abca1-nordestgaard-2015",
@@ -207,10 +1100,26 @@
       "relation": "supports",
       "finding": "For the AD analysis, the abstract reports a higher adjusted hazard for N1800H AC than AA, with a wide confidence interval.",
       "locator": "Publisher abstract, Methods and Results, DOI 10.1016/j.jalz.2015.04.006",
-      "study_context": {"study_design": "Human general-population genetic association", "organism": "Homo sapiens", "population": "General-population participants", "sample_size": 92726, "variant": "ABCA1 N1800H; AC versus AA", "outcome": "Alzheimer's disease hazard", "tissue": null, "intervention": null},
-      "limitations": ["The abstract-level review cannot assess all confounding or ascertainment choices. A rare-variant association is not a treatment experiment."],
+      "study_context": {
+        "study_design": "Human general-population genetic association",
+        "organism": "Homo sapiens",
+        "population": "General-population participants",
+        "sample_size": 92726,
+        "variant": "ABCA1 N1800H; AC versus AA",
+        "outcome": "Alzheimer's disease hazard",
+        "tissue": null,
+        "intervention": null
+      },
+      "limitations": [
+        "The abstract-level review cannot assess all confounding or ascertainment choices. A rare-variant association is not a treatment experiment."
+      ],
       "source_metrics": [],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
     },
     {
       "id": "evidence-trem2-jonsson-2013",
@@ -220,10 +1129,455 @@
       "relation": "supports",
       "finding": "The abstract reports an rs75932628-T association in the Icelandic analysis and in combined discovery and replication samples.",
       "locator": "PubMed abstract, Methods and Results, PMID 23150908",
-      "study_context": {"study_design": "Sequencing, imputation, and case-control replication", "organism": "Homo sapiens", "population": "Icelandic discovery; replication in the United States, Norway, the Netherlands, and Germany", "sample_size": null, "sequenced_discovery_individuals": 2261, "variant": "rs75932628-T; predicted R47H substitution", "outcome": "Alzheimer's disease odds", "tissue": null, "intervention": null},
-      "limitations": ["Only the abstract and metadata were inspected. The 2,261 sequenced individuals are not the total case-control sample size."],
+      "study_context": {
+        "study_design": "Sequencing, imputation, and case-control replication",
+        "organism": "Homo sapiens",
+        "population": "Icelandic discovery; replication in the United States, Norway, the Netherlands, and Germany",
+        "sample_size": null,
+        "sequenced_discovery_individuals": 2261,
+        "variant": "rs75932628-T; predicted R47H substitution",
+        "outcome": "Alzheimer's disease odds",
+        "tissue": null,
+        "intervention": null
+      },
+      "limitations": [
+        "Only the abstract and metadata were inspected. The 2,261 sequenced individuals are not the total case-control sample size."
+      ],
       "source_metrics": [],
-      "review": {"status": "draft", "reviewer": null, "date": null, "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."}
+      "review": {
+        "status": "draft",
+        "reviewer": null,
+        "date": null,
+        "rationale": "AI-assisted abstract lookup only. Independent scientific review, reuse assessment, and correction/retraction checks are pending."
+      }
+    },
+    {
+      "id": "evidence-apoe-encodes",
+      "claim_id": "claim-apoe-encodes",
+      "source_id": "source-uniprot-apoe",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human APOE gene encodes Apolipoprotein E (P02649).",
+      "locator": "UniProtKB ID/AC, gene name (GN), organism (OS), GeneID cross-reference (DR), and entry-version (DT) fields.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "348",
+        "protein_accession": "P02649",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-abca1-encodes",
+      "claim_id": "claim-abca1-encodes",
+      "source_id": "source-reactome-abca1-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human ABCA1 gene encodes Phospholipid-transporting ATPase ABCA1 (O95477).",
+      "locator": "Reactome External Reference Information: UniProt accession, Gene Names and Reference Genes; species in record identity.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "19",
+        "protein_accession": "O95477",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-trem2-encodes",
+      "claim_id": "claim-trem2-encodes",
+      "source_id": "source-uniprot-trem2",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human TREM2 gene encodes Triggering receptor expressed on myeloid cells 2 (Q9NZC2).",
+      "locator": "UniProtKB ID/AC, gene name (GN), organism (OS), GeneID cross-reference (DR), and entry-version (DT) fields.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "54209",
+        "protein_accession": "Q9NZC2",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-tyrobp-encodes",
+      "claim_id": "claim-tyrobp-encodes",
+      "source_id": "source-uniprot-tyrobp",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human TYROBP gene encodes TYRO protein tyrosine kinase-binding protein (O43914).",
+      "locator": "UniProtKB ID/AC, gene name (GN), organism (OS), GeneID cross-reference (DR), and entry-version (DT) fields.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "7305",
+        "protein_accession": "O43914",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-nr1h2-encodes",
+      "claim_id": "claim-nr1h2-encodes",
+      "source_id": "source-reactome-nr1h2-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human NR1H2 gene encodes Oxysterols receptor LXR-beta (P55055).",
+      "locator": "Reactome External Reference Information: UniProt accession, Gene Names and Reference Genes; species in record identity.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "7376",
+        "protein_accession": "P55055",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-nr1h3-encodes",
+      "claim_id": "claim-nr1h3-encodes",
+      "source_id": "source-reactome-nr1h3-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human NR1H3 gene encodes Oxysterols receptor LXR-alpha (Q13133).",
+      "locator": "Reactome External Reference Information: UniProt accession, Gene Names and Reference Genes; species in record identity.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "10062",
+        "protein_accession": "Q13133",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-rxra-encodes",
+      "claim_id": "claim-rxra-encodes",
+      "source_id": "source-uniprot-rxra",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The human RXRA gene encodes Retinoic acid receptor RXR-alpha (P19793).",
+      "locator": "UniProtKB ID/AC, gene name (GN), organism (OS), GeneID cross-reference (DR), and entry-version (DT) fields.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "gene_id": "6256",
+        "protein_accession": "P19793",
+        "sample_size": null
+      },
+      "limitations": [
+        "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-apoe-cholesterol-pathway",
+      "claim_id": "claim-apoe-cholesterol-pathway",
+      "source_id": "source-reactome-apoe-expression",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes APOE protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "locator": "Reactome Participants: APOE protein output; Participates: cholesterol transport/efflux pathway.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "Secreted APOE output of a curated expression event",
+        "pathway_id": "R-HSA-9029569",
+        "sample_size": null
+      },
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-abca1-cholesterol-pathway",
+      "claim_id": "claim-abca1-cholesterol-pathway",
+      "source_id": "source-reactome-abca1-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes ABCA1 protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "locator": "Reactome Locations in the PathwayBrowser: cholesterol transport/efflux → ABCA1 translation and NR1H2 binding.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "ABCA1 at the plasma membrane",
+        "pathway_id": "R-HSA-9029569",
+        "sample_size": null
+      },
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-nr1h2-cholesterol-pathway",
+      "claim_id": "claim-nr1h2-cholesterol-pathway",
+      "source_id": "source-reactome-nr1h2-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes LXRβ protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "locator": "Reactome Locations in the PathwayBrowser: cholesterol transport/efflux branch and NR1H2-containing complexes.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "NR1H2-containing nuclear-receptor complexes",
+        "pathway_id": "R-HSA-9029569",
+        "sample_size": null
+      },
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-nr1h3-cholesterol-pathway",
+      "claim_id": "claim-nr1h3-cholesterol-pathway",
+      "source_id": "source-reactome-nr1h3-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes LXRα protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "locator": "Reactome Locations in the PathwayBrowser: cholesterol transport/efflux branch and NR1H3-containing complexes.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "NR1H3-containing nuclear-receptor complexes",
+        "pathway_id": "R-HSA-9029569",
+        "sample_size": null
+      },
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-rxra-cholesterol-pathway",
+      "claim_id": "claim-rxra-cholesterol-pathway",
+      "source_id": "source-reactome-rxra-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes RXRα protein in its human cholesterol transport and efflux gene-regulation pathway.",
+      "locator": "Reactome Locations in the PathwayBrowser: cholesterol transport/efflux branch, NR1H2:RXRA and NR1H3:RXRA complexes.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "RXRA in NR1H2/NR1H3 receptor complexes",
+        "pathway_id": "R-HSA-9029569",
+        "sample_size": null
+      },
+      "limitations": [
+        "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-trem2-dap12-pathway",
+      "claim_id": "claim-trem2-dap12-pathway",
+      "source_id": "source-reactome-trem2-protein",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes TREM2 protein in its human DAP12 signaling pathway.",
+      "locator": "Reactome Locations in the PathwayBrowser: Innate Immune System → DAP12 interactions → DAP12 signaling.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "TREM2 in DAP12-receptor signaling complexes",
+        "pathway_id": "R-HSA-2424491",
+        "sample_size": null
+      },
+      "limitations": [
+        "The annotation concerns specified protein states and complexes, not all possible protein activities.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-tyrobp-dap12-pathway",
+      "claim_id": "claim-tyrobp-dap12-pathway",
+      "source_id": "source-reactome-tyrobp-state",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome includes DAP12 protein in its human DAP12 signaling pathway.",
+      "locator": "Reactome Locations in the PathwayBrowser: Innate Immune System → DAP12 interactions → DAP12 signaling.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "TYROBP phosphorylated at Y91/Y102 in membrane signaling complexes",
+        "pathway_id": "R-HSA-2424491",
+        "sample_size": null
+      },
+      "limitations": [
+        "The annotation concerns specified protein states and complexes, not all possible protein activities.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-trem2-dap12-binding",
+      "claim_id": "claim-trem2-dap12-binding",
+      "source_id": "source-reactome-trem2-dap12",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome records binding between human TREM2 and the DAP12 adaptor dimer.",
+      "locator": "Reactome R-HSA-210300 Participants: TREM2 and DAP12 dimer inputs, DAP12 dimer:TREM2 output.",
+      "study_context": {
+        "design": "database annotation",
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "protein_state": "TREM2 and DAP12 dimer at the plasma membrane",
+        "record_id": "R-HSA-210300",
+        "sample_size": null
+      },
+      "limitations": [
+        "Curated binding assertion; the primary experiment was not re-extracted in this pass.",
+        "Record page accessed 2026-10-22; database release and record revision not captured",
+        "Database annotations are not independent experimental replication or evidence of treatment benefit."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-22",
+        "human_reviewed": false,
+        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
     }
   ],
   "sources": [
@@ -232,112 +1586,709 @@
       "kind": "publication",
       "title": "Gene dose of apolipoprotein E type 4 allele and the risk of Alzheimer's disease in late onset families",
       "url": "https://pubmed.ncbi.nlm.nih.gov/8346443/",
-      "identifiers": [{"namespace": "PMID", "value": "8346443"}, {"namespace": "DOI", "value": "10.1126/science.8346443"}],
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "8346443"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1126/science.8346443"
+        }
+      ],
       "publication_type": "primary_research",
-      "authors": ["E H Corder", "A M Saunders", "W J Strittmatter", "D E Schmechel", "P C Gaskell", "G W Small", "A D Roses", "J L Haines", "M A Pericak-Vance"],
+      "authors": [
+        "E H Corder",
+        "A M Saunders",
+        "W J Strittmatter",
+        "D E Schmechel",
+        "P C Gaskell",
+        "G W Small",
+        "A D Roses",
+        "J L Haines",
+        "M A Pericak-Vance"
+      ],
       "year": 1993,
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "Corder and colleagues, Science, 1993; bibliographic metadata via PubMed/NLM.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "Corder and colleagues, Science, 1993; bibliographic metadata via PubMed/NLM.",
+        "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-corder-1994",
       "kind": "publication",
       "title": "Protective effect of apolipoprotein E type 2 allele for late onset Alzheimer disease",
       "url": "https://pubmed.ncbi.nlm.nih.gov/7920638/",
-      "identifiers": [{"namespace": "PMID", "value": "7920638"}, {"namespace": "DOI", "value": "10.1038/ng0694-180"}],
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "7920638"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1038/ng0694-180"
+        }
+      ],
       "publication_type": "primary_research",
-      "authors": ["E H Corder", "A M Saunders", "N J Risch", "W J Strittmatter", "D E Schmechel", "P C Gaskell Jr", "J B Rimmler", "P A Locke", "P M Conneally", "K E Schmader", "G W Small", "A D Roses", "J L Haines", "M A Pericak-Vance"],
+      "authors": [
+        "E H Corder",
+        "A M Saunders",
+        "N J Risch",
+        "W J Strittmatter",
+        "D E Schmechel",
+        "P C Gaskell Jr",
+        "J B Rimmler",
+        "P A Locke",
+        "P M Conneally",
+        "K E Schmader",
+        "G W Small",
+        "A D Roses",
+        "J L Haines",
+        "M A Pericak-Vance"
+      ],
       "year": 1994,
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.nature.com/nature-portfolio/about/permissions", "attribution": "Corder and colleagues, Nature Genetics, 1994.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": null, "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.nature.com/nature-portfolio/about/permissions",
+        "attribution": "Corder and colleagues, Nature Genetics, 1994.",
+        "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.",
+        "date_checked": null,
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-nordestgaard-2015",
       "kind": "publication",
       "title": "Loss-of-function mutation in ABCA1 and risk of Alzheimer's disease and cerebrovascular disease",
       "url": "https://pubmed.ncbi.nlm.nih.gov/26079414/",
-      "identifiers": [{"namespace": "PMID", "value": "26079414"}, {"namespace": "DOI", "value": "10.1016/j.jalz.2015.04.006"}],
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "26079414"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1016/j.jalz.2015.04.006"
+        }
+      ],
       "publication_type": "primary_research",
-      "authors": ["Liv Tybjærg Nordestgaard", "Anne Tybjærg-Hansen", "Børge G Nordestgaard", "Ruth Frikke-Schmidt"],
+      "authors": [
+        "Liv Tybjærg Nordestgaard",
+        "Anne Tybjærg-Hansen",
+        "Børge G Nordestgaard",
+        "Ruth Frikke-Schmidt"
+      ],
       "year": 2015,
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://onlinelibrary.wiley.com/terms-and-conditions", "attribution": "Nordestgaard and colleagues, Alzheimer's & Dementia, 2015.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://onlinelibrary.wiley.com/terms-and-conditions",
+        "attribution": "Nordestgaard and colleagues, Alzheimer's & Dementia, 2015.",
+        "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-jonsson-2013",
       "kind": "publication",
       "title": "Variant of TREM2 associated with the risk of Alzheimer's disease",
       "url": "https://pubmed.ncbi.nlm.nih.gov/23150908/",
-      "identifiers": [{"namespace": "PMID", "value": "23150908"}, {"namespace": "DOI", "value": "10.1056/NEJMoa1211103"}],
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "23150908"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1056/NEJMoa1211103"
+        }
+      ],
       "publication_type": "primary_research",
-      "authors": ["Thorlakur Jonsson", "Hreinn Stefansson", "Stacy Steinberg", "Ingileif Jonsdottir", "Palmi V Jonsson", "Jon Snaedal", "Sigurbjorn Bjornsson", "Johanna Huttenlocher", "Allan I Levey", "James J Lah", "Dan Rujescu", "Harald Hampel", "Ina Giegling", "Ole A Andreassen", "Knut Engedal", "Ingun Ulstein", "Srdjan Djurovic", "Carla Ibrahim-Verbaas", "Albert Hofman", "M Arfan Ikram", "Cornelia M van Duijn", "Unnur Thorsteinsdottir", "Augustine Kong", "Kari Stefansson"],
+      "authors": [
+        "Thorlakur Jonsson",
+        "Hreinn Stefansson",
+        "Stacy Steinberg",
+        "Ingileif Jonsdottir",
+        "Palmi V Jonsson",
+        "Jon Snaedal",
+        "Sigurbjorn Bjornsson",
+        "Johanna Huttenlocher",
+        "Allan I Levey",
+        "James J Lah",
+        "Dan Rujescu",
+        "Harald Hampel",
+        "Ina Giegling",
+        "Ole A Andreassen",
+        "Knut Engedal",
+        "Ingun Ulstein",
+        "Srdjan Djurovic",
+        "Carla Ibrahim-Verbaas",
+        "Albert Hofman",
+        "M Arfan Ikram",
+        "Cornelia M van Duijn",
+        "Unnur Thorsteinsdottir",
+        "Augustine Kong",
+        "Kari Stefansson"
+      ],
       "year": 2013,
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "Jonsson and colleagues, New England Journal of Medicine, 2013; bibliographic metadata via PubMed/NLM.", "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "Jonsson and colleagues, New England Journal of Medicine, 2013; bibliographic metadata via PubMed/NLM.",
+        "retained_content": "Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-ncbi-apoe",
       "kind": "database_record",
       "title": "APOE apolipoprotein E [Homo sapiens (human)]",
       "url": "https://www.ncbi.nlm.nih.gov/gene/348",
-      "identifiers": [{"namespace": "NCBIGene", "value": "348"}],
+      "identifiers": [
+        {
+          "namespace": "NCBIGene",
+          "value": "348"
+        }
+      ],
       "publication_type": null,
       "authors": [],
       "year": null,
       "provider": "NCBI Gene",
       "release": "Accessed 2026-10-20; no database release version captured",
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "National Center for Biotechnology Information, National Library of Medicine.", "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "National Center for Biotechnology Information, National Library of Medicine.",
+        "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-ncbi-abca1",
       "kind": "database_record",
       "title": "ABCA1 ATP binding cassette subfamily A member 1 [Homo sapiens (human)]",
       "url": "https://www.ncbi.nlm.nih.gov/gene/19",
-      "identifiers": [{"namespace": "NCBIGene", "value": "19"}],
+      "identifiers": [
+        {
+          "namespace": "NCBIGene",
+          "value": "19"
+        }
+      ],
       "publication_type": null,
       "authors": [],
       "year": null,
       "provider": "NCBI Gene",
       "release": "Accessed 2026-10-20; no database release version captured",
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "National Center for Biotechnology Information, National Library of Medicine.", "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "National Center for Biotechnology Information, National Library of Medicine.",
+        "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-ncbi-trem2",
       "kind": "database_record",
       "title": "TREM2 triggering receptor expressed on myeloid cells 2 [Homo sapiens (human)]",
       "url": "https://www.ncbi.nlm.nih.gov/gene/54209",
-      "identifiers": [{"namespace": "NCBIGene", "value": "54209"}],
+      "identifiers": [
+        {
+          "namespace": "NCBIGene",
+          "value": "54209"
+        }
+      ],
       "publication_type": null,
       "authors": [],
       "year": null,
       "provider": "NCBI Gene",
       "release": "Accessed 2026-10-20; no database release version captured",
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "National Center for Biotechnology Information, National Library of Medicine.", "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "National Center for Biotechnology Information, National Library of Medicine.",
+        "retained_content": "Gene identifier, official symbol, name, organism, and source URL only.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     },
     {
       "id": "source-mesh-alzheimers",
       "kind": "database_record",
       "title": "Alzheimer Disease — MeSH D000544",
       "url": "https://id.nlm.nih.gov/mesh/D000544.html",
-      "identifiers": [{"namespace": "MeSH", "value": "D000544"}],
+      "identifiers": [
+        {
+          "namespace": "MeSH",
+          "value": "D000544"
+        }
+      ],
       "publication_type": null,
       "authors": [],
       "year": null,
       "provider": "NLM MeSH",
       "release": "Accessed 2026-10-20; no MeSH release version captured",
       "retrieved_at": "2026-10-20",
-      "reuse": {"terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/", "attribution": "Medical Subject Headings, National Library of Medicine.", "retained_content": "Disease label, identifier, selected search aliases, and source URL only.", "date_checked": "2026-10-20", "permission_status": "pending_review"},
-      "publication_status": {"status": "not_checked", "checked_at": null, "notice_url": null}
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "Medical Subject Headings, National Library of Medicine.",
+        "retained_content": "Disease label, identifier, selected search aliases, and source URL only.",
+        "date_checked": "2026-10-20",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-uniprot-apoe",
+      "kind": "database_record",
+      "title": "UniProtKB P02649 — Apolipoprotein E",
+      "url": "https://rest.uniprot.org/uniprotkb/P02649.txt",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "P02649"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProt",
+      "release": "Entry version 280, 2026-09-02; sequence version 1",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Identifiers and project-authored summaries; no sequence or source prose retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-uniprot-trem2",
+      "kind": "database_record",
+      "title": "UniProtKB Q9NZC2 — Triggering receptor expressed on myeloid cells 2",
+      "url": "https://rest.uniprot.org/uniprotkb/Q9NZC2.txt",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "Q9NZC2"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProt",
+      "release": "Entry version 187, 2026-09-02; sequence version 1",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Identifiers and project-authored summaries; no sequence or source prose retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-uniprot-tyrobp",
+      "kind": "database_record",
+      "title": "UniProtKB O43914 — TYRO protein tyrosine kinase-binding protein",
+      "url": "https://rest.uniprot.org/uniprotkb/O43914.txt",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "O43914"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProt",
+      "release": "Entry version 196, 2026-09-02; sequence version 1",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Identifiers and project-authored summaries; no sequence or source prose retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-uniprot-rxra",
+      "kind": "database_record",
+      "title": "UniProtKB P19793 — Retinoic acid receptor RXR-alpha",
+      "url": "https://rest.uniprot.org/uniprotkb/P19793.txt",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "P19793"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProt",
+      "release": "Entry version 263, 2026-09-02; sequence version 1",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Identifiers and project-authored summaries; no sequence or source prose retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-abca1-protein",
+      "kind": "database_record",
+      "title": "ABCA1 [plasma membrane]",
+      "url": "https://reactome.org/content/detail/R-HSA-194209",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-194209"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-nr1h2-protein",
+      "kind": "database_record",
+      "title": "NR1H2 [nucleoplasm]",
+      "url": "https://reactome.org/content/detail/R-HSA-375500",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-375500"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-nr1h3-protein",
+      "kind": "database_record",
+      "title": "NR1H3 [nucleoplasm]",
+      "url": "https://reactome.org/content/detail/R-HSA-8854957",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-8854957"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-rxra-protein",
+      "kind": "database_record",
+      "title": "RXRA [nucleoplasm]",
+      "url": "https://reactome.org/content/detail/R-HSA-381319",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-381319"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-trem2-protein",
+      "kind": "database_record",
+      "title": "TREM2 [plasma membrane]",
+      "url": "https://reactome.org/content/detail/R-HSA-197664",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-197664"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-tyrobp-state",
+      "kind": "database_record",
+      "title": "p-Y91,Y102-TYROBP [plasma membrane]",
+      "url": "https://reactome.org/content/detail/R-HSA-210010",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-210010"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-apoe-expression",
+      "kind": "database_record",
+      "title": "Expression of APOE regulated by NR1H2 or NR1H3",
+      "url": "https://reactome.org/content/detail/R-HSA-9031512",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-9031512"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-cholesterol-efflux",
+      "kind": "database_record",
+      "title": "NR1H3 & NR1H2 regulate gene expression linked to cholesterol transport and efflux",
+      "url": "https://reactome.org/content/detail/R-HSA-9029569",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-9029569"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-dap12",
+      "kind": "database_record",
+      "title": "DAP12 signaling",
+      "url": "https://reactome.org/content/detail/R-HSA-2424491",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2424491"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-trem2-dap12",
+      "kind": "database_record",
+      "title": "Interaction of DAP12 and TREM2",
+      "url": "https://reactome.org/content/detail/R-HSA-210300",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-210300"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Record page accessed 2026-10-22; database release and record revision not captured",
+      "retrieved_at": "2026-10-22",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.",
+        "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
+        "date_checked": "2026-10-22",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     }
   ],
   "conflicts": [],
