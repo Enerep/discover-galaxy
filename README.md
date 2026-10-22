@@ -2,9 +2,9 @@
 
 **Explore humanity's scientific knowledge in 3D.**
 
-Discovery Galaxy is an interactive map of scientific evidence in development. Glowing objects represent biological entities and papers; connections let researchers inspect published relationships. Comparing findings and formulating testable questions are planned next steps.
+Discovery Galaxy is an interactive map of scientific evidence in development. Glowing objects represent biological entities and papers; connections lead to the original studies, source-specific context, and limitations behind a finding.
 
-The first version focuses on **Alzheimer's disease**, with **20–50 curated entities**. Its value comes from making evidence easy to follow: every scientific relationship and explanation must lead back to its sources.
+The first version focuses on **Alzheimer's disease**, with a release target of **20–50 curated entities**. Its value comes from making evidence easy to follow: every scientific relationship and explanation must lead back to its sources.
 
 ## Project status
 
@@ -16,11 +16,13 @@ The appearance control offers Light, Dark, and System. System follows the operat
 
 Sharing supports a PNG of the graph and selected finding, with source references, dataset version, and draft status. Native image sharing is offered where supported; downloading works without it. Copied links restore the entity, finding, search, filter, and view, but not the camera position. Images are created in the browser without an upload service.
 
-The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, conflict comparisons, research hypotheses, live upstream integrations, AI service, backend, or database yet.
+**Compare findings** opens two findings side by side with their original citations, study populations, variants, endpoints, limitations, and review status. Recorded fields are labeled matching, different, or missing; those labels do not determine agreement, contradiction, or study independence. A downloadable Markdown brief keeps the complete context and dataset version. Reading prompts identify source checks to make, not verified research gaps or new hypotheses.
+
+The scientific records are **development drafts**, based on an AI-assisted inspection of source abstracts and metadata. Human scientific review, source reuse assessment, and correction/retraction checks are pending. No human approval is fabricated. There are no pathway claims, reviewed disagreement records, research hypotheses, AI service, backend, or database yet. The client still reads its local snapshot and makes no upstream scientific API requests.
 
 See the [starter dataset notes](data/alzheimers/README.md) for original references and lookup limits, and [steps.md](steps.md) for remaining acceptance criteria. The 20–50 entity MVP and its scientific release gates remain ahead.
 
-The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first**, adding reviewed studies, genes, and pathways before applying the workflow to another disease. The [checkpoint plan](docs/checkpoints.md) defines the next AD curation packet and the later path to automated source collection.
+The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first**, adding reviewed studies, genes, and pathways before applying the workflow to another disease. The [checkpoint plan](docs/checkpoints.md) prioritizes evidence comparison and staged source collection over simply adding more connections.
 
 ## Run locally
 
@@ -52,7 +54,15 @@ npm run curation:check
 npm run --silent curation:packet > data/alzheimers/review-packet.md
 ```
 
-Record actual scientific reviews in the source dataset, then regenerate; do not edit the packet as a separate review record. This tooling makes no API requests and does not change the graph.
+Record actual scientific reviews in the source dataset, then regenerate; do not edit the packet as a separate review record. The packet generator makes no API requests and does not change the graph.
+
+The separate [OpenAlex candidate-intake tool](tools/curation/README.md) collects a bounded first page of literature metadata or normalizes an archived response:
+
+```sh
+npm run --silent curation:intake -- --limit 20
+```
+
+Its output is unreviewed staging material, not graph evidence. It excludes abstracts and full text, retains retrieval/query provenance, and does not create claims or review approvals. Live network availability and observed checks belong in the [verification record](docs/verification.md); offline normalization does not verify a live API request.
 
 Dependency lifecycle scripts are disabled in [.npmrc](.npmrc); direct versions are exact and the lockfile is committed. Read the [npm security policy](docs/npm-security.md) before changing dependencies. Its checks include release dates, registry integrity, audit findings, and pinned Shai-Hulud indicators. Optional standard-library Python tooling runs the IOC comparison with `python3 tools/security/check-iocs.py`.
 
@@ -62,12 +72,12 @@ In this cloud workspace, npm's default cache directory may be read-only. Use `ex
 
 1. Search for “Alzheimer's disease” and focus its curated neighborhood.
 2. Select an entity such as APOE, ABCA1, or TREM2.
-3. Inspect its relationships and relevant pathways in a side panel.
+3. Inspect its recorded relationships in the evidence panel.
 4. Open a relationship to see the claim, study context, limitations, and original references.
-5. Compare findings where curators have identified a meaningful disagreement.
-6. Read clearly labeled research questions, including the evidence and assumptions behind them.
+5. Choose **Compare findings** to inspect two findings' source-specific context and download a cited reading brief.
+6. In later content milestones, inspect reviewed disagreements and clearly labeled research questions with their evidence and assumptions.
 
-The current starter implements steps 1–4 through selected genetic-association findings. Pathways, disagreement comparisons, and research questions remain planned. Including APOE, ABCA1, and TREM2 does not establish every possible connection between them. Gene, protein, and variant identities remain distinct.
+The current starter implements steps 1–5 through selected genetic-association findings. Pathways, curated disagreements, and research questions remain planned. Including APOE, ABCA1, and TREM2 does not establish every possible connection between them. Gene, protein, and variant identities remain distinct.
 
 A keyboard-operable searchable list exposes the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
 
@@ -86,11 +96,11 @@ Broad disease coverage, automatic literature ingestion, automatic contradiction 
 | Interface | React, TypeScript, Vite | A small interactive app with a clear data contract |
 | 3D visualization | Three.js through React Three Fiber; native OrbitControls | Integrates the scene with React without an extra helper dependency |
 | Knowledge data | Versioned, reviewed JSON snapshot | Makes a 20–50 entity graph reproducible and inspectable |
-| Data tooling | Python and NetworkX, introduced with curation tooling | Validate graph structure and prepare snapshots offline |
+| Data tooling | Native Node.js/TypeScript tools now; Python and NetworkX when needed | Reuse the data contract for validation, review packets, and candidate staging |
 | API, when needed | Python and FastAPI | Support controlled retrieval and server-side AI calls |
 | Storage, when needed | PostgreSQL | Persist provenance and support updates beyond snapshots |
 
-This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direction, while introducing each component when it has a job to do. The current client pins React 19.3.0, React Three Fiber 9.8.1, Three.js 0.186.1, Vite 8.3.2, and TypeScript 5.9.3. Python security checks are development tooling; biomedical import tooling remains planned.
+This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direction, while introducing each component when it has a job to do. The current client pins React 19.3.0, React Three Fiber 9.8.1, Three.js 0.186.1, Vite 8.3.2, and TypeScript 5.9.3. Python security checks are development tooling; NetworkX analysis and reviewed scientific import/promotion remain planned.
 
 ## Scientific resources
 
@@ -100,14 +110,14 @@ This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direct
 | [Reactome](https://reactome.org/) | Find pathway definitions, stable identifiers, and supporting references |
 | [OpenAlex](https://openalex.org/) | Resolve literature metadata and discover candidate papers |
 
-These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. Access requirements, release versions, attribution, and redistribution terms must be checked before importing data; no integration has been verified or implemented yet.
+These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; Open Targets and Reactome adapters remain planned. Verify current access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
 
 ## Repository guide
 
 | Document | Purpose |
 | --- | --- |
 | [steps.md](steps.md) | Ordered milestones, dependencies, and completion criteria |
-| [Checkpoint plan](docs/checkpoints.md) | Current sharing scope, the next AD evidence pass, and staged automation |
+| [Checkpoint plan](docs/checkpoints.md) | Evidence comparison, candidate intake, and the next AD evidence pass |
 | [Product specification](docs/product.md) | Audience, user journeys, scope, and release criteria |
 | [Design guide](docs/design.md) | Simple workflows, clean presentation, plain language, and purposeful motion |
 | [Architecture](docs/architecture.md) | Data flow, technical boundaries, and planned layout |
@@ -116,6 +126,7 @@ These resources help find and contextualize evidence. Database associations, met
 | [npm security policy](docs/npm-security.md) | Script-disabled installs, exact versions, and known-IOC checks |
 | [Starter dataset](data/alzheimers/README.md) | Source lookups, provenance, and pending scientific review |
 | [AD review packet](data/alzheimers/review-packet.md) | Current findings, source-specific context, and outstanding review tasks |
+| [Curation tools](tools/curation/README.md) | Bounded OpenAlex metadata intake and its staging boundary |
 | [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to make and validate changes |

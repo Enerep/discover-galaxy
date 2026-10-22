@@ -1,5 +1,15 @@
 # Development preview verification
 
+## Candidate intake checkpoint — local commits only
+
+The combined suite passes 37 tests, including seven OpenAlex intake tests. The adapter and its tests passed a separate strict TypeScript check. A real CLI run against the explicitly synthetic archived fixture produced an `offline_input` packet with a processing timestamp, unknown original retrieval time, duplicate metadata grouped for inspection, and every candidate marked `unreviewed` / `not_in_graph`. The fixture and staged output are not imported by the client. Local `data/staging/` output is ignored by Git.
+
+The tests cover nullable bibliographic fields, identifier grouping, retained provider retraction disagreements, metadata allowlisting, credential removal, invalid payloads/URLs/dates/bounds, one-page requests, bearer headers, timeout, size limits, and sanitized failures. Simulated transport responses verify the implementation contract; they do not establish current live API compatibility. The source contract and usage references are in [curation tooling](../tools/curation/README.md).
+
+One keyless live request through the configured environment proxy failed before a candidate packet was produced. Live OpenAlex retrieval remains unverified in this restricted cloud environment. No real imported papers, new scientific relationships, review attestations, dependencies, or published dataset changes were created. The dependency source/integrity/exact-pin check and all 111 local Markdown links passed.
+
+The user's instruction for this checkpoint is commit only: no push or deployment was performed.
+
 ## Evidence comparison checkpoint — local commits only
 
 The comparison implementation passed the production build, all 30 current data/share-state/comparison/review-packet tests, development-data validation, and review-packet freshness. The scientific dataset remains the same eight entities and four draft claims. No dependencies were added. The main application chunk is approximately 300 kB minified / 91 kB gzip; the existing 3D chunk size warning remains.

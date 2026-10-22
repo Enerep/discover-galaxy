@@ -14,6 +14,7 @@ The primary flow is **search → select an entity → read a finding → open th
 - Keep the graph usable with touch, visible zoom/reset controls, and an equivalent keyboard-operable list.
 - Keep the user in control of focus and scrolling. Do not move the viewport while they type or filter. Prefer explicit mobile details and return-to-graph actions over surprise scrolling.
 - Keep sharing in one action area. Exported images must retain the finding's meaning, original source reference, dataset version, and draft status. Provide an evidence-card fallback when the graph cannot be captured.
+- Open comparison from a finding. Keep two original statements and citations visible, align study-context fields, and reveal detailed provenance and reading prompts on request. Preserve the underlying selection, filters, and view.
 
 ## Visual language
 
@@ -42,6 +43,8 @@ Name the action or information directly. Use short labels and concrete nouns; ex
 | Repeated draft warnings in every section | One clear preview notice, with record status where relevant |
 
 Do not add a chat interface, generated explanation, confidence score, progress number, or capability label unless it corresponds to a working, useful feature. Keep scientific wording accurate and traceable; the [evidence policy](evidence-policy.md) governs claims and uncertainty.
+
+Use neutral comparison labels such as “Different” and “Missing context.” Exact text matches do not prove comparable studies; a difference does not prove contradiction. Show unknowns plainly and keep participant subsets attached to their source. Source-reading prompts are checks to perform, not claims of novel research opportunities.
 
 ## Motion
 
@@ -73,5 +76,6 @@ Before calling an interface refinement complete:
 5. Confirm development data remains clearly labeled and source-specific context remains available.
 6. Record observed results separately from intended design. A typecheck does not establish good interaction or animation performance.
 7. Check Light, Dark, and System, including saved preference, operating-system changes, narrow screens, and readable evidence/sharing dialogs. Switching appearance must not reset the current research view.
+8. Compare two findings, open their original sources, inspect known and missing context, and download the complete cited brief. Check narrow-table scrolling, keyboard focus, and return to the unchanged research view.
 
 The current scientific dataset remains a development starter. A cleaner presentation does not make its records scientifically approved or complete the MVP release gates.

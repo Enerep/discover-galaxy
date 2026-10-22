@@ -1,0 +1,41 @@
+{
+  "__fixture_note": "SYNTHETIC TEST DATA ONLY: these IDs and titles are invented fixtures, not scientific records; never import into the public graph.",
+  "meta": { "count": 3, "page": 1, "per_page": 3 },
+  "results": [
+    {
+      "id": "https://openalex.org/W900000000000001",
+      "ids": { "openalex": "https://openalex.org/W900000000000001", "doi": "https://doi.org/10.5555/discovery-galaxy-synthetic-a", "pmid": "https://pubmed.ncbi.nlm.nih.gov/999999991/" },
+      "doi": "https://doi.org/10.5555/discovery-galaxy-synthetic-a",
+      "title": "Synthetic metadata fixture A — not a scientific finding",
+      "publication_year": 2020,
+      "publication_date": "2020-02-29",
+      "type": "article",
+      "is_retracted": false,
+      "updated_date": "2026-10-20T10:15:00.000000",
+      "abstract_inverted_index": { "DO_NOT_RETAIN_ABSTRACT": [0] },
+      "content_urls": { "pdf": "https://example.invalid/DO_NOT_RETAIN_FULLTEXT" }
+    },
+    {
+      "id": "https://openalex.org/works/W900000000000002",
+      "ids": { "doi": "https://doi.org/10.5555/DISCOVERY-GALAXY-SYNTHETIC-A" },
+      "doi": "https://doi.org/10.5555/discovery-galaxy-synthetic-a",
+      "title": "Synthetic duplicate metadata fixture A",
+      "publication_year": null,
+      "publication_date": null,
+      "type": "article",
+      "is_retracted": true,
+      "updated_date": "2026-10-21T00:00:00Z"
+    },
+    {
+      "id": "https://openalex.org/W900000000000003",
+      "ids": {},
+      "doi": null,
+      "title": null,
+      "publication_year": null,
+      "publication_date": null,
+      "type": null,
+      "is_retracted": null,
+      "updated_date": null
+    }
+  ]
+}

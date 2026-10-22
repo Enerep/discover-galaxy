@@ -4,7 +4,7 @@
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
-The [checkpoint plan](docs/checkpoints.md) records sharing and appearance work, then the next AD evidence pass. Coverage remains Alzheimer's-only; the next scientific milestone reviews the existing packet and deepens AD evidence before adding another disease.
+The [checkpoint plan](docs/checkpoints.md) records source-specific finding comparison and staged candidate intake. Coverage remains Alzheimer's-only; the next scientific milestone reviews the existing packet and deepens AD evidence before adding another disease.
 
 ## M0 — Establish the foundation
 
@@ -55,6 +55,15 @@ Engineering can be exercised now; the reviewed-relationship criterion is still p
 
 - [x] Verify Light, Dark, and System controls, local preference persistence, operating-system changes, and the `#1F1F24` dark background.
 - [x] Check readable evidence, controls, dialogs, mobile layout, and sharing in both themes without resetting the current view; record observed results in [verification](docs/verification.md).
+
+### Evidence comparison and candidate intake
+
+- [x] Implement two-finding comparison with original citations, exact recorded context labels, preserved unknowns, source-specific participant counts, and a complete downloadable Markdown brief.
+- [x] Verify comparison through keyboard, both themes, narrow screens, and unavailable WebGL; record observed checks separately from scientific review.
+- [x] Verify bounded OpenAlex metadata intake and archived-response normalization, keeping candidates unreviewed and outside the graph; record live API availability separately from offline contract checks. Offline/simulated-network checks pass; the live request did not complete in this workspace.
+- [ ] Complete a successful bounded live OpenAlex request in an environment with working API access and inspect the real candidate packet before using it for source review.
+
+This work provides a reading and curation workflow. It does not add reviewed claims, establish study independence, classify scientific contradictions, or complete M3's disagreement/hypothesis criteria.
 
 ## M2 — Deliver the curated Alzheimer's explorer
 

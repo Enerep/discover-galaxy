@@ -1,21 +1,22 @@
 # Checkpoints
 
-## Current checkpoint: sharing and appearance
+## Current checkpoint: compare the evidence behind a connection
 
-The app still covers **Alzheimer's disease only**: one disease, three genes, four papers, and four draft claims. Multiple sources deepen a disease's coverage; adding another disease is a separate step. No upstream scientific API or automatic import pipeline is connected.
+The app still covers **Alzheimer's disease only**: one disease, three genes, four papers, and four draft claims. This checkpoint changes the research workflow, not the scientific snapshot. It helps a reader inspect what two findings actually studied before interpreting them together.
 
-The owner reports a working Vercel deployment. Its URL and deployment logs have not been independently checked for this checkpoint. Hosting the development preview does not change the dataset's review status.
+The owner reports a working Vercel deployment. Sharing and Light / Dark / System are part of the existing foundation. The current checkpoint's observed checks belong in [verification](verification.md); hosting and interface completion do not change the dataset's review status.
 
-Image export and reproducible links are implemented. The appearance refinement adds Light, Dark, and System without expanding the scientific dataset. Acceptance criteria are:
+The comparison and intake boundaries are:
 
-- Export the current graph and selected finding to a PNG with the original source reference, dataset version, and visible draft status; retain the full finding rather than shortening its scientific meaning.
-- Export a useful evidence card from the list or when WebGL is unavailable. Do not substitute a decorative graph for an unavailable capture.
-- Offer native image sharing where supported and a PNG download elsewhere. Creating an image does not upload it or send it to anyone.
-- Copy a link that restores the selected entity and finding, search, type filter, and Graph/List view. Camera orbit and zoom are not stored.
-- Keep search text in the URL fragment and strip unrelated URL parameters from copied links. Handle unknown or obsolete record IDs safely.
-- Offer one Light / Dark / System control, default to the operating system, and remember explicit choices locally. Use `#1F1F24` as the dark page background.
-- Preserve the current research view when changing appearance. Keep evidence, controls, dialogs, and mobile layouts readable in both themes; retain graph color meaning and light exported citation cards.
-- Check desktop and mobile flows, keyboard operation, reduced motion, export failure, and unavailable WebGL. Record observed results in [verification](verification.md); a build alone does not complete these checks.
+- Open **Compare findings** from the evidence panel, choose two existing findings, and keep their statements and original citations visible.
+- Align source-specific organism, variant, intervention, endpoint, design, population, tissue, sample size, and additional recorded context. Keep claim scope separate and unknown values explicit; never pool participant counts.
+- Label exact recorded fields matching, different, or missing. These labels do not determine agreement, contradiction, comparability, evidence strength, or study independence.
+- Expose repeated source IDs, PMIDs, or DOIs without treating different publication identities as proof of independent replication.
+- Offer source-reading prompts derived from recorded differences and missing context. They are not new hypotheses, verified research gaps, or curator-reviewed disagreement records.
+- Download a complete Markdown brief with citations, locators, limitations, actual review/source status, and dataset version. Preserve the underlying explorer state, keyboard access, both themes, narrow-table scrolling, and WebGL fallback.
+- Stage a bounded first page of OpenAlex literature metadata or normalize an archived response. Candidates remain unreviewed and outside the graph; exclude abstracts/full text and preserve query/retrieval provenance. Offline contract checks do not verify a live API request.
+
+The intended product value is a traceable path from a connection to the evidence and checks needed to use it. Reviewed pathways, intervention findings, and grounded research questions can deepen that path later. Adding more edges or calling an automated output a discovery does not meet this checkpoint's scientific purpose.
 
 ## Next checkpoint: deepen the Alzheimer's evidence
 
@@ -45,4 +46,4 @@ Introduce one source adapter at a time after verifying current access, attributi
 4. Publish an approved, versioned snapshot that the existing explorer can read; imports must not silently replace its content.
 5. Reuse the tested workflow for a second disease, then widen coverage according to source availability and review capacity.
 
-Open Targets, Reactome, and OpenAlex are planned inputs, not working integrations. AI explanations remain optional and downstream of reviewed evidence. See [steps.md](../steps.md) for the full milestones and the [evidence policy](evidence-policy.md) for scientific release rules.
+The OpenAlex metadata adapter begins the staging boundary; see [curation tooling](../tools/curation/README.md) for its current contract and limitations. Open Targets and Reactome adapters remain planned. No tool promotes candidates, invents claim support, or creates human-review attestations. AI explanations remain optional and downstream of reviewed evidence. See [steps.md](../steps.md) for the full milestones and the [evidence policy](evidence-policy.md) for scientific release rules.

@@ -30,6 +30,7 @@ __pycache__/
 # Large/local source downloads; reviewed snapshots remain tracked
 data/raw/
 data/cache/
+data/staging/
 
 # Local tooling and OS files
 .DS_Store

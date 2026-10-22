@@ -8,7 +8,7 @@ The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.2, Three.js 0.186.
 
 The client imports a versioned JSON development snapshot with eight entities: one disease, three genes, and four paper projections. Four source-scoped association claims link to evidence and original publications. The source lookup was AI-assisted and limited to abstracts and bibliographic records; it is not a completed human scientific review. All claims and evidence are draft, reuse review is pending, and correction/retraction checks remain incomplete.
 
-Implemented views share React state for alias-aware search, entity-type filters, entity and claim selection, and evidence inspection. The scene is loaded lazily; original publication links, study context, limitations, and review status appear in the HTML inspector. The client requires no backend, database, live data API, or AI credential. Pathway content, disagreement comparisons, research-question cards, and live AI explanations remain planned.
+Implemented views share React state for alias-aware search, entity-type filters, entity and claim selection, and evidence inspection. The scene is loaded lazily; original publication links, study context, limitations, and review status appear in the HTML inspector. Two-finding comparison uses those same source records and exports a complete Markdown reading brief. The client requires no backend, database, live data API, or AI credential. Pathway content, curated disagreement records, research-question cards, and live AI explanations remain planned.
 
 ```mermaid
 flowchart LR
@@ -17,6 +17,7 @@ flowchart LR
     State --> Galaxy[React Three Fiber galaxy]
     State --> List[Accessible HTML graph list]
     State --> Inspector[Evidence and entity inspector]
+    Inspector --> Comparison[Source-specific finding comparison]
 ```
 
 The diagram shows the current application. The galaxy, list, and inspector are views of the same local records. A structural validation pass permits development use; it does not establish scientific validity. See the [data model](data-model.md) for schema `0.1.0` and the [evidence policy](evidence-policy.md) for publication rules.
@@ -30,6 +31,7 @@ The diagram shows the current application. The galaxy, list, and inspector are v
 | Explorer state | Own query, selected identifiers, active filters, and view mode; keep the canvas and HTML views synchronized. |
 | Galaxy scene | Render nodes, edges, labels, camera focus, and visible selection state. Keep scientific logic outside render components. |
 | Evidence inspector | Present the selected draft claim, source-linked notes, study context, limitations, original references, and review status. |
+| Finding comparison | Align two findings' recorded context and preserve source-specific values, limitations, review fields, and publication identities in the view and Markdown brief. |
 | Sharing | Capture the graph on demand, generate a cited PNG in the browser, and encode validated explorer state in a shareable URL fragment. |
 
 M2 expands the scientifically reviewed dataset to 20–50 entities and adds verified pathway content and richer filtering. M3 adds reviewed disagreement comparisons and research-question cards. Those additions must remain separate from evidence-backed claims and must not invent a consensus score.
@@ -38,7 +40,7 @@ At this size, local indexes and a bounded graph traversal are sufficient. A grap
 
 ## Layout and interaction
 
-The [design guide](design.md) is the standing interface standard. The interface uses a single control set above the explorer, a graph/list workspace, and a readable evidence panel. Light neutral interface surfaces frame the dark graph. Copy names actions and information directly. Observed browser results are recorded in the [verification record](verification.md).
+The [design guide](design.md) is the standing interface standard. The interface uses a single control set above the explorer, a graph/list workspace, and a readable evidence panel. Light or dark neutral interface surfaces frame the dark graph. Copy names actions and information directly. Observed browser results are recorded in the [verification record](verification.md).
 
 - `createGalaxyLayout` derives deterministic positions from the full snapshot, preserving positions when the visible set changes. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength.
 - Solid connections project claims; dashed connections connect paper projections to the claims they cite. Citation links are not additional biological relationships.
@@ -47,6 +49,14 @@ The [design guide](design.md) is the standing interface standard. The interface 
 - Filters expose their active state and support clearing. An absent edge in the curated or filtered graph says nothing about whether a relationship exists in the wider literature.
 
 The graph/list/evidence flows and presentation refinements have browser coverage. Future refinements still need their own browser QA; do not infer their usability or smoothness from a passing build. Keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
+
+## Finding comparison
+
+`buildEvidenceComparison` derives two columns from existing claim, evidence, and source records. Claim scope remains separate from each source's study context. Aligned rows retain unknowns and extra context fields, including participant subsets, without summing samples or filling absent study fields from a claim summary. Labels compare exact recorded values; they do not classify biological agreement, contradiction, comparability, independence, or strength.
+
+Shared source IDs, normalized PMIDs, and DOIs identify repeated citation identities. No detected identity overlap does not establish independent cohorts. Reading prompts are deterministic source checks derived from missing or different context. They are not a hypothesis-generation service, verified research gaps, or curator-approved disagreement records.
+
+The native comparison dialog preserves the underlying explorer state. Its Markdown export contains the selected statements, full claim and study context, source links and locators, limitations, actual review/reuse/publication fields, and dataset version. It performs no network request and changes no scientific record.
 
 ## Sharing
 
@@ -62,11 +72,13 @@ The offline `tools/curation/review-packet.ts` reads that snapshot through the sa
 
 Introduce Python and NetworkX curation tooling in M2 for normalization, bounded graph inspection, and reproducible exports. The existing Python IOC checker is dependency-security tooling, not a scientific import pipeline. NetworkX connectivity will not establish a biological mechanism or validate a hypothesis.
 
-Planned adapters for Open Targets, Reactome, and OpenAlex belong in this preparation boundary; none is implemented. Import only reviewed records into a published scientific snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing each adapter.
+`tools/curation/openalex-intake.ts` is the first candidate-source adapter. It requests one bounded page of selected OpenAlex metadata fields or normalizes an explicitly supplied archived response. Its allowlist excludes abstracts, full text, and unrelated payload fields. The output retains query/retrieval provenance, canonical publication identifiers, and provider flags; records stay unreviewed and outside the graph. A provider retraction flag is not an independent correction/retraction check. The live API has no immutable release identifier, and an offline input must not be described as a verified live lookup. Current access requirements and observed checks are documented in [curation tooling](../tools/curation/README.md) and [verification](verification.md).
+
+Open Targets and Reactome adapters remain planned. Import only reviewed records into a published scientific snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing each adapter.
 
 The client makes no upstream scientific API requests. The checked-in snapshot makes local exploration reproducible and independent of those services; opening an original external reference still requires network access.
 
-The next dataset pass remains AD-focused. Candidate collection, source comparison, human review, and versioned publication are separate stages; a future adapter may automate collection and validation without promoting candidates or recording human approval. Apply the workflow to another disease only after the AD evidence journey is reliable. The bounded next deliverable is described in [checkpoints](checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
+The next dataset pass remains AD-focused. Candidate collection, source comparison, human review, and versioned publication are separate stages; intake can automate metadata collection and normalization without promoting candidates or recording human approval. Apply the workflow to another disease only after the AD evidence journey is reliable. The bounded next deliverable is described in [checkpoints](checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
 
 ## Later services, when needed
 
@@ -95,11 +107,11 @@ apps/web/             React app, scene, HTML views, adapter, validator, tests
 data/alzheimers/       Draft development snapshot and source-lookup notes
 data/schema/          Knowledge-graph JSON Schema
 tools/validate-data.ts Development and release-mode data validation CLI
-tools/curation/        Deterministic AD review-packet generator and tests
+tools/curation/        AD review-packet generator, OpenAlex candidate intake, and tests
 tools/security/       Lockfile policy, known-IOC checker, pinned feed manifest
 ```
 
-Scientific import adapters and `services/api/` remain planned. No backend, PostgreSQL instance, or AI service exists. The checked-in dependency policy records a 14-day resolution cutoff; `.npmrc` disables installation lifecycle scripts, and the lockfile checker verifies source URLs, integrity hashes, and direct version pins. These controls reduce exposure without certifying dependencies as malware-free.
+Reviewed scientific import/promotion and `services/api/` remain planned. No backend, PostgreSQL instance, or AI service exists. The checked-in dependency policy records a 14-day resolution cutoff; `.npmrc` disables installation lifecycle scripts, and the lockfile checker verifies source URLs, integrity hashes, and direct version pins. These controls reduce exposure without certifying dependencies as malware-free.
 
 ## Validation boundaries
 
@@ -107,11 +119,13 @@ Run the root project commands documented in [CONTRIBUTING.md](../CONTRIBUTING.md
 
 - `npm run validate:data` checks the development snapshot; warnings retain its pending-review status.
 - `npm run validate:release` exercises the stricter publication gate and must fail for the current draft snapshot.
-- `npm test` covers data-integrity and release-gate failures, alias search, and paper-to-claim lookup using isolated synthetic fixtures and the checked-in starter.
+- `npm test` covers data integrity, release gates, alias search, paper-to-claim lookup, source-specific comparison, and curation tooling using isolated synthetic fixtures and the checked-in starter.
 - `npm run build` runs TypeScript checks before creating the production bundle.
 - `npm run check:dependencies` checks the lockfile's sources, integrity, and pins. Network-backed publication-date and pinned IOC checks are described in the [security policy](npm-security.md).
 
 Browser QA must exercise search → entity → claim → original reference through both views, plus keyboard access, no results, reduced motion, and renderer fallback. Automated data tests do not verify those interactions. Measure responsiveness on a documented device/browser before setting or reporting a performance budget.
+
+Comparison checks must distinguish variant contexts, keep source-specific missing fields and participant subsets separate, retain cited brief content, and preserve keyboard/mobile access. Intake checks must distinguish offline normalization from live retrieval and keep metadata candidates outside the scientific snapshot.
 
 When AI is introduced, evaluate citation validity, claim grounding, abstention, hypothesis labeling, and service failure using reviewed answerable and unanswerable cases.
 

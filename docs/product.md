@@ -6,6 +6,8 @@ Help researchers navigate a small, evidence-traceable map of Alzheimer's researc
 
 The central product promise is **from a visible connection to its supporting evidence in a few clear interactions**.
 
+The product direction is to help a researcher judge what a relationship rests on and what needs checking before using it. Source-specific comparison, visible missing context, and portable cited briefs make that task concrete. A larger graph alone does not fulfill this direction, and the product makes no claim that these capabilities are exclusive to Discovery Galaxy.
+
 ## Audience
 
 The initial audience is biomedical researchers, research trainees, and scientifically literate readers exploring relationships across genetics, disease biology, pathways, and literature. The product supports literature orientation and research planning. It does not evaluate individual patients or recommend treatment.
@@ -16,8 +18,8 @@ The initial audience is biomedical researchers, research trainees, and scientifi
 2. Search for “Alzheimer's disease” or a curated alias and focus the disease neighborhood.
 3. Select APOE or another reviewed entity. See its type, identifiers, description, and connected claims.
 4. Select a relationship. Read the exact claim, evidence, study context, source references, and limitations.
-5. Explore relevant pathway membership and inspect comparable findings where curators have flagged disagreement.
-6. Open a research-question card, understand its premises and uncertainties, and follow the sources before deciding how to investigate it.
+5. Choose **Compare findings**. Read the two source records side by side, inspect recorded context differences and unknowns, then download a cited brief for further reading.
+6. In later content milestones, explore reviewed pathways, curated disagreements, and research questions with explicit premises and uncertainty.
 
 Search is local entity/alias lookup in the first version. Unsupported searches explain that the curated dataset has limited coverage; they do not invent entities or trigger an unbounded AI answer.
 
@@ -28,6 +30,7 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 | 3D exploration | Select and focus entities; distinguish entity types; expose labeled relationship details |
 | Search and filters | Search labels, aliases, and curated identifiers; show active filters and no-result states |
 | Evidence inspection | Show exact claims, evidence direction, context, uncertainty, and links to original references |
+| Finding comparison | Align claim scope and source-specific context without pooling participants or inferring agreement, conflict, independence, or strength; preserve citations in a downloadable brief |
 | Pathways | Represent reviewed pathway relationships using stable identifiers and cited provenance |
 | Conflicting findings | Show curator-reviewed comparisons with context and limitations |
 | Research questions | Present testable, sourced questions, labeled as hypotheses or proposals |
@@ -51,15 +54,19 @@ Alzheimer's disease, APOE, ABCA1, and TREM2 are curation priorities. Other genes
 
 The [evidence policy](evidence-policy.md) and [data model](data-model.md) define the detailed rules.
 
+Comparison labels describe recorded values only: matching, different, or missing. The APOE ε4 and ε2/ε3 findings concern different variant contexts; the interface must not turn that difference into a contradiction. Likewise, TREM2's 2,261 sequenced discovery individuals remain a source-specific subset, while its total sample-size field stays unrecorded. Repeated source IDs, PMIDs, or DOIs can expose repeated references; different citations do not establish independent cohorts. Reading prompts identify source checks to make and are not reviewed hypotheses or proof of a research gap.
+
 ## Experience requirements
 
-Follow the standing [design guide](design.md) for every interface and copy change. Use a simple evidence-first workspace: one search field, one filter, one graph/list switch, and a readable finding panel. Prefer plain action labels and useful study information over promotional copy, decorative counters, or repeated navigation. Use light neutral interface surfaces around the dark graph and reserve accents for interaction and meaning.
+Follow the standing [design guide](design.md) for every interface and copy change. Use a simple evidence-first workspace: one search field, one filter, one graph/list switch, and a readable finding panel. Prefer plain action labels and useful study information over promotional copy, decorative counters, or repeated navigation. Use light or dark neutral interface surfaces around the dark graph and reserve accents for interaction and meaning.
 
 The scientific content must be available without interacting with a 3D canvas. Search, selection, filtering, and opening evidence should work using a keyboard. Use text and symbols as well as color, respect reduced-motion preferences, and avoid flashing or perpetual camera movement. On WebGL failure, retain the list and evidence panels.
 
 Keep labels and selection readable before adding decorative effects. Loading, invalid data, empty results, unsupported searches, and unavailable optional AI each need an explicit state. The app must show the dataset version and coverage limits.
 
 Use short, interruptible transitions for selection, details, and camera navigation. The scene should settle when interaction ends. Reduced-motion preferences require immediate state changes without nonessential animation. Keep focus and scrolling under user control, and preserve source-specific study context when progressively disclosing details.
+
+Open comparison from the selected finding, preserve the underlying research view, and keep original citations visible. Its two native finding selectors and aligned table must work with a keyboard, narrow screens, either theme, and unavailable WebGL. Advanced provenance and reading prompts belong in disclosures rather than extra permanent navigation.
 
 ## Out of scope for the first release
 
