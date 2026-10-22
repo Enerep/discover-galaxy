@@ -6,6 +6,19 @@ These command-line tools prepare material for review. They do not promote record
 
 `npm run curation:packet` prints the existing snapshot's review extract; `npm run curation:check` verifies the committed packet is current. Record actual reviews in the source dataset, then regenerate the extract.
 
+## Candidate-source coverage
+
+The checked-in [reading plan](../../data/alzheimers/candidate-coverage.json) stages eight manually selected sources around the existing gene anchors. It contains bibliographic metadata and project-authored screening notes, not abstracts, paper text, graph claims, or scientific approvals. Actual page access is distinguished from indexed excerpts. Unknown experiment-level context, publication checks, permissions, and database releases stay explicit.
+
+```sh
+npm run --silent curation:coverage > data/alzheimers/candidate-coverage.md
+npm run curation:coverage:check
+```
+
+The [generated coverage table](../../data/alzheimers/candidate-coverage.md) includes the current snapshot's pending review states and links three reading questions to candidate sources. Its validator rejects unresolved or duplicate identities, records already in the snapshot, mismatched baseline versions, unsupported extra content, invalid dates/URLs, and attempted scientific/reuse approval or promotion. It requires each candidate to have a reading question. It does not inspect sources, check source accuracy, infer contradictions, assess independence, import content, or fetch data. `npm test` includes its contract tests.
+
+This targeted lookup is **separate from the OpenAlex adapter below**. Neither a retrieved web page nor this coverage validator establishes that the API adapter completed a live request. Before adding pathway assertions, capture the exact Reactome release/member-event provenance and resolve gene/protein identities. A human reviewer must inspect original methods/results and record real claim/evidence reviews in a separate dataset diff.
+
 ## OpenAlex candidate intake
 
 The intake tool makes one bounded request to the OpenAlex works API or normalizes a locally archived response. It retains bibliographic metadata only: identifiers, title, publication date/year, work type, provider update time, and the provider's retraction flag. No abstracts, article text, similarity/relevance scores, or inferred scientific relationships are retained.

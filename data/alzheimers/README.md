@@ -34,6 +34,8 @@ The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wile
 
 ## Before scientific release
 
+The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), prepares the next AD reading pass: six publications and two pathway records around the existing gene anchors. It preserves source access limits and unresolved context. It is not imported by the client and does not establish support for the existing claims. Use `npm run curation:coverage:check` to verify its references and generated output.
+
 Use the [generated review packet](review-packet.md) to inspect all four current findings, their source-specific context, and the eight source records in one place. Run `npm run curation:check` from the repository root to verify the extract is current. Actual review attestations belong in `dataset.json`; regenerate the packet after source-record changes. Generation performs structural checks only and does not complete any item below.
 
 1. Record a named human scientific reviewer and review date for every claim and evidence record.

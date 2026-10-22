@@ -1,6 +1,12 @@
 # Checkpoints
 
-## Current checkpoint: compare the evidence behind a connection
+## Current checkpoint: prepare the Alzheimer's evidence expansion
+
+The [candidate-source coverage packet](../data/alzheimers/candidate-coverage.md) stages six original publications and two human Reactome pathway records, grouped into three source-reading questions. It records lookup dates, indexed-excerpt versus page access, unknown study context, pending publication/reuse checks, and unresolved database releases. Its validator checks source identity and baseline references; a generated extract does not approve the interpretation or add graph records.
+
+This selective, AI-assisted lookup is separate from the OpenAlex API adapter. No successful live OpenAlex response or Reactome release lookup is claimed. The current public graph remains eight entities and four draft claims. The next concrete handoff is a human review of the existing packet and relevant original candidate sources, followed by a small, separately reviewable dataset diff.
+
+## Implemented foundation: compare the evidence behind a connection
 
 The app still covers **Alzheimer's disease only**: one disease, three genes, four papers, and four draft claims. This checkpoint changes the research workflow, not the scientific snapshot. It helps a reader inspect what two findings actually studied before interpreting them together.
 
@@ -34,7 +40,7 @@ Candidate discovery should begin with the existing genes and the pathway questio
 
 A [generated AD review packet](../data/alzheimers/review-packet.md) now collects the four existing findings and their outstanding checks. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a reproducible replacement. It performs no source lookup or scientific review.
 
-The next reviewable deliverable is the **scientific review of that packet and a bounded candidate-source coverage table**, followed by a small reviewed dataset diff. A generated extract or candidate list alone does not expand the released graph or satisfy M2.
+The bounded [candidate-source coverage table](../data/alzheimers/candidate-coverage.md) is prepared; `npm run curation:coverage:check` checks its references and freshness against the starter. The next reviewable deliverable is the **scientific review of the starter and selected candidate sources**, followed by a small reviewed dataset diff. A generated extract or candidate list alone does not expand the released graph or satisfy M2.
 
 ## Then: automate collection, preserve review
 

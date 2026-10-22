@@ -66,6 +66,15 @@ Engineering can be exercised now; the reviewed-relationship criterion is still p
 
 This work provides a reading and curation workflow. It does not add reviewed claims, establish study independence, classify scientific contradictions, or complete M3's disagreement/hypothesis criteria.
 
+### Prepare the next AD evidence pass
+
+- [x] Stage a bounded, source-linked reading list: six publications and two Reactome pathway records, with lookup dates, actual access limits, and unknown context preserved.
+- [x] Generate a [candidate-source coverage table](data/alzheimers/candidate-coverage.md) connecting three reading questions to existing finding context and candidate studies without asserting support or independence.
+- [x] Validate identities, baseline references, freshness, and the unreviewed/outside-graph boundary; keep article content and approval attestations out of the packet.
+- [ ] Have an actual human scientific reviewer inspect the existing findings and selected original candidate sources, resolve study context and source checks, then prepare a small reviewed dataset diff.
+
+Candidate preparation does not expand the explorer, capture an upstream database release, establish live API access, or complete the 20–50 entity milestone.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
 Start with a review packet for the existing four claims and a bounded candidate-source coverage table. Keep discovered candidates separate from approved records and distinguish independent studies from follow-ups or reused cohorts. See [the next checkpoint](docs/checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).

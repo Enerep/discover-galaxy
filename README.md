@@ -66,6 +66,13 @@ npm run --silent curation:intake -- --limit 20
 
 Its output is unreviewed staging material, not graph evidence. It excludes abstracts and full text, retains retrieval/query provenance, and does not create claims or review approvals. Live network availability and observed checks belong in the [verification record](docs/verification.md); offline normalization does not verify a live API request.
 
+A separate [candidate-source coverage packet](data/alzheimers/candidate-coverage.md) now stages **six publications and two Reactome pathway records** around ABCA1–ApoE lipid handling, TREM2–APOE interactions, and TREM2 model comparisons. It records actual lookup limits, missing context, reading questions, and checks needed before proposing graph claims. This selective, AI-assisted source lookup is separate from the OpenAlex adapter; it does not expand or approve the current graph. Edit its [source JSON](data/alzheimers/candidate-coverage.json), then regenerate and check:
+
+```sh
+npm run --silent curation:coverage > data/alzheimers/candidate-coverage.md
+npm run curation:coverage:check
+```
+
 Dependency lifecycle scripts are disabled in [.npmrc](.npmrc); direct versions are exact and the lockfile is committed. Read the [npm security policy](docs/npm-security.md) before changing dependencies. Its checks include release dates, registry integrity, audit findings, and pinned Shai-Hulud indicators. Optional standard-library Python tooling runs the IOC comparison with `python3 tools/security/check-iocs.py`.
 
 In this cloud workspace, npm's default cache directory may be read-only. Use `export npm_config_cache=/tmp/discovery-galaxy-npm-cache` for the session if that occurs.
@@ -128,6 +135,7 @@ These resources help find and contextualize evidence. Database associations, met
 | [npm security policy](docs/npm-security.md) | Script-disabled installs, exact versions, and known-IOC checks |
 | [Starter dataset](data/alzheimers/README.md) | Source lookups, provenance, and pending scientific review |
 | [AD review packet](data/alzheimers/review-packet.md) | Current findings, source-specific context, and outstanding review tasks |
+| [Candidate-source coverage](data/alzheimers/candidate-coverage.md) | Eight staged sources, reading questions, provenance, and checks before a dataset diff |
 | [Curation tools](tools/curation/README.md) | Bounded OpenAlex metadata intake and its staging boundary |
 | [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |
