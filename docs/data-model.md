@@ -92,6 +92,8 @@ The 0.3.0 binding records use `experimental_system` and `assay` for the tested s
 
 The 0.4.0 binding records add source-scoped `binding_condition`, `protein_form`, `ligand_preparation` and `immobilized_partner`. `experiments_reported` stays separate from technical-well counts; do not multiply these fields into a pooled sample. The condition field is a recorded experiment label, not a comparability assessment. Unresolved preparation stays null.
 
+The 0.5.0 BLI finding retains a `fitted_model` and `ligand_concentrations`. Five concentrations describe a dilution series, not independent experiments. The caption's repeat wording does not resolve a total run count here; `experiments_reported`, `assay_replicates` and `sample_size` remain null with that wording in `replicate_unit`.
+
 Separate records may describe different findings from one study. Preserve the underlying study identity so those records are not counted as independent replications. Unknown values are explicit `null` values or documented unknowns, not invented measurements. A null finding is not automatically classified as `refutes`.
 
 ## Source
@@ -112,7 +114,7 @@ A corrected or retracted publication requires a dated check and a non-null origi
 
 Publication URLs and bibliographic metadata do not prove a finding. That judgment belongs in the reviewed evidence record. Preprints and reviews remain visibly labeled, and retracted publications cannot provide active support in a released graph. A corrected publication requires review of the affected evidence.
 
-`reuse.date_checked` may be null while permissions are pending. Release validation requires `permission_status: permitted` and a recorded check date for every source; changing the field without completing the underlying terms review is not permitted. Publication sources must also have a checked correction/retraction status before release. `not_checked` with a null date does not mean that no notice exists. The current starter deliberately leaves reuse pending and publication status unchecked; its own paraphrases and retained metadata are described in the [source notes](../data/alzheimers/README.md), without asserting article-text redistribution rights.
+`reuse.date_checked` may be null while permissions are pending. Release validation requires `permission_status: permitted` and a recorded check date for every source; changing the field without completing the underlying terms review is not permitted. Publication sources must also have a checked correction/retraction status before release. `not_checked` with a null date does not mean that no notice exists. Outstanding checks remain explicit per source; inspected permissions, project-authored paraphrases and retained metadata are described in the [source notes](../data/alzheimers/README.md), without treating metadata access as article-text redistribution rights.
 
 ## Conflicts and hypotheses
 

@@ -101,8 +101,9 @@ Continue from the 24-finding source packet and six staged publications. Keep met
 ## M3 — Add disagreements and research questions
 
 - [x] Record one source-checked draft study-context comparison with cited findings and methodological limits; this is not a definitive contradiction or an independently approved scientific record.
+- [x] Show that note beside the named findings and their exact comparison, with both original studies, a methodological disclosure and complete provenance in the downloaded brief.
 - [ ] Curate potential disagreements, preserving each study's claim, organism, population, intervention, endpoint, and limitations.
-- [ ] Present differences in context alongside results; label true uncertainty without treating every difference or null result as a contradiction.
+- [x] Present differences in context alongside results; label uncertainty without treating every difference or null result as a contradiction. This is verified for the current R47H comparison; further scientific curation remains separate.
 - [ ] Add a small set of curator-reviewed, testable research questions with premises, assumptions, limitations, and a suggested way to investigate each one.
 - [ ] Keep research questions separate from evidence-backed graph claims. Explain why an absent connection in this dataset does not demonstrate an unexplored topic.
 - [ ] Review the resulting wording and evidence before release. If no comparable conflicting findings are verified, show an honest empty state and keep that feature pending.

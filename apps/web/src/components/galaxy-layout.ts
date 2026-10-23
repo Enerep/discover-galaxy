@@ -37,10 +37,14 @@ export function createGalaxyLayout(entities: Entity[]): Map<string, Position> {
   ring(pathways, 6.1, 2.8, Math.PI / 2);
   ring(sorted.filter(({ type }) => type === 'drug'), 4.1, 2.8, Math.PI / 4);
 
+  const upperPapers = Math.ceil(papers.length / 2);
   papers.forEach((entity, index) => {
-    // Offset even-sized rings from the pathways at the left/right extremes.
-    const phase = papers.length % 2 === 0 ? Math.PI / Math.max(papers.length, 1) : Math.PI / 4;
-    const angle = (index / Math.max(papers.length, 1)) * Math.PI * 2 + phase;
+    // Two outer arcs leave the horizontal pathway/protein labels clear.
+    const upper = index < upperPapers;
+    const count = upper ? upperPapers : papers.length - upperPapers;
+    const offset = upper ? index : index - upperPapers;
+    const fraction = count === 1 ? 0.5 : offset / (count - 1);
+    const angle = (upper ? Math.PI / 6 : 7 * Math.PI / 6) + fraction * Math.PI * 2 / 3;
     positions.set(entity.id, [Math.cos(angle) * 6.8, Math.sin(angle) * 5, -0.9 + Math.sin(angle * 2) * 0.4]);
   });
 

@@ -505,7 +505,7 @@ def assert_comparisons(browser, base_url: str, screenshots: Path) -> None:
     destination = screenshots / "comparison-abca1-trem2.md"
     pending_download.value.save_as(destination)
     brief = destination.read_text()
-    for text in ["alzheimers-source-checked-0.4.0", "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
+    for text in ["alzheimers-source-checked-0.5.0", "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
                  "https://pubmed.ncbi.nlm.nih.gov/26079414/", "https://pubmed.ncbi.nlm.nih.gov/23150908/",
                  "Draft comparison", "Study-specific context", "independence"]:
         assert text in brief, text
@@ -601,7 +601,7 @@ def assert_pathways(browser, base_url: str, screenshots: Path) -> None:
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(base_url, wait_until="networkidle")
-    expect(page.locator(".result-status")).to_have_text("23 entities · 6 papers")
+    expect(page.locator(".result-status")).to_have_text("24 entities · 7 papers")
     page.get_by_role("combobox", name="Filter by entity type").select_option("gene")
     page.locator(".claim-button").filter(has_text="Encodes · APOE protein").click()
     expect(page.locator(".source-card")).to_contain_text("Database annotation")
@@ -724,7 +724,7 @@ def assert_binding_findings(browser, base_url: str, screenshots: Path) -> None:
     destination = screenshots / "comparison-binding.md"
     pending.value.save_as(destination)
     brief = destination.read_text()
-    for text in ["26374899", "26374897", "Figure 1A", "Figure 5D", "assay replicates: 3", "Triplicate wells", "Publication status: corrected", "Publication notice: https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/", "alzheimers-source-checked-0.4.0"]:
+    for text in ["26374899", "26374897", "Figure 1A", "Figure 5D", "assay replicates: 3", "Triplicate wells", "Publication status: corrected", "Publication notice: https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/", "alzheimers-source-checked-0.5.0"]:
         assert text in brief, text
     dialog.evaluate("element => { element.scrollTop = 0; }")
     page.screenshot(path=str(screenshots / "comparison-binding-dark.png"), full_page=True)
@@ -806,6 +806,114 @@ def assert_binding_findings(browser, base_url: str, screenshots: Path) -> None:
         expect(page.get_by_role("link", name="View notice")).to_have_attribute("href", "https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/")
         mobile.close()
     print("PASS: two binding studies default to matching recorded conditions, retain preparation/replicate differences and shared-paper checks, export the correction link, and support keyboard/mobile/themes/WebGL fallback plus cited PNGs.")
+
+
+def assert_study_context_note(browser, base_url: str, screenshots: Path) -> None:
+    link = f"{base_url}#entity=protein-trem2&claim=claim-trem2-r47h-apoe-binding&type=protein"
+    source_urls = {"https://pubmed.ncbi.nlm.nih.gov/26374899/", "https://link.springer.com/article/10.15252/emmm.201809027"}
+    context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+    context.add_init_script(RENDER_COUNTERS)
+    page = context.new_page()
+    errors = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(link, wait_until="networkidle")
+    note = page.locator(".inspector .study-context-note")
+    expect(note.get_by_role("heading")).to_contain_text("Different R47H binding results")
+    expect(note.locator(".draft-label")).to_have_text("Draft")
+    expect(note).to_contain_text("no statistically significant APOE3 affinity difference")
+    assert set(note.locator("a").evaluate_all("links => links.map(link => link.href)")) == source_urls
+    # The selected finding's original citation precedes the contextual note.
+    assert page.locator(".source-link").evaluate("element => Boolean(element.compareDocumentPosition(document.querySelector('.inspector .study-context-note')) & Node.DOCUMENT_POSITION_FOLLOWING)")
+    summary = note.get_by_text("What differs", exact=True)
+    summary.focus()
+    page.keyboard.press("Enter")
+    expect(note.locator("details")).to_have_attribute("open", "")
+    expect(note).to_contain_text("not an equivalence test")
+    expect(note).to_contain_text("Discovery Galaxy source check (AI)")
+    for theme in ["light", "dark"]:
+        page.get_by_role("combobox", name="Color theme").select_option(theme)
+        for control in [note.locator("h3"), note.locator("p").first, summary, note.locator("a").first, note.locator(".context-note-review").first]:
+            assert_text_contrast(control)
+        note.scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f"study-context-{theme}.png"), full_page=True)
+    trigger = page.get_by_role("button", name="Compare findings", exact=True)
+    trigger.focus()
+    page.keyboard.press("Enter")
+    dialog = page.get_by_role("dialog", name="Compare findings", exact=True)
+    expect(dialog.get_by_role("combobox", name="Finding B")).to_have_value("claim-lessard-trem2-r47h-apoe3-binding")
+    compared_note = dialog.locator(".study-context-note")
+    expect(compared_note).to_have_count(1)
+    expect(compared_note).to_contain_text("preparations and readouts differ")
+    assert set(compared_note.locator("a").evaluate_all("links => links.map(link => link.href)")) == source_urls
+    experiments = dialog.get_by_role("rowheader", name=re.compile(r"^Experiments reported\b")).locator("..")
+    expect(experiments.locator("td").nth(1)).to_contain_text("Not recorded")
+    concentrations = dialog.get_by_role("rowheader", name=re.compile(r"^Ligand concentrations\b")).locator("..")
+    expect(concentrations.locator("td").nth(1)).to_contain_text("5")
+    with page.expect_download() as pending:
+        dialog.get_by_role("link", name="Download comparison", exact=True).click()
+    destination = screenshots / "comparison-study-context.md"
+    pending.value.save_as(destination)
+    brief = destination.read_text()
+    for text in ["Different R47H binding results", "conflict-r47h-binding-context", "not an equivalence test", "ligand concentrations: 5", "Note review: draft; human reviewed: false", "total run count was not resolved"]:
+        assert text in brief, text
+    assert all(url in brief for url in source_urls)
+    compared_note.scroll_into_view_if_needed()
+    page.screenshot(path=str(screenshots / "comparison-study-context-dark.png"), full_page=True)
+    # Field differences alone must never fabricate a curated disagreement.
+    dialog.get_by_role("combobox", name="Finding B").select_option("claim-bailey-trem2-r47h-apoe-binding")
+    expect(dialog.locator(".study-context-note")).to_have_count(0)
+    page.keyboard.press("Escape")
+    expect(trigger).to_be_focused()
+    expect(page.get_by_role("combobox", name="Filter by entity type")).to_have_value("protein")
+    page.locator(".claim-button").filter(has_text="Lessard et al. 2018 · R47H versus wild type").click()
+    expect(page.locator(".source-link")).to_have_attribute("href", "https://link.springer.com/article/10.15252/emmm.201809027")
+    expect(note).to_have_count(1)
+    page.get_by_role("button", name="Compare findings", exact=True).click()
+    expect(dialog.get_by_role("combobox", name="Finding B")).to_have_value("claim-trem2-r47h-apoe-binding")
+    page.keyboard.press("Escape")
+    page.get_by_role("button", name="View APOE protein", exact=True).click()
+    expect(page.locator(".selected-title")).to_have_text("APOE protein")
+    expect(page.locator(".finding-statement")).to_contain_text("no statistically significant difference")
+    expect(note).to_have_count(1)
+    export_share_image(page, "lessard", screenshots)
+    page.locator(".claim-button").filter(has_text="Atagi et al. 2015 · Wild-type TREM2").click()
+    expect(note).to_have_count(0)
+    assert_idle(page, "Graph after source-context comparison")
+    assert not errors, errors
+    context.close()
+
+    for fallback in [False, True]:
+        mobile = browser.new_context(viewport={"width": 360, "height": 844}, reduced_motion="reduce", color_scheme="dark", is_mobile=True, has_touch=True)
+        if fallback:
+            mobile.add_init_script("""
+              const original = HTMLCanvasElement.prototype.getContext;
+              HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+              };
+            """)
+        page = mobile.new_page()
+        page.goto(link, wait_until="networkidle")
+        page.get_by_role("button", name="View evidence", exact=True).tap()
+        note = page.locator(".inspector .study-context-note")
+        expect(note).to_have_count(1)
+        summary = note.get_by_text("What differs", exact=True)
+        assert_touch_target(summary)
+        for source in note.locator("a").all():
+            assert_touch_target(source)
+        summary.tap()
+        expect(note).to_contain_text("not an equivalence test")
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        note.scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f"study-context-mobile-{'fallback' if fallback else 'graph'}.png"))
+        page.get_by_role("button", name="Compare findings", exact=True).tap()
+        dialog = page.get_by_role("dialog", name="Compare findings", exact=True)
+        expect(dialog.get_by_role("combobox", name="Finding B")).to_have_value("claim-lessard-trem2-r47h-apoe3-binding")
+        expect(dialog.locator(".study-context-note")).to_have_count(1)
+        dialog.locator(".study-context-note").scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f"comparison-context-mobile-{'fallback' if fallback else 'graph'}.png"))
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        mobile.close()
+    print("PASS: the cited R47H context note opens its explicit pair, retains non-equivalence and unknown repeat totals in briefs/PNG sharing, and works with keyboard, themes, mobile touch and WebGL fallback.")
 
 
 def run(base_url: str, executable: str, screenshots: Path) -> None:
@@ -890,12 +998,12 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         search.fill("e")
         results = page.get_by_role("listbox")
         options = results.get_by_role("option")
-        expect(options).to_have_count(23)
+        expect(options).to_have_count(24)
         assert results.evaluate("element => element.scrollHeight > element.clientHeight")
         page_scroll = page.evaluate("window.scrollY")
-        for _ in range(22):
+        for _ in range(23):
             search.press("ArrowDown")
-        expect(options.nth(22)).to_have_attribute("aria-selected", "true")
+        expect(options.nth(23)).to_have_attribute("aria-selected", "true")
         assert results.evaluate("element => element.scrollTop > 0")
         active_visible = "element => { const bounds = element.getBoundingClientRect(); const active = element.querySelector('[aria-selected=true]').getBoundingClientRect(); const top = bounds.top + element.clientTop; return active.top >= top - 1 && active.bottom <= top + element.clientHeight + 1; }"
         assert results.evaluate(active_visible)
@@ -904,7 +1012,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(options.nth(0)).to_have_attribute("aria-selected", "true")
         assert results.evaluate(active_visible)
         search.press("ArrowUp")
-        expect(options.nth(22)).to_have_attribute("aria-selected", "true")
+        expect(options.nth(23)).to_have_attribute("aria-selected", "true")
         assert results.evaluate("element => element.scrollTop > 0")
         assert results.evaluate(active_visible)
         assert abs(page.evaluate("window.scrollY") - page_scroll) <= 2
@@ -919,9 +1027,9 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(page.locator(".claim-button")).to_have_count(4)
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
-        expect(page.locator(".result-status")).to_have_text("23 entities · 6 papers")
+        expect(page.locator(".result-status")).to_have_text("24 entities · 7 papers")
         search.fill("APOE")
-        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(6)
+        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(7)
         search.press("ArrowDown")
         expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Corder et al. · 1993")
         search.press("Enter")
@@ -930,7 +1038,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(search).to_have_value("")
         search.fill("APOE")
         search.press("ArrowUp")
-        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Bailey et al. · 2015")
+        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Lessard et al. · 2018")
         search.press("Escape")
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
@@ -942,7 +1050,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(search).to_have_value("")
 
         page.get_by_role("button", name="List view", exact=True).click()
-        expect(page.locator(".entity-row")).to_have_count(23)
+        expect(page.locator(".entity-row")).to_have_count(24)
         page.locator('.entity-row[data-entity-id="paper-corder-1994"]').click()
         expect(page.locator(".selected-title")).to_have_text("Corder et al. · 1994")
         expect(page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/7920638/")
@@ -954,10 +1062,10 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         filter_control.select_option("gene")
         expect(page.locator(".entity-row")).to_have_count(7)
         filter_control.select_option("paper")
-        expect(page.locator(".entity-row")).to_have_count(6)
+        expect(page.locator(".entity-row")).to_have_count(7)
         page.get_by_role("button", name="Show in the current view").click()
         expect(filter_control).to_have_value("all")
-        expect(page.locator(".entity-row")).to_have_count(23)
+        expect(page.locator(".entity-row")).to_have_count(24)
         page.get_by_role("button", name="About the data").click()
         expect(page.get_by_role("dialog")).to_be_visible()
         expect(page.get_by_role("dialog")).to_contain_text("Source-checked draft")
@@ -1051,7 +1159,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         fallback_page = fallback.new_page()
         fallback_page.goto(base_url, wait_until="networkidle")
         expect(fallback_page.locator(".fallback-notice")).to_be_visible()
-        expect(fallback_page.locator(".entity-row")).to_have_count(23)
+        expect(fallback_page.locator(".entity-row")).to_have_count(24)
         expect(fallback_page.get_by_role("button", name="Graph view", exact=True)).to_be_disabled()
         fallback_page.locator('.entity-row[data-entity-id="gene-trem2"]').click()
         expect(fallback_page.locator(".selected-title")).to_have_text("TREM2")
@@ -1098,6 +1206,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         assert_comparisons(browser, base_url, screenshots)
         assert_pathways(browser, base_url, screenshots)
         assert_binding_findings(browser, base_url, screenshots)
+        assert_study_context_note(browser, base_url, screenshots)
         browser.close()
 
 

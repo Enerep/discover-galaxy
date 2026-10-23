@@ -1,5 +1,5 @@
 import { getClaimEvidence } from './dataset.ts';
-import type { Claim, Context, Entity, Evidence, Review, Snapshot, Source } from './types.ts';
+import type { Claim, Conflict, Context, Entity, Evidence, Review, Snapshot, Source } from './types.ts';
 
 export type ContextValue = Context[string] | null;
 export interface ComparisonStudyValue {
@@ -32,6 +32,7 @@ export interface EvidenceComparison {
   contextRows: ComparisonContextRow[];
   scopeStatus: 'different recorded scope' | 'matching recorded fields' | 'insufficient context';
   sharedSources: { leftSourceId: string; rightSourceId: string; matchedBy: string[] }[];
+  contextNotes: Conflict[];
   prompts: string[];
   notices: string[];
 }
@@ -43,7 +44,12 @@ const LABELS: Record<string, string> = {
   study_design: 'Study design', population: 'Population', tissue: 'Tissue', sample_size: 'Sample size',
 };
 
-/** A navigation default only: matching condition labels do not establish comparable experiments. */
+/** Only explicit, source-linked notes from the validated snapshot; no inferred disagreements. */
+export function getStudyContextNotes(snapshot: Snapshot, claimId: string): Conflict[] {
+  return snapshot.conflicts.filter(({ claim_ids }) => claim_ids.includes(claimId));
+}
+
+/** Prefer a curated pair, then a matching condition. Neither establishes comparable experiments. */
 export function findComparisonPartner(snapshot: Snapshot, claimId: string): Claim | undefined {
   const active = snapshot.claims.find(({ id }) => id === claimId);
   if (!active) return undefined;
@@ -52,6 +58,11 @@ export function findComparisonPartner(snapshot: Snapshot, claimId: string): Clai
     (claim.subject_id === active.subject_id && claim.object_id === active.object_id)
     || (active.predicate === 'interacts_with' && claim.subject_id === active.object_id && claim.object_id === active.subject_id)
   ));
+  const curatedPartner = getStudyContextNotes(snapshot, claimId)
+    .filter(({ claim_ids }) => claim_ids.length === 2)
+    .flatMap(({ claim_ids }) => claim_ids)
+    .map((id) => related.find((claim) => claim.id === id))
+    .find((claim) => claim !== undefined);
   const publicationKeys = (claim: Claim) => getClaimEvidence(snapshot, claim.id).flatMap(({ source_id }) => {
     const source = snapshot.sources.find(({ id }) => id === source_id);
     return source?.kind === 'publication' ? [`source:${source.id}`, ...identities(source)] : [];
@@ -63,7 +74,7 @@ export function findComparisonPartner(snapshot: Snapshot, claimId: string): Clai
       const keys = publicationKeys(claim);
       return claim.context.binding_condition === condition && keys.length > 0 && keys.every((key) => !activeKeys.has(key));
     }) : undefined;
-  return sameConditionOtherPaper ?? related[0] ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
+  return curatedPartner ?? sameConditionOtherPaper ?? related[0] ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
 }
 
 function recorded(value: ContextValue): boolean {
@@ -165,6 +176,11 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
     ])];
     return matchedBy.length ? [{ leftSourceId: left.id, rightSourceId: right.id, matchedBy }] : [];
   }));
+  const selectedIds = new Set([firstClaimId, secondClaimId]);
+  const selectedEvidenceIds = new Set(columns.flatMap(({ evidence }) => evidence.map(({ evidence: item }) => item.id)));
+  const contextNotes = getStudyContextNotes(snapshot, firstClaimId).filter((note) =>
+    note.claim_ids.includes(secondClaimId) && note.claim_ids.every((id) => selectedIds.has(id))
+    && note.evidence_ids.every((id) => selectedEvidenceIds.has(id)));
   const different = new Set(contextRows.filter(({ status }) => status === 'different').map(({ key }) => key));
   const missing = contextRows.filter(({ status }) => status === 'missing').map(({ label }) => label.toLowerCase());
   const prompts = [
@@ -180,7 +196,7 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
         : 'Check cohort overlap and study independence in the original papers; different citations alone do not establish replication.',
   ];
   return {
-    columns, experimentalContext: experiment, contextRows, scopeStatus, sharedSources, prompts,
+    columns, experimentalContext: experiment, contextRows, scopeStatus, sharedSources, contextNotes, prompts,
     notices: [
       'Context labels compare recorded fields only; they do not determine whether findings agree or conflict.',
       'Matching text does not establish comparable studies, pooled cohorts, independent replication, or research novelty.',
@@ -220,6 +236,17 @@ export function buildComparisonBrief(snapshot: Snapshot, firstClaimId: string, s
         'Evidence limitations:', '', ...evidence.limitations.map((value) => `- ${markdown(value)}`), '');
     }
     lines.push('### Claim limitations', '', ...item.claim.limitations.map((value) => `- ${markdown(value)}`), '');
+  }
+  for (const note of comparison.contextNotes) {
+    lines.push(`## ${markdown(note.label)}`, '', `Study-context note: ${markdown(note.id)}`, '', markdown(note.comparison), '',
+      'Context differences and limits:', '', ...note.context_differences.map((value) => `- ${markdown(value)}`), '',
+      `Compared claims: ${markdown(note.claim_ids)}`, '', 'Cited evidence:', '');
+    for (const id of note.evidence_ids) {
+      const { evidence, source } = comparison.columns.flatMap((item) => item.evidence).find(({ evidence: item }) => item.id === id)!;
+      lines.push(`- ${markdown(evidence.id)}: [${markdown(source.title)}](${source.url}). Inspected location: ${markdown(evidence.locator)}`);
+    }
+    lines.push('', `Note review: ${markdown(note.review.status)}; human reviewed: ${humanReviewFlag(note.review)}; reviewer: ${markdown(note.review.reviewer)}; date: ${markdown(note.review.date)}.`, '',
+      `Source check: ${markdown(note.review.rationale)}`, '');
   }
   lines.push('## Questions to check in the sources', '', ...comparison.prompts.map((prompt) => `- ${prompt}`), '',
     'Shared citation identities:', '', ...(comparison.sharedSources.length

@@ -1,9 +1,11 @@
 import { useId, useLayoutEffect, useState } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { getClaimEvidence, getEntityClaims } from '../lib/dataset.ts';
+import { getStudyContextNotes } from '../lib/compare-evidence.ts';
 import type { Claim, Context, Entity, Snapshot, Source } from '../lib/types.ts';
 import { Icon, TYPE_LABELS } from './ui.tsx';
 import { PublicationStatus } from './PublicationStatus.tsx';
+import { StudyContextNote } from './StudyContextNote.tsx';
 
 function Disclosure({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -89,6 +91,7 @@ function Finding({ snapshot, claim, selected, onFollow }: { snapshot: Snapshot; 
           </button>;
         })}
       </div>
+      {getStudyContextNotes(snapshot, claim.id).map((note) => <StudyContextNote key={note.id} snapshot={snapshot} note={note} />)}
       <Disclosure label="Study details and limitations">
         <div className="study-context">
           <h4>Claim context</h4>

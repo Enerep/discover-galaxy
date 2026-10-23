@@ -24,9 +24,9 @@ The interface uses **Source-checked draft**. Each finding records its source, in
 
 Four findings connect APOE and TREM2 proteins through the binding assays reported by Atagi and Bailey (2015), with baseline and R47H results kept separate. Source-specific protein preparations, surface presentation and replicate units remain attached to the original paper. Bailey's plasma-derived APOE isoform is unknown, and its triplicate wells are not three independent studies. The source records its in-article correction and the actual inspection limits.
 
-A fifth finding from Lessard (2018) reports no significant wild-type/R47H APOE3 affinity difference under a different assay setup. A source-checked context note records that contrast with Atagi's result and the differences that constrain interpretation. The source retains its lipidated-protein BLI setup, unresolved run count, inspected locations and CC BY attribution.
+A fifth finding from Lessard (2018) reports no significant wild-type/R47H APOE3 affinity difference under a different assay setup. **Different R47H binding results** appears beside either compared finding, with both original studies and a **What differs** disclosure. The source retains its lipidated-protein BLI setup, unresolved run count, inspected locations and CC BY attribution.
 
-The assay setup appears beside the citation, and finding labels name the study and recorded condition. **Compare findings** starts with the same recorded binding condition in another publication when available; within-paper comparisons remain selectable. Assay details come first in experimental comparisons, with preparation, immobilization, replicate units and unknowns retained. Original correction links are available in the source details and downloaded brief. Shared links preserve protein and pathway filters.
+The assay setup appears beside the citation, and finding labels name the study and recorded condition. **Compare findings** opens an explicitly curated pair first, otherwise the same recorded binding condition in another publication when available; within-paper comparisons remain selectable. The context note is included only for its cited pair and survives the Markdown export with its limits, locators and actual review record. Assay details come first in experimental comparisons, with preparation, immobilization, replicate units and unknowns retained. Original correction links are available in the source details and downloaded brief. Shared links preserve protein and pathway filters.
 
 Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. One source-checked study-context note records differing assay reports; it is a draft comparison, not a definitive contradiction. Research hypotheses, an AI service, backend and database remain unimplemented. The client reads its local snapshot and makes no upstream scientific API requests.
 
@@ -93,9 +93,10 @@ In this cloud workspace, npm's default cache directory may be read-only. Use `ex
 4. Open a relationship to see the claim, study context, limitations, and original references.
 5. Choose **Compare findings** to inspect two findings' source-specific context and download a cited reading brief.
 6. Follow **View APOE protein**, then its cholesterol-regulation connection; inspect the original Reactome record or follow another participant such as ABCA1.
-7. In later content milestones, inspect justified disagreements and clearly labeled research questions with their evidence and assumptions.
+7. Select the Atagi or Lessard R47H binding finding to read **Different R47H binding results**, then compare the cited assays.
+8. In later content milestones, inspect further justified disagreements and clearly labeled research questions with their evidence and assumptions.
 
-The current explorer implements steps 1–6. The TREM2 protein → DAP12 signaling route is also available. Curated disagreements and research questions remain planned. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
+The current explorer implements steps 1–7, including one draft study-context comparison. The TREM2 protein → DAP12 signaling route is also available. Further disagreement curation and research questions remain planned. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
 
 A keyboard-operable searchable list exposes the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
 

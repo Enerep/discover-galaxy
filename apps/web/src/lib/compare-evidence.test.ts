@@ -2,17 +2,18 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { loadDataset } from './dataset.ts';
-import { buildComparisonBrief, buildEvidenceComparison, findComparisonPartner } from './compare-evidence.ts';
+import { buildComparisonBrief, buildEvidenceComparison, findComparisonPartner, getStudyContextNotes } from './compare-evidence.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const FIRST = 'claim-apoe-e4-risk';
 const SECOND = 'claim-apoe-e2-risk';
 
-test('comparison prefers the same recorded binding condition in a different publication without inferring comparability', () => {
+test('comparison opens a curated pair before matching conditions without inferring comparability', () => {
   const binding = 'claim-trem2-apoe-binding';
   const variant = 'claim-trem2-r47h-apoe-binding';
   assert.equal(findComparisonPartner(snapshot, binding)?.id, 'claim-bailey-trem2-apoe-binding');
-  assert.equal(findComparisonPartner(snapshot, variant)?.id, 'claim-bailey-trem2-r47h-apoe-binding');
+  assert.equal(findComparisonPartner(snapshot, variant)?.id, 'claim-lessard-trem2-r47h-apoe3-binding');
+  assert.equal(findComparisonPartner(snapshot, 'claim-lessard-trem2-r47h-apoe3-binding')?.id, variant);
   assert.equal(findComparisonPartner(snapshot, 'claim-bailey-trem2-apoe-binding')?.id, binding);
   assert.equal(findComparisonPartner(snapshot, 'claim-bailey-trem2-r47h-apoe-binding')?.id, variant);
   assert.equal(findComparisonPartner(snapshot, FIRST)?.id, SECOND);
@@ -22,12 +23,43 @@ test('comparison prefers the same recorded binding condition in a different publ
   [claim.subject_id, claim.object_id] = [claim.object_id, claim.subject_id];
   assert.equal(findComparisonPartner(reversed, binding)?.id, claim.id);
   assert.equal(findComparisonPartner({ ...snapshot, claims: [snapshot.claims[0]] }, FIRST), undefined);
+  const withoutNote = { ...snapshot, conflicts: [] };
+  assert.equal(findComparisonPartner(withoutNote, variant)?.id, 'claim-bailey-trem2-r47h-apoe-binding');
+  const missingPartner = { ...snapshot, claims: snapshot.claims.filter(({ id }) => id !== 'claim-lessard-trem2-r47h-apoe3-binding') };
+  assert.equal(findComparisonPartner(missingPartner, variant)?.id, 'claim-bailey-trem2-r47h-apoe-binding');
   const noSecondPaper = { ...snapshot, claims: snapshot.claims.filter(({ id }) => !id.startsWith('claim-bailey-')) };
   assert.equal(findComparisonPartner(noSecondPaper, binding)?.id, variant);
   const repeatedMetadata = structuredClone(snapshot);
   // Deliberately aliased metadata is confined to this helper test, not the graph.
   repeatedMetadata.sources.find(({ id }) => id === 'source-bailey-2015')!.identifiers = repeatedMetadata.sources.find(({ id }) => id === 'source-atagi-2015')!.identifiers;
   assert.equal(findComparisonPartner(repeatedMetadata, binding)?.id, variant);
+});
+
+test('a source-checked context note appears only for its cited pair and exports the actual limits and review record', () => {
+  const before = JSON.stringify(snapshot);
+  const ids: [string, string] = ['claim-trem2-r47h-apoe-binding', 'claim-lessard-trem2-r47h-apoe3-binding'];
+  const comparison = buildEvidenceComparison(snapshot, ...ids);
+  assert.deepEqual(comparison.contextNotes.map(({ id }) => id), ['conflict-r47h-binding-context']);
+  assert.deepEqual(buildEvidenceComparison(snapshot, ids[1], ids[0]).contextNotes, comparison.contextNotes);
+  assert.equal(comparison.sharedSources.length, 0);
+  assert.equal(getStudyContextNotes(snapshot, ids[0]).length, 1);
+  assert.equal(getStudyContextNotes(snapshot, FIRST).length, 0);
+  assert.equal(buildEvidenceComparison(snapshot, FIRST, SECOND).contextNotes.length, 0);
+  assert.equal(buildEvidenceComparison(snapshot, ids[0], 'claim-bailey-trem2-r47h-apoe-binding').contextNotes.length, 0);
+  assert.equal(buildEvidenceComparison(snapshot, 'claim-trem2-apoe-binding', ids[1]).contextNotes.length, 0);
+  assert.equal(buildEvidenceComparison({ ...snapshot, conflicts: [] }, ...ids).contextNotes.length, 0);
+  const units = comparison.contextRows.find(({ key }) => key === 'ligand_concentrations')!;
+  assert.equal(units.left.studies[0].value, null);
+  assert.equal(units.right.studies[0].value, 5);
+  const experiments = comparison.contextRows.find(({ key }) => key === 'experiments_reported')!;
+  assert.equal(experiments.right.studies[0].value, null);
+  const brief = buildComparisonBrief(snapshot, ...ids);
+  for (const value of ['Different R47H binding results', 'conflict-r47h-binding-context', 'not an equivalence test',
+    'https://pubmed.ncbi.nlm.nih.gov/26374899/', 'https://link.springer.com/article/10.15252/emmm.201809027',
+    'evidence-atagi-2015-r47h-binding', 'evidence-lessard-2018-apoe3-binding', 'ligand concentrations: 5',
+    'complete experiment repeated twice', 'Note review: draft; human reviewed: false', 'Source check:']) assert.ok(brief.includes(value), value);
+  for (const difference of comparison.contextNotes[0].context_differences) assert.ok(brief.includes(difference));
+  assert.equal(JSON.stringify(snapshot), before);
 });
 
 test('two binding publications expose preparation differences, technical units and the original correction in the brief', () => {

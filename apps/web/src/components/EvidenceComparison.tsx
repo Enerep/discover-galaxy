@@ -4,6 +4,7 @@ import type { ComparisonColumn, ComparisonContextCell, ContextValue } from '../l
 import type { Claim, Snapshot, Source } from '../lib/types.ts';
 import { Icon } from './ui.tsx';
 import { PublicationStatus } from './PublicationStatus.tsx';
+import { StudyContextNote } from './StudyContextNote.tsx';
 
 interface Props {
   snapshot: Snapshot;
@@ -124,6 +125,7 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Pr
           : comparison.scopeStatus === 'insufficient context' ? 'The recorded study context is incomplete.'
             : 'Recorded fields match; check the source methods before treating the studies as comparable.'} These labels do not establish agreement or contradiction.</p>
         <div className="comparison-findings">{comparison.columns.map((column) => <FindingCard key={column.claim.id} column={column} />)}</div>
+        {comparison.contextNotes.map((note) => <StudyContextNote key={note.id} snapshot={snapshot} note={note} />)}
         <h3>Study context</h3>
         <p>{comparison.experimentalContext ? 'Assay context and replicate units stay with each original source.' : 'Source values and claim scope stay separate; participant counts are not combined.'}</p>
         <div className="comparison-table-wrap" tabIndex={0} role="region" aria-label="Study context comparison">

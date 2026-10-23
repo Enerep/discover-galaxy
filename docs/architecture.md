@@ -44,7 +44,7 @@ At this size, local indexes and a bounded graph traversal are sufficient. A grap
 
 The [design guide](design.md) is the standing interface standard. The interface uses a single control set above the explorer, a graph/list workspace, and a readable evidence panel. Light or dark neutral interface surfaces frame the dark graph. Copy names actions and information directly. Observed browser results are recorded in the [verification record](verification.md).
 
-- `createGalaxyLayout` derives deterministic type-based rings from the full snapshot, preserving positions when the visible set changes. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength. Narrow views prioritize the main anchors and current selection; labels wrap and stay within the canvas where possible.
+- `createGalaxyLayout` derives deterministic type-based rings from the full snapshot, preserving positions when the visible set changes. Papers use two outer arcs that leave room for horizontal pathway/protein labels as the collection grows. Position, size, glow, and decorative stars are navigation choices, not measurements of biological similarity, causality, or evidence strength. Narrow views prioritize the main anchors and current selection; labels wrap and stay within the canvas where possible.
 - Solid connections project claims; dashed connections connect paper projections to the claims they cite. Citation links are not additional biological relationships.
 - The HTML list, search results, and inspector provide entity and evidence selection without manipulating the canvas. The scene itself is hidden from the accessibility tree.
 - The renderer uses demand-based frames, bounded pixel density, camera reset, and reduced-motion-aware controls. Hover, selection, camera focus, and zoom animate briefly and settle; materials and geometry are reused during feedback. User gestures interrupt camera transitions. Renderer errors and lost WebGL context switch to the list view.
@@ -60,6 +60,8 @@ The graph/list/evidence flows and presentation refinements have browser coverage
 Shared source IDs, normalized PMIDs, and DOIs identify repeated citation identities. No detected identity overlap does not establish independent cohorts. Reading prompts are deterministic source checks derived from missing or different context. They are not a hypothesis-generation service, verified research gaps, or curator-approved disagreement records.
 
 The native comparison dialog preserves the underlying explorer state. Its Markdown export contains the selected statements, full claim and study context, source links and locators, limitations, actual review/reuse/publication fields, and dataset version. It performs no network request and changes no scientific record.
+
+`StudyContextNote` renders only annotations from the snapshot's `conflicts` collection, after a finding's original citation and between the comparison cards and context table. It retains both original links, methodological differences and actual check metadata. Comparison includes a note only when all its claims and cited evidence belong to the selected pair; the complete note and provenance remain in the Markdown brief. The initial partner prefers an explicit curated pair before the recorded-condition fallback. No note is inferred from automatic field differences.
 
 ## Sharing
 
