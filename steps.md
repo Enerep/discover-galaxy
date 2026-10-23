@@ -1,10 +1,10 @@
 # Implementation steps
 
-**Current stage: the 24-entity Source-checked draft explorer is implemented; independent scientific review is a future milestone.**
+**Current stage: the 24-entity Source-checked draft explorer includes a locally saved research brief workspace; independent scientific review is a future milestone.**
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
-The [checkpoint plan](docs/checkpoints.md) records source-specific finding comparison and staged candidate intake. Coverage remains Alzheimer's-only; the next scientific milestone reviews the existing packet and deepens AD evidence before adding another disease.
+The [checkpoint plan](docs/checkpoints.md) now prioritizes turning pinned evidence into a research argument. Coverage remains Alzheimer's-only. Further scientific source work, independent review and other diseases remain separate future milestones.
 
 ## M0 — Establish the foundation
 
@@ -67,6 +67,17 @@ The source-checked development journey is usable now; structural checks never ma
 
 This work provides a reading and curation workflow. It does not add reviewed claims, establish study independence, classify scientific contradictions, or complete M3's disagreement/hypothesis criteria.
 
+### Research brief workspace
+
+- [x] Pin existing findings and include one comparison without changing scientific records or the underlying explorer view.
+- [x] Provide separate fields for the user's question, explanation, assumptions and proposed experiment, with no generated or prefilled scientific conclusions.
+- [x] Save one bounded draft locally, retain notes across reloads, and expose recovery for unavailable/corrupt storage and another tab's edits.
+- [x] Preserve references across dataset changes, show unavailable findings and require explicit refresh before evidence additions or export.
+- [x] Export a user-authored draft with complete cited findings/comparison, source contexts, unknowns, limitations and actual review metadata.
+- [x] Verify keyboard, themes, mobile touch, WebGL fallback, saved-state recovery and downloaded Markdown in browser checks.
+
+This is a user writing workflow. It does not add curator-reviewed questions, establish novelty, supply a live AI service or complete M3's scientific-content criteria. Notes remain device-local; Markdown download is the current sharing option, with imports and multiple saved briefs deferred.
+
 ### Prepare the next AD evidence pass
 
 - [x] Stage a bounded, source-linked reading list: six publications and two Reactome pathway records, with lookup dates, actual access limits, and unknown context preserved.
@@ -85,7 +96,7 @@ Snapshot 0.5.0 adds Lessard 2018's scoped APOE3 BLI finding and one source-check
 
 ## M2 — Deliver the curated Alzheimer's explorer
 
-Continue from the 24-finding source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [the next checkpoint](docs/checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
+Future content work can continue from the 24-finding source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
 
 - [x] Reach **20–50 source-checked draft entities**, including paper nodes: 24 total, with scope and original references retained.
 - [x] Add two human Reactome pathways and seven distinct proteins with source-linked participation and state context; variant nodes remain deferred.

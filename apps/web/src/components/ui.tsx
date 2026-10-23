@@ -31,6 +31,8 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
     moon: <path d="M20.5 13a8.5 8.5 0 0 1-9.5-9.5A8.5 8.5 0 1 0 20.5 13Z" />,
     monitor: <><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></>,
     compare: <><path d="M5 7h14l-4-4M19 17H5l4 4M19 7v4M5 17v-4" /></>,
+    pin: <><path d="m8 3 8 0-1 6 4 4v2H5v-2l4-4-1-6M12 15v7" /></>,
+    brief: <><path d="M6 3h13v18H6a3 3 0 0 1 0-6h13M6 3a3 3 0 0 0-3 3v12M9 7h6M9 11h6" /></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"

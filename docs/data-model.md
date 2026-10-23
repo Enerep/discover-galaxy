@@ -124,6 +124,14 @@ Snapshot 0.5.0 uses this collection for one **source-checked draft study-context
 
 A hypothesis record contains `id`, `question`, `basis_claim_ids`, `basis_evidence_ids`, `assumptions`, `limitations`, `suggested_test`, `origin` (`curated` or `ai_generated`), `dataset_version`, and `review`. It remains labeled as a question for investigation and never becomes a claim merely by being generated. The released snapshot contains only reviewed hypotheses; unreviewed AI output stays outside it. Record any novelty-check method and date before asserting a question is unexplored.
 
+## User-authored research brief
+
+The [research-brief model](../apps/web/src/lib/research-brief.ts) is a separate client-side contract, not part of schema `0.1.0` or the snapshot's `hypotheses` collection. Its fields are `schema_version: 1`, `dataset_version`, `updated_at`, `question`, `explanation`, `assumptions`, `experiment`, `pinned_claim_ids` and nullable `comparison_claim_ids`. The timestamp is a client edit time, not a source-inspection or review date. It stores no source copies, review fields or scientific approvals.
+
+One draft is stored under `discovery-galaxy:research-brief:v1`. There are at most 12 unique claim references and one pair of distinct pinned findings; text limits are defined in the model. The parser rejects extra fields, invalid shapes and oversized data. Structurally valid references missing from the current snapshot are retained visibly so the user can remove them without losing their notes. A dataset-version mismatch requires explicit refresh, with every remaining reference resolvable, before evidence additions or export.
+
+The Markdown export requires a question and at least one current, resolvable pin. It keeps user reasoning in escaped, blockquoted sections, then includes complete source-backed finding or comparison records with their actual context and review metadata. This associates references with a working document; it does not validate support for each user statement, approve a hypothesis or establish novelty. There is no import, cloud synchronization or promotion into the scientific dataset.
+
 ## Required validation before release
 
 1. Validate the contract version, required fields, types, enum values, ID uniqueness, dates, and reference integrity. Every endpoint, evidence link, source link, and annotation reference must resolve.

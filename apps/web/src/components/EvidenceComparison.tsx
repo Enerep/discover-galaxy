@@ -1,8 +1,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { buildComparisonBrief, buildEvidenceComparison } from '../lib/compare-evidence.ts';
 import type { ComparisonColumn, ComparisonContextCell, ContextValue } from '../lib/compare-evidence.ts';
-import type { Claim, Snapshot } from '../lib/types.ts';
-import { sourceCitation } from '../lib/source-format.ts';
+import type { Snapshot } from '../lib/types.ts';
+import { findingLabel, sourceCitation } from '../lib/source-format.ts';
 import { Icon } from './ui.tsx';
 import { PublicationStatus } from './PublicationStatus.tsx';
 import { StudyContextNote } from './StudyContextNote.tsx';
@@ -12,22 +12,12 @@ interface Props {
   claimIds: [string, string] | null;
   onChange: (side: 0 | 1, id: string) => void;
   onClose: () => void;
+  onIncludeInBrief: (pair: [string, string]) => void;
 }
 
 function display(value: ContextValue | undefined) {
   if (value === null || value === undefined || (typeof value === 'string' && !value.trim()) || (Array.isArray(value) && !value.length)) return 'Not recorded';
   return Array.isArray(value) ? value.join('; ') : typeof value === 'number' ? value.toLocaleString('en-US') : value;
-}
-
-function findingLabel(snapshot: Snapshot, claim: Claim) {
-  if (typeof claim.context.binding_condition === 'string') {
-    const sourceIds = new Set(snapshot.evidence.filter(({ claim_id }) => claim_id === claim.id).map(({ source_id }) => source_id));
-    const sources = snapshot.sources.filter(({ id, kind }) => sourceIds.has(id) && kind === 'publication');
-    if (sources.length === 1) return `${sourceCitation(sources[0])} · ${claim.context.binding_condition}`;
-  }
-  const subject = snapshot.entities.find(({ id }) => id === claim.subject_id);
-  const object = snapshot.entities.find(({ id }) => id === claim.object_id);
-  return String(claim.context.variant ?? `${subject?.label ?? claim.subject_id} · ${claim.predicate.replaceAll('_', ' ')} · ${object?.label ?? claim.object_id}`);
 }
 
 function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: ComparisonColumn }) {
@@ -82,7 +72,7 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
   );
 }
 
-export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Props) {
+export function EvidenceComparison({ snapshot, claimIds, onChange, onClose, onIncludeInBrief }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const [downloadUrl, setDownloadUrl] = useState('');
@@ -145,6 +135,7 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Pr
           <ul>{comparison.prompts.map((prompt) => <li key={prompt}>{prompt}</li>)}</ul>
         </details>
         <div className="comparison-actions">{downloadUrl && <a className="primary-button" href={downloadUrl} download="discovery-galaxy-comparison.md"><Icon name="download" size={17} />Download comparison</a>}
+          <button className="secondary-button" onClick={() => onIncludeInBrief(claimIds)}><Icon name="pin" size={16} />Add to research brief</button>
         </div>
       </>}
     </dialog>

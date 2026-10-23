@@ -1,6 +1,23 @@
 # Checkpoints
 
-## Current checkpoint: inspect different R47H assay results
+## Current checkpoint: build a research argument
+
+The research brief workspace adds a complete working flow on top of the existing Alzheimer's evidence:
+
+1. Use **Pin finding** in the inspector or **Add to research brief** from a comparison.
+2. Write a research question, explanation, assumptions and proposed experiment beside the selected evidence.
+3. Keep original citations and context accessible, and include one comparison without losing its methodological limits.
+4. Save one draft locally and download a cited Markdown document for discussion.
+
+The workspace supports up to 12 pinned findings and one comparison. It keeps user text separate from scientific records and never creates graph hypotheses or approvals. Storage errors leave writing/export usable; corrupt saved data and conflicting tabs require explicit recovery. Dataset changes retain notes and require an explicit evidence refresh. There are no accounts, cloud sync, brief imports or AI-generated answers. Explorer sharing links and PNGs do not carry the user's notes.
+
+This checkpoint changes the research workflow without adding more source records. Browser and model checks are recorded in [verification](verification.md); a working brief does not establish novelty or experimentally validate its argument.
+
+## Next checkpoint: reuse and refine research briefs
+
+Use the complete pin → compare → write → download flow for a concrete lab-meeting question. Check whether the resulting document makes the evidence, assumptions and proposed controls easy to discuss. Prioritize the next workflow change from that use: multiple saved questions or reopening a portable draft are natural extensions, but neither is implemented here. Keep the current single-device storage boundary explicit and preserve cited context in any future import/export format. More source records and broader disease coverage are separate work.
+
+## Evidence foundation: inspect different R47H assay results
 
 Snapshot **alzheimers-source-checked-0.5.0** has **24 entities, 24 cited draft claims and one draft study-context comparison**. A Lessard 2018 finding reports no significant APOE3 affinity difference between wild-type and R47H TREM2 in its lipidated-protein BLI assay. The context note compares that scoped report with Atagi 2015's reduced-binding finding while preserving different preparations, constructs and readouts. The [dataset changes](../data/alzheimers/CHANGELOG.md) record inspected publisher text, figure captions, unknown replicate totals and CC BY attribution. This does not establish identical binding, a settled contradiction, the cause of the difference or clinical effects.
 
@@ -28,7 +45,7 @@ The comparison and intake boundaries are:
 
 The intended product value is a traceable path from a connection to the evidence and checks needed to use it. Reviewed pathways, intervention findings, and grounded research questions can deepen that path later. Adding more edges or calling an automated output a discovery does not meet this checkpoint's scientific purpose.
 
-## Next checkpoint: deepen the Alzheimer's evidence
+## Future content work: deepen the Alzheimer's evidence
 
 The development snapshot meets the **20–50 entity size target**. Next, inspect selected original papers from the staged list at assay level and add precise, cited draft findings when the source supports them. Prioritize useful connections across lipid handling and microglial signaling rather than adding nodes for their count.
 
@@ -44,7 +61,7 @@ Candidate discovery should begin with the existing genes and the pathway questio
 
 A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 24 findings, the context comparison and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
 
-`npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. This checkpoint extends the three-study binding evidence with one source-checked contextual comparison, preserving page-vs-indexed access. Next, inspect the staged ABCA1/APOE lipid-handling papers for a precisely scoped experiment, keeping organism, model and preparation explicit. Such an experiment would not establish the cause of the R47H assay difference. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
+`npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. The prior content checkpoint extended the three-study binding evidence with one source-checked contextual comparison, preserving page-vs-indexed access. A future data pass can inspect the staged ABCA1/APOE lipid-handling papers for a precisely scoped experiment, keeping organism, model and preparation explicit. Such an experiment would not establish the cause of the R47H assay difference. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
 
 ## Then: automate collection, preserve review
 

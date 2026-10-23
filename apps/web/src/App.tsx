@@ -6,6 +6,7 @@ import { Inspector } from './components/Inspector.tsx';
 import { ShareDialog } from './components/ShareDialog.tsx';
 import { ThemeControl } from './components/ThemeControl.tsx';
 import { EvidenceComparison } from './components/EvidenceComparison.tsx';
+import { ResearchBrief } from './components/ResearchBrief.tsx';
 import { Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getClaimEvidence, getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
@@ -13,6 +14,7 @@ import { useReducedMotion } from './lib/useReducedMotion.ts';
 import { buildShareUrl, parseShareState } from './lib/share-state.ts';
 import type { ExplorerShareState } from './lib/share-state.ts';
 import { findComparisonPartner } from './lib/compare-evidence.ts';
+import { useResearchBrief } from './lib/useResearchBrief.ts';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const FILTERS: { value: EntityType | 'all'; label: string }[] = [
@@ -59,12 +61,15 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const [webglFailed, setWebglFailed] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [comparisonIds, setComparisonIds] = useState<[string, string] | null>(null);
+  const [briefOpen, setBriefOpen] = useState(false);
+  const research = useResearchBrief(snapshot);
   const graphCapture = useRef<(() => HTMLCanvasElement) | null>(null);
   const receiveCapture = useCallback((capture: (() => HTMLCanvasElement) | null) => { graphCapture.current = capture; }, []);
   const captureGraph = useCallback(() => graphCapture.current?.(), []);
   const aboutRef = useRef<HTMLDialogElement>(null);
   const graphRef = useRef<HTMLElement>(null);
   const inspectorRef = useRef<HTMLElement>(null);
+  const briefTrigger = useRef<HTMLButtonElement>(null);
   const focusConnection = useRef(false);
   const reducedMotion = useReducedMotion();
   const matches = useMemo(() => searchEntities(snapshot, query, filter), [snapshot, query, filter]);
@@ -85,7 +90,30 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     if (!focusConnection.current) return;
     inspectorRef.current?.querySelector<HTMLElement>('.selected-title')?.focus({ preventScroll: true });
     focusConnection.current = false;
-  }, [selectedId]);
+  }, [selectedId, selectedClaimId]);
+
+  function togglePin(claimId: string) {
+    const success = research.change(research.brief.pinned_claim_ids.includes(claimId)
+      ? { type: 'unpin', claimId } : { type: 'pin', claimIds: [claimId] });
+    if (!success) setBriefOpen(true);
+  }
+  function includeComparison(pair: [string, string]) {
+    research.includeComparison(pair);
+    setComparisonIds(null);
+    setBriefOpen(true);
+  }
+  function closeBrief() {
+    setBriefOpen(false);
+    requestAnimationFrame(() => briefTrigger.current?.focus({ preventScroll: true }));
+  }
+  function viewBriefFinding(id: string) {
+    const claim = snapshot.claims.find((claim) => claim.id === id);
+    if (!claim) return;
+    setBriefOpen(false);
+    followConnection(claim.subject_id, claim.id);
+    // A dialog can also return to the currently selected record.
+    requestAnimationFrame(openEvidence);
+  }
 
   function openComparison() {
     if (!activeClaim) return;
@@ -180,7 +208,12 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <main className="explorer" id="explorer" tabIndex={-1}>
           <div className="page-heading">
             <h1>Alzheimer’s disease</h1>
-            <button className="secondary-button share-trigger" onClick={() => setShareOpen(true)}><Icon name="share" size={17} />Share</button>
+            <div className="workspace-actions">
+              <button ref={briefTrigger} className="secondary-button brief-trigger" aria-label="Research brief" onClick={() => setBriefOpen(true)}><Icon name="brief" size={17} />Research brief
+                {research.brief.pinned_claim_ids.length > 0 && <span className="brief-count" aria-hidden="true">{research.brief.pinned_claim_ids.length}</span>}
+              </button>
+              <button className="secondary-button share-trigger" onClick={() => setShareOpen(true)}><Icon name="share" size={17} />Share</button>
+            </div>
           </div>
           <div className="explorer-tools">
             <EntitySearch query={query} matches={matches} onQuery={setQuery} onSelect={selectEntity} />
@@ -267,7 +300,8 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
         <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
-          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection} />
+          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection}
+          pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin} />
       </div>
 
       <dialog className="data-dialog" ref={aboutRef} aria-labelledby="data-title">
@@ -279,7 +313,10 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       </dialog>
       <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} snapshot={snapshot}
         selected={selected} claim={activeClaim} captureGraph={captureGraph} shareUrl={shareUrl} />
-      <EvidenceComparison snapshot={snapshot} claimIds={comparisonIds} onChange={changeComparison} onClose={() => setComparisonIds(null)} />
+      <EvidenceComparison snapshot={snapshot} claimIds={comparisonIds} onChange={changeComparison} onClose={() => setComparisonIds(null)} onIncludeInBrief={includeComparison} />
+      <ResearchBrief snapshot={snapshot} brief={research.brief} open={briefOpen} onClose={closeBrief}
+        status={research.status} error={research.error} selectedClaimId={activeClaim?.id ?? null} onChange={research.change} onSave={research.saveThisVersion}
+        onViewFinding={viewBriefFinding} onCompare={(pair) => { setBriefOpen(false); setComparisonIds(pair); }} />
     </div>
   );
 }

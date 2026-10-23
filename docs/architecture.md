@@ -8,7 +8,7 @@ The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.2, Three.js 0.186.
 
 The client imports snapshot `alzheimers-source-checked-0.5.0`: one disease, seven genes, seven distinct proteins, two pathways and seven papers. Its 24 claims/evidence records combine four original association findings with canonical gene/product mappings, curated pathway participation, TREM2–DAP12 binding and five assay-scoped APOE–TREM2 findings from three original papers. Source locators and context distinguish experimental studies from database assertions. All records remain draft; source-specific checks and unknowns are preserved. [Dataset changes](../data/alzheimers/CHANGELOG.md) record the inspected material and provenance.
 
-Implemented views share React state for alias-aware search, all current entity-type filters, entity/claim selection and evidence inspection. The scene loads lazily. The inspector distinguishes **Original paper** from **Database annotation**, links the original title directly and lets users follow a claim's other entity without losing the finding or graph/list mode. Two-finding comparison exports a cited Markdown brief. The client requires no backend, database, live scientific API, or AI credential. One draft study-context comparison records differing R47H reports; definitive disagreement classifications, research-question cards and live AI explanations remain planned.
+Implemented views share React state for alias-aware search, all current entity-type filters, entity/claim selection and evidence inspection. The scene loads lazily. The inspector distinguishes **Original paper** from **Database annotation**, links the original title directly and lets users follow a claim's other entity without losing the finding or graph/list mode. Two-finding comparison exports a cited Markdown brief. The research brief workspace combines pinned references with user-authored reasoning, device-local saving and a cited document export. The client requires no backend, database, live scientific API, or AI credential. One draft study-context comparison records differing R47H reports; definitive disagreement classifications, curator-reviewed research-question cards and live AI explanations remain planned.
 
 Binding comparison defaults use exact recorded condition labels and distinct publication identities as navigation hints; they never infer agreement or independence. Explicit experimental-system context selects an assay-first row order without dropping missing fields. A shared publication-status component retains recorded notice dates and original links in both the inspector and comparison; the Markdown brief retains notice URLs as well.
 
@@ -20,6 +20,9 @@ flowchart LR
     State --> List[Accessible HTML graph list]
     State --> Inspector[Evidence and entity inspector]
     Inspector --> Comparison[Source-specific finding comparison]
+    Inspector --> Brief[Research brief: pinned references and user notes]
+    Comparison --> Brief
+    Brief --> Local[Device-local draft and Markdown export]
 ```
 
 The diagram shows the current application. The galaxy, list, and inspector are views of the same local records. A structural validation pass permits development use; it does not establish scientific validity. See the [data model](data-model.md) for schema `0.1.0` and the [evidence policy](evidence-policy.md) for publication rules.
@@ -35,8 +38,9 @@ The diagram shows the current application. The galaxy, list, and inspector are v
 | Evidence inspector | Present the selected draft claim, source-linked notes, study context, limitations, original references, and review status. |
 | Finding comparison | Align two findings' recorded context and preserve source-specific values, limitations, review fields, and publication identities in the view and Markdown brief. |
 | Sharing | Capture the graph on demand, generate a cited PNG in the browser, and encode validated explorer state in a shareable URL fragment. |
+| Research brief | Own bounded user notes and claim references separately from scientific records; save locally and export complete cited evidence. |
 
-The development snapshot meets M2's 20–50 entity size target and includes typed pathway journeys. Further work deepens original-study evidence and source provenance; independent scientific review is a future milestone. M3 adds justified disagreement comparisons and research-question cards, separate from evidence-backed claims and without invented consensus scores.
+The development snapshot meets M2's 20–50 entity size target and includes typed pathway journeys. The current workflow adds user-authored research briefs; further source expansion and independent scientific review are separate future work. M3 adds justified disagreement comparisons and curator-reviewed research-question cards, separate from evidence-backed claims and without invented consensus scores.
 
 At this size, local indexes and a bounded graph traversal are sufficient. A graph database, distributed processing, and microservices add little value before the exploration flow works. The adapter allows a future HTTP source to replace the local loader without coupling the UI to an upstream provider's response shape.
 
@@ -67,6 +71,18 @@ Table cells omit repeated attribution when one evidence record and the column he
 
 `StudyContextNote` renders only annotations from the snapshot's `conflicts` collection, after a finding's original citation and between the comparison cards and context table. It retains both original links, methodological differences and actual check metadata. Comparison includes a note only when all its claims and cited evidence belong to the selected pair; the complete note and provenance remain in the Markdown brief. The initial partner prefers an explicit curated pair before the recorded-condition fallback. No note is inferred from automatic field differences.
 
+## Research brief workspace
+
+`research-brief.ts` owns a bounded, versioned user-draft contract, explicit pin/comparison actions and Markdown assembly. It stores claim IDs rather than copied scientific records, never mutates the snapshot and never creates a `Hypothesis` or review attestation. Including a comparison pins both findings atomically. Removing either pin clears its comparison while preserving notes. `source-format.ts` shares finding labels across the inspector, comparison and brief.
+
+`useResearchBrief` restores one draft from `discovery-galaxy:research-brief:v1` in `localStorage`, validates its shape and debounces writes by 300 ms, flushing the latest edit on `pagehide` for an immediate refresh. Storage failures preserve an in-memory draft. Unreadable data and another tab's change pause automatic writes; only **Save this version** replaces the stored draft. Before writing, the hook also checks that the saved value has not changed. This prevents ordinary tab overwrites; localStorage is not an atomic collaborative store, a backup or cloud sync.
+
+Dataset-version mismatches keep the user's notes and referenced IDs. The workspace identifies unavailable findings, shows that evidence resolves against the current snapshot and requires explicit **Refresh evidence** before adding findings/comparisons or exporting. Unavailable references must be removed first. A refresh acknowledges the current snapshot; it does not claim to have rechecked the original literature or archive the old scientific records.
+
+`ResearchBrief` provides labeled native textareas, pinned citations/disclosures and optional pair selectors. Writing precedes evidence in document order; desktop shows them side by side and mobile stacks them. Sticky download/save feedback remains available while scrolling. **View finding** clears hiding filters, keeps graph/list mode and explicitly focuses/scrolls to the inspector. Ordinary closing returns focus to the brief trigger.
+
+`buildResearchBrief` requires a question and resolvable pinned evidence from the current snapshot. User notes are escaped and blockquoted in their own sections. The shared complete finding renderer and existing comparison exporter retain scientific statements, contexts, locators, source/notice URLs, unknowns and actual review metadata. An included comparison keeps its curated context note. The exported document labels user reasoning as a draft and does not attest novelty, feasibility or support for that reasoning. Downloads use a local Blob; notes are never included in explorer links or PNG exports and are not uploaded.
+
 ## Sharing
 
 Image export captures the current graph on demand and combines it with the selected entity, full finding, source references, dataset version, and explicit draft status. The image renderer uses local Canvas APIs; it does not fetch paper content or upload the image. List view and unavailable WebGL use an evidence card without pretending to capture a graph. Native file sharing is optional; PNG download remains available.
@@ -87,7 +103,7 @@ Open Targets and Reactome adapters remain planned. Import only reviewed records 
 
 The client makes no upstream scientific API requests. The checked-in snapshot makes local exploration reproducible and independent of those services; opening an original external reference still requires network access.
 
-The next dataset pass remains AD-focused. Candidate collection, source comparison, human review, and versioned publication are separate stages; intake can automate metadata collection and normalization without promoting candidates or recording human approval. Apply the workflow to another disease only after the AD evidence journey is reliable. The bounded next deliverable is described in [checkpoints](checkpoints.md#next-checkpoint-deepen-the-alzheimers-evidence).
+Future dataset work remains AD-focused. Candidate collection, source comparison, human review, and versioned publication are separate stages; intake can automate metadata collection and normalization without promoting candidates or recording human approval. Apply the workflow to another disease only after the AD evidence journey is reliable. This is separate from the current brief workspace; see [future content work](checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
 
 ## Later services, when needed
 
@@ -128,13 +144,15 @@ Run the root project commands documented in [CONTRIBUTING.md](../CONTRIBUTING.md
 
 - `npm run validate:data` checks the development snapshot; warnings retain its pending-review status.
 - `npm run validate:release` exercises the stricter publication gate and must fail for the current draft snapshot.
-- `npm test` covers data integrity, release gates, alias search, paper-to-claim lookup, source-specific comparison, and curation tooling using isolated synthetic fixtures and the checked-in starter.
+- `npm test` covers data integrity, release gates, alias search, paper-to-claim lookup, source-specific comparison, research-brief state/export boundaries, and curation tooling using isolated synthetic fixtures and the checked-in starter.
 - `npm run build` runs TypeScript checks before creating the production bundle.
 - `npm run check:dependencies` checks the lockfile's sources, integrity, and pins. Network-backed publication-date and pinned IOC checks are described in the [security policy](npm-security.md).
 
 Browser QA must exercise search → entity → claim → original reference through both views, plus keyboard access, no results, reduced motion, and renderer fallback. Automated data tests do not verify those interactions. Measure responsiveness on a documented device/browser before setting or reporting a performance budget.
 
 Comparison checks must distinguish variant contexts, keep source-specific missing fields and participant subsets separate, retain cited brief content, and preserve keyboard/mobile access. Intake checks must distinguish offline normalization from live retrieval and keep metadata candidates outside the scientific snapshot.
+
+Brief checks must preserve user text and references across reloads, keep exports cited without laundering notes into findings, and exercise blocked/corrupt storage, dataset changes and conflicting tabs through the browser. Model tests alone do not verify the autosave hook or dialog focus.
 
 When AI is introduced, evaluate citation validity, claim grounding, abstention, hypothesis labeling, and service failure using reviewed answerable and unanswerable cases.
 

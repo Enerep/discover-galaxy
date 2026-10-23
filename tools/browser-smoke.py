@@ -6,6 +6,7 @@ counters are injected into the test browser only; production has no QA hooks.
 """
 
 import argparse
+import json
 from pathlib import Path
 import re
 import struct
@@ -925,6 +926,213 @@ def assert_study_context_note(browser, base_url: str, screenshots: Path) -> None
     print("PASS: the cited R47H context note opens its explicit pair, retains non-equivalence and unknown repeat totals in briefs/PNG sharing, and works with keyboard, themes, mobile touch and WebGL fallback.")
 
 
+def assert_research_brief(browser, base_url: str, screenshots: Path) -> None:
+    key = 'discovery-galaxy:research-brief:v1'
+    atagi = 'claim-trem2-r47h-apoe-binding'
+    lessard = 'claim-lessard-trem2-r47h-apoe3-binding'
+    link = f'{base_url}#entity=protein-trem2&claim={atagi}&type=protein'
+    context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+    context.add_init_script(RENDER_COUNTERS)
+    page = context.new_page()
+    errors = []
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.goto(link, wait_until='networkidle')
+    pin = page.get_by_role('button', name='Pin finding', exact=True)
+    pin.click()
+    expect(pin).to_have_attribute('aria-pressed', 'true')
+    expect(page.get_by_role('combobox', name='Filter by entity type')).to_have_value('protein')
+    page.get_by_role('button', name='Compare findings', exact=True).click()
+    page.get_by_role('button', name='Add to research brief', exact=True).click()
+    dialog = page.get_by_role('dialog', name='Research brief', exact=True)
+    expect(dialog).to_be_visible()
+    expect(page.get_by_role('dialog', name='Compare findings', exact=True)).not_to_be_visible()
+    expect(dialog.locator('.brief-finding')).to_have_count(2)
+    expect(dialog.get_by_role('combobox', name='Finding A')).to_have_value(atagi)
+    expect(dialog.get_by_role('combobox', name='Finding B')).to_have_value(lessard)
+    fields = {
+        'Research question': 'Workflow test: which assay conditions need a controlled comparison?',
+        'Your explanation': 'Workflow test notes, not a scientific finding.\n# This is user text.',
+        'Your assumptions': 'Workflow test: the selected methods may need harmonizing.',
+        'Your proposed experiment': 'Workflow test: compare preparations with prespecified controls and readouts.',
+    }
+    for label, value in fields.items():
+        dialog.get_by_role('textbox', name=label, exact=True).fill(value)
+    expect(dialog.locator('.brief-save-status')).to_have_text('Saved on this device')
+    saved = page.evaluate('key => JSON.parse(localStorage.getItem(key))', key)
+    assert saved['pinned_claim_ids'] == [atagi, lessard]
+    assert saved['comparison_claim_ids'] == [atagi, lessard]
+    assert saved['experiment'] == fields['Your proposed experiment']
+    assert not {'sources', 'review', 'human_reviewed'} & saved.keys()
+    for theme in ['light', 'dark']:
+        page.keyboard.press('Escape')
+        expect(page.get_by_role('button', name='Research brief', exact=True)).to_be_focused()
+        page.get_by_role('combobox', name='Color theme').select_option(theme)
+        page.get_by_role('button', name='Research brief', exact=True).click()
+        for control in [dialog.get_by_role('textbox', name='Research question'), dialog.get_by_role('textbox', name='Your explanation'), dialog.locator('.brief-source a').first, dialog.locator('.brief-save-status')]:
+            assert_text_contrast(control)
+        dialog.get_by_role('textbox', name='Research question').scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f'research-brief-{theme}.png'))
+    download_button = dialog.get_by_role('button', name='Download brief', exact=True)
+    box = download_button.bounding_box()
+    assert box and 0 <= box['y'] < 1000 - box['height'], 'Download action must stay visible while writing.'
+    with page.expect_download() as pending:
+        download_button.click()
+    destination = screenshots / 'research-brief.md'
+    pending.value.save_as(destination)
+    markdown = destination.read_text()
+    for text in ['Researcher-entered draft', '> Workflow test', '> \\# This is user text.', atagi, lessard,
+                 'https://pubmed.ncbi.nlm.nih.gov/26374899/', 'https://link.springer.com/article/10.15252/emmm.201809027',
+                 'conflict-r47h-binding-context', 'not an equivalence test', 'ligand concentrations: 5', 'total run count was not resolved']:
+        assert text in markdown, text
+    # Native modal focus excludes background controls; Chromium also allows browser chrome.
+    for _ in range(6):
+        page.keyboard.press('Tab')
+        assert dialog.evaluate('element => element.contains(document.activeElement) || document.activeElement === document.body')
+    dialog.get_by_role('button', name='View comparison', exact=True).click()
+    expect(page.get_by_role('dialog', name='Compare findings', exact=True)).to_be_visible()
+    page.get_by_role('button', name='Add to research brief', exact=True).click()
+    expect(dialog.get_by_role('textbox', name='Your explanation')).to_have_value(fields['Your explanation'])
+    # Refresh immediately after editing, before the ordinary autosave debounce.
+    fields['Your proposed experiment'] += ' Immediate-reload workflow test note.'
+    dialog.get_by_role('textbox', name='Your proposed experiment').fill(fields['Your proposed experiment'])
+    page.reload(wait_until='networkidle')
+    page.get_by_role('button', name='Research brief', exact=True).click()
+    for label, value in fields.items():
+        expect(dialog.get_by_role('textbox', name=label, exact=True)).to_have_value(value)
+    expect(dialog.locator('.brief-finding')).to_have_count(2)
+    dialog.locator(f'[data-claim-id="{lessard}"]').get_by_role('button', name=re.compile('^Unpin ')).click()
+    expect(dialog.locator('.brief-finding')).to_have_count(1)
+    expect(dialog.get_by_role('combobox', name='Finding A')).to_have_count(0)
+    expect(dialog.get_by_role('textbox', name='Your assumptions')).to_have_value(fields['Your assumptions'])
+    dialog.get_by_role('button', name='View finding', exact=True).click()
+    expect(dialog).not_to_be_visible()
+    expect(page.locator('.selected-title')).to_be_focused()
+    expect(page.locator('.finding-statement')).to_contain_text('R47H-Fc showed less APOE binding')
+    expect(page.get_by_role('combobox', name='Filter by entity type')).to_have_value('all')
+    assert_idle(page, 'Graph after writing and exporting a research brief')
+    assert not errors, errors
+    context.close()
+
+    # Both real WebGL and the searchable fallback support the same mobile workspace.
+    for fallback in [False, True]:
+        mobile = browser.new_context(viewport={"width": 360, "height": 844}, reduced_motion='reduce', color_scheme='dark', is_mobile=True, has_touch=True)
+        if fallback:
+            mobile.add_init_script("""
+                const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                    return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+                };
+            """)
+        page = mobile.new_page()
+        page.goto(link, wait_until='networkidle')
+        page.get_by_role('button', name='View evidence', exact=True).tap()
+        pin = page.get_by_role('button', name='Pin finding', exact=True)
+        assert_touch_target(pin)
+        pin.tap()
+        trigger = page.get_by_role('button', name='Research brief', exact=True)
+        assert_touch_target(trigger)
+        trigger.tap()
+        dialog = page.get_by_role('dialog', name='Research brief', exact=True)
+        dialog.get_by_role('textbox', name='Research question').fill(fields['Research question'])
+        dialog.get_by_role('textbox', name='Your explanation').fill(fields['Your explanation'])
+        for control in [dialog.get_by_role('button', name='Download brief'), dialog.get_by_role('button', name='Close research brief'), dialog.locator('.brief-source a').first]:
+            assert_touch_target(control)
+        dialog.get_by_role('textbox', name='Research question').scroll_into_view_if_needed()
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        assert dialog.evaluate('element => element.scrollWidth <= element.clientWidth')
+        page.screenshot(path=str(screenshots / f'research-brief-mobile-{"fallback" if fallback else "graph"}.png'))
+        with page.expect_download() as pending:
+            dialog.get_by_role('button', name='Download brief', exact=True).tap()
+        assert pending.value.suggested_filename == 'discovery-galaxy-research-brief.md'
+        dialog.get_by_role('button', name='View finding', exact=True).tap()
+        expect(page.locator('.selected-title')).to_be_focused()
+        title = page.locator('.selected-title').bounding_box()
+        assert title and 0 <= title['y'] < 844, 'View finding must bring evidence into view.'
+        expect(page.get_by_role('button', name='List view')).to_have_attribute('aria-pressed', str(fallback).lower())
+        mobile.close()
+
+    # An unavailable store still permits in-memory writing and a cited download.
+    blocked = browser.new_context()
+    blocked.add_init_script("""Object.defineProperty(window, 'localStorage', { configurable: true,
+        get() { throw new DOMException('Storage disabled by test', 'SecurityError'); }
+    });""")
+    page = blocked.new_page()
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.goto(link, wait_until='networkidle')
+    page.get_by_role('button', name='Research brief', exact=True).click()
+    dialog = page.get_by_role('dialog', name='Research brief', exact=True)
+    expect(dialog).to_contain_text('Device storage is unavailable')
+    dialog.get_by_role('button', name='Pin selected finding').click()
+    dialog.get_by_role('textbox', name='Research question').fill(fields['Research question'])
+    expect(dialog).to_contain_text('Device storage is unavailable')
+    with page.expect_download() as pending:
+        dialog.get_by_role('button', name='Download brief', exact=True).click()
+    assert pending.value.suggested_filename.endswith('.md')
+    blocked.close()
+
+    # Corrupt saved data is left untouched until the user explicitly replaces it.
+    corrupt = browser.new_context()
+    corrupt.add_init_script(f'localStorage.setItem({json.dumps(key)}, "unreadable workflow test")')
+    page = corrupt.new_page()
+    page.goto(link, wait_until='networkidle')
+    page.get_by_role('button', name='Research brief', exact=True).click()
+    dialog = page.get_by_role('dialog', name='Research brief', exact=True)
+    dialog.get_by_role('textbox', name='Research question').fill(fields['Research question'])
+    expect(dialog).to_contain_text('It has not been replaced.')
+    page.wait_for_timeout(450)
+    assert page.evaluate('key => localStorage.getItem(key)', key) == 'unreadable workflow test'
+    dialog.get_by_role('button', name='Save this version').click()
+    expect(dialog.locator('.brief-save-status')).to_have_text('Saved on this device')
+    assert page.evaluate('key => JSON.parse(localStorage.getItem(key)).question', key) == fields['Research question']
+    corrupt.close()
+
+    # Dataset upgrades never drop notes or silently substitute different evidence.
+    outdated = browser.new_context()
+    old = {**saved, 'dataset_version': 'workflow-test-old-version', 'pinned_claim_ids': [atagi, 'claim-workflow-test-unavailable'], 'comparison_claim_ids': None}
+    outdated.add_init_script(f'localStorage.setItem({json.dumps(key)}, {json.dumps(json.dumps(old))})')
+    page = outdated.new_page()
+    page.goto(link, wait_until='networkidle')
+    page.get_by_role('button', name='Research brief', exact=True).click()
+    dialog = page.get_by_role('dialog', name='Research brief', exact=True)
+    expect(dialog).to_contain_text('Unavailable finding')
+    dialog.get_by_role('button', name='Refresh evidence').click()
+    expect(dialog.get_by_role('alert')).to_contain_text('Remove unavailable findings')
+    dialog.get_by_role('button', name='Unpin claim-workflow-test-unavailable', exact=True).click()
+    dialog.get_by_role('button', name='Refresh evidence').click()
+    expect(dialog.get_by_role('button', name='Refresh evidence')).to_have_count(0)
+    expect(dialog.get_by_role('textbox', name='Your explanation')).to_have_value(fields['Your explanation'])
+    with page.expect_download() as pending:
+        dialog.get_by_role('button', name='Download brief', exact=True).click()
+    assert pending.value.suggested_filename.endswith('.md')
+    outdated.close()
+
+    # Another tab's save pauses autosave instead of overwriting either in-memory draft.
+    shared = browser.new_context()
+    first = shared.new_page()
+    first.goto(link, wait_until='networkidle')
+    first.get_by_role('button', name='Research brief', exact=True).click()
+    first_dialog = first.get_by_role('dialog', name='Research brief', exact=True)
+    first_dialog.get_by_role('textbox', name='Research question').fill('Workflow test: first tab question')
+    expect(first_dialog.locator('.brief-save-status')).to_have_text('Saved on this device')
+    second = shared.new_page()
+    second.goto(link, wait_until='networkidle')
+    second.get_by_role('button', name='Research brief', exact=True).click()
+    second_dialog = second.get_by_role('dialog', name='Research brief', exact=True)
+    second_dialog.get_by_role('textbox', name='Research question').fill('Workflow test: second tab question')
+    expect(second_dialog.locator('.brief-save-status')).to_have_text('Saved on this device')
+    expect(first_dialog).to_contain_text('Another tab changed the saved brief')
+    expect(first_dialog.get_by_role('textbox', name='Research question')).to_have_value('Workflow test: first tab question')
+    first_dialog.get_by_role('textbox', name='Your explanation').fill('Workflow test: unsaved first tab edits')
+    first.wait_for_timeout(450)
+    assert first.evaluate('key => JSON.parse(localStorage.getItem(key)).question', key) == 'Workflow test: second tab question'
+    first_dialog.get_by_role('button', name='Save this version').click()
+    expect(second_dialog).to_contain_text('Another tab changed the saved brief')
+    assert first.evaluate('key => JSON.parse(localStorage.getItem(key)).explanation', key) == 'Workflow test: unsaved first tab edits'
+    shared.close()
+    assert not errors, errors
+    print('PASS: research briefs pin cited findings and comparisons, retain user notes across reloads, export complete evidence, and recover explicitly from blocked/corrupt storage, dataset changes and other tabs; keyboard, themes, mobile and WebGL fallback work.')
+
+
 def run(base_url: str, executable: str, screenshots: Path) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -1228,6 +1436,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         assert_pathways(browser, base_url, screenshots)
         assert_binding_findings(browser, base_url, screenshots)
         assert_study_context_note(browser, base_url, screenshots)
+        assert_research_brief(browser, base_url, screenshots)
         browser.close()
 
 

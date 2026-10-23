@@ -50,6 +50,12 @@ The development graph uses deterministic, project-authored summaries, labeled dr
 
 Research questions are separate, explicitly labeled **hypotheses for investigation**. Each should identify the supporting evidence, assumptions, relevant uncertainty, and a possible study or analysis that could test it. A missing edge in this small curated dataset is a coverage limitation, not proof of an unexplored research question. Questions need a documented literature check before anyone describes them as novel. Neither graph proximity nor AI wording establishes therapeutic potential.
 
+## User-authored research briefs
+
+The research brief workspace lets a user collect existing findings and a comparison, then write their own question, explanation, assumptions and proposed experiment. These are working notes outside the scientific snapshot and its `hypotheses` collection. They require no scientific approval to save locally or share as a document, and must never acquire the cited studies' review status or be presented as source-backed findings.
+
+Pinned evidence and exports retain exact statements, source-specific context, locators, limitations, correction links and actual review metadata. User text remains visibly separate in the exported draft. References do not prove support for that text, novelty of a question, comparability of experiments or feasibility of a proposed test. The app performs no automated assessment of those properties. A dataset refresh resolves pinned IDs against the current snapshot; it is not a fresh literature review. Notes are excluded from the graph and explorer sharing URLs.
+
 ## Source access and reuse
 
 Start with these upstream resources:

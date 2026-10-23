@@ -6,7 +6,7 @@ Help researchers navigate a small, evidence-traceable map of Alzheimer's researc
 
 The central product promise is **from a visible connection to its supporting evidence in a few clear interactions**.
 
-The product direction is to help a researcher judge what a relationship rests on and what needs checking before using it. Source-specific comparison, visible missing context, and portable cited briefs make that task concrete. A larger graph alone does not fulfill this direction, and the product makes no claim that these capabilities are exclusive to Discovery Galaxy.
+The product direction is to help a researcher turn findings into an argument they can discuss and test: collect evidence, compare methods, state their explanation and assumptions, then describe an experiment. The research brief workspace implements that workflow with local saving and a portable cited document. It does not establish a question's novelty or an experiment's validity, and the product makes no claim that these capabilities are exclusive to Discovery Galaxy.
 
 ## Audience
 
@@ -20,7 +20,8 @@ The initial audience is biomedical researchers, research trainees, and scientifi
 4. Select a relationship. Read the exact claim, evidence, study context, source references, and limitations.
 5. Choose **Compare findings**. Read the two source records side by side, inspect recorded context differences and unknowns, then download a cited brief for further reading.
 6. Follow the finding's **View …** action from gene to protein to a cited pathway and another participant. Distinguish database annotations from original studies.
-7. In later content milestones, inspect justified disagreements and research questions with explicit premises and uncertainty.
+7. Pin selected findings or add the comparison to **Research brief**. Write a question, explanation, assumptions and proposed experiment; save locally and download the cited document.
+8. In later content milestones, inspect further justified disagreements and curator-reviewed research questions with explicit premises and uncertainty.
 
 Search is local entity/alias lookup in the first version. Unsupported searches explain that the curated dataset has limited coverage; they do not invent entities or trigger an unbounded AI answer.
 
@@ -32,6 +33,7 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 | Search and filters | Search labels, aliases, and curated identifiers; show active filters and no-result states |
 | Evidence inspection | Show exact claims, evidence direction, context, uncertainty, and links to original references |
 | Finding comparison | Align claim scope and source-specific context without pooling participants or inferring agreement, conflict, independence, or strength; preserve citations in a downloadable brief |
+| Research brief workspace | Pin up to 12 findings and one comparison, write separate user notes, retain one draft on this device, and export the notes with complete source context |
 | Pathways | Represent reviewed pathway relationships using stable identifiers and cited provenance |
 | Conflicting findings | Show curator-reviewed comparisons with context and limitations |
 | Research questions | Present testable, sourced questions, labeled as hypotheses or proposals |
@@ -70,6 +72,8 @@ Keep labels and selection readable before adding decorative effects. Loading, in
 Use short, interruptible transitions for selection, details, and camera navigation. The scene should settle when interaction ends. Reduced-motion preferences require immediate state changes without nonessential animation. Keep focus and scrolling under user control, and preserve source-specific study context when progressively disclosing details.
 
 Open comparison from the selected finding, preserve the underlying research view, and keep original citations visible. Its two native finding selectors and aligned table must work with a keyboard, narrow screens, either theme, and unavailable WebGL. Advanced provenance and reading prompts belong in disclosures rather than extra permanent navigation.
+
+Keep writing fields first in the brief, evidence beside them on desktop and below on mobile, and download/save feedback visible while scrolling. Pinning preserves the explorer view. **View finding** explicitly returns to the evidence panel and focuses its heading. Notes are local to one browser/device and excluded from explorer sharing links; sharing the downloaded document is explicit. Storage failure must leave in-memory work usable, conflicting tabs must not silently overwrite it, and dataset changes require an explicit evidence refresh before export.
 
 ## Out of scope for the first release
 

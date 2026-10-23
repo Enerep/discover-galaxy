@@ -52,7 +52,7 @@ function connectionLabel(snapshot: Snapshot, claim: Claim, selected: Entity): st
   return `${label} · ${other?.label ?? ''}`;
 }
 
-function Finding({ snapshot, claim, selected, onFollow }: { snapshot: Snapshot; claim: Claim; selected: Entity; onFollow: (entityId: string, claimId: string) => void }) {
+function Finding({ snapshot, claim, selected, onFollow, pinned, onPin }: { snapshot: Snapshot; claim: Claim; selected: Entity; onFollow: (entityId: string, claimId: string) => void; pinned: boolean; onPin: (claimId: string) => void }) {
   const evidence = getClaimEvidence(snapshot, claim.id);
   const limitations = [...new Set([...claim.limitations, ...evidence.flatMap((item) => item.limitations)])];
   return (
@@ -74,6 +74,9 @@ function Finding({ snapshot, claim, selected, onFollow }: { snapshot: Snapshot; 
           </div>
         ) : null;
       })}
+      <div className="finding-actions"><button className="secondary-button pin-finding" aria-label="Pin finding" aria-pressed={pinned} onClick={() => onPin(claim.id)}>
+        <Icon name="pin" size={16} />{pinned ? 'Pinned' : 'Pin finding'}
+      </button></div>
       <div className="connection-navigation" aria-label="Follow this connection">
         {[...new Set([claim.subject_id, claim.object_id])].filter((id) => id !== selected.id).map((id) => {
           const entity = snapshot.entities.find((item) => item.id === id)!;
@@ -125,9 +128,11 @@ interface Props {
   panelRef: RefObject<HTMLElement | null>;
   onCompare: () => void;
   onFollow: (entityId: string, claimId: string) => void;
+  pinnedClaimIds: string[];
+  onPin: (claimId: string) => void;
 }
 
-export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow }: Props) {
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
   useLayoutEffect(() => {
@@ -157,7 +162,7 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
               ))}
             </div>
           )}
-          {active ? <Finding key={active.id} snapshot={snapshot} claim={active} selected={selected} onFollow={onFollow} />
+          {active ? <Finding key={active.id} snapshot={snapshot} claim={active} selected={selected} onFollow={onFollow} pinned={pinnedClaimIds.includes(active.id)} onPin={onPin} />
             : <p className="no-findings">No findings for this record in the current dataset.</p>}
         </section>
         {(selected.external_ids.length > 0 || selected.description) && (

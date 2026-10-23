@@ -20,6 +20,8 @@ Pasting the website link into a compatible social app uses a separate **1200 × 
 
 **Compare findings** opens two findings side by side with their original citations, study populations, variants, endpoints, limitations, and review status. Recorded fields are labeled matching, different, or missing; those labels do not determine agreement, contradiction, or study independence. A downloadable Markdown brief keeps the complete context and dataset version. Reading prompts identify source checks to make, not verified research gaps or new hypotheses.
 
+**Research brief** turns selected evidence into a working document. Pin findings or add a comparison, write your question, explanation, assumptions and proposed experiment, then download a cited Markdown brief. One draft with up to 12 findings and one comparison is saved on this browser/device; no account or AI key is needed. Notes stay separate from the scientific records and retain their user-authored status in the export. Download the file to share it or keep a copy: explorer links and PNG sharing do not include your notes, and device storage is not cloud sync or a backup.
+
 The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the additions are seven gene–protein mappings, seven pathway-participation annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
 
 Four findings connect APOE and TREM2 proteins through the binding assays reported by Atagi and Bailey (2015), with baseline and R47H results kept separate. Source-specific protein preparations, surface presentation and replicate units remain attached to the original paper. Bailey's plasma-derived APOE isoform is unknown, and its triplicate wells are not three independent studies. The source records its in-article correction and the actual inspection limits.
@@ -28,11 +30,11 @@ A fifth finding from Lessard (2018) reports no significant wild-type/R47H APOE3 
 
 The assay setup appears beside the citation, and finding labels name the study and recorded condition. **Compare findings** opens an explicitly curated pair first, otherwise the same recorded binding condition in another publication when available; within-paper comparisons remain selectable. The context note is included only for its cited pair and survives the Markdown export with its limits, locators and actual review record. Assay details come first in experimental comparisons, with preparation, immobilization, replicate units and unknowns retained. Original correction links are available in the source details and downloaded brief. Shared links preserve protein and pathway filters.
 
-Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. One source-checked study-context note records differing assay reports; it is a draft comparison, not a definitive contradiction. Research hypotheses, an AI service, backend and database remain unimplemented. The client reads its local snapshot and makes no upstream scientific API requests.
+Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. One source-checked study-context note records differing assay reports; it is a draft comparison, not a definitive contradiction. Curator-reviewed hypothesis records, an AI service, backend and database remain unimplemented. The client reads its local snapshot and makes no upstream scientific API requests.
 
 See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.
 
-The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first**, with scoped evidence and useful pathway journeys before applying the workflow to another disease. The [checkpoint plan](docs/checkpoints.md) prioritizes evidence comparison and source inspection.
+The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first.** The [checkpoint plan](docs/checkpoints.md) now prioritizes using evidence to build a research brief; additional disease coverage and scientific source work remain separate milestones.
 
 ## Run locally
 
@@ -94,9 +96,11 @@ In this cloud workspace, npm's default cache directory may be read-only. Use `ex
 5. Choose **Compare findings** to inspect two findings' source-specific context and download a cited reading brief.
 6. Follow **View APOE protein**, then its cholesterol-regulation connection; inspect the original Reactome record or follow another participant such as ABCA1.
 7. Select the Atagi or Lessard R47H binding finding to read **Different R47H binding results**, then compare the cited assays.
-8. In later content milestones, inspect further justified disagreements and clearly labeled research questions with their evidence and assumptions.
+8. Pin useful findings, or choose **Add to research brief** from a comparison. Open **Research brief**, write your question and reasoning, and download the cited document for discussion.
 
-The current explorer implements steps 1–7, including one draft study-context comparison. The TREM2 protein → DAP12 signaling route is also available. Further disagreement curation and research questions remain planned. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
+The current explorer implements these steps, including one draft study-context comparison and a user-authored brief. The TREM2 protein → DAP12 signaling route is also available. Further disagreement curation and curator-reviewed research questions remain planned; a user's notes do not complete those milestones. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
+
+Briefs save automatically after editing. If another tab changes the saved draft or saved data cannot be read, automatic saving pauses until **Save this version** is chosen. If the dataset changes, inspect the current pinned findings, remove unavailable references, then choose **Refresh evidence** before adding evidence or exporting. When storage is unavailable, writing and downloading still work in memory.
 
 A keyboard-operable searchable list exposes the same information as the 3D view. The galaxy is a way to navigate evidence; its layout does not measure biological distance, causality, or therapeutic promise.
 
@@ -136,7 +140,7 @@ These resources help find and contextualize evidence. Database associations, met
 | Document | Purpose |
 | --- | --- |
 | [steps.md](steps.md) | Ordered milestones, dependencies, and completion criteria |
-| [Checkpoint plan](docs/checkpoints.md) | Evidence comparison, candidate intake, and the next AD evidence pass |
+| [Checkpoint plan](docs/checkpoints.md) | Research brief workspace, evidence comparison, and future coverage |
 | [Product specification](docs/product.md) | Audience, user journeys, scope, and release criteria |
 | [Design guide](docs/design.md) | Simple workflows, clean presentation, plain language, and purposeful motion |
 | [Architecture](docs/architecture.md) | Data flow, technical boundaries, and planned layout |
