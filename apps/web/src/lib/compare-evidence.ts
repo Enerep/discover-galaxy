@@ -211,6 +211,33 @@ function markdown(value: ContextValue): string {
   return result.replace(/[\\`*_\[\]<>|]/gu, '\\$&').replace(/\r?\n/gu, ' ');
 }
 
+/** Complete citation and context for one finding, shared by both portable reports. */
+export function buildFindingBrief(snapshot: Snapshot, claimId: string): string {
+  return findingLines(column(snapshot, claimId)).join('\n');
+}
+
+function findingLines(item: ComparisonColumn): string[] {
+  const lines: string[] = [];
+  lines.push(`## ${markdown(item.subject.label)} → ${markdown(item.object.label)}`, '',
+    `Claim ID: ${markdown(item.claim.id)}`, '', markdown(item.claim.statement), '', markdown(item.claim.summary), '',
+    `Claim review: ${markdown(item.claim.review.status)}; human reviewed: ${humanReviewFlag(item.claim.review)}; reviewer: ${markdown(item.claim.review.reviewer)}; date: ${markdown(item.claim.review.date)}.`, '',
+    '### Claim context', '', ...Object.entries(item.claim.context).map(([key, value]) => `- ${markdown(key.replaceAll('_', ' '))}: ${markdown(value)}`), '');
+  for (const { evidence, source } of item.evidence) {
+    lines.push(`### ${markdown(source.title)}`, '', source.url, '',
+      `Source: ${markdown(source.id)}; year: ${markdown(source.year)}; identifiers: ${markdown(source.identifiers.map(({ namespace, value }) => `${namespace}: ${value}`))}.`, '',
+      `Evidence: ${markdown(evidence.id)}; relation to its own claim: ${markdown(evidence.relation)}.`, '',
+      markdown(evidence.finding), '', `Inspected location: ${markdown(evidence.locator)}`, '',
+      'Study-specific context:', '', ...Object.entries(evidence.study_context).map(([key, value]) => `- ${markdown(key.replaceAll('_', ' '))}: ${markdown(value)}`), '',
+      `Evidence review: ${markdown(evidence.review.status)}; human reviewed: ${humanReviewFlag(evidence.review)}; reviewer: ${markdown(evidence.review.reviewer)}; date: ${markdown(evidence.review.date)}.`,
+      `Reuse status: ${markdown(source.reuse.permission_status)}; checked: ${markdown(source.reuse.date_checked)}.`,
+      `Publication status: ${markdown(source.publication_status.status)}; checked: ${markdown(source.publication_status.checked_at)}.`, '',
+      ...(source.publication_status.notice_url ? [`Publication notice: ${source.publication_status.notice_url}`, ''] : []),
+      'Evidence limitations:', '', ...evidence.limitations.map((value) => `- ${markdown(value)}`), '');
+  }
+  lines.push('### Claim limitations', '', ...item.claim.limitations.map((value) => `- ${markdown(value)}`), '');
+  return lines;
+}
+
 /** Portable reading brief with source-specific context; no generated scientific conclusion. */
 export function buildComparisonBrief(snapshot: Snapshot, firstClaimId: string, secondClaimId: string): string {
   const comparison = buildEvidenceComparison(snapshot, firstClaimId, secondClaimId);
@@ -218,25 +245,7 @@ export function buildComparisonBrief(snapshot: Snapshot, firstClaimId: string, s
     'Draft comparison aid: recorded context and reading prompts, not a verdict on agreement, conflict, causation, independence, or novelty.', '',
     `Dataset: ${markdown(snapshot.dataset_version)}`, `Snapshot status: ${markdown(snapshot.release_status)}`, '',
     `Recorded scope: ${comparison.scopeStatus}`, '', ...comparison.notices.map((notice) => `- ${notice}`), ''];
-  for (const item of comparison.columns) {
-    lines.push(`## ${markdown(item.subject.label)} → ${markdown(item.object.label)}`, '',
-      `Claim ID: ${markdown(item.claim.id)}`, '', markdown(item.claim.statement), '', markdown(item.claim.summary), '',
-      `Claim review: ${markdown(item.claim.review.status)}; human reviewed: ${humanReviewFlag(item.claim.review)}; reviewer: ${markdown(item.claim.review.reviewer)}; date: ${markdown(item.claim.review.date)}.`, '',
-      '### Claim context', '', ...Object.entries(item.claim.context).map(([key, value]) => `- ${markdown(key.replaceAll('_', ' '))}: ${markdown(value)}`), '');
-    for (const { evidence, source } of item.evidence) {
-      lines.push(`### ${markdown(source.title)}`, '', source.url, '',
-        `Source: ${markdown(source.id)}; year: ${markdown(source.year)}; identifiers: ${markdown(source.identifiers.map(({ namespace, value }) => `${namespace}: ${value}`))}.`, '',
-        `Evidence: ${markdown(evidence.id)}; relation to its own claim: ${markdown(evidence.relation)}.`, '',
-        markdown(evidence.finding), '', `Inspected location: ${markdown(evidence.locator)}`, '',
-        'Study-specific context:', '', ...Object.entries(evidence.study_context).map(([key, value]) => `- ${markdown(key.replaceAll('_', ' '))}: ${markdown(value)}`), '',
-        `Evidence review: ${markdown(evidence.review.status)}; human reviewed: ${humanReviewFlag(evidence.review)}; reviewer: ${markdown(evidence.review.reviewer)}; date: ${markdown(evidence.review.date)}.`,
-        `Reuse status: ${markdown(source.reuse.permission_status)}; checked: ${markdown(source.reuse.date_checked)}.`,
-        `Publication status: ${markdown(source.publication_status.status)}; checked: ${markdown(source.publication_status.checked_at)}.`, '',
-        ...(source.publication_status.notice_url ? [`Publication notice: ${source.publication_status.notice_url}`, ''] : []),
-        'Evidence limitations:', '', ...evidence.limitations.map((value) => `- ${markdown(value)}`), '');
-    }
-    lines.push('### Claim limitations', '', ...item.claim.limitations.map((value) => `- ${markdown(value)}`), '');
-  }
+  for (const item of comparison.columns) lines.push(...findingLines(item));
   for (const note of comparison.contextNotes) {
     lines.push(`## ${markdown(note.label)}`, '', `Study-context note: ${markdown(note.id)}`, '', markdown(note.comparison), '',
       'Context differences and limits:', '', ...note.context_differences.map((value) => `- ${markdown(value)}`), '',
