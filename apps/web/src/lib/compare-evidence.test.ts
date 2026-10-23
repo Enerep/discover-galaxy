@@ -2,11 +2,42 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { loadDataset } from './dataset.ts';
-import { buildComparisonBrief, buildEvidenceComparison } from './compare-evidence.ts';
+import { buildComparisonBrief, buildEvidenceComparison, findComparisonPartner } from './compare-evidence.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const FIRST = 'claim-apoe-e4-risk';
 const SECOND = 'claim-apoe-e2-risk';
+
+test('comparison starts with another finding on the same relationship, including symmetric protein interactions', () => {
+  const binding = 'claim-trem2-apoe-binding';
+  const variant = 'claim-trem2-r47h-apoe-binding';
+  assert.equal(findComparisonPartner(snapshot, binding)?.id, variant);
+  assert.equal(findComparisonPartner(snapshot, variant)?.id, binding);
+  assert.equal(findComparisonPartner(snapshot, FIRST)?.id, SECOND);
+  assert.equal(findComparisonPartner(snapshot, 'missing-for-test'), undefined);
+  const reversed = structuredClone(snapshot);
+  const claim = reversed.claims.find(({ id }) => id === variant)!;
+  [claim.subject_id, claim.object_id] = [claim.object_id, claim.subject_id];
+  assert.equal(findComparisonPartner(reversed, binding)?.id, variant);
+  assert.equal(findComparisonPartner({ ...snapshot, claims: [snapshot.claims[0]] }, FIRST), undefined);
+});
+
+test('baseline and R47H assays retain one publication and three assay replicates without pooling participants', () => {
+  const ids: [string, string] = ['claim-trem2-apoe-binding', 'claim-trem2-r47h-apoe-binding'];
+  const comparison = buildEvidenceComparison(snapshot, ...ids);
+  assert.equal(comparison.sharedSources.length, 1);
+  assert.deepEqual(comparison.sharedSources[0].matchedBy, ['source ID', 'PMID:26374899', 'DOI:10.1074/jbc.m115.679043']);
+  assert.equal(comparison.contextRows.find(({ key }) => key === 'variant')?.status, 'different');
+  const samples = comparison.contextRows.find(({ key }) => key === 'sample_size')!;
+  assert.equal(samples.status, 'missing');
+  assert.equal(samples.left.studies[0].value, null);
+  assert.equal(samples.right.studies[0].value, null);
+  const units = comparison.contextRows.find(({ key }) => key === 'replicate_unit')!;
+  assert.equal(units.status, 'different');
+  const brief = buildComparisonBrief(snapshot, ...ids);
+  for (const text of ['26374899', 'assay replicates: 3', 'Independent dot blots', 'replicate independence not resolved', 'Figure 1A', 'Figure 5A']) assert.ok(brief.includes(text));
+  assert.ok(comparison.prompts.some((prompt) => prompt.includes('shared source records')));
+});
 
 test('APOE findings retain different genotype scope without declaring a scientific conflict', () => {
   const before = JSON.stringify(snapshot);

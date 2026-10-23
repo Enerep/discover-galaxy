@@ -1717,7 +1717,7 @@
         "assay": "Dot blot and solid-phase binding",
         "controls": "Anti-Fc loading control for dot blots; uncoated wells for solid-phase assays",
         "assay_replicates": 3,
-        "replicate_unit": "Figure 5 reports n = 3; replicate independence not resolved",
+        "replicate_unit": "Figure 5 reports n = 3 per assay panel; replicate independence not resolved",
         "sample_size": null
       },
       "limitations": [

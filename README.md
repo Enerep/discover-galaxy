@@ -24,6 +24,8 @@ The interface uses **Source-checked draft**. Each finding records its source, in
 
 Two additional findings connect APOE and TREM2 proteins through the binding assays reported by Atagi et al. (2015), including the R47H comparison. Their inspected figure captions, fusion-protein context and replicate units stay attached to the same original paper; these are not clinical outcomes or independent studies.
 
+The assay setup appears beside the citation. **Compare findings** starts with another finding on the same relationship when available, so the baseline and R47H assays are one click apart. Shared-paper identities and replicate units remain visible in the comparison and downloaded brief. Shared links also preserve protein and pathway filters.
+
 Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. There are no curated disagreement records, research hypotheses, AI service, backend, or database yet. The client reads its local snapshot and makes no upstream scientific API requests.
 
 See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.

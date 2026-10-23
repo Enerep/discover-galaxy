@@ -12,6 +12,7 @@ import type { EntityType, Snapshot } from './lib/types.ts';
 import { useReducedMotion } from './lib/useReducedMotion.ts';
 import { buildShareUrl, parseShareState } from './lib/share-state.ts';
 import type { ExplorerShareState } from './lib/share-state.ts';
+import { findComparisonPartner } from './lib/compare-evidence.ts';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const FILTERS: { value: EntityType | 'all'; label: string }[] = [
@@ -88,8 +89,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
   function openComparison() {
     if (!activeClaim) return;
-    const other = snapshot.claims.find((claim) => claim.id !== activeClaim.id && claim.subject_id === activeClaim.subject_id)
-      ?? snapshot.claims.find((claim) => claim.id !== activeClaim.id);
+    const other = findComparisonPartner(snapshot, activeClaim.id);
     if (other) setComparisonIds([activeClaim.id, other.id]);
   }
   function changeComparison(side: 0 | 1, id: string) {

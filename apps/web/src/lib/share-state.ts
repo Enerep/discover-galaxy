@@ -10,7 +10,7 @@ export interface ExplorerShareState {
 }
 
 const KEYS = ['entity', 'claim', 'q', 'type', 'view'] as const;
-const FILTERS = new Set(['all', 'gene', 'disease', 'paper']);
+const FILTERS = new Set(['all', 'gene', 'protein', 'pathway', 'disease', 'paper']);
 const MAX_QUERY_LENGTH = 256;
 const MAX_FRAGMENT_LENGTH = 4096;
 

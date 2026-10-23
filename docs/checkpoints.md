@@ -6,6 +6,8 @@ Snapshot **alzheimers-source-checked-0.3.0** has **22 entities and 21 cited draf
 
 The interface uses **Source-checked draft**. Users can follow a finding's **View …** action from a gene to its protein, then a pathway and another participant. Protein/pathway filters and distinct database-record labels support this through graph, list, keyboard, touch and WebGL fallback. The owner deferred independent scientific review to a future milestone; it is not a blocker for this development track, and no independent approval or human attestation is fabricated.
 
+The binding findings expose their recorded experimental system and assay beside the citation. Comparison defaults to another finding on the same relationship where available; its recorded-field labels still make no comparability judgment. The binding pair preserves the shared publication and different replicate definitions in the table and Markdown export. Protein/pathway filters now survive shared-link creation and restoration.
+
 The [candidate-source coverage packet](../data/alzheimers/candidate-coverage.md) now retains six original publications outside the graph, grouped into three reading questions. The two prior pathway candidates entered through the separately source-checked dataset diff. This selective lookup is separate from the OpenAlex adapter; no successful live API request or exact Reactome release capture is claimed.
 
 ## Implemented foundation: compare the evidence behind a connection

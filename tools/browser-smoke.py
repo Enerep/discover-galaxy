@@ -505,7 +505,7 @@ def assert_comparisons(browser, base_url: str, screenshots: Path) -> None:
     destination = screenshots / "comparison-abca1-trem2.md"
     pending_download.value.save_as(destination)
     brief = destination.read_text()
-    for text in ["alzheimers-source-checked-0.2.0", "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
+    for text in ["alzheimers-source-checked-0.3.0", "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
                  "https://pubmed.ncbi.nlm.nih.gov/26079414/", "https://pubmed.ncbi.nlm.nih.gov/23150908/",
                  "Draft comparison", "Study-specific context", "independence"]:
         assert text in brief, text
@@ -601,7 +601,7 @@ def assert_pathways(browser, base_url: str, screenshots: Path) -> None:
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(base_url, wait_until="networkidle")
-    expect(page.locator(".result-status")).to_have_text("21 entities · 4 papers")
+    expect(page.locator(".result-status")).to_have_text("22 entities · 5 papers")
     page.get_by_role("combobox", name="Filter by entity type").select_option("gene")
     page.locator(".claim-button").filter(has_text="Encodes · APOE protein").click()
     expect(page.locator(".source-card")).to_contain_text("Database annotation")
@@ -681,6 +681,91 @@ def assert_pathways(browser, base_url: str, screenshots: Path) -> None:
         mobile.screenshot(path=str(screenshots / f"pathway-mobile-{'fallback' if fallback else 'graph'}.png"), full_page=True)
         context.close()
     print("PASS: typed APOE/ABCA1 and TREM2/DAP12 pathway journeys preserve citations, states, keyboard focus, filters, themes, mobile touch, database PNG export, and WebGL fallback.")
+
+
+def assert_binding_findings(browser, base_url: str, screenshots: Path) -> None:
+    link = f"{base_url}#entity=protein-trem2&claim=claim-trem2-apoe-binding&type=protein"
+    context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+    context.add_init_script(RENDER_COUNTERS)
+    page = context.new_page()
+    errors = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(link, wait_until="networkidle")
+    expect(page.locator(".selected-title")).to_have_text("TREM2 protein")
+    expect(page.get_by_role("combobox", name="Filter by entity type")).to_have_value("protein")
+    expect(page.locator(".finding-statement")).to_contain_text("dot-blot assays")
+    expect(page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/26374899/")
+    expect(page.locator(".source-context")).to_have_text("Cell-free protein assayDot blot")
+    for theme in ["light", "dark"]:
+        page.get_by_role("combobox", name="Color theme").select_option(theme)
+        assert_text_contrast(page.locator(".source-context"))
+        page.screenshot(path=str(screenshots / f"binding-{theme}.png"), full_page=True)
+    trigger = page.get_by_role("button", name="Compare findings", exact=True)
+    trigger.focus()
+    page.keyboard.press("Enter")
+    dialog = page.get_by_role("dialog", name="Compare findings", exact=True)
+    expect(dialog.get_by_role("combobox", name="Finding A")).to_have_value("claim-trem2-apoe-binding")
+    expect(dialog.get_by_role("combobox", name="Finding B")).to_have_value("claim-trem2-r47h-apoe-binding")
+    expect(dialog.locator(".comparison-source-note")).to_contain_text("shared")
+    replicates = dialog.get_by_role("rowheader", name=re.compile(r"^Assay replicates\b")).locator("..")
+    expect(replicates.locator(".context-status")).to_have_attribute("data-state", "matching")
+    units = dialog.get_by_role("rowheader", name=re.compile(r"^Replicate unit\b")).locator("..")
+    expect(units).to_contain_text("Independent dot blots")
+    expect(units).to_contain_text("replicate independence not resolved")
+    sample = dialog.get_by_role("rowheader", name=re.compile(r"^Sample size\b")).locator("..")
+    expect(sample.locator(".context-status")).to_have_attribute("data-state", "missing")
+    with page.expect_download() as pending:
+        dialog.get_by_role("link", name="Download comparison", exact=True).click()
+    destination = screenshots / "comparison-binding.md"
+    pending.value.save_as(destination)
+    brief = destination.read_text()
+    for text in ["26374899", "Figure 1A", "Figure 5A", "assay replicates: 3", "replicate independence not resolved", "alzheimers-source-checked-0.3.0"]:
+        assert text in brief, text
+    page.screenshot(path=str(screenshots / "comparison-binding-dark.png"), full_page=True)
+    page.keyboard.press("Escape")
+    expect(trigger).to_be_focused()
+    export_share_image(page, "binding", screenshots)
+    page.get_by_role("button", name="Share", exact=True).click()
+    sharing = page.get_by_role("dialog", name="Share this view", exact=True)
+    shared = sharing.get_by_role("textbox", name="Link to this view").input_value()
+    assert "type=protein" in shared and "claim=claim-trem2-apoe-binding" in shared
+    page.keyboard.press("Escape")
+    page.goto(shared, wait_until="networkidle")
+    expect(page.get_by_role("combobox", name="Filter by entity type")).to_have_value("protein")
+    page.get_by_role("button", name="View APOE protein", exact=True).click()
+    expect(page.locator(".selected-title")).to_have_text("APOE protein")
+    expect(page.locator(".selected-title")).to_be_focused()
+    expect(page.locator(".finding-statement")).to_contain_text("dot-blot assays")
+    expect(page.get_by_role("combobox", name="Filter by entity type")).to_have_value("all")
+    assert_idle(page, "Protein binding graph after comparison and sharing")
+    assert not errors, errors
+    context.close()
+
+    for fallback in [False, True]:
+        mobile = browser.new_context(viewport={"width": 360, "height": 844}, reduced_motion="reduce", color_scheme="dark", is_mobile=True, has_touch=True)
+        if fallback:
+            mobile.add_init_script("""
+              const original = HTMLCanvasElement.prototype.getContext;
+              HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+              };
+            """)
+        page = mobile.new_page()
+        page.goto(link, wait_until="networkidle")
+        page.get_by_role("button", name="View evidence", exact=True).tap()
+        expect(page.locator(".source-context")).to_contain_text("Cell-free protein assay")
+        page.get_by_role("button", name="Study details and limitations").tap()
+        expect(page.locator(".source-study-context")).to_contain_text("Independent dot blots")
+        expect(page.locator(".source-locator").filter(has_text="Source location")).to_contain_text("Figure 1A")
+        trigger = page.get_by_role("button", name="Compare findings", exact=True)
+        assert_touch_target(trigger)
+        trigger.tap()
+        dialog = page.get_by_role("dialog", name="Compare findings", exact=True)
+        expect(dialog.get_by_role("combobox", name="Finding B")).to_have_value("claim-trem2-r47h-apoe-binding")
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        page.screenshot(path=str(screenshots / f"binding-mobile-{'fallback' if fallback else 'graph'}.png"))
+        mobile.close()
+    print("PASS: source-scoped binding findings expose assay context, default to the paired finding, preserve shared-study identity and replicate units, share protein filters, and work with keyboard/mobile/themes/WebGL fallback.")
 
 
 def run(base_url: str, executable: str, screenshots: Path) -> None:
@@ -765,12 +850,12 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         search.fill("e")
         results = page.get_by_role("listbox")
         options = results.get_by_role("option")
-        expect(options).to_have_count(21)
+        expect(options).to_have_count(22)
         assert results.evaluate("element => element.scrollHeight > element.clientHeight")
         page_scroll = page.evaluate("window.scrollY")
-        for _ in range(20):
+        for _ in range(21):
             search.press("ArrowDown")
-        expect(options.nth(20)).to_have_attribute("aria-selected", "true")
+        expect(options.nth(21)).to_have_attribute("aria-selected", "true")
         assert results.evaluate("element => element.scrollTop > 0")
         active_visible = "element => { const bounds = element.getBoundingClientRect(); const active = element.querySelector('[aria-selected=true]').getBoundingClientRect(); const top = bounds.top + element.clientTop; return active.top >= top - 1 && active.bottom <= top + element.clientHeight + 1; }"
         assert results.evaluate(active_visible)
@@ -779,7 +864,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(options.nth(0)).to_have_attribute("aria-selected", "true")
         assert results.evaluate(active_visible)
         search.press("ArrowUp")
-        expect(options.nth(20)).to_have_attribute("aria-selected", "true")
+        expect(options.nth(21)).to_have_attribute("aria-selected", "true")
         assert results.evaluate("element => element.scrollTop > 0")
         assert results.evaluate(active_visible)
         assert abs(page.evaluate("window.scrollY") - page_scroll) <= 2
@@ -794,9 +879,9 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(page.locator(".claim-button")).to_have_count(4)
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
-        expect(page.locator(".result-status")).to_have_text("21 entities · 4 papers")
+        expect(page.locator(".result-status")).to_have_text("22 entities · 5 papers")
         search.fill("APOE")
-        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(4)
+        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(5)
         search.press("ArrowDown")
         expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Corder et al. · 1993")
         search.press("Enter")
@@ -805,7 +890,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(search).to_have_value("")
         search.fill("APOE")
         search.press("ArrowUp")
-        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("APOE protein")
+        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Atagi et al. · 2015")
         search.press("Escape")
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
@@ -817,7 +902,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(search).to_have_value("")
 
         page.get_by_role("button", name="List view", exact=True).click()
-        expect(page.locator(".entity-row")).to_have_count(21)
+        expect(page.locator(".entity-row")).to_have_count(22)
         page.locator('.entity-row[data-entity-id="paper-corder-1994"]').click()
         expect(page.locator(".selected-title")).to_have_text("Corder et al. · 1994")
         expect(page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/7920638/")
@@ -829,10 +914,10 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         filter_control.select_option("gene")
         expect(page.locator(".entity-row")).to_have_count(7)
         filter_control.select_option("paper")
-        expect(page.locator(".entity-row")).to_have_count(4)
+        expect(page.locator(".entity-row")).to_have_count(5)
         page.get_by_role("button", name="Show in the current view").click()
         expect(filter_control).to_have_value("all")
-        expect(page.locator(".entity-row")).to_have_count(21)
+        expect(page.locator(".entity-row")).to_have_count(22)
         page.get_by_role("button", name="About the data").click()
         expect(page.get_by_role("dialog")).to_be_visible()
         expect(page.get_by_role("dialog")).to_contain_text("Source-checked draft")
@@ -926,7 +1011,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         fallback_page = fallback.new_page()
         fallback_page.goto(base_url, wait_until="networkidle")
         expect(fallback_page.locator(".fallback-notice")).to_be_visible()
-        expect(fallback_page.locator(".entity-row")).to_have_count(21)
+        expect(fallback_page.locator(".entity-row")).to_have_count(22)
         expect(fallback_page.get_by_role("button", name="Graph view", exact=True)).to_be_disabled()
         fallback_page.locator('.entity-row[data-entity-id="gene-trem2"]').click()
         expect(fallback_page.locator(".selected-title")).to_have_text("TREM2")
@@ -972,6 +1057,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         assert_themes(browser, base_url, screenshots)
         assert_comparisons(browser, base_url, screenshots)
         assert_pathways(browser, base_url, screenshots)
+        assert_binding_findings(browser, base_url, screenshots)
         browser.close()
 
 

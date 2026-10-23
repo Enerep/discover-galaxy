@@ -1278,7 +1278,7 @@ Source-specific study context:
 - **organism:** Homo sapiens
 - **outcome:** APOE binding to TREM2-Fc
 - **population:** Not recorded
-- **replicate unit:** Figure 5 reports n = 3; replicate independence not resolved
+- **replicate unit:** Figure 5 reports n = 3 per assay panel; replicate independence not resolved
 - **sample size:** Not recorded
 - **study design:** Biochemical binding assay
 - **tissue:** Not recorded

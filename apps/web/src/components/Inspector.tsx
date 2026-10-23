@@ -68,6 +68,10 @@ function Finding({ snapshot, claim, selected, onFollow }: { snapshot: Snapshot; 
               <span className="source-action">{source.kind === 'publication' ? 'Open paper' : 'Open record'} <Icon name="external" size={14} /></span>
             </a>
             <p className="source-author">{source.kind === 'publication' ? `${authorLabel(source)} · ${source.publication_type?.replaceAll('_', ' ') ?? 'Publication'}` : source.release}</p>
+            {typeof item.study_context.experimental_system === 'string' && <p className="source-context" aria-label="Experiment context">
+              <span>{item.study_context.experimental_system}</span>
+              {typeof item.study_context.assay === 'string' && <span>{item.study_context.assay}</span>}
+            </p>}
           </div>
         ) : null;
       })}

@@ -39,7 +39,7 @@ export function createGalaxyLayout(entities: Entity[]): Map<string, Position> {
 
   papers.forEach((entity, index) => {
     const angle = (index / Math.max(papers.length, 1)) * Math.PI * 2 + Math.PI / 4;
-    positions.set(entity.id, [Math.cos(angle) * 6.35, Math.sin(angle) * 4.4, -0.9 + Math.sin(angle * 2) * 0.4]);
+    positions.set(entity.id, [Math.cos(angle) * 6.8, Math.sin(angle) * 5, -0.9 + Math.sin(angle * 2) * 0.4]);
   });
 
   return positions;

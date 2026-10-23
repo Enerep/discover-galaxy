@@ -262,6 +262,7 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .source-link:hover .source-title { text-decoration: underline; text-underline-offset: 3px; }
 .source-action { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 12px; font-weight: 500; margin-top: 11px; min-height: 24px; }
 .source-author { font-size: 11px; color: var(--muted); margin: 5px 0 0; line-height: 1.6; }
+.source-context { display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 2px; margin: 10px 0 0; font-size: 12px; line-height: 1.6; color: var(--secondary-ink); }
 .connection-navigation { display: grid; padding: 8px 0; }
 .connection-link { display: flex; align-items: center; gap: 9px; min-height: 44px; width: 100%; text-align: left; color: var(--accent); font-size: 13px; padding: 7px 0; }
 .connection-link span { flex: 1; }

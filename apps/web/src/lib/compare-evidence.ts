@@ -41,6 +41,17 @@ const LABELS: Record<string, string> = {
   study_design: 'Study design', population: 'Population', tissue: 'Tissue', sample_size: 'Sample size',
 };
 
+/** A navigation default only: shared endpoints do not establish comparable experiments. */
+export function findComparisonPartner(snapshot: Snapshot, claimId: string): Claim | undefined {
+  const active = snapshot.claims.find(({ id }) => id === claimId);
+  if (!active) return undefined;
+  const others = snapshot.claims.filter(({ id }) => id !== claimId);
+  return others.find((claim) => claim.predicate === active.predicate && (
+    (claim.subject_id === active.subject_id && claim.object_id === active.object_id)
+    || (active.predicate === 'interacts_with' && claim.subject_id === active.object_id && claim.object_id === active.subject_id)
+  )) ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
+}
+
 function recorded(value: ContextValue): boolean {
   if (value === null) return false;
   if (typeof value === 'number') return Number.isFinite(value);

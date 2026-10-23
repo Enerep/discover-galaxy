@@ -15,6 +15,7 @@ The primary flow is **search → select an entity → read a finding → open th
 - Keep the user in control of focus and scrolling. Do not move the viewport while they type or filter. Prefer explicit mobile details and return-to-graph actions over surprise scrolling.
 - Keep sharing in one action area. Exported images must retain the finding's meaning, original source reference, dataset version, and draft status. Provide an evidence-card fallback when the graph cannot be captured.
 - Open comparison from a finding. Keep two original statements and citations visible, align study-context fields, and reveal detailed provenance and reading prompts on request. Preserve the underlying selection, filters, and view.
+- Prefer another finding on the same relationship as the initial comparison choice; this is a navigation shortcut, not a judgment of scientific comparability. Keep explicit experimental system and assay context visible with the original citation. Preserve replicate units separately from participant counts.
 - Let readers follow a finding to its other entity with **View …**, preserving the chosen finding and graph/list mode. Clear filters that would hide that destination, move keyboard focus to its heading without scrolling the page, and keep the original source link before this navigation.
 
 ## Visual language

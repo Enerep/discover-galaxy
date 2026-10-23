@@ -29,13 +29,24 @@ test('shared paper selections accept only findings cited by that paper', () => {
   assert.throws(() => buildShareUrl(base, { ...state, claimId: 'claim-trem2-r47h-risk' }, snapshot), /invalid explorer/);
 });
 
+test('protein and pathway filters preserve a selected finding when a shared link is restored', () => {
+  for (const [entityId, claimId, filter] of [
+    ['protein-trem2', 'claim-trem2-apoe-binding', 'protein'],
+    ['pathway-cholesterol-efflux', 'claim-apoe-cholesterol-pathway', 'pathway'],
+  ] as const) {
+    const state = { entityId, claimId, filter, query: '', view: 'list' as const };
+    const link = buildShareUrl(base, state, snapshot);
+    assert.deepEqual(parseShareState(new URL(link), snapshot), state);
+  }
+});
+
 test('unknown selections, unrelated claims, invalid modes and ambiguous parameters safely fall back', () => {
   for (const fragment of [
     'entity=not-in-the-dataset',
     'entity=gene-apoe&claim=not-in-the-dataset',
     'entity=gene-apoe&claim=claim-abca1-n1800h-risk',
     'entity=gene-apoe&claim=',
-    'entity=gene-apoe&type=protein',
+    'entity=gene-apoe&type=drug',
     'entity=gene-apoe&type=unknown',
     'entity=gene-apoe&view=unknown',
     'entity=gene-apoe&entity=gene-trem2',

@@ -23,7 +23,8 @@ function citation(source: Source) {
 
 function findingLabel(snapshot: Snapshot, claim: Claim) {
   const subject = snapshot.entities.find(({ id }) => id === claim.subject_id);
-  return String(claim.context.variant ?? `${subject?.label ?? claim.subject_id}: ${claim.predicate.replaceAll('_', ' ')}`);
+  const object = snapshot.entities.find(({ id }) => id === claim.object_id);
+  return String(claim.context.variant ?? `${subject?.label ?? claim.subject_id} · ${claim.predicate.replaceAll('_', ' ')} · ${object?.label ?? claim.object_id}`);
 }
 
 function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: ComparisonColumn }) {
