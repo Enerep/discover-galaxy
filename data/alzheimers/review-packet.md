@@ -3,18 +3,19 @@
 Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.
 Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.
 
-- **Dataset:** alzheimers-source-checked-0.2.0
+- **Dataset:** alzheimers-source-checked-0.3.0
 - **Schema:** 0.1.0
-- **Snapshot date:** 2026-10-22
+- **Snapshot date:** 2026-10-23
 - **Release status:** development
-- **Coverage:** 21 entities, 19 claims, 19 evidence records, 22 sources
+- **Coverage:** 22 entities, 21 claims, 21 evidence records, 23 sources
 - **Disease:** Alzheimer's disease
-- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, and curated cholesterol-regulation and DAP12 pathway records.
+- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 pathway records, and source-scoped APOE–TREM2 binding assays.
 
 ## Scope limitations
 
-- Source-checked draft: original study abstracts/metadata and specific database annotations were inspected at the recorded locations; this is not a comprehensive literature review.
+- Source-checked draft: inspected locations include study abstracts/metadata, selected original figure captions, and specific database annotations; this is not a comprehensive literature or full-paper review.
 - The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.
+- The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.
 - Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.
 - Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.
 - Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.
@@ -26,6 +27,7 @@ Each row is one source record, not an independent experiment or cohort. Database
 
 | Source | Kind | Linked claims | Entity provenance | Reuse | Publication status |
 | --- | --- | --- | --- | --- | --- |
+| source-atagi-2015 | publication | claim-trem2-apoe-binding; claim-trem2-r47h-apoe-binding | paper-atagi-2015 | pending\_review | not\_checked |
 | source-corder-1993 | publication | claim-apoe-e4-risk | paper-corder-1993 | pending\_review | not\_checked |
 | source-corder-1994 | publication | claim-apoe-e2-risk | paper-corder-1994 | pending\_review | not\_checked |
 | source-jonsson-2013 | publication | claim-trem2-r47h-risk | paper-jonsson-2013 | pending\_review | not\_checked |
@@ -939,6 +941,85 @@ Evidence limitations:
 - [ ] Check source reuse terms, attribution, and correction/retraction status.
 - [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
 
+### claim-trem2-apoe-binding
+
+**TREM2 protein → APOE protein · interacts\_with**
+
+In Atagi et al.'s dot-blot assays, APOE2, APOE3 and APOE4 bound the human TREM2 extracellular domain fused to Fc.
+
+**Summary:** Follow this protein interaction to inspect the separate cholesterol and DAP12 pathway annotations.
+
+#### Claim context
+
+- **assay:** Dot blot
+- **experimental system:** Cell-free protein assay
+- **intervention:** Not recorded
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Fc
+- **population:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** APOE2, APOE3 and APOE4; wild-type TREM2
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only.
+
+#### Claim limitations
+
+- Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.
+- Two findings from this paper are not independent studies.
+
+#### Evidence: evidence-atagi-2015-binding
+
+- **Original source:** [Apolipoprotein E Is a Ligand for Triggering Receptor Expressed on Myeloid Cells 2 (TREM2)](https://pubmed.ncbi.nlm.nih.gov/26374899/)
+- **Source record:** source-atagi-2015
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** PubMed Figures, original Figure 1A–B caption; Figure 4A caption identifies the human TREM2 fusion construct. Caption text inspected, not raw figure images.
+
+In Atagi et al.'s dot-blot assays, APOE2, APOE3 and APOE4 bound the human TREM2 extracellular domain fused to Fc.
+
+Source-specific study context:
+
+- **assay:** Dot blot
+- **assay replicates:** 3
+- **controls:** Human IgG-Fc and TREM1-Fc
+- **experimental system:** Cell-free protein assay
+- **intervention:** Not recorded
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Fc
+- **population:** Not recorded
+- **replicate unit:** Independent dot blots in Figure 1B
+- **sample size:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** APOE2, APOE3 and APOE4; wild-type TREM2
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only.
+
+Evidence limitations:
+
+- Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.
+- Two findings from this paper are not independent studies.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
 ### claim-trem2-dap12-binding
 
 **TREM2 protein → DAP12 protein · interacts\_with**
@@ -1136,6 +1217,85 @@ Evidence limitations:
 
 - Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.
 - Database annotations are not independent experimental replication or evidence of treatment benefit.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-trem2-r47h-apoe-binding
+
+**TREM2 protein → APOE protein · interacts\_with**
+
+In Atagi et al.'s dot-blot and solid-phase assays, human TREM2 R47H-Fc showed less APOE binding than the wild-type fusion.
+
+**Summary:** Compare this assay result with the baseline binding finding or the separate human genetic association.
+
+#### Claim context
+
+- **assay:** Dot blot and solid-phase binding
+- **experimental system:** Cell-free protein assay
+- **intervention:** Not recorded
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Fc
+- **population:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** TREM2 R47H versus wild type; APOE2, APOE3 and APOE4
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only.
+
+#### Claim limitations
+
+- Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.
+- Two findings from this paper are not independent studies.
+
+#### Evidence: evidence-atagi-2015-r47h-binding
+
+- **Original source:** [Apolipoprotein E Is a Ligand for Triggering Receptor Expressed on Myeloid Cells 2 (TREM2)](https://pubmed.ncbi.nlm.nih.gov/26374899/)
+- **Source record:** source-atagi-2015
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** PubMed Figures, original Figure 4A and Figure 5A–G captions: human constructs, loading/background controls and isoform-specific assays. Caption text inspected, not raw figure images.
+
+In Atagi et al.'s dot-blot and solid-phase assays, human TREM2 R47H-Fc showed less APOE binding than the wild-type fusion.
+
+Source-specific study context:
+
+- **assay:** Dot blot and solid-phase binding
+- **assay replicates:** 3
+- **controls:** Anti-Fc loading control for dot blots; uncoated wells for solid-phase assays
+- **experimental system:** Cell-free protein assay
+- **intervention:** Not recorded
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Fc
+- **population:** Not recorded
+- **replicate unit:** Figure 5 reports n = 3; replicate independence not resolved
+- **sample size:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** TREM2 R47H versus wild type; APOE2, APOE3 and APOE4
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only.
+
+Evidence limitations:
+
+- Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.
+- Two findings from this paper are not independent studies.
 
 #### Pending review tasks
 
@@ -1351,6 +1511,25 @@ Evidence limitations:
 - [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
 
 ## Source records and outstanding checks
+
+### source-atagi-2015
+
+[Apolipoprotein E Is a Ligand for Triggering Receptor Expressed on Myeloid Cells 2 (TREM2)](https://pubmed.ncbi.nlm.nih.gov/26374899/)
+
+- **Kind:** publication
+- **Identifiers:** PMID: 26374899; DOI: 10.1074/jbc.M115.679043; PMCID: PMC4646257
+- **Authors:** Yuka Atagi; Chia-Chen Liu; Meghan M Painter; Xiao-Fen Chen; Christophe Verbeeck; Honghua Zheng; Xia Li; Rosa Rademakers; Silvia S Kang; Huaxi Xu; Steven Younkin; Pritam Das; John D Fryer; Guojun Bu
+- **Year / publication type:** 2015 / primary\_research
+- **Provider / release:** Not recorded / Not recorded
+- **Retrieved:** 2026-10-23
+- **Reuse permission status:** pending\_review
+- **Reuse terms:** https://pmc.ncbi.nlm.nih.gov/about/copyright/
+- **Reuse checked:** 2026-10-23
+- **Attribution:** Atagi and colleagues, Journal of Biological Chemistry, 2015; bibliographic facts and original figure captions inspected via PubMed/NLM. © 2015 American Society for Biochemistry and Molecular Biology.
+- **Retained content:** Bibliographic facts, links and short project-authored paraphrases only; no abstract, caption text, article body or figures redistributed. NCBI policy and PMC copyright notice inspected; publisher-specific reuse remains unresolved.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
 
 ### source-corder-1993
 

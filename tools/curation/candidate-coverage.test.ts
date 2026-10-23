@@ -95,7 +95,7 @@ test('unknown context, publication checks, release provenance and actual inspect
 test('malformed dates, identifiers, non-human pathway records and credential-bearing URLs fail closed', () => {
   for (const mutate of [
     (copy: typeof packet) => { copy.prepared_at = '2026-02-30'; },
-    (copy: typeof packet) => { copy.candidates[0].inspection.accessed_at = '2026-10-23'; },
+    (copy: typeof packet) => { copy.candidates[0].inspection.accessed_at = new Date(Date.parse(copy.prepared_at) + 86_400_000).toISOString().slice(0, 10); },
     (copy: typeof packet) => { copy.candidates[0].url = 'https://reader:secret@example.org/paper'; },
     (copy: typeof packet) => { copy.candidates[0].inspection.url = 'https://example.org/paper?api_key=synthetic'; },
     (copy: typeof packet) => { copy.candidates[0].identifiers.doi = 'not-a-doi'; },

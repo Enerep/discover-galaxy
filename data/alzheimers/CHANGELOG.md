@@ -1,5 +1,20 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.3.0 — 2026-10-23
+
+**22 entities, 21 claims, 21 evidence records, 23 sources.** Adds one paper projection and two protein-level findings from [Atagi et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26374899/), DOI `10.1074/jbc.M115.679043`, PMCID `PMC4646257`. The 0.2.0 records are unchanged. All scientific records remain draft.
+
+| Finding | Inspected original locator | Extracted context |
+| --- | --- | --- |
+| `claim-trem2-apoe-binding` | PubMed's Figure 1A–B caption; Figure 4A construct caption | Cell-free dot blots of APOE isoforms and a human TREM2-Fc construct; three independent dot blots, not three participants |
+| `claim-trem2-r47h-apoe-binding` | PubMed's Figure 4A and Figure 5A–G captions | R47H versus wild-type fusion constructs; dot-blot and solid-phase readouts; n = 3 with replicate independence unresolved |
+
+The original figure captions and bibliographic metadata were readable on PubMed. An initial PMC view exposed partial methods/introductory text; later PMC opens returned a browser challenge, and publisher full-text/PDF and Europe PMC links were unavailable. Raw figure images, complete methods, supplements and underlying data were not reviewed. Captions support these narrowly scoped statements, not estimates of binding kinetics, microglial signaling, clinical effects or an AD-specific causal mechanism. Both findings retain the same paper identity; they are not independent studies. Protein endpoints stay separate from the existing gene–disease associations.
+
+The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [PMC copyright notice](https://pmc.ncbi.nlm.nih.gov/about/copyright/) were inspected on 2026-10-23. Access is not a redistribution license. Only bibliographic facts, source links and short project-authored paraphrases are retained; publisher-specific reuse remains pending and no article prose, captions or figures are redistributed. Correction/retraction status remains `not_checked`; no absence-of-notice assertion was created.
+
+Atagi 2015 was found while following the staged TREM2–APOE reading question. The six earlier publication candidates remain outside the graph: blocked access to the Yeh 2016 original methods did not become a claim. Their generated coverage packet now uses the 0.3.0 baseline and points to the two separately checked binding findings. Reactome release provenance remains unresolved.
+
 ## alzheimers-source-checked-0.2.0 — 2026-10-22
 
 **21 entities, 19 claims, 19 evidence records, 22 sources.** Development snapshot; all claims/evidence remain draft. The original four variant-scoped human association findings and four paper projections are unchanged.

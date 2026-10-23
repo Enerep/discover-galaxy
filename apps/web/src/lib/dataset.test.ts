@@ -138,6 +138,36 @@ test('optional metadata cannot smuggle malformed values past the typed adapter',
   assert.equal(validateDataset(snapshot).valid, false);
 });
 
+test('binding assays keep protein endpoints, one paper identity and replicate units separate from human associations', async () => {
+  const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  const ids = ['claim-trem2-apoe-binding', 'claim-trem2-r47h-apoe-binding'];
+  const records = ids.flatMap((id) => {
+    const claim = data.claims.find((item) => item.id === id)!;
+    assert.equal(claim.subject_id, 'protein-trem2');
+    assert.equal(claim.object_id, 'protein-apoe');
+    assert.equal(claim.predicate, 'interacts_with');
+    assert.equal(claim.context.experimental_system, 'Cell-free protein assay');
+    assert.equal(claim.review.status, 'draft');
+    assert.equal(claim.review.human_reviewed, false);
+    return getClaimEvidence(data, id);
+  });
+  assert.equal(records.length, 2);
+  assert.deepEqual([...new Set(records.map(({ source_id }) => source_id))], ['source-atagi-2015']);
+  for (const record of records) {
+    assert.equal(record.study_context.sample_size, null);
+    assert.equal(record.study_context.assay_replicates, 3);
+    assert.equal(typeof record.study_context.replicate_unit, 'string');
+    assert.match(record.locator, /caption/);
+    assert.match(record.review.rationale, /not reviewed/);
+  }
+  const source = data.sources.find(({ id }) => id === records[0].source_id)!;
+  assert.equal(source.url, 'https://pubmed.ncbi.nlm.nih.gov/26374899/');
+  assert.equal(source.publication_status.status, 'not_checked');
+  assert.equal(source.reuse.permission_status, 'pending_review');
+  assert.deepEqual(getEntityClaims(data, 'paper-atagi-2015').map(({ id }) => id), ids);
+  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+});
+
 test('two publication records with one study identifier cannot appear as independent sources', () => {
   const snapshot = syntheticFixture();
   snapshot.sources[0]!.identifiers = [{ namespace: 'test', value: 'synthetic-publication' }];

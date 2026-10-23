@@ -1,14 +1,15 @@
 {
   "schema_version": "0.1.0",
-  "dataset_version": "alzheimers-source-checked-0.2.0",
-  "created_at": "2026-10-22",
+  "dataset_version": "alzheimers-source-checked-0.3.0",
+  "created_at": "2026-10-23",
   "release_status": "development",
   "scope": {
     "disease": "Alzheimer's disease",
-    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, and curated cholesterol-regulation and DAP12 pathway records.",
+    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 pathway records, and source-scoped APOE–TREM2 binding assays.",
     "limitations": [
-      "Source-checked draft: original study abstracts/metadata and specific database annotations were inspected at the recorded locations; this is not a comprehensive literature review.",
+      "Source-checked draft: inspected locations include study abstracts/metadata, selected original figure captions, and specific database annotations; this is not a comprehensive literature or full-paper review.",
       "The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
+      "The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.",
       "Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.",
       "Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.",
       "Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.",
@@ -487,6 +488,22 @@
       "description_claim_ids": [],
       "provenance_source_ids": [
         "source-reactome-dap12"
+      ]
+    },
+    {
+      "id": "paper-atagi-2015",
+      "type": "paper",
+      "label": "Atagi et al. · 2015",
+      "aliases": [
+        "26374899",
+        "APOE TREM2 binding assays",
+        "Apolipoprotein E Is a Ligand for Triggering Receptor Expressed on Myeloid Cells 2"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-atagi-2015",
+      "provenance_source_ids": [
+        "source-atagi-2015"
       ]
     }
   ],
@@ -1029,6 +1046,72 @@
         "date": "2026-10-22",
         "human_reviewed": false,
         "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "claim-trem2-apoe-binding",
+      "subject_id": "protein-trem2",
+      "object_id": "protein-apoe",
+      "predicate": "interacts_with",
+      "statement": "In Atagi et al.'s dot-blot assays, APOE2, APOE3 and APOE4 bound the human TREM2 extracellular domain fused to Fc.",
+      "context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "APOE binding to TREM2-Fc",
+        "variant": "APOE2, APOE3 and APOE4; wild-type TREM2",
+        "assay": "Dot blot"
+      },
+      "evidence_ids": [
+        "evidence-atagi-2015-binding"
+      ],
+      "summary": "Follow this protein interaction to inspect the separate cholesterol and DAP12 pathway annotations.",
+      "limitations": [
+        "Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.",
+        "Two findings from this paper are not independent studies."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-23",
+        "human_reviewed": false,
+        "rationale": "Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only."
+      }
+    },
+    {
+      "id": "claim-trem2-r47h-apoe-binding",
+      "subject_id": "protein-trem2",
+      "object_id": "protein-apoe",
+      "predicate": "interacts_with",
+      "statement": "In Atagi et al.'s dot-blot and solid-phase assays, human TREM2 R47H-Fc showed less APOE binding than the wild-type fusion.",
+      "context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "APOE binding to TREM2-Fc",
+        "variant": "TREM2 R47H versus wild type; APOE2, APOE3 and APOE4",
+        "assay": "Dot blot and solid-phase binding"
+      },
+      "evidence_ids": [
+        "evidence-atagi-2015-r47h-binding"
+      ],
+      "summary": "Compare this assay result with the baseline binding finding or the separate human genetic association.",
+      "limitations": [
+        "Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.",
+        "Two findings from this paper are not independent studies."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-23",
+        "human_reviewed": false,
+        "rationale": "Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only."
       }
     }
   ],
@@ -1577,6 +1660,76 @@
         "date": "2026-10-22",
         "human_reviewed": false,
         "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+      }
+    },
+    {
+      "id": "evidence-atagi-2015-binding",
+      "claim_id": "claim-trem2-apoe-binding",
+      "source_id": "source-atagi-2015",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "In Atagi et al.'s dot-blot assays, APOE2, APOE3 and APOE4 bound the human TREM2 extracellular domain fused to Fc.",
+      "locator": "PubMed Figures, original Figure 1A–B caption; Figure 4A caption identifies the human TREM2 fusion construct. Caption text inspected, not raw figure images.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "APOE binding to TREM2-Fc",
+        "variant": "APOE2, APOE3 and APOE4; wild-type TREM2",
+        "assay": "Dot blot",
+        "controls": "Human IgG-Fc and TREM1-Fc",
+        "assay_replicates": 3,
+        "replicate_unit": "Independent dot blots in Figure 1B",
+        "sample_size": null
+      },
+      "limitations": [
+        "Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.",
+        "Two findings from this paper are not independent studies."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-23",
+        "human_reviewed": false,
+        "rationale": "Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only."
+      }
+    },
+    {
+      "id": "evidence-atagi-2015-r47h-binding",
+      "claim_id": "claim-trem2-r47h-apoe-binding",
+      "source_id": "source-atagi-2015",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "In Atagi et al.'s dot-blot and solid-phase assays, human TREM2 R47H-Fc showed less APOE binding than the wild-type fusion.",
+      "locator": "PubMed Figures, original Figure 4A and Figure 5A–G captions: human constructs, loading/background controls and isoform-specific assays. Caption text inspected, not raw figure images.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "APOE binding to TREM2-Fc",
+        "variant": "TREM2 R47H versus wild type; APOE2, APOE3 and APOE4",
+        "assay": "Dot blot and solid-phase binding",
+        "controls": "Anti-Fc loading control for dot blots; uncoated wells for solid-phase assays",
+        "assay_replicates": 3,
+        "replicate_unit": "Figure 5 reports n = 3; replicate independence not resolved",
+        "sample_size": null
+      },
+      "limitations": [
+        "Surface-based assays with fusion proteins do not establish binding kinetics, microglial signaling, or treatment benefit.",
+        "Two findings from this paper are not independent studies."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-23",
+        "human_reviewed": false,
+        "rationale": "Original figure captions and bibliographic metadata inspected on PubMed, with partial PMC methods/introductory text. Full article methods, raw figure images and supplements were not reviewed; later full-text opens were blocked. Source check only."
       }
     }
   ],
@@ -2283,6 +2436,57 @@
         "retained_content": "Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.",
         "date_checked": "2026-10-22",
         "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-atagi-2015",
+      "kind": "publication",
+      "title": "Apolipoprotein E Is a Ligand for Triggering Receptor Expressed on Myeloid Cells 2 (TREM2)",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26374899/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "26374899"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1074/jbc.M115.679043"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC4646257"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Yuka Atagi",
+        "Chia-Chen Liu",
+        "Meghan M Painter",
+        "Xiao-Fen Chen",
+        "Christophe Verbeeck",
+        "Honghua Zheng",
+        "Xia Li",
+        "Rosa Rademakers",
+        "Silvia S Kang",
+        "Huaxi Xu",
+        "Steven Younkin",
+        "Pritam Das",
+        "John D Fryer",
+        "Guojun Bu"
+      ],
+      "year": 2015,
+      "retrieved_at": "2026-10-23",
+      "reuse": {
+        "terms_url": "https://pmc.ncbi.nlm.nih.gov/about/copyright/",
+        "attribution": "Atagi and colleagues, Journal of Biological Chemistry, 2015; bibliographic facts and original figure captions inspected via PubMed/NLM. © 2015 American Society for Biochemistry and Molecular Biology.",
+        "retained_content": "Bibliographic facts, links and short project-authored paraphrases only; no abstract, caption text, article body or figures redistributed. NCBI policy and PMC copyright notice inspected; publisher-specific reuse remains unresolved.",
+        "date_checked": "2026-10-23",
+        "permission_status": "pending_review"
       },
       "publication_status": {
         "status": "not_checked",

@@ -1,8 +1,14 @@
 # Alzheimer's source-checked snapshot
 
-`dataset.json` is **alzheimers-source-checked-0.2.0**: 21 entities, 19 claims, 19 evidence records, and 22 sources. It contains one disease, seven human genes, seven distinct human proteins, two pathways, and four paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
+`dataset.json` is **alzheimers-source-checked-0.3.0**: 22 entities, 21 claims, 21 evidence records, and 23 sources. It contains one disease, seven human genes, seven distinct human proteins, two pathways, and five paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
-The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. New data are canonical gene/product mappings and attributed Reactome annotations, not new empirical AD-risk findings. The four original studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and two assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Binding experiments added in 0.3.0
+
+[Atagi et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26374899/) connects the existing APOE and TREM2 **protein** nodes. Two findings preserve baseline binding and the R47H comparison separately, with original figure-caption locators, cell-free fusion-protein context, controls and assay replicate units. Three replicates are not three human participants. Both findings share one original publication; the comparison must expose that shared identity.
+
+Only the original captions, metadata and partial introductory/methods text were inspected. Raw figure images, complete methods and supplements were unavailable or not reviewed. See the [0.3.0 change record](CHANGELOG.md#alzheimers-source-checked-030--2026-10-23) for actual access and reuse checks. These assays do not establish signaling, treatment benefit or independent replication.
 
 ## Original study lookups retained from 0.1.0
 
@@ -38,7 +44,7 @@ The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wile
 
 The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), keeps six publications ready for the next AD source pass. The two earlier pathway candidates were added through the separately checked dataset diff in 0.2.0. The remaining papers need assay-level extraction; their metadata is not experimental graph evidence. Use `npm run curation:coverage:check` to verify the packet's references and generated output.
 
-Use the [generated source-review packet](review-packet.md) for all 19 findings, their source-specific context and 22 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
+Use the [generated source-review packet](review-packet.md) for all 21 findings, their source-specific context and 23 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
 
 Further draft additions require actual source inspection, scoped context and limitations, identifiers, locators, and source reuse assessment. Keep unknowns explicit and record a new dataset version. Do not add automatic approval attestations or promote staged metadata into experimental evidence.
 

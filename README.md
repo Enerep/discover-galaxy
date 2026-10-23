@@ -8,7 +8,7 @@ The first version focuses on **Alzheimer's disease**, with a release target of *
 
 ## Project status
 
-**The source-checked explorer contains 21 entities and 19 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and four papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The source-checked explorer contains 22 entities and 21 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and five papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
 The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
 
@@ -21,6 +21,8 @@ Pasting the website link into a compatible social app uses a separate **1200 × 
 **Compare findings** opens two findings side by side with their original citations, study populations, variants, endpoints, limitations, and review status. Recorded fields are labeled matching, different, or missing; those labels do not determine agreement, contradiction, or study independence. A downloadable Markdown brief keeps the complete context and dataset version. Reading prompts identify source checks to make, not verified research gaps or new hypotheses.
 
 The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the additions are seven gene–protein mappings, seven pathway-participation annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
+
+Two additional findings connect APOE and TREM2 proteins through the binding assays reported by Atagi et al. (2015), including the R47H comparison. Their inspected figure captions, fusion-protein context and replicate units stay attached to the same original paper; these are not clinical outcomes or independent studies.
 
 Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. There are no curated disagreement records, research hypotheses, AI service, backend, or database yet. The client reads its local snapshot and makes no upstream scientific API requests.
 
@@ -51,7 +53,7 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
 
-The [AD source-review packet](data/alzheimers/review-packet.md) collects the 19 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 21 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check
