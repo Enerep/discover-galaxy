@@ -43,6 +43,7 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Add keyboard search-result navigation, visible zoom/reset controls, and explicit mobile evidence/back navigation without automatic page scrolling.
 - [x] Smooth selection, camera movement, and disclosure transitions; honor reduced motion and verify that graph rendering settles at rest.
 - [x] Exercise the revised desktop, touch/mobile, and WebGL-fallback flows in browser checks. Scientific release criteria remain pending.
+- [x] Record the owner's copy and UX/DX/AX rules in `AGENTS.md`; group controls, remove repeated labels/instructions, share citation formatting and retain scientific context in disclosures.
 
 ### Sharing and review preparation
 

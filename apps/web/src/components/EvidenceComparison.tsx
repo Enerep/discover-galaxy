@@ -1,7 +1,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { buildComparisonBrief, buildEvidenceComparison } from '../lib/compare-evidence.ts';
 import type { ComparisonColumn, ComparisonContextCell, ContextValue } from '../lib/compare-evidence.ts';
-import type { Claim, Snapshot, Source } from '../lib/types.ts';
+import type { Claim, Snapshot } from '../lib/types.ts';
+import { sourceCitation } from '../lib/source-format.ts';
 import { Icon } from './ui.tsx';
 import { PublicationStatus } from './PublicationStatus.tsx';
 import { StudyContextNote } from './StudyContextNote.tsx';
@@ -18,16 +19,11 @@ function display(value: ContextValue | undefined) {
   return Array.isArray(value) ? value.join('; ') : typeof value === 'number' ? value.toLocaleString('en-US') : value;
 }
 
-function citation(source: Source) {
-  const author = source.authors[0]?.split(' ').at(-1) ?? 'Source';
-  return `${author}${source.authors.length > 1 ? ' et al.' : ''}${source.year ? ` · ${source.year}` : ''}`;
-}
-
 function findingLabel(snapshot: Snapshot, claim: Claim) {
   if (typeof claim.context.binding_condition === 'string') {
     const sourceIds = new Set(snapshot.evidence.filter(({ claim_id }) => claim_id === claim.id).map(({ source_id }) => source_id));
     const sources = snapshot.sources.filter(({ id, kind }) => sourceIds.has(id) && kind === 'publication');
-    if (sources.length === 1) return `${citation(sources[0])} · ${claim.context.binding_condition}`;
+    if (sources.length === 1) return `${sourceCitation(sources[0])} · ${claim.context.binding_condition}`;
   }
   const subject = snapshot.entities.find(({ id }) => id === claim.subject_id);
   const object = snapshot.entities.find(({ id }) => id === claim.object_id);
@@ -35,14 +31,19 @@ function findingLabel(snapshot: Snapshot, claim: Claim) {
 }
 
 function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: ComparisonColumn }) {
+  const showClaimScope = display(cell.claimValue) !== 'Not recorded'
+    && cell.studies.some(({ value }) => JSON.stringify(value) !== JSON.stringify(cell.claimValue));
   return (
     <div className="comparison-values">
-      {display(cell.claimValue) !== 'Not recorded' && cell.studies.some(({ value }) => JSON.stringify(value) !== JSON.stringify(cell.claimValue)) && (
+      {showClaimScope && (
         <div className="comparison-entry"><strong>Claim scope</strong><p>{display(cell.claimValue)}</p></div>
       )}
       {cell.studies.map((study) => {
         const source = column.sources.find(({ id }) => id === study.sourceId);
-        return <div className="comparison-entry" key={study.evidenceId}><strong>{source ? citation(source) : 'Study'}</strong><p>{display(study.value)}</p></div>;
+        return <div className="comparison-entry" key={study.evidenceId}>
+          {(showClaimScope || cell.studies.length > 1) && <strong>{source ? sourceCitation(source) : 'Study'}</strong>}
+          <p>{display(study.value)}</p>
+        </div>;
       })}
     </div>
   );
@@ -51,7 +52,7 @@ function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: 
 function FindingCard({ column }: { column: ComparisonColumn }) {
   const { claim, subject, evidence, limitations } = column;
   const heading = typeof claim.context.binding_condition === 'string' && column.sources.length === 1
-    ? citation(column.sources[0]) : subject.label;
+    ? sourceCitation(column.sources[0]) : subject.label;
   const draft = claim.review.status !== 'approved' || claim.review.human_reviewed !== true
     || evidence.some(({ evidence: item }) => item.review.status !== 'approved' || item.review.human_reviewed !== true);
   return (
@@ -69,7 +70,7 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
           <div><dt>Reviewer / date</dt><dd>{claim.review.reviewer ?? 'Not recorded'} / {claim.review.date ?? 'Not recorded'}</dd></div>
         </dl>
         {evidence.map(({ evidence: item, source }) => <section key={item.id}>
-          <h4>{citation(source)}</h4>
+          <h4>{sourceCitation(source)}</h4>
           <p>{item.finding}</p>
           <p>Source location: {item.locator}</p>
           <p>{item.review.status === 'approved' && item.review.human_reviewed ? 'Evidence review recorded.' : 'Draft source check.'} {source.reuse.permission_status === 'permitted' ? 'Reuse permitted.' : 'Reuse assessment pending.'}</p>
@@ -84,7 +85,6 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
 export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
-  const descriptionId = useId();
   const [downloadUrl, setDownloadUrl] = useState('');
   const result = useMemo(() => {
     if (!claimIds) return { comparison: null, error: '' };
@@ -107,10 +107,9 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Pr
   }, [snapshot, comparison]);
 
   return (
-    <dialog className="data-dialog comparison-dialog" ref={dialog} aria-labelledby={titleId} aria-describedby={descriptionId} onClose={onClose}>
+    <dialog className="data-dialog comparison-dialog" ref={dialog} aria-labelledby={titleId} onClose={onClose}>
       <button className="icon-button dialog-close" aria-label="Close comparison" onClick={onClose}><Icon name="close" /></button>
       <h2 id={titleId}>Compare findings</h2>
-      <p id={descriptionId}>Check what was studied, where the context differs, and what the source records leave unanswered.</p>
       {result.error && <p role="alert">{result.error}</p>}
       {comparison && claimIds && <>
         <div className="comparison-selectors">
@@ -121,34 +120,31 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Pr
             </select>
           </label>)}
         </div>
-        <p className="comparison-summary">{comparison.scopeStatus === 'different recorded scope' ? 'The recorded study contexts differ.'
-          : comparison.scopeStatus === 'insufficient context' ? 'The recorded study context is incomplete.'
-            : 'Recorded fields match; check the source methods before treating the studies as comparable.'} These labels do not establish agreement or contradiction.</p>
         <div className="comparison-findings">{comparison.columns.map((column) => <FindingCard key={column.claim.id} column={column} />)}</div>
         {comparison.contextNotes.map((note) => <StudyContextNote key={note.id} snapshot={snapshot} note={note} />)}
         <h3>Study context</h3>
-        <p>{comparison.experimentalContext ? 'Assay context and replicate units stay with each original source.' : 'Source values and claim scope stay separate; participant counts are not combined.'}</p>
         <div className="comparison-table-wrap" tabIndex={0} role="region" aria-label="Study context comparison">
           <table className="comparison-table">
             <caption className="sr-only">Source-specific study context for the two selected findings</caption>
             <thead><tr><th scope="col">Recorded field</th><th scope="col">Finding A</th><th scope="col">Finding B</th></tr></thead>
-            <tbody>{comparison.contextRows.map((row) => <tr key={row.key}>
-              <th scope="row">{row.label}<span className="context-status" data-state={row.status}>{row.status === 'matching' ? 'Same recorded value' : row.status === 'different' ? 'Different' : 'Missing context'}</span></th>
+            <tbody>{comparison.contextRows.map((row) => <tr key={row.key} data-state={row.status}>
+              <th scope="row">{row.label}{' '}<span className={row.status === 'matching' ? 'sr-only' : 'context-status'} data-state={row.status}>{row.status === 'matching' ? 'Same recorded value' : row.status === 'different' ? 'Different' : 'Missing context'}</span></th>
               <td><ContextValues cell={row.left} column={comparison.columns[0]} /></td>
               <td><ContextValues cell={row.right} column={comparison.columns[1]} /></td>
             </tr>)}</tbody>
           </table>
         </div>
-        <p className="comparison-source-note">{comparison.sharedSources.length
+        <details className="comparison-prompts"><summary>Interpretation and source checks</summary>
+          <p className="comparison-summary">{comparison.scopeStatus === 'different recorded scope' ? 'The recorded study contexts differ.'
+            : comparison.scopeStatus === 'insufficient context' ? 'The recorded study context is incomplete.'
+              : 'Recorded fields match; check the source methods before treating the studies as comparable.'} These labels do not establish agreement or contradiction.</p>
+          <p className="comparison-source-note">{comparison.sharedSources.length
           ? 'A source record or publication identifier is shared. Repeated references are not separate observations.'
           : comparison.experimentalContext ? 'No shared publication identifier is recorded. Shared materials and study independence have not been checked.'
             : 'No shared publication identifier is recorded. Participant overlap and study independence have not been checked.'}</p>
-        <details className="comparison-prompts"><summary>Questions to check in the sources</summary>
           <ul>{comparison.prompts.map((prompt) => <li key={prompt}>{prompt}</li>)}</ul>
-          <p>These are reading prompts from the recorded context, not verified research gaps or new hypotheses.</p>
         </details>
         <div className="comparison-actions">{downloadUrl && <a className="primary-button" href={downloadUrl} download="discovery-galaxy-comparison.md"><Icon name="download" size={17} />Download comparison</a>}
-          <p>Includes full context, limitations, citations, and dataset {snapshot.dataset_version}.</p>
         </div>
       </>}
     </dialog>

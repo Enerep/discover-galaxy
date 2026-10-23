@@ -2,14 +2,17 @@
 
 This is the standing design standard for Discovery Galaxy. Apply it to every interface and copy change. The goal is a simple research tool that feels clear and responsive, with smooth animation that helps people understand what changed.
 
+Follow the [canonical design and decision rules](../AGENTS.md#design-standard): cut taglines, helper text and secondary labels, and choose changes that improve UX, DX and AX together. Solve unclear screens through layout, grouping and direct controls. Keep scientific data, accessible names, form labels and actionable error states; move detailed metadata into the relevant disclosure.
+
 ## Start with the task
 
 The primary flow is **search → select an entity → read a finding → open the original study**. Make that flow clear before adding another feature or visual treatment.
 
-- Keep one search field, one entity-type filter, and one graph/list switch in a consistent location.
+- Group one search field, one entity-type filter, and one graph/list switch in the same toolbar. On narrow screens, use a full-width search followed by the filter and switch.
 - Use a single main workspace and a readable evidence panel. A single collection does not need a permanent navigation sidebar.
 - Make node selection obvious. Search results, graph selection, list selection, and the evidence panel must agree.
 - Put the finding and original paper link before advanced identifiers and detailed study metadata.
+- Use the entity icon and title as one heading. Put full entity names and identifiers in **Entity details**, and keep the finding summary with **Study details and limitations**. Omit repeated Findings/Finding headings and decorative counts.
 - Reveal study context and limitations on request, preserving their source-specific meaning. Simplifying the interface must not remove scientific context.
 - Keep the graph usable with touch, visible zoom/reset controls, and an equivalent keyboard-operable list.
 - Keep the user in control of focus and scrolling. Do not move the viewport while they type or filter. Prefer explicit mobile details and return-to-graph actions over surprise scrolling.
@@ -38,19 +41,21 @@ Offer Light, Dark, and System in one appearance control. Light uses neutral surf
 
 Name the action or information directly. Use short labels and concrete nouns; explain only what helps someone make the next choice.
 
-Use **Source-checked draft** as the dataset status (short **Draft** on narrow headers). It describes the actual limited source checks, not independent scientific approval. Independent review is a future milestone, not a repeated interface warning or a blocker for development work. Keep exact inspection limits, reuse/publication status, and review provenance available in the data dialog and source disclosures. Label **Database annotation / Open record** separately from **Original paper / Open paper**.
+Use **Source-checked draft** as the dataset status (short **Draft** on narrow headers). It describes the actual limited source checks, not independent scientific approval. Independent review is a future milestone, not a repeated interface warning or a blocker for development work. Keep exact inspection limits, reuse/publication status, and review provenance available in the data dialog and source disclosures. Distinguish **Database annotation** from **Original paper** beside the source citation. The linked title and external-link icon provide the action without a repeated Open paper/Open record caption.
 
 | Avoid | Prefer |
 | --- | --- |
 | “Your observatory” above navigation | A visible search field and entity-type filter |
 | “A starting point for discovery” | Omit the promotional card |
-| “Every visible node leads to a source” | “Select an entity to view its studies” when guidance is needed |
+| “Every visible node leads to a source” | Omit the instruction; make selection and the source panel obvious |
 | “The knowledge atlas / 001” | “Alzheimer’s disease” |
 | Repeated draft warnings in every section | One clear preview notice, with record status where relevant |
 
 Do not add a chat interface, generated explanation, confidence score, progress number, or capability label unless it corresponds to a working, useful feature. Keep scientific wording accurate and traceable; the [evidence policy](evidence-policy.md) governs claims and uncertainty.
 
 Use neutral comparison labels such as “Different” and “Missing context.” Exact text matches do not prove comparable studies; a difference does not prove contradiction. Show unknowns plainly and keep participant subsets attached to their source. Source-reading prompts are checks to perform, not claims of novel research opportunities.
+
+Show comparison values directly beneath their column headings. Repeat study attribution in a cell only when multiple evidence records or a separate claim-scope value make it necessary. Keep matching-value status available to screen readers without a badge on every row. Put interpretation limits and source-identity checks in **Interpretation and source checks**; retain their complete meaning in exported briefs. Sharing should show the actual preview and actions, with text only for loading, errors or recovery.
 
 ## Motion
 

@@ -10,7 +10,7 @@ The first version focuses on **Alzheimer's disease**, with a release target of *
 
 **The source-checked explorer contains 24 entities and 24 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and seven papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
-The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
+One toolbar groups search, the type filter and Graph/List. The selected entity, finding and original citation lead the evidence panel; **Entity details** and **Study details and limitations** hold the extra metadata. Keyboard search, visible camera controls and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) applies the standing rule to cut taglines/helper text and improve UX, DX and AX together.
 
 The appearance control offers Light, Dark, and System. System follows the operating system by default; explicit choices are remembered locally. Dark uses a `#1F1F24` page background. The graph stays dark in either theme, and exported citation cards keep their light background.
 

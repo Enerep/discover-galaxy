@@ -252,6 +252,10 @@ def assert_export_retry(browser, base_url: str, screenshots: Path) -> None:
 
 
 def assert_text_contrast(control: Locator, *, pseudo: str | None = None, minimum: float = 4.5) -> None:
+    # Measure the settled palette after finite control/theme transitions.
+    control.evaluate("""element => Promise.all(element.getAnimations()
+        .filter(animation => animation.playState === 'running' && animation.effect.getTiming().iterations !== Infinity)
+        .map(animation => animation.finished.catch(() => {})))""")
     colors = control.evaluate("""(element, pseudo) => {
         const parse = value => {
             const values = value.match(/[\\d.]+/g).map(Number);
@@ -291,7 +295,7 @@ def assert_themes(browser, base_url: str, screenshots: Path) -> None:
     def assert_palette(mode: str) -> None:
         expect(page.locator("html")).to_have_attribute("data-theme", mode)
         expect(page.locator("html")).to_have_attribute("data-theme-preference", mode)
-        for selector in [".page-heading p", ".selected-title", ".finding-statement", ".finding-summary", ".source-title", ".source-meta", ".draft-label", ".claim-button", ".coverage-note"]:
+        for selector in [".selected-title", ".finding-statement", ".source-title", ".source-meta", ".data-status", ".claim-button"]:
             assert_text_contrast(page.locator(selector).first)
         assert_text_contrast(page.get_by_role("combobox", name="Search entities"))
         assert_text_contrast(page.get_by_role("combobox", name="Search entities"), pseudo="::placeholder")
@@ -353,7 +357,7 @@ def assert_themes(browser, base_url: str, screenshots: Path) -> None:
     expect(page.get_by_role("button", name="List view", exact=True)).to_have_attribute("aria-pressed", "true")
     expect(page.locator(".entity-row")).to_have_count(1)
     assert_text_contrast(page.locator(".entity-row-text strong"))
-    assert_text_contrast(page.locator(".entity-row-text small"))
+    assert_text_contrast(page.locator(".row-type"))
     page.screenshot(path=str(screenshots / "list-dark.png"), full_page=True)
     page.get_by_role("button", name="About the data").click()
     about = page.get_by_role("dialog", name="About this dataset", exact=True)
@@ -364,7 +368,7 @@ def assert_themes(browser, base_url: str, screenshots: Path) -> None:
     dialog = page.get_by_role("dialog", name="Share this view", exact=True)
     preview = dialog.get_by_role("img", name="Share image preview", exact=True)
     expect(preview).to_be_visible(timeout=10000)
-    for control in [dialog.locator("h2"), dialog.locator("p").first, dialog.get_by_role("textbox", name="Link to this view"), dialog.get_by_role("button", name="Copy link", exact=True), dialog.get_by_role("link", name="Download PNG", exact=True)]:
+    for control in [dialog.locator("h2"), dialog.get_by_role("textbox", name="Link to this view"), dialog.get_by_role("button", name="Copy link", exact=True), dialog.get_by_role("link", name="Download PNG", exact=True)]:
         assert_text_contrast(control)
     assert preview.evaluate("""async image => {
         await image.decode();
@@ -475,7 +479,11 @@ def assert_comparisons(browser, base_url: str, screenshots: Path) -> None:
     variant = dialog.get_by_role("rowheader", name=re.compile(r"^Variant\b")).locator("..")
     expect(variant.locator(".context-status")).to_have_attribute("data-state", "different")
     assert "conflicting evidence" not in dialog.inner_text().lower()
+    interpretation = dialog.get_by_text("Interpretation and source checks", exact=True)
+    interpretation.click()
     assert "independen" in dialog.inner_text().lower()
+    expect(dialog.locator(".comparison-summary")).to_contain_text("do not establish agreement or contradiction")
+    interpretation.click()
     urls = set(dialog.locator('a[href^="https://pubmed.ncbi.nlm.nih.gov/"]').evaluate_all("links => links.map(link => link.href)"))
     assert urls == {"https://pubmed.ncbi.nlm.nih.gov/8346443/", "https://pubmed.ncbi.nlm.nih.gov/7920638/"}, urls
     assert first.locator('option[value="claim-apoe-e2-risk"]').evaluate("option => option.disabled")
@@ -528,6 +536,7 @@ def assert_comparisons(browser, base_url: str, screenshots: Path) -> None:
     page.get_by_role("combobox", name="Color theme", exact=True).select_option("dark")
     trigger.click()
     expect(dialog).to_be_visible()
+    dialog.get_by_text("Interpretation and source checks", exact=True).click()
     assert_text_contrast(dialog.locator(".comparison-summary"))
     assert_text_contrast(dialog.get_by_role("combobox", name="Finding A", exact=True))
     page.screenshot(path=str(screenshots / "comparison-dark.png"), full_page=True)
@@ -711,9 +720,9 @@ def assert_binding_findings(browser, base_url: str, screenshots: Path) -> None:
     expect(dialog.locator(".comparison-finding h3").nth(1)).to_contain_text("Bailey et al.")
     expect(dialog.locator("tbody tr").first).to_contain_text("Experimental system")
     condition = dialog.get_by_role("rowheader", name=re.compile(r"^Binding condition\b")).locator("..")
-    expect(condition.locator(".context-status")).to_have_attribute("data-state", "matching")
+    expect(condition).to_have_attribute("data-state", "matching")
     replicates = dialog.get_by_role("rowheader", name=re.compile(r"^Assay replicates\b")).locator("..")
-    expect(replicates.locator(".context-status")).to_have_attribute("data-state", "matching")
+    expect(replicates).to_have_attribute("data-state", "matching")
     units = dialog.get_by_role("rowheader", name=re.compile(r"^Replicate unit\b")).locator("..")
     expect(units).to_contain_text("Independent dot blots")
     expect(units).to_contain_text("Triplicate wells")
@@ -940,6 +949,15 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         expect(filter_control).to_have_count(1)
         expect(page.get_by_role("button", name="Graph view", exact=True)).to_have_count(1)
         expect(page.get_by_role("button", name="List view", exact=True)).to_have_count(1)
+        expect(page.locator(".entity-heading").get_by_role("img", name="Gene", exact=True)).to_be_visible()
+        entity_details = page.get_by_role("button", name="Entity details", exact=True)
+        entity_details.focus()
+        page.keyboard.press("Enter")
+        expect(page.locator(".identifiers")).to_be_visible()
+        expect(page.locator(".identifiers")).to_contain_text("apolipoprotein E")
+        expect(page.locator(".identifiers")).to_contain_text("Gene")
+        page.keyboard.press("Enter")
+        expect(entity_details).to_have_attribute("aria-expanded", "false")
         assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
         assert page.get_by_role("button", name="About the data").evaluate(
             "element => getComputedStyle(element).transitionDuration.split(',').some(value => parseFloat(value) > 0)"
@@ -1021,7 +1039,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
 
         search.fill("Alzheimer’s disease")
         expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(1)
-        expect(page.locator(".result-status")).to_contain_text("with context")
+        expect(page.locator(".result-status")).to_contain_text("related")
         search.press("Enter")
         expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
         expect(page.locator(".claim-button")).to_have_count(4)
@@ -1117,8 +1135,11 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         ]:
             assert_touch_target(control)
         assert_idle(mobile_page, "Reduced-motion graph")
-        expect(mobile_page.locator(".touch-hint")).to_be_visible()
-        expect(mobile_page.locator(".pointer-hint")).not_to_be_visible()
+        assert mobile_page.locator("canvas").evaluate("element => getComputedStyle(element).touchAction === 'none'")
+        for name in ["Zoom in", "Zoom out"]:
+            before = mobile_page.evaluate("window.__browserQA.draws")
+            mobile_page.get_by_role("button", name=name, exact=True).tap()
+            mobile_page.wait_for_function("before => window.__browserQA.draws > before", arg=before)
         mobile_page.screenshot(path=str(screenshots / "mobile.png"), full_page=True)
         shortcut = mobile_page.get_by_role("button", name="TREM2", exact=True)
         assert_no_scroll(mobile_page, shortcut, shortcut.tap, "Mobile gene selection")

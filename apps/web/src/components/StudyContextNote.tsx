@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import type { Conflict, Snapshot } from '../lib/types.ts';
+import { sourceCitation } from '../lib/source-format.ts';
 import { Icon } from './ui.tsx';
 
 /** A curated comparison of named findings, separate from automatic field labels. */
@@ -14,7 +15,7 @@ export function StudyContextNote({ snapshot, note }: { snapshot: Snapshot; note:
       <p>{note.comparison}</p>
       <div className="context-note-sources" aria-label="Compared original studies">
         {sources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer">
-          {source.authors[0]?.split(' ').at(-1) ?? source.provider ?? 'Source'}{source.authors.length > 1 ? ' et al.' : ''}{source.year ? ` · ${source.year}` : ''}<Icon name="external" size={13} />
+          {sourceCitation(source)}<Icon name="external" size={13} />
         </a>)}
       </div>
       <details>

@@ -12,9 +12,17 @@ This file is the canonical agent guide. [agent.md](agent.md) exists as a human-f
 
 ## Design standard
 
+> Cut taglines, helper text and secondary labels. If a screen needs them to make sense, fix the layout.
+
 Read and apply [docs/design.md](docs/design.md) for every interface or copy change. The user's standing preference is a simple, clean application with smooth, purposeful animation and plain language. Keep the search → selection → original-study flow obvious. Use one set of controls, readable evidence, and progressive disclosure instead of repeated navigation, slogans, decorative counters, or fake AI features. Respect keyboard access and reduced motion, and keep draft scientific status visible without repeating it throughout the interface.
 
 Support Light, Dark, and System appearance with semantic color tokens; the dark page background is `#1F1F24`. Keep text, controls, dialogs, and evidence readable in both themes. Preserve graph color meaning and the current selection when changing appearance. System follows the operating system; explicit choices are local preferences.
+
+## Decision standard
+
+> Make the best decision that will elevate all three: the user experience (UX), developer experience (DX), and agent experience (AX) always, without breaking anything.
+
+Choose clear layouts, reusable behavior and straightforward code that people and agents can maintain. Keep one canonical source for rules and shared presentation logic. Preserve working interactions, accessibility, scientific meaning and dependency safeguards; verify the affected flows before calling a change complete. Prefer removing unnecessary code and copy over adding abstractions or dependencies.
 
 ## Current repository state
 

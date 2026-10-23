@@ -179,7 +179,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       <div className="workspace">
         <main className="explorer" id="explorer" tabIndex={-1}>
           <div className="page-heading">
-            <div><h1>Alzheimer’s disease</h1><p>Explore genes, proteins, pathways, and their evidence.</p></div>
+            <h1>Alzheimer’s disease</h1>
             <button className="secondary-button share-trigger" onClick={() => setShareOpen(true)}><Icon name="share" size={17} />Share</button>
           </div>
           <div className="explorer-tools">
@@ -190,26 +190,26 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
               </select>
               <Icon name="down" size={16} />
             </div>
+            <div className="view-switch" role="group" aria-label="View mode">
+              <button aria-label="Graph view" aria-pressed={view === 'graph'} disabled={webglFailed} onClick={() => setView('graph')}><Icon name="galaxy" size={16} />Graph</button>
+              <button aria-label="List view" aria-pressed={view === 'list'} onClick={() => setView('list')}><Icon name="list" size={16} />List</button>
+            </div>
           </div>
 
           <section className="graph-card" ref={graphRef} tabIndex={-1} aria-label="Knowledge explorer">
-            <div className="view-toolbar">
+            <div className={filtered ? 'view-toolbar' : 'sr-only'}>
               <p className="result-status" role="status">
                 {filtered ? `${matches.length} ${matches.length === 1 ? 'match' : 'matches'}` : `${snapshot.entities.length} entities · ${paperCount} papers`}
-                {query.trim() && filter === 'all' && view === 'graph' && matches.length > 0 && <span> with context</span>}
+                {query.trim() && filter === 'all' && view === 'graph' && graph.entities.length > matches.length
+                  && <span> · {graph.entities.length - matches.length} related</span>}
               </p>
               {filtered && <button className="clear-filters" onClick={clearFilters}>Clear filters</button>}
-              <div className="view-switch" role="group" aria-label="View mode">
-                <button aria-label="Graph view" aria-pressed={view === 'graph'} disabled={webglFailed} onClick={() => setView('graph')}><Icon name="galaxy" size={16} />Graph</button>
-                <button aria-label="List view" aria-pressed={view === 'list'} onClick={() => setView('list')}><Icon name="list" size={16} />List</button>
-              </div>
             </div>
 
             <div className={`viewport ${view === 'list' ? 'list-mode' : ''}`}>
               {!matches.length ? (
                 <div className="empty-state" role="status">
                   <Icon name="search" size={28} /><h2>No matches</h2>
-                  <p>Try an entity name or clear the filters.</p>
                   <button className="primary-button" onClick={clearFilters}>Show all entities</button>
                 </div>
               ) : view === 'graph' ? (
@@ -227,18 +227,17 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
                     <button className="icon-button" aria-label="Zoom out" title="Zoom out" onClick={() => setZoomStep((step) => step - 1)}><Icon name="minus" /></button>
                     <button className="icon-button" aria-label="Reset view" title="Reset view" onClick={() => setResetKey((key) => key + 1)}><Icon name="reset" size={17} /></button>
                   </div>
-                  <p className="graph-hint"><span className="pointer-hint">Drag to rotate · Scroll to zoom</span><span className="touch-hint">Drag to rotate · Pinch to zoom</span></p>
                 </>
               ) : (
                 <div className="list-content">
-                  {webglFailed && <p className="fallback-notice" role="status">3D is unavailable. You can browse all the evidence in this list.</p>}
+                  {webglFailed && <p className="fallback-notice" role="status">3D unavailable · List view</p>}
                   <ul className="entity-list">
                     {matches.map((entity) => (
                       <li key={entity.id}>
                         <button className="entity-row" data-entity-id={entity.id} aria-pressed={selectedId === entity.id} onClick={() => selectEntity(entity.id)}>
-                          <span className={`entity-symbol ${entity.type}`}><Icon name={entity.type} size={20} /></span>
-                          <span className="entity-row-text"><strong>{entity.label}</strong><small>{entity.description?.split(' · ')[0] ?? snapshot.sources.find(({ id }) => id === entity.source_id)?.title}</small></span>
-                          <span className="row-type">{TYPE_LABELS[entity.type]}</span><Icon name="arrow" size={15} />
+                          <span className={`entity-symbol ${entity.type}`} role="img" aria-label={TYPE_LABELS[entity.type]}><Icon name={entity.type} size={20} /></span>
+                          <span className="entity-row-text"><strong>{entity.label}</strong></span>
+                          <span className="row-type" aria-hidden="true">{TYPE_LABELS[entity.type]}</span><Icon name="arrow" size={15} />
                         </button>
                       </li>
                     ))}
@@ -247,25 +246,23 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
               )}
             </div>
 
-            <footer className="graph-legend" aria-label="Graph legend">
+            {view === 'graph' && matches.length > 0 && <footer className="graph-legend" aria-label="Graph legend">
               <div className="entity-legend">
                 {(['gene', 'protein', 'pathway', 'disease', 'paper'] as const).map((type) => <span key={type}><i className={`type-dot ${type}`} />{TYPE_LABELS[type]}</span>)}
               </div>
               <div className="edge-legend"><span><i />Claim</span><span><i className="citation-line" />Citation</span></div>
-            </footer>
+            </footer>}
           </section>
 
-          <div className="gene-shortcuts" aria-label="Choose a gene">
-            <span>Genes</span>
+          <div className="gene-shortcuts" role="group" aria-label="Choose a gene">
             {snapshot.entities.filter(({ type }) => type === 'gene').map((entity) => (
               <button key={entity.id} aria-pressed={selectedId === entity.id} onClick={() => { clearFilters(); selectEntity(entity.id); }}>{entity.label}</button>
             ))}
           </div>
           <div className="mobile-selection">
-            <span><strong>{selected.label}</strong><small>{related.length} {related.length === 1 ? 'finding' : 'findings'}</small></span>
+            <span><strong>{selected.label}</strong></span>
             <button className="primary-button" onClick={openEvidence}>View evidence<Icon name="arrow" size={14} /></button>
           </div>
-          <p className="coverage-note">Selected studies and database annotations.</p>
         </main>
 
         <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
@@ -278,9 +275,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <h2 id="data-title">About this dataset</h2>
         <p>{snapshot.scope.inclusion_criteria}</p>
         <ul>{snapshot.scope.limitations.map((item) => <li key={item}>{item}</li>)}</ul>
-        <p>Source-checked draft. Each finding links to its source and records what was inspected. Study results and curated database annotations retain their own scope.</p>
         <dl className="context-list"><div><dt>Dataset</dt><dd>{snapshot.dataset_version}</dd></div><div><dt>Source lookup</dt><dd>{snapshot.created_at.slice(0, 10)}</dd></div></dl>
-        <button className="primary-button" onClick={() => aboutRef.current?.close()}>Close</button>
       </dialog>
       <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} snapshot={snapshot}
         selected={selected} claim={activeClaim} captureGraph={captureGraph} shareUrl={shareUrl} />

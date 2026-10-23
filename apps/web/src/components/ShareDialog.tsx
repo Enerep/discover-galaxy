@@ -90,7 +90,6 @@ export function ShareDialog({ open, onClose, snapshot, selected, claim, captureG
     <dialog className="data-dialog share-dialog" ref={dialog} aria-labelledby={titleId} onClose={onClose}>
       <button className="icon-button dialog-close" aria-label="Close sharing" onClick={onClose}><Icon name="close" /></button>
       <h2 id={titleId}>Share this view</h2>
-      <p>The image includes the selected finding, its sources, and the dataset’s draft status.</p>
       <div className="share-preview" aria-busy={!preview && !error}>
         {preview ? <img src={preview.url} alt="Share image preview" />
           : error ? <div role="alert"><p>{error}</p><button className="secondary-button" onClick={() => setAttempt((value) => value + 1)}>Retry</button></div>
@@ -102,14 +101,14 @@ export function ShareDialog({ open, onClose, snapshot, selected, claim, captureG
         {preview?.nativeShare && <button className="secondary-button" onClick={() => void shareImage()} disabled={sharing}><Icon name="share" size={17} />{sharing ? 'Sharing…' : 'Share image'}</button>}
       </div>
       <div className="share-link">
-        <label htmlFor={`${titleId}-link`}>Link to this view</label>
+        <label className="sr-only" htmlFor={`${titleId}-link`}>Link to this view</label>
         <div className="share-link-field">
           <input id={`${titleId}-link`} ref={linkInput} value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
           <button className="secondary-button" onClick={() => void copyLink()} disabled={!shareUrl}>{copyStatus === 'copied' ? 'Copied' : 'Copy link'}</button>
         </div>
-        <p className="copy-status" role="status">{!shareUrl ? 'Clear the search to create a shareable link.'
-          : copyStatus === 'copied' ? 'Link copied.' : copyStatus === 'manual' ? 'Copy the selected link to share this view.'
-          : 'Opens the same entity, finding, search, filter, and view.'}</p>
+        {(!shareUrl || copyStatus !== 'idle') && <p className={`copy-status${copyStatus === 'copied' ? ' sr-only' : ''}`} role="status">
+          {!shareUrl ? 'Clear the search to create a shareable link.' : copyStatus === 'copied' ? 'Link copied.' : 'Copy the selected link to share this view.'}
+        </p>}
       </div>
     </dialog>
   );
