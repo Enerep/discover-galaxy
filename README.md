@@ -8,7 +8,7 @@ The first version focuses on **Alzheimer's disease**, with a release target of *
 
 ## Project status
 
-**The source-checked explorer contains 23 entities and 23 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and six papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The source-checked explorer contains 24 entities and 24 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and seven papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
 The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
 
@@ -24,9 +24,11 @@ The interface uses **Source-checked draft**. Each finding records its source, in
 
 Four findings connect APOE and TREM2 proteins through the binding assays reported by Atagi and Bailey (2015), with baseline and R47H results kept separate. Source-specific protein preparations, surface presentation and replicate units remain attached to the original paper. Bailey's plasma-derived APOE isoform is unknown, and its triplicate wells are not three independent studies. The source records its in-article correction and the actual inspection limits.
 
+A fifth finding from Lessard (2018) reports no significant wild-type/R47H APOE3 affinity difference under a different assay setup. A source-checked context note records that contrast with Atagi's result and the differences that constrain interpretation. The source retains its lipidated-protein BLI setup, unresolved run count, inspected locations and CC BY attribution.
+
 The assay setup appears beside the citation, and finding labels name the study and recorded condition. **Compare findings** starts with the same recorded binding condition in another publication when available; within-paper comparisons remain selectable. Assay details come first in experimental comparisons, with preparation, immobilization, replicate units and unknowns retained. Original correction links are available in the source details and downloaded brief. Shared links preserve protein and pathway filters.
 
-Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. There are no curated disagreement records, research hypotheses, AI service, backend, or database yet. The client reads its local snapshot and makes no upstream scientific API requests.
+Independent scientific review is deferred to a future milestone, as requested by the owner; it does not block expanding or hosting the source-checked development explorer. Source-checking is a limited inspection, not an independent approval or a full-paper review. All scientific records retain draft status, and outstanding source reuse/publication checks remain recorded. One source-checked study-context note records differing assay reports; it is a draft comparison, not a definitive contradiction. Research hypotheses, an AI service, backend and database remain unimplemented. The client reads its local snapshot and makes no upstream scientific API requests.
 
 See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.
 
@@ -55,7 +57,7 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
 
-The [AD source-review packet](data/alzheimers/review-packet.md) collects the 23 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 24 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check

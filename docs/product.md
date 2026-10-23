@@ -55,7 +55,7 @@ Alzheimer's disease, APOE, ABCA1, and TREM2 are curation priorities. Other genes
 
 The [evidence policy](evidence-policy.md) and [data model](data-model.md) define the detailed rules.
 
-The current 23-entity explorer is a **Source-checked draft**. Independent scientific review is a future milestone, as requested by the owner, and does not block source-checked development. Gene/product mappings, curated pathway participation and experimental findings retain different meanings. Exact source-check provenance and limits remain accessible; the interface must not imply an independent approval that has not occurred.
+The current 24-entity explorer is a **Source-checked draft**. Independent scientific review is a future milestone, as requested by the owner, and does not block source-checked development. Gene/product mappings, curated pathway participation and experimental findings retain different meanings. Exact source-check provenance and limits remain accessible; the interface must not imply an independent approval that has not occurred.
 
 Comparison labels describe recorded values only: matching, different, or missing. The APOE ε4 and ε2/ε3 findings concern different variant contexts; the interface must not turn that difference into a contradiction. Likewise, TREM2's 2,261 sequenced discovery individuals remain a source-specific subset, while its total sample-size field stays unrecorded. Repeated source IDs, PMIDs, or DOIs can expose repeated references; different citations do not establish independent cohorts. Reading prompts identify source checks to make and are not reviewed hypotheses or proof of a research gap.
 

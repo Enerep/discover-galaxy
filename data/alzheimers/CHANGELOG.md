@@ -1,5 +1,19 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.5.0 — 2026-10-23
+
+**24 entities, 24 claims/evidence records, 25 sources and one draft study-context comparison.** Adds [Lessard et al. (2018)](https://link.springer.com/article/10.15252/emmm.201809027), DOI `10.15252/emmm.201809027`, PMID `30341064`, PMCID `PMC6220267`. Prior entity, claim, evidence and source records are unchanged.
+
+The selected finding records the authors' report of no statistically significant wild-type/R47H difference for lipidated APOE3 binding affinity in biolayer interferometry (BLI). The publisher's Results adjacent to Figure 2C, Figure 2C caption, BioLayer interferometry methods and Discussion were readable. Human soluble TREM2–IgG4 Fc–V5 was presented on Protein A sensors; the authors fitted association/dissociation curves with a 1:1 model. The article's numerical figure images, appendices, raw curves and underlying data were not reviewed, and no numerical affinity estimate is imported.
+
+The caption's five ligand concentrations remain a dilution-series count. Its statement that the complete experiment was repeated twice with new preparations is retained without assuming a total run count; `assay_replicates`, `experiments_reported` and `sample_size` stay null. A non-significant comparison does not establish equivalence or a universally absent R47H effect. No Aβ experiment, cellular signaling result, therapeutic claim or mouse-to-human inference is added.
+
+`conflict-r47h-binding-context` is a source-checked draft comparison of the Atagi and Lessard findings, not an automatic contradiction classification. Lessard's Discussion explicitly addresses differences from earlier reports. The comparison retains the overlapping protein/variant question, different readouts, unresolved Atagi preparation and distinct constructs; these observations do not identify the cause of the difference. Both underlying findings support their own scoped claims, rather than acting as blanket refutations of one another.
+
+Check date: **2026-10-23**. Metadata and authors were cross-checked on PubMed. The publisher's Rights and permissions section and [CC BY 4.0 terms](https://creativecommons.org/licenses/by/4.0/) were inspected; the new source records permission for the retained material with author, DOI and license attribution. Only metadata, links and project-authored paraphrases are retained; no article prose, images, tables or full-text payload are redistributed. Publication-status checking remains `not_checked`; a reachable page does not establish absence of a notice.
+
+All 49 scientific records remain draft with no independent/human-review attestation. The context note is stored in the existing `conflicts` collection, and its citations cover every compared claim. The generated review packet now retains those comparisons and their actual review records. Six earlier publication candidates remain in staging; no metadata was automatically promoted and no research hypothesis was added.
+
 ## alzheimers-source-checked-0.4.0 — 2026-10-23
 
 **23 entities, 23 claims, 23 evidence records, 24 sources.** Adds [Bailey et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26374897/), DOI `10.1074/jbc.M115.677286`, PMCID `PMC4646256`, as one paper projection and two scoped protein-binding findings. Existing human association findings and database annotations are unchanged. The two Atagi binding records gain structured condition, protein-form, ligand-preparation and immobilization fields from their previously inspected captions; unknown preparation in the Atagi Figure 5 assays remains null.

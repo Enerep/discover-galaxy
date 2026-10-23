@@ -223,6 +223,7 @@ export function validateDataset(input: unknown, { release = false }: { release?:
   snapshot.conflicts.forEach((conflict) => {
     references(conflict.claim_ids, claimMap, `${conflict.id}.claim_ids`); references(conflict.evidence_ids, evidenceMap, `${conflict.id}.evidence_ids`); checkReview(conflict.review, conflict.id);
     conflict.evidence_ids.forEach((id) => { if (evidenceMap.has(id) && !conflict.claim_ids.includes(evidenceMap.get(id)!.claim_id)) fail(conflict.id, `compared evidence ${id} must address a compared claim`); });
+    conflict.claim_ids.forEach((id) => { if (claimMap.has(id) && !conflict.evidence_ids.some((evidenceId) => evidenceMap.get(evidenceId)?.claim_id === id)) fail(conflict.id, `compared claim ${id} needs cited evidence in the comparison`); });
   });
   snapshot.hypotheses.forEach((hypothesis) => {
     references(hypothesis.basis_claim_ids, claimMap, `${hypothesis.id}.basis_claim_ids`); references(hypothesis.basis_evidence_ids, evidenceMap, `${hypothesis.id}.basis_evidence_ids`); checkReview(hypothesis.review, hypothesis.id);

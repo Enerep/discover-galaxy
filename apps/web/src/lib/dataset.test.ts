@@ -124,7 +124,7 @@ test('the source-checked snapshot preserves typed pathway journeys and remains a
     }
   }
   assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
-  assert.equal(data.conflicts.length, 0);
+  assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
 });
 
@@ -212,7 +212,7 @@ test('the second binding publication preserves plasma preparation, technical wel
   const variant = evidence.find(({ claim_id }) => claim_id === 'claim-bailey-trem2-r47h-apoe-binding')!;
   assert.equal(variant.study_context.experiments_reported, 2);
   assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
-  assert.equal(data.conflicts.length, 0);
+  assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
 });
 
@@ -229,4 +229,30 @@ test('a release can pass only with explicit review, provenance, rights and size 
   assert.deepEqual(validateDataset(snapshot).errors, []);
   snapshot.evidence[0]!.review.human_reviewed = false;
   assert.equal(validateDataset(snapshot).valid, false);
+});
+
+test('a study-context comparison cites evidence for every compared claim and cannot create scientific approval', async () => {
+  const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  assert.equal(data.conflicts.length, 1);
+  const note = data.conflicts[0];
+  assert.equal(note.id, 'conflict-r47h-binding-context');
+  assert.deepEqual(note.claim_ids, ['claim-trem2-r47h-apoe-binding', 'claim-lessard-trem2-r47h-apoe3-binding']);
+  for (const id of note.claim_ids) assert.ok(note.evidence_ids.some((eid) => data.evidence.find((item) => item.id === eid)?.claim_id === id));
+  assert.equal(note.review.status, 'draft');
+  assert.equal(note.review.human_reviewed, false);
+  assert.match(note.comparison, /no statistically significant/);
+  assert.ok(note.context_differences.some((value) => value.includes('not an equivalence test')));
+  const lessard = getClaimEvidence(data, 'claim-lessard-trem2-r47h-apoe3-binding')[0];
+  assert.equal(lessard.relation, 'supports'); // Supports its own scoped finding, not a blanket refutation.
+  assert.equal(lessard.study_context.ligand_concentrations, 5);
+  assert.equal(lessard.study_context.assay_replicates, null);
+  assert.equal(lessard.study_context.experiments_reported, null);
+  assert.equal(lessard.study_context.sample_size, null);
+  const broken = structuredClone(data);
+  broken.conflicts[0].claim_ids.push('claim-apoe-e4-risk');
+  assert.ok(validateDataset(broken).errors.some((error) => error.includes('needs cited evidence in the comparison')));
+  const source = data.sources.find(({ id }) => id === lessard.source_id)!;
+  assert.equal(source.reuse.permission_status, 'permitted');
+  assert.equal(source.publication_status.status, 'not_checked');
+  assert.equal(validateDataset(data, { release: true }).valid, false);
 });

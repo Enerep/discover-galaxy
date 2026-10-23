@@ -83,6 +83,19 @@ export function renderReviewPacket(snapshot: Snapshot): string {
       '- [ ] Check source reuse terms, attribution, and correction/retraction status.',
       '- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.', '');
   }
+  lines.push('## Study-context comparisons', '');
+  if (!snapshot.conflicts.length) lines.push('No study-context comparison is recorded.', '');
+  for (const note of [...snapshot.conflicts].sort((a, b) => a.id.localeCompare(b.id, 'en'))) {
+    lines.push(`### ${text(note.id)}`, '', `**${text(note.label)}**`, '', text(note.comparison), '',
+      `- **Compared claims:** ${text(note.claim_ids)}`, '', 'Compared evidence:', '');
+    for (const id of note.evidence_ids) {
+      const evidence = snapshot.evidence.find((item) => item.id === id)!;
+      const source = snapshot.sources.find((item) => item.id === evidence.source_id)!;
+      lines.push(`- ${text(id)}: [${text(source.title)}](${source.url}); inspected location: ${text(evidence.locator)}`);
+    }
+    lines.push('', 'Context differences and limits:', '', ...note.context_differences.map((item) => `- ${text(item)}`), '',
+      'Comparison review record:', '', ...reviewRows(note.review), '');
+  }
   lines.push('## Source records and outstanding checks', '');
   for (const source of sources) {
     lines.push(`### ${text(source.id)}`, '', `[${text(source.title)}](${source.url})`, '',

@@ -3,7 +3,7 @@
 Generated from candidate-coverage.json and the current snapshot. Edit the JSON, then regenerate. This is a reading plan: candidates are unreviewed, outside the graph, and do not establish support for any existing or proposed claim.
 
 - **Prepared:** 2026-10-23
-- **Baseline snapshot:** alzheimers-source-checked-0.4.0
+- **Baseline snapshot:** alzheimers-source-checked-0.5.0
 - **Staged sources:** 6 (6 publications, 0 pathway records)
 - **Selection:** Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.
 
@@ -14,7 +14,7 @@ Generated from candidate-coverage.json and the current snapshot. Edit the JSON, 
 - Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.
 - Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.
 - Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.
-- These are source-reading questions, not novel research hypotheses or curated contradictions. The 23-entity development snapshot meets the size target; scientific release remains a separate future milestone.
+- These staging questions are not novel hypotheses or classified contradictions. The 24-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone.
 
 ## Existing findings and recorded review status
 
@@ -31,6 +31,7 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-apoe-encodes | [source-uniprot-apoe](https://rest.uniprot.org/uniprotkb/P02649.txt) | draft | draft | No |
 | claim-bailey-trem2-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |
 | claim-bailey-trem2-r47h-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |
+| claim-lessard-trem2-r47h-apoe3-binding | [30341064](https://link.springer.com/article/10.15252/emmm.201809027) | draft | draft | No |
 | claim-nr1h2-cholesterol-pathway | [source-reactome-nr1h2-protein](https://reactome.org/content/detail/R-HSA-375500) | draft | draft | No |
 | claim-nr1h2-encodes | [source-reactome-nr1h2-protein](https://reactome.org/content/detail/R-HSA-375500) | draft | draft | No |
 | claim-nr1h3-cholesterol-pathway | [source-reactome-nr1h3-protein](https://reactome.org/content/detail/R-HSA-8854957) | draft | draft | No |
@@ -75,7 +76,7 @@ Which experiments address TREM2–APOE protein interactions or microglial transc
 
 **Current graph anchors:** gene-trem2; gene-apoe. These remain their recorded entity types.
 
-**Existing finding context:** claim-trem2-r47h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk; claim-trem2-dap12-binding; claim-trem2-dap12-pathway; claim-trem2-apoe-binding; claim-trem2-r47h-apoe-binding; claim-bailey-trem2-apoe-binding; claim-bailey-trem2-r47h-apoe-binding
+**Existing finding context:** claim-trem2-r47h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk; claim-trem2-dap12-binding; claim-trem2-dap12-pathway; claim-trem2-apoe-binding; claim-trem2-r47h-apoe-binding; claim-bailey-trem2-apoe-binding; claim-bailey-trem2-r47h-apoe-binding; claim-lessard-trem2-r47h-apoe3-binding
 
 | Candidate source | Kind | Recorded model | Recorded readout |
 | --- | --- | --- | --- |
@@ -87,7 +88,7 @@ Which experiments address TREM2–APOE protein interactions or microglial transc
 - [ ] Separate binding, cellular uptake and transcriptional endpoints. Extract assay-specific organism, protein form, variant, model and controls.
 - [ ] Distinguish protein-level interactions from gene associations and human risk from experimental perturbations; resolve canonical protein identities before adding nodes.
 - [ ] Inspect TREM2/DAP12 member-event provenance and record versions; an upstream pathway name or review badge does not establish an AD-specific edge or project approval.
-- [ ] Compare the staged papers with the separately source-checked Atagi and Bailey 2015 binding assays. Preserve shared-source identity, ligand preparation, surface presentation and replicate units; different citations do not establish independent replication.
+- [ ] Compare staged papers with the separately checked Atagi/Bailey 2015 and Lessard 2018 binding findings. Preserve preparation, readout, variant and replicate units; the source-checked context note does not resolve the cause of differing reports or prove independent replication.
 
 ### reading-trem2-model-context
 

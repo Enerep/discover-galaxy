@@ -12,8 +12,8 @@ test('the packet is deterministic and cannot silently modify scientific review s
   assert.equal(packet, renderReviewPacket(structuredClone(snapshot)));
   assert.equal(JSON.stringify(snapshot), before);
   assert.match(packet, /Release status:\*\* development/);
-  assert.equal((packet.match(/\*\*Review status:\*\* draft/g) ?? []).length, snapshot.claims.length + snapshot.evidence.length);
-  const unrecorded = [...snapshot.claims, ...snapshot.evidence].filter(({ review }) => review.reviewer === null).length;
+  assert.equal((packet.match(/\*\*Review status:\*\* draft/g) ?? []).length, snapshot.claims.length + snapshot.evidence.length + snapshot.conflicts.length);
+  const unrecorded = [...snapshot.claims, ...snapshot.evidence, ...snapshot.conflicts].filter(({ review }) => review.reviewer === null).length;
   assert.equal((packet.match(/\*\*Reviewer:\*\* Not recorded/g) ?? []).length, unrecorded);
   assert.doesNotMatch(packet, /\*\*Review status:\*\* approved/);
   assert.match(packet, /does not inspect publications, establish study independence, or grant scientific approval/);
@@ -42,6 +42,22 @@ test('the review packet fails closed on a broken citation rather than omitting i
   const malformed = structuredClone(snapshot);
   malformed.evidence[0].source_id = 'source-missing-for-test';
   assert.throws(() => renderReviewPacket(malformed), /Unable to load knowledge dataset/);
+});
+
+test('source-context comparisons retain their citations, limits and actual draft review record', () => {
+  const packet = renderReviewPacket(snapshot);
+  for (const note of snapshot.conflicts) {
+    assert.ok(packet.includes(note.id));
+    assert.ok(packet.includes(note.comparison));
+    assert.ok(packet.includes(note.review.rationale));
+    for (const value of note.context_differences) assert.ok(packet.includes(value));
+    for (const id of note.evidence_ids) {
+      const evidence = snapshot.evidence.find((item) => item.id === id)!;
+      const source = snapshot.sources.find((item) => item.id === evidence.source_id)!;
+      assert.ok(packet.includes(`${id}: [`));
+      assert.ok(packet.includes(`(${source.url})`));
+    }
+  }
 });
 
 test('every source retains pending reuse and publication-status checks without fabricated dates', () => {

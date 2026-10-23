@@ -1,6 +1,6 @@
 # Knowledge graph data model
 
-Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.4.0** contains 23 entities, 23 draft claims/evidence records, and 24 sources; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
+Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.5.0** contains 24 entities, 24 draft claims/evidence records, 25 sources, and one draft context comparison; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
 
 ## Model boundaries
 
@@ -117,6 +117,8 @@ Publication URLs and bibliographic metadata do not prove a finding. That judgmen
 ## Conflicts and hypotheses
 
 A conflict record contains `id`, `claim_ids`, `evidence_ids`, `label`, `comparison`, `context_differences`, and `review`. References must identify the compared findings, and the comparison must explain why disagreement is meaningful despite contextual differences. Use the rules in [the evidence policy](evidence-policy.md); an empty collection is acceptable when no justified conflict has been curated.
+
+Snapshot 0.5.0 uses this collection for one **source-checked draft study-context comparison**, not a definitive contradiction. It names the overlap and methodological limits, cites evidence for every compared claim, and retains `human_reviewed: false`. Runtime validation rejects a comparison that names a claim without including its evidence. Context notes remain annotations, never primary evidence or automatic judgments from field differences.
 
 A hypothesis record contains `id`, `question`, `basis_claim_ids`, `basis_evidence_ids`, `assumptions`, `limitations`, `suggested_test`, `origin` (`curated` or `ai_generated`), `dataset_version`, and `review`. It remains labeled as a question for investigation and never becomes a claim merely by being generated. The released snapshot contains only reviewed hypotheses; unreviewed AI output stays outside it. Record any novelty-check method and date before asserting a question is unexplored.
 

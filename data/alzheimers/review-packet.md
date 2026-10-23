@@ -3,13 +3,13 @@
 Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.
 Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.
 
-- **Dataset:** alzheimers-source-checked-0.4.0
+- **Dataset:** alzheimers-source-checked-0.5.0
 - **Schema:** 0.1.0
 - **Snapshot date:** 2026-10-23
 - **Release status:** development
-- **Coverage:** 23 entities, 23 claims, 23 evidence records, 24 sources
+- **Coverage:** 24 entities, 24 claims, 24 evidence records, 25 sources
 - **Disease:** Alzheimer's disease
-- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 pathway records, and source-scoped APOE–TREM2 binding assays from two publications.
+- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison.
 
 ## Scope limitations
 
@@ -19,7 +19,7 @@ Generating this packet performs structural validation only; it does not inspect 
 - Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.
 - Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.
 - Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.
-- No curated contradictions, therapeutic claims or novel research hypotheses are included. Missing connections describe coverage, not research gaps.
+- One draft study-context comparison records different R47H assay reports. It does not establish a settled contradiction, the cause of the difference, or clinical effects. No research hypotheses are included.
 - Different publication identifiers do not establish independent replication. Assay preparations, surface presentation and replicate units remain source-specific; a recorded correction does not mean a comprehensive notice search is complete.
 
 ## Source coverage
@@ -33,6 +33,7 @@ Each row is one source record, not an independent experiment or cohort. Database
 | source-corder-1993 | publication | claim-apoe-e4-risk | paper-corder-1993 | pending\_review | not\_checked |
 | source-corder-1994 | publication | claim-apoe-e2-risk | paper-corder-1994 | pending\_review | not\_checked |
 | source-jonsson-2013 | publication | claim-trem2-r47h-risk | paper-jonsson-2013 | pending\_review | not\_checked |
+| source-lessard-2018 | publication | claim-lessard-trem2-r47h-apoe3-binding | paper-lessard-2018 | permitted | not\_checked |
 | source-mesh-alzheimers | database\_record | None | disease-alzheimers | pending\_review | not\_checked |
 | source-ncbi-abca1 | database\_record | None | gene-abca1 | pending\_review | not\_checked |
 | source-ncbi-apoe | database\_record | None | gene-apoe | pending\_review | not\_checked |
@@ -707,6 +708,99 @@ Evidence limitations:
 - Surface-based binding signals do not establish binding kinetics, cellular signaling or treatment benefit.
 - The plasma-derived APOE isoform was not identified. Triplicate wells are not three independent studies or participants.
 - The in-article Note Added in Proof corrects a Figure 1 control plot; it does not identify Figure 5 as affected. Broader correction/retraction checking remains incomplete.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-lessard-trem2-r47h-apoe3-binding
+
+**TREM2 protein → APOE protein · interacts\_with**
+
+Lessard et al. reported no statistically significant difference in lipidated APOE3 binding affinity between wild-type and R47H human TREM2-Fc in their biolayer interferometry assay.
+
+**Summary:** Read alongside the earlier R47H assays while keeping preparation and readout differences visible.
+
+#### Claim context
+
+- **assay:** Biolayer interferometry
+- **binding condition:** R47H versus wild type
+- **experimental system:** Cell-free protein assay
+- **fitted model:** 1:1 association/dissociation fit
+- **immobilized partner:** TREM2-Fc on Protein A biosensors
+- **intervention:** Not recorded
+- **ligand preparation:** Human lipidated recombinant APOE3
+- **organism:** Homo sapiens
+- **outcome:** Fitted equilibrium dissociation constant (KD) for APOE3 binding
+- **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–IgG4 Fc–V5 fusion
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** TREM2 R47H versus wild type; APOE3
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** Publisher Results around Figure 2C, BioLayer interferometry methods, Figure 2 caption and Discussion inspected as readable article text; metadata cross-checked with PubMed. Selected passages only: numerical figure tables, raw curves, supplements and underlying data were not reviewed. Publication-status search remains incomplete.
+
+#### Claim limitations
+
+- A non-significant difference does not establish equivalent binding or a universally absent R47H effect.
+- The result concerns lipidated APOE3 and this construct/assay; it does not establish cellular signaling or treatment benefit.
+- The caption says the complete experiment was repeated twice with new preparations; the total run count was not resolved. Five ligand concentrations are a dilution series, not five independent experiments.
+
+#### Evidence: evidence-lessard-2018-apoe3-binding
+
+- **Original source:** [High-affinity interactions and signal transduction between Aβ oligomers and TREM2](https://link.springer.com/article/10.15252/emmm.201809027)
+- **Source record:** source-lessard-2018
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Publisher Results paragraph on APOE3/APOE4 affinities adjacent to Figure 2C; Figure 2C caption; Materials and Methods: BioLayer interferometry; Discussion comparison with Atagi/Bailey. Article text and captions inspected, not numerical figure images or appendices.
+
+Lessard et al. reported no statistically significant difference in lipidated APOE3 binding affinity between wild-type and R47H human TREM2-Fc in their biolayer interferometry assay.
+
+Source-specific study context:
+
+- **assay:** Biolayer interferometry
+- **assay replicates:** Not recorded
+- **binding condition:** R47H versus wild type
+- **controls:** Buffer baseline; Fc and nonspecific-binding checks in the optimized assay
+- **experimental system:** Cell-free protein assay
+- **experiments reported:** Not recorded
+- **fitted model:** 1:1 association/dissociation fit
+- **immobilized partner:** TREM2-Fc on Protein A biosensors
+- **intervention:** Not recorded
+- **ligand concentrations:** 5
+- **ligand preparation:** Human lipidated recombinant APOE3
+- **organism:** Homo sapiens
+- **outcome:** Fitted equilibrium dissociation constant (KD) for APOE3 binding
+- **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–IgG4 Fc–V5 fusion
+- **replicate unit:** Caption: complete experiment repeated twice with new preparations; total run count not resolved
+- **sample size:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** TREM2 R47H versus wild type; APOE3
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** Publisher Results around Figure 2C, BioLayer interferometry methods, Figure 2 caption and Discussion inspected as readable article text; metadata cross-checked with PubMed. Selected passages only: numerical figure tables, raw curves, supplements and underlying data were not reviewed. Publication-status search remains incomplete.
+
+Evidence limitations:
+
+- A non-significant difference does not establish equivalent binding or a universally absent R47H effect.
+- The result concerns lipidated APOE3 and this construct/assay; it does not establish cellular signaling or treatment benefit.
+- The caption says the complete experiment was repeated twice with new preparations; the total run count was not resolved. Five ligand concentrations are a dilution series, not five independent experiments.
 
 #### Pending review tasks
 
@@ -1708,6 +1802,36 @@ Evidence limitations:
 - [ ] Check source reuse terms, attribution, and correction/retraction status.
 - [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
 
+## Study-context comparisons
+
+### conflict-r47h-binding-context
+
+**Different R47H binding results**
+
+Atagi 2015 reported reduced R47H binding in dot-blot and solid-phase assays. Lessard 2018 reported no statistically significant APOE3 affinity difference in biolayer interferometry. The protein/variant question overlaps, but preparations and readouts differ; these reports do not establish one assay-independent R47H effect.
+
+- **Compared claims:** claim-trem2-r47h-apoe-binding; claim-lessard-trem2-r47h-apoe3-binding
+
+Compared evidence:
+
+- evidence-atagi-2015-r47h-binding: [Apolipoprotein E Is a Ligand for Triggering Receptor Expressed on Myeloid Cells 2 (TREM2)](https://pubmed.ncbi.nlm.nih.gov/26374899/); inspected location: PubMed Figures, original Figure 4A and Figure 5A–G captions: human constructs, loading/background controls and isoform-specific assays. Caption text inspected, not raw figure images.
+- evidence-lessard-2018-apoe3-binding: [High-affinity interactions and signal transduction between Aβ oligomers and TREM2](https://link.springer.com/article/10.15252/emmm.201809027); inspected location: Publisher Results paragraph on APOE3/APOE4 affinities adjacent to Figure 2C; Figure 2C caption; Materials and Methods: BioLayer interferometry; Discussion comparison with Atagi/Bailey. Article text and captions inspected, not numerical figure images or appendices.
+
+Context differences and limits:
+
+- Readout: Atagi measured membrane/plate binding signals; Lessard fitted association/dissociation curves.
+- Preparation: the Atagi Figure 5 preparation is unresolved here; Lessard used lipidated recombinant APOE3.
+- Construct: Atagi used human TREM2-Fc; Lessard used an IgG4 Fc–V5 fusion on Protein A biosensors.
+- The difference does not demonstrate that lipidation, construct or assay format caused the different result; a non-significant result is not an equivalence test.
+
+Comparison review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** The two scoped findings, named locators and methodological distinctions were source-checked. Lessard explicitly discusses differences from earlier binding reports. This draft is a contextual comparison, not a definitive contradiction, causal explanation or independent scientific approval.
+
 ## Source records and outstanding checks
 
 ### source-atagi-2015
@@ -1801,6 +1925,25 @@ Evidence limitations:
 - **Reuse checked:** 2026-10-20
 - **Attribution:** Jonsson and colleagues, New England Journal of Medicine, 2013; bibliographic metadata via PubMed/NLM.
 - **Retained content:** Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-lessard-2018
+
+[High-affinity interactions and signal transduction between Aβ oligomers and TREM2](https://link.springer.com/article/10.15252/emmm.201809027)
+
+- **Kind:** publication
+- **Identifiers:** PMID: 30341064; DOI: 10.15252/emmm.201809027; PMCID: PMC6220267
+- **Authors:** Christian B Lessard; Samuel L Malnik; Yingyue Zhou; Thomas B Ladd; Pedro E Cruz; Yong Ran; Thomas E Mahan; Paramita Chakrabaty; David M Holtzman; Jason D Ulrich; Marco Colonna; Todd E Golde
+- **Year / publication type:** 2018 / primary\_research
+- **Provider / release:** Not recorded / Not recorded
+- **Retrieved:** 2026-10-23
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://creativecommons.org/licenses/by/4.0/
+- **Reuse checked:** 2026-10-23
+- **Attribution:** Lessard and colleagues, EMBO Molecular Medicine, 2018, doi:10.15252/emmm.201809027. © The Authors; CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Project-authored paraphrases, not source text.
+- **Retained content:** Bibliographic facts, source links and project-authored paraphrases only; no article prose, figures, tables or raw payloads retained. Publisher Rights and permissions and CC BY 4.0 terms inspected on the check date.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
