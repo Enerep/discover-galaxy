@@ -38,7 +38,9 @@ export function createGalaxyLayout(entities: Entity[]): Map<string, Position> {
   ring(sorted.filter(({ type }) => type === 'drug'), 4.1, 2.8, Math.PI / 4);
 
   papers.forEach((entity, index) => {
-    const angle = (index / Math.max(papers.length, 1)) * Math.PI * 2 + Math.PI / 4;
+    // Offset even-sized rings from the pathways at the left/right extremes.
+    const phase = papers.length % 2 === 0 ? Math.PI / Math.max(papers.length, 1) : Math.PI / 4;
+    const angle = (index / Math.max(papers.length, 1)) * Math.PI * 2 + phase;
     positions.set(entity.id, [Math.cos(angle) * 6.8, Math.sin(angle) * 5, -0.9 + Math.sin(angle * 2) * 0.4]);
   });
 

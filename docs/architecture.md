@@ -10,6 +10,8 @@ The client imports snapshot `alzheimers-source-checked-0.4.0`: one disease, seve
 
 Implemented views share React state for alias-aware search, all current entity-type filters, entity/claim selection and evidence inspection. The scene loads lazily. The inspector distinguishes **Original paper / Open paper** from **Database annotation / Open record** and lets users follow a claim's other entity without losing the finding or graph/list mode. Two-finding comparison exports a cited Markdown brief. The client requires no backend, database, live scientific API, or AI credential. Curated disagreement records, research-question cards, and live AI explanations remain planned.
 
+Binding comparison defaults use exact recorded condition labels and distinct publication identities as navigation hints; they never infer agreement or independence. Explicit experimental-system context selects an assay-first row order without dropping missing fields. A shared publication-status component retains recorded notice dates and original links in both the inspector and comparison; the Markdown brief retains notice URLs as well.
+
 ```mermaid
 flowchart LR
     Snapshot[Versioned draft development snapshot] --> Adapter[Typed dataset adapter and validator]

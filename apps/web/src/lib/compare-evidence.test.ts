@@ -8,18 +8,49 @@ const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data
 const FIRST = 'claim-apoe-e4-risk';
 const SECOND = 'claim-apoe-e2-risk';
 
-test('comparison starts with another finding on the same relationship, including symmetric protein interactions', () => {
+test('comparison prefers the same recorded binding condition in a different publication without inferring comparability', () => {
   const binding = 'claim-trem2-apoe-binding';
   const variant = 'claim-trem2-r47h-apoe-binding';
-  assert.equal(findComparisonPartner(snapshot, binding)?.id, variant);
-  assert.equal(findComparisonPartner(snapshot, variant)?.id, binding);
+  assert.equal(findComparisonPartner(snapshot, binding)?.id, 'claim-bailey-trem2-apoe-binding');
+  assert.equal(findComparisonPartner(snapshot, variant)?.id, 'claim-bailey-trem2-r47h-apoe-binding');
+  assert.equal(findComparisonPartner(snapshot, 'claim-bailey-trem2-apoe-binding')?.id, binding);
+  assert.equal(findComparisonPartner(snapshot, 'claim-bailey-trem2-r47h-apoe-binding')?.id, variant);
   assert.equal(findComparisonPartner(snapshot, FIRST)?.id, SECOND);
   assert.equal(findComparisonPartner(snapshot, 'missing-for-test'), undefined);
   const reversed = structuredClone(snapshot);
-  const claim = reversed.claims.find(({ id }) => id === variant)!;
+  const claim = reversed.claims.find(({ id }) => id === 'claim-bailey-trem2-apoe-binding')!;
   [claim.subject_id, claim.object_id] = [claim.object_id, claim.subject_id];
-  assert.equal(findComparisonPartner(reversed, binding)?.id, variant);
+  assert.equal(findComparisonPartner(reversed, binding)?.id, claim.id);
   assert.equal(findComparisonPartner({ ...snapshot, claims: [snapshot.claims[0]] }, FIRST), undefined);
+  const noSecondPaper = { ...snapshot, claims: snapshot.claims.filter(({ id }) => !id.startsWith('claim-bailey-')) };
+  assert.equal(findComparisonPartner(noSecondPaper, binding)?.id, variant);
+  const repeatedMetadata = structuredClone(snapshot);
+  // Deliberately aliased metadata is confined to this helper test, not the graph.
+  repeatedMetadata.sources.find(({ id }) => id === 'source-bailey-2015')!.identifiers = repeatedMetadata.sources.find(({ id }) => id === 'source-atagi-2015')!.identifiers;
+  assert.equal(findComparisonPartner(repeatedMetadata, binding)?.id, variant);
+});
+
+test('two binding publications expose preparation differences, technical units and the original correction in the brief', () => {
+  const ids: [string, string] = ['claim-trem2-r47h-apoe-binding', 'claim-bailey-trem2-r47h-apoe-binding'];
+  const comparison = buildEvidenceComparison(snapshot, ...ids);
+  assert.equal(comparison.sharedSources.length, 0);
+  assert.equal(comparison.contextRows[0].key, 'experimental_system');
+  assert.equal(comparison.contextRows.find(({ key }) => key === 'binding_condition')?.status, 'matching');
+  assert.equal(comparison.contextRows.find(({ key }) => key === 'assay')?.status, 'different');
+  assert.equal(comparison.contextRows.find(({ key }) => key === 'protein_form')?.status, 'different');
+  const preparation = comparison.contextRows.find(({ key }) => key === 'ligand_preparation')!;
+  assert.equal(preparation.left.studies[0].value, null);
+  assert.match(String(preparation.right.studies[0].value), /isoform not identified/);
+  assert.equal(preparation.status, 'missing');
+  assert.equal(comparison.contextRows.find(({ key }) => key === 'replicate_unit')?.status, 'different');
+  const experiments = comparison.contextRows.find(({ key }) => key === 'experiments_reported')!;
+  assert.equal(experiments.left.studies[0].value, null);
+  assert.equal(experiments.right.studies[0].value, 2);
+  assert.equal(comparison.contextRows.find(({ key }) => key === 'sample_size')?.status, 'missing');
+  assert.ok(comparison.prompts.some((prompt) => prompt.includes('surface presentation')));
+  assert.ok(comparison.prompts.some((prompt) => prompt.includes('different citations alone do not establish replication')));
+  const brief = buildComparisonBrief(snapshot, ...ids);
+  for (const value of ['26374899', '26374897', 'Publication status: corrected', 'Publication notice: https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/', 'Triplicate wells in one of two', 'Figure 1 control plot']) assert.ok(brief.includes(value), value);
 });
 
 test('baseline and R47H assays retain one publication and three assay replicates without pooling participants', () => {

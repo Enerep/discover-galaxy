@@ -3,6 +3,7 @@ import type { ReactNode, RefObject } from 'react';
 import { getClaimEvidence, getEntityClaims } from '../lib/dataset.ts';
 import type { Claim, Context, Entity, Snapshot, Source } from '../lib/types.ts';
 import { Icon, TYPE_LABELS } from './ui.tsx';
+import { PublicationStatus } from './PublicationStatus.tsx';
 
 function Disclosure({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -41,6 +42,11 @@ function authorLabel(source: Source) {
 }
 
 function connectionLabel(snapshot: Snapshot, claim: Claim, selected: Entity): string {
+  if (typeof claim.context.binding_condition === 'string') {
+    const sourceIds = new Set(getClaimEvidence(snapshot, claim.id).map(({ source_id }) => source_id));
+    const sources = snapshot.sources.filter(({ id, kind }) => sourceIds.has(id) && kind === 'publication');
+    if (sources.length === 1) return `${authorLabel(sources[0])} ${sources[0].year ?? ''} · ${claim.context.binding_condition}`;
+  }
   if (claim.context.variant) return String(claim.context.variant);
   const isSubject = claim.subject_id === selected.id;
   const other = snapshot.entities.find(({ id }) => id === (isSubject ? claim.object_id : claim.subject_id));
@@ -99,7 +105,7 @@ function Finding({ snapshot, claim, selected, onFollow }: { snapshot: Snapshot; 
                 {source && <>
                   <p className="source-locator"><strong>Source check</strong>{item.review.rationale}</p>
                   <p className="source-locator"><strong>Reuse</strong>{source.reuse.permission_status === 'permitted' ? 'Recorded metadata reuse permitted.' : 'Assessment pending.'} {source.reuse.attribution} <a href={source.reuse.terms_url} target="_blank" rel="noreferrer">Source terms <Icon name="external" size={12} /></a></p>
-                  {source.kind === 'publication' && <p className="source-locator"><strong>Publication status</strong>{source.publication_status.status === 'not_checked' ? 'Correction/retraction check not recorded.' : source.publication_status.status.replaceAll('_', ' ')}</p>}
+                  <PublicationStatus source={source} />
                 </>}
               </section>
             );

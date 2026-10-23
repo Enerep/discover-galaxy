@@ -129,7 +129,7 @@ export function validateDataset(input: unknown, { release = false }: { release?:
       enumeration(status.status, ['not_checked', 'no_notice_found', 'corrected', 'retracted'], `${p}.publication_status.status`);
       date(status.checked_at, `${p}.publication_status.checked_at`, true); url(status.notice_url, `${p}.publication_status.notice_url`, true);
       if (status.status !== 'not_checked' && !status.checked_at) fail(`${p}.publication_status`, 'checked status requires a check date');
-      if (['corrected', 'retracted'].includes(String(status.status)) && !status.notice_url) fail(`${p}.publication_status`, 'a correction or retraction requires a notice URL');
+      if ((status.status === 'corrected' || status.status === 'retracted') && !status.notice_url) fail(`${p}.publication_status`, 'a correction or retraction requires a notice URL');
     }
   }, 1);
   array(data.conflicts, 'conflicts', (item, p) => {

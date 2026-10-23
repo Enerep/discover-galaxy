@@ -3,6 +3,7 @@ import { buildComparisonBrief, buildEvidenceComparison } from '../lib/compare-ev
 import type { ComparisonColumn, ComparisonContextCell, ContextValue } from '../lib/compare-evidence.ts';
 import type { Claim, Snapshot, Source } from '../lib/types.ts';
 import { Icon } from './ui.tsx';
+import { PublicationStatus } from './PublicationStatus.tsx';
 
 interface Props {
   snapshot: Snapshot;
@@ -22,6 +23,11 @@ function citation(source: Source) {
 }
 
 function findingLabel(snapshot: Snapshot, claim: Claim) {
+  if (typeof claim.context.binding_condition === 'string') {
+    const sourceIds = new Set(snapshot.evidence.filter(({ claim_id }) => claim_id === claim.id).map(({ source_id }) => source_id));
+    const sources = snapshot.sources.filter(({ id, kind }) => sourceIds.has(id) && kind === 'publication');
+    if (sources.length === 1) return `${citation(sources[0])} · ${claim.context.binding_condition}`;
+  }
   const subject = snapshot.entities.find(({ id }) => id === claim.subject_id);
   const object = snapshot.entities.find(({ id }) => id === claim.object_id);
   return String(claim.context.variant ?? `${subject?.label ?? claim.subject_id} · ${claim.predicate.replaceAll('_', ' ')} · ${object?.label ?? claim.object_id}`);
@@ -43,11 +49,13 @@ function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: 
 
 function FindingCard({ column }: { column: ComparisonColumn }) {
   const { claim, subject, evidence, limitations } = column;
+  const heading = typeof claim.context.binding_condition === 'string' && column.sources.length === 1
+    ? citation(column.sources[0]) : subject.label;
   const draft = claim.review.status !== 'approved' || claim.review.human_reviewed !== true
     || evidence.some(({ evidence: item }) => item.review.status !== 'approved' || item.review.human_reviewed !== true);
   return (
     <section className="comparison-finding" aria-label={`${subject.label} finding`}>
-      <h3>{subject.label}{draft && <span className="draft-label">Draft</span>}</h3>
+      <h3>{heading}{draft && <span className="draft-label">Draft</span>}</h3>
       <p>{claim.statement}</p>
       <ul className="comparison-sources">
         {column.sources.map((source) => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a></li>)}
@@ -64,9 +72,7 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
           <p>{item.finding}</p>
           <p>Source location: {item.locator}</p>
           <p>{item.review.status === 'approved' && item.review.human_reviewed ? 'Evidence review recorded.' : 'Draft source check.'} {source.reuse.permission_status === 'permitted' ? 'Reuse permitted.' : 'Reuse assessment pending.'}</p>
-          {source.kind === 'publication' && <p>{source.publication_status.status === 'not_checked' ? 'Correction/retraction check pending.'
-            : source.publication_status.status === 'retracted' ? 'Retraction recorded.'
-              : source.publication_status.status === 'corrected' ? 'Correction recorded.' : `No notice found at the recorded check (${source.publication_status.checked_at ?? 'date not recorded'}).`}</p>}
+          <PublicationStatus source={source} />
         </section>)}
         <ul>{limitations.map((item) => <li key={item}>{item}</li>)}</ul>
       </details>
@@ -119,7 +125,7 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Pr
             : 'Recorded fields match; check the source methods before treating the studies as comparable.'} These labels do not establish agreement or contradiction.</p>
         <div className="comparison-findings">{comparison.columns.map((column) => <FindingCard key={column.claim.id} column={column} />)}</div>
         <h3>Study context</h3>
-        <p>Source values and claim scope stay separate; participant counts are not combined.</p>
+        <p>{comparison.experimentalContext ? 'Assay context and replicate units stay with each original source.' : 'Source values and claim scope stay separate; participant counts are not combined.'}</p>
         <div className="comparison-table-wrap" tabIndex={0} role="region" aria-label="Study context comparison">
           <table className="comparison-table">
             <caption className="sr-only">Source-specific study context for the two selected findings</caption>
@@ -133,7 +139,8 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose }: Pr
         </div>
         <p className="comparison-source-note">{comparison.sharedSources.length
           ? 'A source record or publication identifier is shared. Repeated references are not separate observations.'
-          : 'No shared publication identifier is recorded. Participant overlap and study independence have not been checked.'}</p>
+          : comparison.experimentalContext ? 'No shared publication identifier is recorded. Shared materials and study independence have not been checked.'
+            : 'No shared publication identifier is recorded. Participant overlap and study independence have not been checked.'}</p>
         <details className="comparison-prompts"><summary>Questions to check in the sources</summary>
           <ul>{comparison.prompts.map((prompt) => <li key={prompt}>{prompt}</li>)}</ul>
           <p>These are reading prompts from the recorded context, not verified research gaps or new hypotheses.</p>

@@ -28,6 +28,7 @@ export interface ComparisonColumn {
 }
 export interface EvidenceComparison {
   columns: [ComparisonColumn, ComparisonColumn];
+  experimentalContext: boolean;
   contextRows: ComparisonContextRow[];
   scopeStatus: 'different recorded scope' | 'matching recorded fields' | 'insufficient context';
   sharedSources: { leftSourceId: string; rightSourceId: string; matchedBy: string[] }[];
@@ -36,20 +37,33 @@ export interface EvidenceComparison {
 }
 
 const DIMENSIONS = ['organism', 'variant', 'intervention', 'outcome', 'study_design', 'population', 'tissue', 'sample_size'];
+const EXPERIMENT_DIMENSIONS = ['experimental_system', 'binding_condition', 'assay', 'protein_form', 'ligand_preparation', 'immobilized_partner', 'assay_replicates', 'replicate_unit', 'experiments_reported', 'controls'];
 const LABELS: Record<string, string> = {
   organism: 'Organism', variant: 'Variant', intervention: 'Intervention', outcome: 'Outcome',
   study_design: 'Study design', population: 'Population', tissue: 'Tissue', sample_size: 'Sample size',
 };
 
-/** A navigation default only: shared endpoints do not establish comparable experiments. */
+/** A navigation default only: matching condition labels do not establish comparable experiments. */
 export function findComparisonPartner(snapshot: Snapshot, claimId: string): Claim | undefined {
   const active = snapshot.claims.find(({ id }) => id === claimId);
   if (!active) return undefined;
   const others = snapshot.claims.filter(({ id }) => id !== claimId);
-  return others.find((claim) => claim.predicate === active.predicate && (
+  const related = others.filter((claim) => claim.predicate === active.predicate && (
     (claim.subject_id === active.subject_id && claim.object_id === active.object_id)
     || (active.predicate === 'interacts_with' && claim.subject_id === active.object_id && claim.object_id === active.subject_id)
-  )) ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
+  ));
+  const publicationKeys = (claim: Claim) => getClaimEvidence(snapshot, claim.id).flatMap(({ source_id }) => {
+    const source = snapshot.sources.find(({ id }) => id === source_id);
+    return source?.kind === 'publication' ? [`source:${source.id}`, ...identities(source)] : [];
+  });
+  const activeKeys = new Set(publicationKeys(active));
+  const condition = active.context.binding_condition;
+  const sameConditionOtherPaper = typeof condition === 'string' && condition.trim() && activeKeys.size
+    ? related.find((claim) => {
+      const keys = publicationKeys(claim);
+      return claim.context.binding_condition === condition && keys.length > 0 && keys.every((key) => !activeKeys.has(key));
+    }) : undefined;
+  return sameConditionOtherPaper ?? related[0] ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
 }
 
 function recorded(value: ContextValue): boolean {
@@ -131,8 +145,10 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
   const keys = new Set(columns.flatMap(({ claim, evidence }) => [
     ...Object.keys(claim.context), ...evidence.flatMap(({ evidence: item }) => Object.keys(item.study_context)),
   ]));
-  const extras = [...keys].filter((key) => !DIMENSIONS.includes(key)).sort();
-  const contextRows = [...DIMENSIONS, ...extras].map((key): ComparisonContextRow => {
+  const experiment = columns.every(({ evidence }) => evidence.every(({ evidence: item }) => typeof item.study_context.experimental_system === 'string' && item.study_context.experimental_system.trim().length > 0));
+  const dimensions = [...(experiment ? EXPERIMENT_DIMENSIONS.filter((key) => keys.has(key)) : []), ...DIMENSIONS];
+  const extras = [...keys].filter((key) => !dimensions.includes(key)).sort();
+  const contextRows = [...dimensions, ...extras].map((key): ComparisonContextRow => {
     const left = cell(columns[0], key); const right = cell(columns[1], key);
     const label = LABELS[key] ?? key.replaceAll('_', ' ').replace(/^./u, (letter) => letter.toUpperCase());
     return { key, label, left, right, status: rowStatus(left, right) };
@@ -156,12 +172,15 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
     ...(different.has('population') ? ['Check population definitions and any reused participants in the original sources.'] : []),
     ...(['organism', 'study_design', 'intervention', 'outcome'].some((key) => different.has(key))
       ? ['Check whether organisms, study designs, interventions, and endpoints allow a meaningful comparison.'] : []),
+    ...(['assay', 'protein_form', 'ligand_preparation', 'immobilized_partner'].some((key) => different.has(key))
+      ? ['Check how protein preparation and surface presentation affect the assay readout before interpreting the binding results together.'] : []),
     ...(missing.length ? [`Find the unrecorded study context in the original sources: ${missing.join(', ')}.`] : []),
     sharedSources.length ? 'Inspect the shared source records before treating the findings as separate observations.'
-      : 'Check cohort overlap and study independence in the original papers; different citations alone do not establish replication.',
+      : experiment ? 'Check shared protein preparations, experiments and study provenance; different citations alone do not establish replication.'
+        : 'Check cohort overlap and study independence in the original papers; different citations alone do not establish replication.',
   ];
   return {
-    columns, contextRows, scopeStatus, sharedSources, prompts,
+    columns, experimentalContext: experiment, contextRows, scopeStatus, sharedSources, prompts,
     notices: [
       'Context labels compare recorded fields only; they do not determine whether findings agree or conflict.',
       'Matching text does not establish comparable studies, pooled cohorts, independent replication, or research novelty.',
@@ -197,6 +216,7 @@ export function buildComparisonBrief(snapshot: Snapshot, firstClaimId: string, s
         `Evidence review: ${markdown(evidence.review.status)}; human reviewed: ${humanReviewFlag(evidence.review)}; reviewer: ${markdown(evidence.review.reviewer)}; date: ${markdown(evidence.review.date)}.`,
         `Reuse status: ${markdown(source.reuse.permission_status)}; checked: ${markdown(source.reuse.date_checked)}.`,
         `Publication status: ${markdown(source.publication_status.status)}; checked: ${markdown(source.publication_status.checked_at)}.`, '',
+        ...(source.publication_status.notice_url ? [`Publication notice: ${source.publication_status.notice_url}`, ''] : []),
         'Evidence limitations:', '', ...evidence.limitations.map((value) => `- ${markdown(value)}`), '');
     }
     lines.push('### Claim limitations', '', ...item.claim.limitations.map((value) => `- ${markdown(value)}`), '');
