@@ -175,6 +175,47 @@ test('two publication records with one study identifier cannot appear as indepen
   assert.ok(validateDataset(snapshot).errors.some((error) => error.includes('publication identity duplicates')));
 });
 
+test('a recorded correction or retraction requires its actual notice link and check date', () => {
+  const data = syntheticFixture();
+  for (const status of ['corrected', 'retracted'] as const) {
+    data.sources[0].publication_status = { status, checked_at: '2026-10-23', notice_url: null };
+    assert.ok(validateDataset(data).errors.some((error) => error.includes('requires a notice URL')));
+    data.sources[0].publication_status.notice_url = 'https://example.org/synthetic-notice';
+    assert.equal(validateDataset(data).valid, true);
+    data.sources[0].publication_status.checked_at = null;
+    assert.equal(validateDataset(data).valid, false);
+  }
+});
+
+test('the second binding publication preserves plasma preparation, technical wells and its recorded correction', async () => {
+  const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  const source = data.sources.find(({ id }) => id === 'source-bailey-2015')!;
+  assert.equal(source.url, 'https://pubmed.ncbi.nlm.nih.gov/26374897/');
+  assert.deepEqual(source.publication_status, { status: 'corrected', checked_at: '2026-10-23', notice_url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/' });
+  assert.equal(source.reuse.permission_status, 'pending_review');
+  const evidence = data.evidence.filter(({ source_id }) => source_id === source.id);
+  assert.equal(evidence.length, 2);
+  for (const item of evidence) {
+    const claim = data.claims.find(({ id }) => id === item.claim_id)!;
+    assert.equal(claim.subject_id, 'protein-trem2');
+    assert.equal(claim.object_id, 'protein-apoe');
+    assert.equal(item.study_context.organism, 'Homo sapiens');
+    assert.equal(item.study_context.assay, 'ELISA');
+    assert.match(String(item.study_context.ligand_preparation), /plasma-derived APOE; isoform not identified/);
+    assert.equal(item.study_context.assay_replicates, 3);
+    assert.equal(item.study_context.sample_size, null);
+    assert.match(String(item.study_context.replicate_unit), /Triplicate wells/);
+    assert.match(item.locator, /Figure 5[CD]/);
+    assert.equal(item.review.human_reviewed, false);
+    assert.equal(claim.review.status, 'draft');
+  }
+  const variant = evidence.find(({ claim_id }) => claim_id === 'claim-bailey-trem2-r47h-apoe-binding')!;
+  assert.equal(variant.study_context.experiments_reported, 2);
+  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.conflicts.length, 0);
+  assert.equal(data.hypotheses.length, 0);
+});
+
 test('a release can pass only with explicit review, provenance, rights and size requirements', () => {
   const snapshot = syntheticFixture();
   snapshot.release_status = 'released';

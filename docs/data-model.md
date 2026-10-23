@@ -1,6 +1,6 @@
 # Knowledge graph data model
 
-Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.3.0** contains 22 entities, 21 draft claims/evidence records, and 23 sources; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
+Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.4.0** contains 23 entities, 23 draft claims/evidence records, and 24 sources; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
 
 ## Model boundaries
 
@@ -90,9 +90,13 @@ The same review object is used for claims, evidence, conflicts, and hypotheses. 
 
 The 0.3.0 binding records use `experimental_system` and `assay` for the tested setup, and `assay_replicates` with an explicit `replicate_unit`. Their `sample_size` remains null; three assay replicates must not become three human participants.
 
+The 0.4.0 binding records add source-scoped `binding_condition`, `protein_form`, `ligand_preparation` and `immobilized_partner`. `experiments_reported` stays separate from technical-well counts; do not multiply these fields into a pooled sample. The condition field is a recorded experiment label, not a comparability assessment. Unresolved preparation stays null.
+
 Separate records may describe different findings from one study. Preserve the underlying study identity so those records are not counted as independent replications. Unknown values are explicit `null` values or documented unknowns, not invented measurements. A null finding is not automatically classified as `refutes`.
 
 ## Source
+
+A corrected or retracted publication requires a dated check and a non-null original notice URL in both runtime validation and JSON Schema. A note contained in the original article may use that article's URL, with the specific location and observed scope recorded in source-check context. An observed correction is not a completed comprehensive publication-status search.
 
 | Field | Requirement |
 | --- | --- |

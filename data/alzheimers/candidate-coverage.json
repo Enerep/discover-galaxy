@@ -1,6 +1,6 @@
 {
   "schema_version": "candidate-coverage-1",
-  "dataset_version": "alzheimers-source-checked-0.3.0",
+  "dataset_version": "alzheimers-source-checked-0.4.0",
   "prepared_at": "2026-10-23",
   "selection_method": "Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.",
   "limitations": [
@@ -9,7 +9,7 @@
     "Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.",
     "Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.",
     "Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.",
-    "These are source-reading questions, not novel research hypotheses or curated contradictions. The 22-entity development snapshot meets the size target; scientific release remains a separate future milestone."
+    "These are source-reading questions, not novel research hypotheses or curated contradictions. The 23-entity development snapshot meets the size target; scientific release remains a separate future milestone."
   ],
   "candidates": [
     {
@@ -269,7 +269,9 @@
         "claim-trem2-dap12-binding",
         "claim-trem2-dap12-pathway",
         "claim-trem2-apoe-binding",
-        "claim-trem2-r47h-apoe-binding"
+        "claim-trem2-r47h-apoe-binding",
+        "claim-bailey-trem2-apoe-binding",
+        "claim-bailey-trem2-r47h-apoe-binding"
       ],
       "candidate_ids": [
         "candidate-yeh-2016",
@@ -279,7 +281,7 @@
         "Separate binding, cellular uptake and transcriptional endpoints. Extract assay-specific organism, protein form, variant, model and controls.",
         "Distinguish protein-level interactions from gene associations and human risk from experimental perturbations; resolve canonical protein identities before adding nodes.",
         "Inspect TREM2/DAP12 member-event provenance and record versions; an upstream pathway name or review badge does not establish an AD-specific edge or project approval.",
-        "Compare the staged papers with the separately source-checked Atagi 2015 binding assays; preserve shared-source identity, protein form and endpoint. Binding, signaling and uptake are different outcomes."
+        "Compare the staged papers with the separately source-checked Atagi and Bailey 2015 binding assays. Preserve shared-source identity, ligand preparation, surface presentation and replicate units; different citations do not establish independent replication."
       ]
     },
     {

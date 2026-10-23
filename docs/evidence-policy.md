@@ -1,6 +1,6 @@
 # Scientific evidence policy
 
-Status: policy for the Alzheimer's explorer. The [22-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
+Status: policy for the Alzheimer's explorer. The [23-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
 
 Discovery Galaxy helps researchers inspect published evidence and formulate testable questions. It does not establish causality, discover treatments, or provide clinical recommendations. A visually prominent object, short graph path, or AI explanation is not evidence of biological importance.
 
@@ -29,6 +29,8 @@ The full MVP release will contain 20–50 displayed entities, including any pape
 7. Validate references, inspect citation links, check source reuse terms, and publish a versioned snapshot with its coverage and limitations.
 
 Data changes require a reviewable diff. Preserve upstream identifiers and release information so another person can reconstruct where a relationship came from. Track retractions and corrections when encountered; remove withdrawn support from active claims while preserving the audit history and explaining the change.
+
+A recorded correction or retraction requires both its actual notice URL and the date checked, including during development. An in-article correction can use the article containing the note; preserve its location and scope in source-check context. Recording one notice does not establish that a comprehensive notice search is complete.
 
 ## Conflicting findings
 
@@ -66,4 +68,4 @@ Open metadata does not imply permission to redistribute paper full text. Retain 
 
 A scientific dataset release must pass the validation rules in [the data model](data-model.md), have no displayed claim without approved human-reviewed evidence, and state its curation date, coverage, and known gaps. It must meet the 20–50 entity MVP boundary, complete source reuse review, and record publication-status checks. The interface must expose citations and limitations without requiring an AI service.
 
-Release validation is enforced both by an explicit `{ release: true }` option and automatically for an envelope marked `released`. The current 22-entity snapshot meets the size boundary while retaining draft records and outstanding source checks; it does not claim the deferred scientific-release approvals. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a review.
+Release validation is enforced both by an explicit `{ release: true }` option and automatically for an envelope marked `released`. The current 23-entity snapshot meets the size boundary while retaining draft records and outstanding source checks; it does not claim the deferred scientific-release approvals. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a review.

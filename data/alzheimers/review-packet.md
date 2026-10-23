@@ -3,23 +3,24 @@
 Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.
 Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.
 
-- **Dataset:** alzheimers-source-checked-0.3.0
+- **Dataset:** alzheimers-source-checked-0.4.0
 - **Schema:** 0.1.0
 - **Snapshot date:** 2026-10-23
 - **Release status:** development
-- **Coverage:** 22 entities, 21 claims, 21 evidence records, 23 sources
+- **Coverage:** 23 entities, 23 claims, 23 evidence records, 24 sources
 - **Disease:** Alzheimer's disease
-- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 pathway records, and source-scoped APOE–TREM2 binding assays.
+- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 pathway records, and source-scoped APOE–TREM2 binding assays from two publications.
 
 ## Scope limitations
 
-- Source-checked draft: inspected locations include study abstracts/metadata, selected original figure captions, and specific database annotations; this is not a comprehensive literature or full-paper review.
+- Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.
 - The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.
 - The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.
 - Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.
 - Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.
 - Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.
 - No curated contradictions, therapeutic claims or novel research hypotheses are included. Missing connections describe coverage, not research gaps.
+- Different publication identifiers do not establish independent replication. Assay preparations, surface presentation and replicate units remain source-specific; a recorded correction does not mean a comprehensive notice search is complete.
 
 ## Source coverage
 
@@ -28,6 +29,7 @@ Each row is one source record, not an independent experiment or cohort. Database
 | Source | Kind | Linked claims | Entity provenance | Reuse | Publication status |
 | --- | --- | --- | --- | --- | --- |
 | source-atagi-2015 | publication | claim-trem2-apoe-binding; claim-trem2-r47h-apoe-binding | paper-atagi-2015 | pending\_review | not\_checked |
+| source-bailey-2015 | publication | claim-bailey-trem2-apoe-binding; claim-bailey-trem2-r47h-apoe-binding | paper-bailey-2015 | pending\_review | corrected |
 | source-corder-1993 | publication | claim-apoe-e4-risk | paper-corder-1993 | pending\_review | not\_checked |
 | source-corder-1994 | publication | claim-apoe-e2-risk | paper-corder-1994 | pending\_review | not\_checked |
 | source-jonsson-2013 | publication | claim-trem2-r47h-risk | paper-jonsson-2013 | pending\_review | not\_checked |
@@ -533,6 +535,186 @@ Evidence limitations:
 - [ ] Check source reuse terms, attribution, and correction/retraction status.
 - [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
 
+### claim-bailey-trem2-apoe-binding
+
+**TREM2 protein → APOE protein · interacts\_with**
+
+In Bailey et al.'s ELISA, wild-type human TREM2-Ig bound plasma-derived APOE.
+
+**Summary:** Compare the source-specific preparation and plate readout with the Atagi binding assays.
+
+#### Claim context
+
+- **assay:** ELISA
+- **binding condition:** Wild-type TREM2
+- **experimental system:** Cell-free protein assay
+- **immobilized partner:** APOE on ELISA plates
+- **intervention:** Not recorded
+- **ligand preparation:** Human plasma-derived APOE; isoform not identified
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Ig
+- **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–IgG1 Fc fusion; plasma-derived APOE
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** Wild-type TREM2; plasma APOE isoform not identified
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** PubMed original Figure 5 captions and bibliographic metadata checked. Search-indexed PMC passages checked: Ig Fusion Constructs, ELISA methods, Results, Discussion and Note Added in Proof. Direct full-text opens were blocked; indexed text may be stale. Raw figure images, supplements and underlying data were not reviewed.
+
+#### Claim limitations
+
+- Surface-based binding signals do not establish binding kinetics, cellular signaling or treatment benefit.
+- The plasma-derived APOE isoform was not identified. Triplicate wells are not three independent studies or participants.
+- The in-article Note Added in Proof corrects a Figure 1 control plot; it does not identify Figure 5 as affected. Broader correction/retraction checking remains incomplete.
+
+#### Evidence: evidence-bailey-2015-binding
+
+- **Original source:** [The Triggering Receptor Expressed on Myeloid Cells 2 Binds Apolipoprotein E](https://pubmed.ncbi.nlm.nih.gov/26374897/)
+- **Source record:** source-bailey-2015
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** PubMed original Figure 5D caption; search-indexed PMC Experimental Procedures (Ig Fusion Constructs, ELISA), Results and Discussion.
+
+In Bailey et al.'s ELISA, wild-type human TREM2-Ig bound plasma-derived APOE.
+
+Source-specific study context:
+
+- **assay:** ELISA
+- **assay replicates:** 3
+- **binding condition:** Wild-type TREM2
+- **controls:** CD4-Ig background; plasma-derived APOA1 and APOA2
+- **experimental system:** Cell-free protein assay
+- **experiments reported:** Not recorded
+- **immobilized partner:** APOE on ELISA plates
+- **intervention:** Not recorded
+- **ligand preparation:** Human plasma-derived APOE; isoform not identified
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Ig
+- **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–IgG1 Fc fusion; plasma-derived APOE
+- **replicate unit:** Triplicate wells in a representative Figure 5D experiment
+- **sample size:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** Wild-type TREM2; plasma APOE isoform not identified
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** PubMed original Figure 5 captions and bibliographic metadata checked. Search-indexed PMC passages checked: Ig Fusion Constructs, ELISA methods, Results, Discussion and Note Added in Proof. Direct full-text opens were blocked; indexed text may be stale. Raw figure images, supplements and underlying data were not reviewed.
+
+Evidence limitations:
+
+- Surface-based binding signals do not establish binding kinetics, cellular signaling or treatment benefit.
+- The plasma-derived APOE isoform was not identified. Triplicate wells are not three independent studies or participants.
+- The in-article Note Added in Proof corrects a Figure 1 control plot; it does not identify Figure 5 as affected. Broader correction/retraction checking remains incomplete.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-bailey-trem2-r47h-apoe-binding
+
+**TREM2 protein → APOE protein · interacts\_with**
+
+In Bailey et al.'s plasma-APOE ELISA, the human TREM2 R47H-Ig construct showed less binding than wild type.
+
+**Summary:** Compare this plate-binding result with the Atagi variant assays; the preparations differ.
+
+#### Claim context
+
+- **assay:** ELISA
+- **binding condition:** R47H versus wild type
+- **experimental system:** Cell-free protein assay
+- **immobilized partner:** APOE on ELISA plates
+- **intervention:** Not recorded
+- **ligand preparation:** Human plasma-derived APOE; isoform not identified
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Ig
+- **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–IgG1 Fc fusion; plasma-derived APOE
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** TREM2 R47H versus wild type; plasma APOE isoform not identified
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** PubMed original Figure 5 captions and bibliographic metadata checked. Search-indexed PMC passages checked: Ig Fusion Constructs, ELISA methods, Results, Discussion and Note Added in Proof. Direct full-text opens were blocked; indexed text may be stale. Raw figure images, supplements and underlying data were not reviewed.
+
+#### Claim limitations
+
+- Surface-based binding signals do not establish binding kinetics, cellular signaling or treatment benefit.
+- The plasma-derived APOE isoform was not identified. Triplicate wells are not three independent studies or participants.
+- The in-article Note Added in Proof corrects a Figure 1 control plot; it does not identify Figure 5 as affected. Broader correction/retraction checking remains incomplete.
+
+#### Evidence: evidence-bailey-2015-r47h-binding
+
+- **Original source:** [The Triggering Receptor Expressed on Myeloid Cells 2 Binds Apolipoprotein E](https://pubmed.ncbi.nlm.nih.gov/26374897/)
+- **Source record:** source-bailey-2015
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** PubMed original Figure 5C caption; search-indexed PMC Experimental Procedures (Ig Fusion Constructs, ELISA), Results and Discussion.
+
+In Bailey et al.'s plasma-APOE ELISA, the human TREM2 R47H-Ig construct showed less binding than wild type.
+
+Source-specific study context:
+
+- **assay:** ELISA
+- **assay replicates:** 3
+- **binding condition:** R47H versus wild type
+- **controls:** Wild-type TREM2-Ig; mutant panel
+- **experimental system:** Cell-free protein assay
+- **experiments reported:** 2
+- **immobilized partner:** APOE on ELISA plates
+- **intervention:** Not recorded
+- **ligand preparation:** Human plasma-derived APOE; isoform not identified
+- **organism:** Homo sapiens
+- **outcome:** APOE binding to TREM2-Ig
+- **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–IgG1 Fc fusion; plasma-derived APOE
+- **replicate unit:** Triplicate wells in one of two Figure 5C experiments
+- **sample size:** Not recorded
+- **study design:** Biochemical binding assay
+- **tissue:** Not recorded
+- **variant:** TREM2 R47H versus wild type; plasma APOE isoform not identified
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-23
+- **Human reviewed:** false
+- **Review rationale:** PubMed original Figure 5 captions and bibliographic metadata checked. Search-indexed PMC passages checked: Ig Fusion Constructs, ELISA methods, Results, Discussion and Note Added in Proof. Direct full-text opens were blocked; indexed text may be stale. Raw figure images, supplements and underlying data were not reviewed.
+
+Evidence limitations:
+
+- Surface-based binding signals do not establish binding kinetics, cellular signaling or treatment benefit.
+- The plasma-derived APOE isoform was not identified. Triplicate wells are not three independent studies or participants.
+- The in-article Note Added in Proof corrects a Figure 1 control plot; it does not identify Figure 5 as affected. Broader correction/retraction checking remains incomplete.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
 ### claim-nr1h2-cholesterol-pathway
 
 **LXRβ protein → Cholesterol transport and efflux · participates\_in**
@@ -952,11 +1134,15 @@ In Atagi et al.'s dot-blot assays, APOE2, APOE3 and APOE4 bound the human TREM2 
 #### Claim context
 
 - **assay:** Dot blot
+- **binding condition:** Wild-type TREM2
 - **experimental system:** Cell-free protein assay
+- **immobilized partner:** TREM2-Fc on nitrocellulose
 - **intervention:** Not recorded
+- **ligand preparation:** Recombinant or astrocyte-derived APOE isoforms
 - **organism:** Homo sapiens
 - **outcome:** APOE binding to TREM2-Fc
 - **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–Fc fusion; APOE2, APOE3 and APOE4
 - **study design:** Biochemical binding assay
 - **tissue:** Not recorded
 - **variant:** APOE2, APOE3 and APOE4; wild-type TREM2
@@ -988,12 +1174,16 @@ Source-specific study context:
 
 - **assay:** Dot blot
 - **assay replicates:** 3
+- **binding condition:** Wild-type TREM2
 - **controls:** Human IgG-Fc and TREM1-Fc
 - **experimental system:** Cell-free protein assay
+- **immobilized partner:** TREM2-Fc on nitrocellulose
 - **intervention:** Not recorded
+- **ligand preparation:** Recombinant or astrocyte-derived APOE isoforms
 - **organism:** Homo sapiens
 - **outcome:** APOE binding to TREM2-Fc
 - **population:** Not recorded
+- **protein form:** Human TREM2 ectodomain–Fc fusion; APOE2, APOE3 and APOE4
 - **replicate unit:** Independent dot blots in Figure 1B
 - **sample size:** Not recorded
 - **study design:** Biochemical binding assay
@@ -1236,11 +1426,15 @@ In Atagi et al.'s dot-blot and solid-phase assays, human TREM2 R47H-Fc showed le
 #### Claim context
 
 - **assay:** Dot blot and solid-phase binding
+- **binding condition:** R47H versus wild type
 - **experimental system:** Cell-free protein assay
+- **immobilized partner:** TREM2-Fc in dot blots; APOE on solid-phase plates
 - **intervention:** Not recorded
+- **ligand preparation:** Not recorded
 - **organism:** Homo sapiens
 - **outcome:** APOE binding to TREM2-Fc
 - **population:** Not recorded
+- **protein form:** Human TREM2-Fc or R47H-Fc; APOE2, APOE3 and APOE4
 - **study design:** Biochemical binding assay
 - **tissue:** Not recorded
 - **variant:** TREM2 R47H versus wild type; APOE2, APOE3 and APOE4
@@ -1272,12 +1466,16 @@ Source-specific study context:
 
 - **assay:** Dot blot and solid-phase binding
 - **assay replicates:** 3
+- **binding condition:** R47H versus wild type
 - **controls:** Anti-Fc loading control for dot blots; uncoated wells for solid-phase assays
 - **experimental system:** Cell-free protein assay
+- **immobilized partner:** TREM2-Fc in dot blots; APOE on solid-phase plates
 - **intervention:** Not recorded
+- **ligand preparation:** Not recorded
 - **organism:** Homo sapiens
 - **outcome:** APOE binding to TREM2-Fc
 - **population:** Not recorded
+- **protein form:** Human TREM2-Fc or R47H-Fc; APOE2, APOE3 and APOE4
 - **replicate unit:** Figure 5 reports n = 3 per assay panel; replicate independence not resolved
 - **sample size:** Not recorded
 - **study design:** Biochemical binding assay
@@ -1530,6 +1728,25 @@ Evidence limitations:
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
+
+### source-bailey-2015
+
+[The Triggering Receptor Expressed on Myeloid Cells 2 Binds Apolipoprotein E](https://pubmed.ncbi.nlm.nih.gov/26374897/)
+
+- **Kind:** publication
+- **Identifiers:** PMID: 26374897; DOI: 10.1074/jbc.M115.677286; PMCID: PMC4646256
+- **Authors:** Charles C Bailey; Lindsey B DeVaux; Michael Farzan
+- **Year / publication type:** 2015 / primary\_research
+- **Provider / release:** Not recorded / Not recorded
+- **Retrieved:** 2026-10-23
+- **Reuse permission status:** pending\_review
+- **Reuse terms:** https://pmc.ncbi.nlm.nih.gov/about/copyright/
+- **Reuse checked:** 2026-10-23
+- **Attribution:** Bailey, DeVaux and Farzan, Journal of Biological Chemistry, 2015; publication metadata and figure captions via PubMed/NLM. © 2015 American Society for Biochemistry and Molecular Biology.
+- **Retained content:** Bibliographic facts, links and short project-authored paraphrases only. NCBI policies and PMC copyright notice inspected; no article prose, captions, figures or full-text payload retained. Publisher-specific reuse remains unresolved.
+- **Publication status:** corrected
+- **Publication status checked:** 2026-10-23
+- **Notice URL:** https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/
 
 ### source-corder-1993
 

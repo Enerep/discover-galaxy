@@ -609,6 +609,22 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": ["corrected", "retracted"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "notice_url": {
+                "$ref": "#/$defs/url"
+              }
+            }
+          }
         }
       ]
     },

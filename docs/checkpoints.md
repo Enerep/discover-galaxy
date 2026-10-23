@@ -1,8 +1,8 @@
 # Checkpoints
 
-## Current checkpoint: assay-specific APOE–TREM2 findings
+## Current checkpoint: compare two APOE–TREM2 studies
 
-Snapshot **alzheimers-source-checked-0.3.0** has **22 entities and 21 cited draft claims**. Two new findings connect APOE and TREM2 proteins using Atagi 2015's binding assays, preserving the baseline and R47H comparison separately. Original figure captions, controls, protein constructs, replicate units and access limits are recorded in the [dataset changes](../data/alzheimers/CHANGELOG.md). Both findings share one paper; they are not independent studies. The earlier human associations, distinct proteins and two Reactome pathways retain their scopes.
+Snapshot **alzheimers-source-checked-0.4.0** has **23 entities and 23 cited draft claims**. Four findings preserve baseline and R47H binding experiments from Atagi and Bailey 2015 separately. Protein constructs, ligand preparation, surface presentation and replicate units remain source-specific. The [dataset changes](../data/alzheimers/CHANGELOG.md) distinguish readable original captions from indexed methods/results and record Bailey's in-article correction. Separate citations do not establish independent replication; the earlier human associations and database annotations retain their scopes.
 
 The interface uses **Source-checked draft**. Users can follow a finding's **View …** action from a gene to its protein, then a pathway and another participant. Protein/pathway filters and distinct database-record labels support this through graph, list, keyboard, touch and WebGL fallback. The owner deferred independent scientific review to a future milestone; it is not a blocker for this development track, and no independent approval or human attestation is fabricated.
 
@@ -42,9 +42,9 @@ The development snapshot meets the **20–50 entity size target**. Next, inspect
 
 Candidate discovery should begin with the existing genes and the pathway questions their reviewed sources actually support. A candidate's name, a database hit, or a generated summary does not establish a relationship. Keep genes, proteins, and variant contexts distinct. Curate disagreements only when study contexts support a meaningful comparison.
 
-A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 21 findings and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
+A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 23 findings and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
 
-`npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. This checkpoint supplies a bounded caption-level extract and draft diff. Next, inspect full methods and another original study to deepen the binding comparison or add a separately identified model-specific lipid-handling experiment. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
+`npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. This checkpoint supplies two source-specific binding study extracts and a draft diff, with indexed-vs-page access recorded. Next, deepen assay coverage with a further original source or add a separately identified model-specific lipid-handling experiment. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
 
 ## Then: automate collection, preserve review
 

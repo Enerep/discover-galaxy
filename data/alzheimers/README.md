@@ -1,8 +1,14 @@
 # Alzheimer's source-checked snapshot
 
-`dataset.json` is **alzheimers-source-checked-0.3.0**: 22 entities, 21 claims, 21 evidence records, and 23 sources. It contains one disease, seven human genes, seven distinct human proteins, two pathways, and five paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
+`dataset.json` is **alzheimers-source-checked-0.4.0**: 23 entities, 23 claims, 23 evidence records, and 24 sources. It contains one disease, seven human genes, seven distinct human proteins, two pathways, and six paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
-The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and two assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and four assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Two binding studies in 0.4.0
+
+[Bailey et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26374897/) adds baseline and R47H ELISA findings using plasma-derived APOE. Original figure captions and selected indexed methods/results preserve the unknown APOE isoform, plate presentation and technical-well units. Two reported experiments do not turn triplicate wells into six independent studies. The source retains its in-article Figure 1 correction and original notice link; broader notice checking remains incomplete.
+
+The Atagi records now include structured condition, protein form and immobilization context from the same original captions. A null ligand preparation for the Atagi variant assays remains unknown. See the [0.4.0 change record](CHANGELOG.md#alzheimers-source-checked-040--2026-10-23) for the exact extract, access and reuse limits. Different citations do not establish independent replication or scientific agreement.
 
 ## Binding experiments added in 0.3.0
 
@@ -44,7 +50,7 @@ The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wile
 
 The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), keeps six publications ready for the next AD source pass. The two earlier pathway candidates were added through the separately checked dataset diff in 0.2.0. The remaining papers need assay-level extraction; their metadata is not experimental graph evidence. Use `npm run curation:coverage:check` to verify the packet's references and generated output.
 
-Use the [generated source-review packet](review-packet.md) for all 21 findings, their source-specific context and 23 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
+Use the [generated source-review packet](review-packet.md) for all 23 findings, their source-specific context and 24 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
 
 Further draft additions require actual source inspection, scoped context and limitations, identifiers, locators, and source reuse assessment. Keep unknowns explicit and record a new dataset version. Do not add automatic approval attestations or promote staged metadata into experimental evidence.
 

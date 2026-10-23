@@ -8,7 +8,7 @@ The first version focuses on **Alzheimer's disease**, with a release target of *
 
 ## Project status
 
-**The source-checked explorer contains 22 entities and 21 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and five papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The source-checked explorer contains 23 entities and 23 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and six papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
 The interface uses one search field, one type filter, and one Graph/List switch. Keyboard search, visible camera controls, a readable evidence panel, and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) makes simplicity, plain language, and purposeful animation permanent requirements.
 
@@ -22,7 +22,7 @@ Pasting the website link into a compatible social app uses a separate **1200 × 
 
 The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the additions are seven gene–protein mappings, seven pathway-participation annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
 
-Two additional findings connect APOE and TREM2 proteins through the binding assays reported by Atagi et al. (2015), including the R47H comparison. Their inspected figure captions, fusion-protein context and replicate units stay attached to the same original paper; these are not clinical outcomes or independent studies.
+Four findings connect APOE and TREM2 proteins through the binding assays reported by Atagi and Bailey (2015), with baseline and R47H results kept separate. Source-specific protein preparations, surface presentation and replicate units remain attached to the original paper. Bailey's plasma-derived APOE isoform is unknown, and its triplicate wells are not three independent studies. The source records its in-article correction and the actual inspection limits.
 
 The assay setup appears beside the citation. **Compare findings** starts with another finding on the same relationship when available, so the baseline and R47H assays are one click apart. Shared-paper identities and replicate units remain visible in the comparison and downloaded brief. Shared links also preserve protein and pathway filters.
 
@@ -55,7 +55,7 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
 
-The [AD source-review packet](data/alzheimers/review-packet.md) collects the 21 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 23 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check

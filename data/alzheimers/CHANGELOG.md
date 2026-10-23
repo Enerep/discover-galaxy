@@ -1,5 +1,22 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.4.0 — 2026-10-23
+
+**23 entities, 23 claims, 23 evidence records, 24 sources.** Adds [Bailey et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26374897/), DOI `10.1074/jbc.M115.677286`, PMCID `PMC4646256`, as one paper projection and two scoped protein-binding findings. Existing human association findings and database annotations are unchanged. The two Atagi binding records gain structured condition, protein-form, ligand-preparation and immobilization fields from their previously inspected captions; unknown preparation in the Atagi Figure 5 assays remains null.
+
+| Finding | Original locator and actual access | Retained context |
+| --- | --- | --- |
+| `claim-bailey-trem2-apoe-binding` | PubMed Figure 5D caption; search-indexed PMC Ig Fusion Constructs, ELISA, Results and Discussion | Wild-type human TREM2-Ig; plasma-derived APOE with unidentified isoform; plate ELISA; triplicate wells in a representative experiment |
+| `claim-bailey-trem2-r47h-apoe-binding` | PubMed Figure 5C caption; the same indexed methods/results passages | R47H versus wild type; plasma APOE; triplicate wells in one of two reported experiments |
+
+Source check date: **2026-10-23**. PubMed metadata and the original captions were readable as pages. The web search returned indexed PMC article passages, including construct/ELISA methods, the selected binding results, Discussion and Note Added in Proof. Direct PMC opens returned a browser challenge; publisher full-text links returned 403. Indexed passages may be stale. Raw figure images, supplements and underlying data were not reviewed. No complete full-paper or systematic literature review is claimed.
+
+The [in-article Note Added in Proof](https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/) reports replacement of an incorrect Figure 1 control scatter plot from the Paper in Press. It does not identify the selected Figure 5 experiments as affected. The source records `publication_status: corrected`, check date and the article URL containing the notice; this is a targeted observation, not a completed comprehensive notice search or a retraction finding.
+
+The assays retain protein endpoints and separate source identity, preparation, immobilization and replicate units. Plate-binding signals do not become binding-rate measurements, cellular signaling, clinical outcomes or evidence of independent replication. No macaque-fluid experiment, therapeutic claim, contradiction or hypothesis was added. The six staged candidates remain outside the graph.
+
+NCBI policies and the PMC copyright notice were inspected on the source-check date. Only bibliographic facts, links and short project-authored paraphrases are retained; no article prose, captions, images or full-text payloads are redistributed. Publisher-specific reuse remains pending. All scientific records remain draft, with no human or independent-review attestation.
+
 ## alzheimers-source-checked-0.3.0 — 2026-10-23
 
 **22 entities, 21 claims, 21 evidence records, 23 sources.** Adds one paper projection and two protein-level findings from [Atagi et al. (2015)](https://pubmed.ncbi.nlm.nih.gov/26374899/), DOI `10.1074/jbc.M115.679043`, PMCID `PMC4646257`. The 0.2.0 records are unchanged. All scientific records remain draft.
