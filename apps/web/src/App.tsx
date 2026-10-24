@@ -90,7 +90,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   }, [snapshot, selected.id, activeClaim?.id, query, filter, view]);
   const paperCount = snapshot.entities.filter(({ type }) => type === 'paper').length;
   const filtered = !!query.trim() || filter !== 'all';
-  const experimentRows = useMemo(() => new Map(experiment?.table.rows.map((row) => [row.gene, row]) ?? []), [experiment]);
+  const experimentRows = useMemo(() => new Map(experiment?.rows.map((row) => [row.gene, row]) ?? []), [experiment]);
   const observation = selected.type === 'gene' ? experimentRows.get(selected.label) : undefined;
 
   useLayoutEffect(() => {

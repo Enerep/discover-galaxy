@@ -4,6 +4,8 @@ import { enrichPathways } from './enrichment.ts';
 import type { EnrichmentResult, PathwayGeneSet } from './enrichment.ts';
 import { selectExperimentHits } from './experiment.ts';
 import type { ExperimentRow, ExperimentTable, ExperimentThresholds } from './experiment.ts';
+import { applyGeneMapping, resolveGeneIdentifiers } from './gene-identifiers.ts';
+import type { GeneIdentityReference, GeneMappingReport } from './gene-identifiers.ts';
 
 export interface PathwayReference {
   schema_version: 1;
@@ -16,6 +18,8 @@ export interface PathwayReference {
 }
 export interface ExperimentAnalysis {
   table: ExperimentTable;
+  rows: ExperimentRow[];
+  identifierMapping: GeneMappingReport | null;
   comparison: string;
   thresholds: ExperimentThresholds;
   reference: PathwayReference;
@@ -83,18 +87,22 @@ export async function loadPathwayReference(): Promise<PathwayReference> {
   return validatePathwayReference(payload);
 }
 
-export function runExperimentAnalysis(table: ExperimentTable, options: { comparison: string; thresholds: ExperimentThresholds; allTestedGenes: boolean }, reference: PathwayReference): ExperimentAnalysis {
+export function runExperimentAnalysis(table: ExperimentTable, options: { comparison: string; thresholds: ExperimentThresholds; allTestedGenes: boolean; allowUnresolvedIds?: boolean }, reference: PathwayReference, geneReference?: GeneIdentityReference): ExperimentAnalysis {
   if (options.allTestedGenes !== true) throw new Error('Use the full tested-gene table as the background, including genes that did not pass your cutoffs.');
   if (typeof options.comparison !== 'string' || !options.comparison.trim() || options.comparison.trim().length > 160) throw new Error('Name the comparison, in numerator / denominator order.');
   validatePathwayReference(reference);
-  const selected = selectExperimentHits(table, options.thresholds);
+  if (table.identifierType === 'ensembl' && !geneReference) throw new Error('Load the pinned Ensembl identifier reference before analysis.');
+  const identifierMapping = table.identifierType === 'ensembl' ? resolveGeneIdentifiers(table, geneReference!) : null;
+  if (identifierMapping?.unresolvedCount && options.allowUnresolvedIds !== true) throw new Error('Review unresolved identifiers before analysis. They remain unannotated in the eligible background.');
+  const rows = identifierMapping ? applyGeneMapping(table, identifierMapping) : table.rows;
+  const selected = selectExperimentHits({ ...table, rows }, options.thresholds);
   // Eligibility precedes every p/effect cutoff. Missing padj can mean a gene
   // was untestable or independently filtered and could never enter this set.
-  const background = table.rows.filter(({ padj, log2FoldChange }) => padj !== null && log2FoldChange !== null).map(({ gene }) => gene);
+  const background = rows.filter(({ padj, log2FoldChange }) => padj !== null && log2FoldChange !== null).map(({ gene }) => gene);
   if (!background.length) throw new Error('No genes have both a fold change and an adjusted p-value. Supply complete tested-gene results for enrichment.');
   const pathways = enrichPathways(background, selected.map(({ gene }) => gene), reference.pathways);
   const annotated = new Set(reference.pathways.flatMap(({ genes }) => genes));
-  return { table, comparison: options.comparison.trim(), thresholds: { ...options.thresholds }, reference, selected, backgroundGenes: background,
+  return { table, rows, identifierMapping, comparison: options.comparison.trim(), thresholds: { ...options.thresholds }, reference, selected, backgroundGenes: background,
     mappedGenesCount: background.filter((gene) => annotated.has(gene)).length, pathways, createdAt: new Date().toISOString(),
     backgroundDeclaration: 'full_tested_table_supplied' };
 }

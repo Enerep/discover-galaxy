@@ -155,6 +155,7 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
         {experimentObservation && <section className="experiment-observation" aria-label="Your RNA-seq result">
           <h3>Your RNA-seq result</h3><p>{experimentObservation.comparison}</p>
           <dl className="context-list">
+            {experimentObservation.row.sourceId && <div><dt>Input ID</dt><dd>{experimentObservation.row.sourceId}</dd></div>}
             <div><dt>log₂ fold change</dt><dd>{experimentObservation.row.log2FoldChange ?? 'Not recorded'}</dd></div>
             <div><dt>Gene FDR</dt><dd>{experimentObservation.row.padj === null ? 'Not recorded' : formatProbability(experimentObservation.row.padj)}</dd></div>
             <div><dt>Selection</dt><dd>{experimentObservation.row.log2FoldChange === null || experimentObservation.row.padj === null ? 'Incomplete statistics'

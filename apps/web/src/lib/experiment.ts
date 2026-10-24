@@ -4,6 +4,8 @@ const MAX_COLUMNS = 128;
 
 export interface ExperimentRow {
   gene: string;
+  /** Original Ensembl ID when a separate mapping produced the display symbol. */
+  sourceId?: string;
   log2FoldChange: number | null;
   padj: number | null;
 }
@@ -14,6 +16,7 @@ export interface ExperimentTable {
   columns: { gene: string; log2FoldChange: string; padj: string };
   rows: ExperimentRow[];
   missingStatisticsCount: number;
+  identifierType: 'symbol' | 'ensembl';
 }
 
 export interface ExperimentThresholds {
@@ -23,11 +26,19 @@ export interface ExperimentThresholds {
 
 type RecordRow = { values: string[]; line: number };
 const HEADER_ALIASES = {
-  gene: ['gene', 'gene_symbol', 'symbol'],
+  gene: ['gene', 'gene_symbol', 'symbol', 'gene_id', 'ensembl_gene_id', 'ensembl_id', 'genename'],
   log2FoldChange: ['log2foldchange', 'log2fc'],
   padj: ['padj', 'fdr', 'adj.p.val'],
 } as const;
 const MISSING_VALUES = new Set(['', 'NA', 'N/A', 'NAN', 'NULL']);
+
+export class ExperimentColumnChoiceError extends Error {
+  columns: { index: number; label: string }[];
+  constructor(columns: { index: number; label: string }[]) {
+    super('Choose the column containing gene identifiers.');
+    this.columns = columns;
+  }
+}
 
 function detectDelimiter(text: string): ',' | '\t' {
   let quoted = false;
@@ -108,7 +119,7 @@ function numberValue(value: string, line: number, column: string, adjustedP: boo
 }
 
 /** Parse local results only. Syntax does not verify HGNC identity, species or assay completeness. */
-export function parseExperiment(text: string, filename: string): ExperimentTable {
+export function parseExperiment(text: string, filename: string, options: { identifierColumn?: number } = {}): ExperimentTable {
   if (typeof text !== 'string' || typeof filename !== 'string') throw new Error('Read a UTF-8 CSV or TSV results file.');
   if (text.length > MAX_EXPERIMENT_BYTES || new TextEncoder().encode(text).byteLength > MAX_EXPERIMENT_BYTES) throw new Error('Use a results file no larger than 5 MiB.');
   if (text.includes('\0')) throw new Error('Read a UTF-8 CSV or TSV file; binary content is not supported.');
@@ -119,7 +130,15 @@ export function parseExperiment(text: string, filename: string): ExperimentTable
   const normalizedHeader = header.map((value) => value.toLowerCase());
   const indices = {} as Record<keyof typeof HEADER_ALIASES, number>;
   for (const [key, aliases] of Object.entries(HEADER_ALIASES)) {
-    const matches = normalizedHeader.flatMap((value, index) => (aliases as readonly string[]).includes(value) ? [index] : []);
+    let matches = normalizedHeader.flatMap((value, index) => (aliases as readonly string[]).includes(value) || (key === 'gene' && index === 0 && value === '') ? [index] : []);
+    if (key === 'gene') {
+      if (options.identifierColumn !== undefined) {
+        if (!Number.isInteger(options.identifierColumn) || options.identifierColumn < 0 || options.identifierColumn >= header.length) throw new Error('Choose an available gene identifier column.');
+        matches = [options.identifierColumn];
+      } else if (matches.length !== 1) {
+        throw new ExperimentColumnChoiceError(header.map((label, index) => ({ index, label: label || `Column ${index + 1} (unnamed)` })));
+      }
+    }
     if (matches.length !== 1) throw new Error(`Include exactly one ${key} column (${aliases.join(', ')}).`);
     indices[key as keyof typeof HEADER_ALIASES] = matches[0];
   }
@@ -127,12 +146,16 @@ export function parseExperiment(text: string, filename: string): ExperimentTable
   const rows: ExperimentRow[] = [];
   const seen = new Set<string>();
   let missingStatisticsCount = 0;
+  let identifierType: ExperimentTable['identifierType'] | undefined;
   for (const record of records.slice(1)) {
     if (record.values.length !== header.length) throw new Error(`Row ${record.line} has ${record.values.length} columns; the header has ${header.length}.`);
     const gene = record.values[indices.gene].trim();
-    if (/^ENS[A-Z]*G\d+(?:\.\d+)?$/u.test(gene)) throw new Error(`Row ${record.line}, gene: use human HGNC gene symbols; Ensembl IDs are not mapped in this version.`);
-    if (gene.length > 64 || !/^(?:[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*|C(?:\d+|X|Y)orf\d+(?:-[A-Z0-9]+)*)$/u.test(gene)) throw new Error(`Row ${record.line}, gene: use one human HGNC symbol with its original capitalization. Identifiers and species are not converted.`);
-    if (seen.has(gene)) throw new Error(`Row ${record.line}, gene: duplicate symbol. Supply one result per gene; duplicates are not merged.`);
+    if (gene.length > 64) throw new Error(`Row ${record.line}, gene: identifiers must contain at most 64 characters.`);
+    const type = /^ENSG\d{11}(?:\.\d+)?$/u.test(gene) ? 'ensembl' : 'symbol';
+    if (type === 'symbol' && (/^ENS[A-Z]*G\d/u.test(gene) || gene.length > 64 || !/^(?:[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*|C(?:\d+|X|Y)orf\d+(?:-[A-Z0-9]+)*)$/u.test(gene))) throw new Error(`Row ${record.line}, gene: use human gene symbols or human Ensembl gene IDs. Species and identifiers are not guessed.`);
+    if (identifierType && identifierType !== type) throw new Error(`Row ${record.line}, gene: use one identifier type per column; symbols and Ensembl IDs cannot be mixed.`);
+    identifierType = type;
+    if (seen.has(gene)) throw new Error(`Row ${record.line}, gene: duplicate ${type === 'symbol' ? 'symbol' : 'identifier'}. Supply one result per gene; duplicates are not merged.`);
     seen.add(gene);
     const log2FoldChange = numberValue(record.values[indices.log2FoldChange], record.line, 'log2FoldChange', false);
     const padj = numberValue(record.values[indices.padj], record.line, 'padj', true);
@@ -142,7 +165,7 @@ export function parseExperiment(text: string, filename: string): ExperimentTable
   if (!rows.length) throw new Error('Include at least one gene row below the header.');
   return { filename: filename.trim().slice(0, 255) || 'Uploaded results', delimiter,
     columns: { gene: header[indices.gene], log2FoldChange: header[indices.log2FoldChange], padj: header[indices.padj] },
-    rows, missingStatisticsCount };
+    rows, missingStatisticsCount, identifierType: identifierType! };
 }
 
 /** Literal inclusive thresholds; zero remains unchanged even if selected at a zero minimum. */

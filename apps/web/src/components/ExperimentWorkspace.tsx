@@ -1,12 +1,15 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { Snapshot } from '../lib/types.ts';
-import { MAX_EXPERIMENT_BYTES, parseExperiment } from '../lib/experiment.ts';
+import { ExperimentColumnChoiceError, MAX_EXPERIMENT_BYTES, parseExperiment } from '../lib/experiment.ts';
 import type { ExperimentTable } from '../lib/experiment.ts';
 import { buildExperimentQuestions, formatProbability, loadPathwayReference, runExperimentAnalysis } from '../lib/experiment-analysis.ts';
 import type { ExperimentAnalysis } from '../lib/experiment-analysis.ts';
 import { useReducedMotion } from '../lib/useReducedMotion.ts';
 import { Icon } from './ui.tsx';
+import { loadGeneIdentityReference, resolveGeneIdentifiers } from '../lib/gene-identifiers.ts';
+import type { GeneIdentityReference, GeneMappingReport } from '../lib/gene-identifiers.ts';
+import { GeneMappingDetails } from './GeneMappingDetails.tsx';
 import './experiment-workspace.css';
 
 interface Props {
@@ -33,6 +36,13 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const detailHeading = useRef<HTMLHeadingElement>(null);
   const readSequence = useRef(0);
   const pendingResultFocus = useRef(false);
+  const mappingRegion = useRef<HTMLDivElement>(null);
+  const pendingMappingFocus = useRef(false);
+  const geneReference = useRef<{ table: ExperimentTable; reference: GeneIdentityReference } | null>(null);
+  const [columnInput, setColumnInput] = useState<{ text: string; filename: string; choices: { index: number; label: string }[] } | null>(null);
+  const [identifierColumn, setIdentifierColumn] = useState('');
+  const [mapping, setMapping] = useState<GeneMappingReport | null>(null);
+  const [allowUnresolvedIds, setAllowUnresolvedIds] = useState(false);
   const [pendingTable, setPendingTable] = useState<ExperimentTable | null>(null);
   const [analysis, setAnalysis] = useState<ExperimentAnalysis | null>(null);
   const [comparison, setComparison] = useState('');
@@ -48,6 +58,14 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const [pathwayId, setPathwayId] = useState<string | null>(null);
   const [memberPage, setMemberPage] = useState(0);
   const reducedMotion = useReducedMotion();
+
+  useLayoutEffect(() => {
+    if (!mapping || !pendingMappingFocus.current) return;
+    pendingMappingFocus.current = false;
+    if (!workspace.current?.getClientRects().length) return;
+    mappingRegion.current?.focus({ preventScroll: true });
+    mappingRegion.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+  }, [mapping, reducedMotion]);
 
   useLayoutEffect(() => {
     if (!analysis || !pendingResultFocus.current) return;
@@ -73,7 +91,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const eligibleMembers = useMemo(() => {
     const reference = analysis?.reference.pathways.find(({ id }) => id === selectedPathway?.id);
     const members = new Set(reference?.genes ?? []);
-    return (analysis?.table.rows ?? []).filter(({ gene }) => eligibleGenes.has(gene) && members.has(gene))
+    return (analysis?.rows ?? []).filter(({ gene }) => eligibleGenes.has(gene) && members.has(gene))
       .sort((a, b) => Number(selectedGenes.has(b.gene)) - Number(selectedGenes.has(a.gene)) || a.gene.localeCompare(b.gene, 'en-US'));
   }, [analysis, selectedPathway?.id, selectedGenes, eligibleGenes]);
   const questions = useMemo(() => analysis && selectedPathway ? buildExperimentQuestions(snapshot, analysis, selectedPathway.id) : [], [snapshot, analysis, selectedPathway]);
@@ -86,16 +104,32 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     if (!file) return;
     const sequence = ++readSequence.current;
     setBusy('reading'); setError(''); setPendingTable(null); setAllTestedGenes(false);
+    setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
+    let text = '';
     try {
       if (file.size > MAX_EXPERIMENT_BYTES) throw new Error('Use a results file no larger than 5 MiB.');
-      const table = parseExperiment(await file.text(), file.name);
+      text = await file.text();
+      const table = parseExperiment(text, file.name);
       if (sequence === readSequence.current) setPendingTable(table);
     } catch (cause) {
       if (sequence === readSequence.current) {
+        if (cause instanceof ExperimentColumnChoiceError) {
+          setColumnInput({ text, filename: file.name, choices: cause.columns });
+          return;
+        }
         setError(cause instanceof Error ? cause.message : 'The file could not be read. Choose a UTF-8 CSV or TSV file.');
         if (fileInput.current) fileInput.current.value = '';
       }
     } finally { if (sequence === readSequence.current) setBusy(null); }
+  }
+
+  function chooseColumn(value: string) {
+    if (!columnInput) return;
+    setIdentifierColumn(value); setError(''); setPendingTable(null); setAllTestedGenes(false);
+    setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
+    if (value === '') return;
+    try { setPendingTable(parseExperiment(columnInput.text, columnInput.filename, { identifierColumn: Number(value) })); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to read this identifier column.'); }
   }
 
   async function analyze(event: FormEvent<HTMLFormElement>) {
@@ -103,9 +137,19 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     if (!pendingTable || busy) return;
     setBusy('analyzing'); setError('');
     try {
+      let identities: GeneIdentityReference | undefined;
+      if (pendingTable.identifierType === 'ensembl') {
+        identities = geneReference.current?.table === pendingTable ? geneReference.current.reference : await loadGeneIdentityReference();
+        geneReference.current = { table: pendingTable, reference: identities };
+        const report = resolveGeneIdentifiers(pendingTable, identities);
+        pendingMappingFocus.current = report.collisionCount > 0 || (report.unresolvedCount > 0 && !allowUnresolvedIds);
+        setMapping(report);
+        if (report.collisionCount) throw new Error('Resolve duplicate gene mappings in your file before analysis. No rows have been merged.');
+        if (report.unresolvedCount && !allowUnresolvedIds) return;
+      }
       const reference = await loadPathwayReference();
-      const result = runExperimentAnalysis(pendingTable, { comparison, allTestedGenes,
-        thresholds: { adjustedPMax: Number(geneFdr), minAbsLog2FoldChange: Number(minimumFoldChange) } }, reference);
+      const result = runExperimentAnalysis(pendingTable, { comparison, allTestedGenes, allowUnresolvedIds,
+        thresholds: { adjustedPMax: Number(geneFdr), minAbsLog2FoldChange: Number(minimumFoldChange) } }, reference, identities);
       pendingResultFocus.current = true;
       setAnalysis(result); onResults(result);
       setQuery(''); setPage(0); setMemberPage(0); setPathwayId(null); setSignificantOnly(false);
@@ -117,7 +161,9 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   function clear() {
     ++readSequence.current;
     pendingResultFocus.current = false;
+    pendingMappingFocus.current = false;
     setPendingTable(null); setAnalysis(null); setAllTestedGenes(false); setBusy(null); setError('');
+    setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
     if (fileInput.current) fileInput.current.value = '';
     onResults(null); fileInput.current?.focus();
   }
@@ -149,6 +195,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
       <label className="experiment-file"><span>Human RNA-seq results</span>
         <input ref={fileInput} type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values" onChange={chooseFile} disabled={busy !== null} aria-describedby="experiment-format" />
       </label>
+      {columnInput && <label><span>Gene identifier column</span><select value={identifierColumn} onChange={(event) => chooseColumn(event.target.value)} disabled={busy !== null} required><option value="">Choose column</option>{columnInput.choices.map(({ index, label }) => <option key={index} value={index}>{label}</option>)}</select></label>}
       <label className="experiment-comparison"><span>Comparison</span>
         <input value={comparison} onChange={(event) => setComparison(event.target.value)} required maxLength={160} placeholder="Treatment / control" aria-describedby="experiment-contrast" />
       </label>
@@ -161,9 +208,13 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
       </button>{(analysis || pendingTable) && <button className="text-button" type="button" onClick={clear} disabled={busy === 'analyzing'}>Remove results</button>}</div>
       {busy === 'reading' && <p className="experiment-input-status" role="status">Reading results…</p>}
       {error && <p className="experiment-error" role="alert">{error}</p>}
+      {mapping && pendingTable !== analysis?.table && <div ref={mappingRegion} className="experiment-mapping" tabIndex={-1} role="region" aria-label="Identifier review">
+        {mapping.unresolvedCount > 0 && !mapping.collisionCount && <label className="experiment-background"><input type="checkbox" required checked={allowUnresolvedIds} onChange={(event) => setAllowUnresolvedIds(event.target.checked)} />Keep unresolved IDs unannotated in the eligible background</label>}
+        <GeneMappingDetails key={pendingTable?.filename} report={mapping} />
+      </div>}
       <details className="experiment-input-details"><summary>Input format and privacy</summary>
-        <p id="experiment-format">CSV or TSV with one human gene symbol per row and columns <code>gene</code>, <code>log2FoldChange</code> and <code>padj</code>. Include the full tested table, including nonsignificant genes. Maximum 5 MiB and 50,000 rows.</p>
-        <p>Ensembl IDs and duplicate symbols require resolution before upload. Rows missing log2FoldChange or padj stay in the input but are excluded from the enrichment background and selected set. Symbols are matched exactly; their spelling does not verify species or gene identity.</p>
+        <p id="experiment-format">CSV or TSV with one human gene symbol or Ensembl gene ID per row and columns <code>gene</code>, <code>log2FoldChange</code> and <code>padj</code>. Choose the identifier column if several are present. Include the full tested table, including nonsignificant genes. Maximum 5 MiB and 50,000 rows.</p>
+        <p>Ensembl IDs use a pinned HGNC cross-reference, with ambiguous/unmapped IDs reported and duplicate gene mappings blocked. Symbol inputs keep exact spelling. Rows missing either statistic remain in the input but are excluded from enrichment. Input species and annotation release are not verified.</p>
         <p>File contents are processed on this device and stay in this tab. They are not uploaded or automatically saved. The CSV template contains synthetic values and demonstrates the format only.</p>
       </details>
     </form>
@@ -220,6 +271,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
         </section>}
       </div>
       <details className="experiment-methods"><summary>Methods and reference</summary>
+        {analysis.identifierMapping && <GeneMappingDetails key={analysis.createdAt} report={analysis.identifierMapping} />}
         <dl className="context-list">
           <div><dt>Selected set</dt><dd>Gene FDR ≤ {analysis.thresholds.adjustedPMax}; |log₂ fold change| ≥ {analysis.thresholds.minAbsLog2FoldChange}. Supplied gene adjusted p-values are used without recalculation.</dd></div>
           <div><dt>Eligible background</dt><dd>{integer(analysis.backgroundGenes.length)} unique symbols with complete log2FoldChange and padj values, including unannotated eligible genes. {integer(analysis.table.missingStatisticsCount)} incomplete rows remain in the uploaded input and are excluded from the enrichment background and selected set.</dd></div>

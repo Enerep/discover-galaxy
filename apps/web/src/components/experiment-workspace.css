@@ -73,6 +73,11 @@
 .experiment-methods a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .experiment-empty { border-block: 1px solid var(--border); padding: 26px 0; }
 .experiment-empty h3 { font-size: 15px; font-weight: 500; line-height: 1.6; margin: 0 0 14px; }
+.experiment-mapping { grid-column: 1 / -1; min-width: 0; }
+.experiment-identifiers { min-width: 0; }
+.experiment-identifiers p { overflow-wrap: anywhere; }
+.experiment-identifiers a { color: var(--source-ink); display: inline-flex; align-items: center; min-height: 40px; }
+.experiment-identifiers .experiment-table-tools { margin-top: 10px; }
 @media (max-width: 1200px) {
   .experiment-workspace { padding-inline: 28px; }
   .experiment-input { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }

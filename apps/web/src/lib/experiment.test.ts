@@ -44,12 +44,29 @@ test('unknown, ambiguous or inconsistent columns and malformed quoting fail with
 
 test('duplicate genes and unsupported identifiers are rejected without casing conversion or merging', () => {
   assert.throws(() => parseExperiment(`${HEADER}\nAPOE,1,.01\n APOE ,-2,.001`, 'synthetic.csv'), /Row 3, gene: duplicate/);
-  for (const gene of ['Apoe', 'apoe', '348', 'ENSG00000130203', 'ENSG00000130203.12', 'ENSMUSG00000002985', 'APOE;ABCA1', 'C11orf' + '6'.repeat(65)]) {
+  for (const gene of ['Apoe', 'apoe', '348', 'ENSG123', 'ENSMUSG00000002985', 'APOE;ABCA1', 'C11orf' + '6'.repeat(65)]) {
     assert.throws(() => parseExperiment(`${HEADER}\n${gene},1,.01`, 'synthetic.csv'), /Row 2, gene:/);
   }
   // Syntactic acceptance is not a claim that the uploaded symbol exists in HGNC.
   const table = parseExperiment(`${HEADER}\nSYNTHETIC-WORKFLOW-GENE,1,.01`, 'synthetic.csv');
   assert.equal(table.rows[0].gene, 'SYNTHETIC-WORKFLOW-GENE');
+});
+
+test('Ensembl versions and unnamed R row names are preserved; mixed types need a separate column', () => {
+  const table = parseExperiment(',log2FoldChange,padj\nENSG00000130203.12,2,.01\nENSG00000095970,-1,.02', 'synthetic.csv');
+  assert.equal(table.identifierType, 'ensembl');
+  assert.equal(table.rows[0].gene, 'ENSG00000130203.12');
+  assert.throws(() => parseExperiment(`${HEADER}\nAPOE,2,.01\nENSG00000095970,1,.02`, 'synthetic.csv'), /cannot be mixed/);
+});
+
+test('explicit column selection resolves multiple identifier columns without changing data or guessing a symbol', () => {
+  const text = 'gene_id,symbol,log2FC,padj\nENSG00000130203,APOE,2,.01';
+  const ensembl = parseExperiment(text, 'synthetic.csv', { identifierColumn: 0 });
+  const symbols = parseExperiment(text, 'synthetic.csv', { identifierColumn: 1 });
+  assert.equal(ensembl.identifierType, 'ensembl');
+  assert.equal(symbols.identifierType, 'symbol');
+  assert.equal(ensembl.rows[0].log2FoldChange, symbols.rows[0].log2FoldChange);
+  assert.throws(() => parseExperiment(text, 'synthetic.csv', { identifierColumn: 8 }), /available/);
 });
 
 test('finite decimal statistics are required and missing values remain explicit', () => {
