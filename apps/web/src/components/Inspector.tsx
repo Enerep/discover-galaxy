@@ -9,6 +9,7 @@ import { PublicationStatus } from './PublicationStatus.tsx';
 import { StudyContextNote } from './StudyContextNote.tsx';
 import { formatProbability } from '../lib/experiment-analysis.ts';
 import type { ExperimentObservation } from '../lib/experiment-analysis.ts';
+import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
 
 function Disclosure({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -161,6 +162,7 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
             <div><dt>Selection</dt><dd>{experimentObservation.row.log2FoldChange === null || experimentObservation.row.padj === null ? 'Incomplete statistics'
               : experimentObservation.selected ? 'Meets gene cutoffs' : 'Outside gene cutoffs'}</dd></div>
           </dl>
+          <details><summary>Experiment context</summary><ExperimentContextDetails context={experimentObservation.context} /></details>
         </section>}
         <section className="findings" aria-label="Findings">
           {active && snapshot.claims.length > 1 && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}

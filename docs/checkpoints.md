@@ -24,9 +24,13 @@ The complete working path is processed human RNA-seq input → identifier audit 
 
 On the public MAYO table, all nine settings × 2,720 pathways matched independent SciPy calculations. Independent Python sets also matched all 1,673 groups. At the applied cutoffs, its 71 pathways at BH ≤0.05 appear as 37 groups, with every underlying result retained. These are input/reference-specific observations, not benchmarks or disease claims; full provenance and reproduction are in [experimental validation](experimental-validation.md).
 
-## Next checkpoint: experimental context and public use
+## Completed checkpoint: experiment context
 
-Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Explicit tissue/cell model and perturbation context can make follow-up questions more useful. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.
+Optional tissue/cell model, treatment/condition and explicit study design now scope follow-up questions. Observational comparisons prompt sample-composition and potential-confounder checks; treatment/perturbation studies prompt controlled manipulation or rescue designs. Applied context stays separate from pending fields and cited study metadata, and remains available beside a gene's RNA observation. Blank context is not inferred. Selection, membership, pathway statistics, sensitivity and overlap groups are unchanged, and context stays in memory outside worker messages/storage/exports. The example includes explicitly synthetic context.
+
+## Next checkpoint: public research use
+
+Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Expand curated gene evidence where those inputs reveal useful coverage gaps, with source-specific review. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.
 
 ## Existing workflow: build a research argument
 

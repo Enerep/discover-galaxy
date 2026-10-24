@@ -13,7 +13,10 @@ import { GeneMappingDetails } from './GeneMappingDetails.tsx';
 import { ThresholdSensitivity } from './ThresholdSensitivity.tsx';
 import { PathwayGroupMembers } from './PathwayGroupMembers.tsx';
 import { useExperimentRobustness } from '../lib/useExperimentRobustness.ts';
-import { createExampleExperiment, EXAMPLE_COMPARISON } from '../lib/experiment-example.ts';
+import { createExampleExperiment, EXAMPLE_COMPARISON, EXAMPLE_CONTEXT } from '../lib/experiment-example.ts';
+import { MAX_CONTEXT_LENGTH, normalizeExperimentContext, STUDY_DESIGN_LABELS } from '../lib/experiment-context.ts';
+import type { ExperimentContext } from '../lib/experiment-context.ts';
+import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
 import './experiment-workspace.css';
 
 interface Props {
@@ -51,6 +54,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const [pendingTable, setPendingTable] = useState<ExperimentTable | null>(null);
   const [analysis, setAnalysis] = useState<ExperimentAnalysis | null>(null);
   const [comparison, setComparison] = useState('');
+  const [context, setContext] = useState<ExperimentContext>(() => normalizeExperimentContext());
   const [geneFdr, setGeneFdr] = useState('0.05');
   const [minimumFoldChange, setMinimumFoldChange] = useState('1');
   const [allTestedGenes, setAllTestedGenes] = useState(false);
@@ -122,12 +126,14 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const questions = useMemo(() => analysis && selectedPathway ? buildExperimentQuestions(snapshot, analysis, selectedPathway.id) : [], [snapshot, analysis, selectedPathway]);
   const curatedGenes = useMemo(() => new Set(snapshot.entities.filter(({ type }) => type === 'gene').map(({ label }) => label)), [snapshot]);
   const changed = analysis && (pendingTable !== analysis.table || comparison.trim() !== analysis.comparison
+    || context.model.trim() !== analysis.context.model || context.condition.trim() !== analysis.context.condition || context.design !== analysis.context.design
     || Number(geneFdr) !== analysis.thresholds.adjustedPMax || Number(minimumFoldChange) !== analysis.thresholds.minAbsLog2FoldChange || !allTestedGenes);
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     if (pendingTable?.isSynthetic) setComparison('');
+    setContext(normalizeExperimentContext());
     const sequence = ++readSequence.current;
     setBusy('reading'); setError(''); setPendingTable(null); setAllTestedGenes(false);
     setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
@@ -174,7 +180,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
         if (report.unresolvedCount && !allowUnresolvedIds) return;
       }
       const reference = await loadPathwayReference();
-      const result = runExperimentAnalysis(pendingTable, { comparison, allTestedGenes, allowUnresolvedIds,
+      const result = runExperimentAnalysis(pendingTable, { comparison, context, allTestedGenes, allowUnresolvedIds,
         thresholds: { adjustedPMax: Number(geneFdr), minAbsLog2FoldChange: Number(minimumFoldChange) } }, reference, identities);
       applyAnalysis(result);
     } catch (cause) {
@@ -195,9 +201,10 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     try {
       const reference = await loadPathwayReference();
       const table = createExampleExperiment();
-      const result = runExperimentAnalysis(table, { comparison: EXAMPLE_COMPARISON, allTestedGenes: true,
+      const result = runExperimentAnalysis(table, { comparison: EXAMPLE_COMPARISON, context: EXAMPLE_CONTEXT, allTestedGenes: true,
         thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 } }, reference);
       setPendingTable(table); setComparison(EXAMPLE_COMPARISON); setAllTestedGenes(true);
+      setContext({ ...EXAMPLE_CONTEXT });
       setGeneFdr('0.05'); setMinimumFoldChange('1');
       applyAnalysis(result);
     } catch (cause) {
@@ -210,6 +217,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     pendingResultFocus.current = false;
     pendingMappingFocus.current = false;
     if (pendingTable?.isSynthetic) setComparison('');
+    setContext(normalizeExperimentContext());
     setPendingTable(null); setAnalysis(null); setAllTestedGenes(false); setBusy(null); setError('');
     setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
     setGroupOverlaps(false); setSensitivityOpen(false);
@@ -254,6 +262,15 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
       <span className="sr-only" id="experiment-contrast">Enter the numerator and denominator. Positive log2 fold changes describe higher expression in the numerator.</span>
       <label><span>Gene FDR</span><input type="number" required min="0" max="1" step="any" value={geneFdr} onChange={(event) => setGeneFdr(event.target.value)} /></label>
       <label><span>|log₂ fold change|</span><input type="number" required min="0" step="any" value={minimumFoldChange} onChange={(event) => setMinimumFoldChange(event.target.value)} /></label>
+      <details className="experiment-input-details experiment-context-input"><summary>Experiment context (optional)</summary>
+        <div className="experiment-context-fields">
+          <label><span>Tissue or cell model</span><input value={context.model} onChange={(event) => setContext({ ...context, model: event.target.value })} maxLength={MAX_CONTEXT_LENGTH} placeholder="e.g. iPSC-derived microglia" disabled={busy !== null} /></label>
+          <label><span>Treatment or condition</span><input value={context.condition} onChange={(event) => setContext({ ...context, condition: event.target.value })} maxLength={MAX_CONTEXT_LENGTH} placeholder="e.g. AD vs control" disabled={busy !== null} /></label>
+          <label><span>Study design</span><select value={context.design} onChange={(event) => setContext({ ...context, design: event.target.value as ExperimentContext['design'] })} disabled={busy !== null}>
+            {Object.entries(STUDY_DESIGN_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select></label>
+        </div>
+      </details>
       <label className="experiment-background"><input type="checkbox" required checked={allTestedGenes} onChange={(event) => setAllTestedGenes(event.target.checked)} />This table contains all tested genes</label>
       <div className="experiment-run-actions"><button className="primary-button" type="submit" disabled={!pendingTable || busy !== null}>
         {busy === 'analyzing' ? 'Analyzing…' : changed ? 'Apply changes' : 'Analyze results'}<Icon name="arrow" size={16} />
@@ -331,6 +348,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
         </section>}
       </div>
       <details className="experiment-methods"><summary>Methods and reference</summary>
+        <details><summary>Applied experiment context</summary><ExperimentContextDetails context={analysis.context} /><p>Context is provided by the researcher and shapes follow-up questions. It does not change the uploaded statistics, pathway reference or enrichment calculations.</p></details>
         {analysis.identifierMapping && <GeneMappingDetails key={analysis.createdAt} report={analysis.identifierMapping} />}
         <dl className="context-list">
           {analysis.table.isSynthetic && <div><dt>Example data</dt><dd>All measurements are invented. This small demonstration background is not a real experiment. Pathway memberships use the same pinned reference as uploaded analyses.</dd></div>}

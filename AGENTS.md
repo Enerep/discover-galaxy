@@ -36,6 +36,8 @@ The public research-preview workflow also includes on-demand local-worker thresh
 
 **Try example** opens an authored synthetic demonstration through the same analysis code. Preserve `table.isSynthetic` through cutoff changes and label its results, questions and explorer observations accordingly, even after the comparison is edited. Do not infer synthetic provenance from uploaded text or replace pending/applied results with the example. These measurements never enter the curated dataset or shared exports.
 
+Optional `ExperimentContext` records model/condition strings (single line, ≤160 characters each) and an explicitly selected study design. Never infer context from a contrast, filename or gene. Context scopes rule-based questions; observational designs prompt composition/covariate checks, treatment designs prompt controlled perturbation/rescue tests. It cannot change numerical selection/enrichment or establish tissue-specific reference membership, source comparability, genotype or causality. Keep pending context separate from the applied snapshot, retain that snapshot after failed applies, and reset input context on a new file/removal. Context and synthetic example model labels stay outside storage, network/worker payloads, graph records and existing exports.
+
 ## Dependency security
 
 Original software and project-authored documentation use the root [MIT License](LICENSE). Preserve its copyright and permission notice. Third-party dependencies, scientific datasets, and publications retain their own terms; selecting MIT does not complete source reuse checks or scientific approval.

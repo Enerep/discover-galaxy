@@ -6,6 +6,8 @@ import { selectExperimentHits } from './experiment.ts';
 import type { ExperimentRow, ExperimentTable, ExperimentThresholds } from './experiment.ts';
 import { applyGeneMapping, resolveGeneIdentifiers } from './gene-identifiers.ts';
 import type { GeneIdentityReference, GeneMappingReport } from './gene-identifiers.ts';
+import { describeExperimentContext, normalizeExperimentContext } from './experiment-context.ts';
+import type { ExperimentContext } from './experiment-context.ts';
 
 export interface PathwayReference {
   schema_version: 1;
@@ -21,6 +23,7 @@ export interface ExperimentAnalysis {
   rows: ExperimentRow[];
   identifierMapping: GeneMappingReport | null;
   comparison: string;
+  context: ExperimentContext;
   thresholds: ExperimentThresholds;
   reference: PathwayReference;
   backgroundGenes: string[];
@@ -32,6 +35,7 @@ export interface ExperimentAnalysis {
 }
 export interface ExperimentObservation {
   comparison: string;
+  context: ExperimentContext;
   isSynthetic?: true;
   row: ExperimentRow;
   selected: boolean;
@@ -88,9 +92,10 @@ export async function loadPathwayReference(): Promise<PathwayReference> {
   return validatePathwayReference(payload);
 }
 
-export function runExperimentAnalysis(table: ExperimentTable, options: { comparison: string; thresholds: ExperimentThresholds; allTestedGenes: boolean; allowUnresolvedIds?: boolean }, reference: PathwayReference, geneReference?: GeneIdentityReference): ExperimentAnalysis {
+export function runExperimentAnalysis(table: ExperimentTable, options: { comparison: string; context?: Partial<ExperimentContext>; thresholds: ExperimentThresholds; allTestedGenes: boolean; allowUnresolvedIds?: boolean }, reference: PathwayReference, geneReference?: GeneIdentityReference): ExperimentAnalysis {
   if (options.allTestedGenes !== true) throw new Error('Use the full tested-gene table as the background, including genes that did not pass your cutoffs.');
   if (typeof options.comparison !== 'string' || !options.comparison.trim() || options.comparison.trim().length > 160) throw new Error('Name the comparison, in numerator / denominator order.');
+  const context = normalizeExperimentContext(options.context);
   validatePathwayReference(reference);
   if (table.identifierType === 'ensembl' && !geneReference) throw new Error('Load the pinned Ensembl identifier reference before analysis.');
   const identifierMapping = table.identifierType === 'ensembl' ? resolveGeneIdentifiers(table, geneReference!) : null;
@@ -103,7 +108,7 @@ export function runExperimentAnalysis(table: ExperimentTable, options: { compari
   if (!background.length) throw new Error('No genes have both a fold change and an adjusted p-value. Supply complete tested-gene results for enrichment.');
   const pathways = enrichPathways(background, selected.map(({ gene }) => gene), reference.pathways);
   const annotated = new Set(reference.pathways.flatMap(({ genes }) => genes));
-  return { table, rows, identifierMapping, comparison: options.comparison.trim(), thresholds: { ...options.thresholds }, reference, selected, backgroundGenes: background,
+  return { table, rows, identifierMapping, comparison: options.comparison.trim(), context, thresholds: { ...options.thresholds }, reference, selected, backgroundGenes: background,
     mappedGenesCount: background.filter((gene) => annotated.has(gene)).length, pathways, createdAt: new Date().toISOString(),
     backgroundDeclaration: 'full_tested_table_supplied' };
 }
@@ -128,14 +133,32 @@ export function buildExperimentQuestions(snapshot: Snapshot, analysis: Experimen
   const selected = new Map(analysis.selected.map((row) => [row.gene, row]));
   const row = result.overlapGenes.map((gene) => selected.get(gene)!)
     .sort((left, right) => Math.abs(right.log2FoldChange!) - Math.abs(left.log2FoldChange!) || left.gene.localeCompare(right.gene))[0];
+  const context = analysis.context;
+  const scope = context.model ? `in ${context.model}` : 'in your experimental model';
+  const condition = context.condition ? ` for ${context.condition}` : '';
+  const contextNote = describeExperimentContext(context);
+  const contextualAssumptions = [
+    ...(contextNote ? ['Experiment context is researcher-supplied; it does not verify the samples or establish that a cited study used the same model or condition.'] : []),
+    ...(!context.model ? ['Specify the tissue or cell model before choosing a follow-up assay.'] : []),
+    ...(!context.condition ? ['Specify the treatment or condition and the comparison groups before choosing controls.'] : []),
+    ...(context.design === 'unspecified' ? ['Study design is unspecified. The comparison label does not establish whether a treatment was applied or groups were observed.'] : []),
+  ];
+  const observational = context.design === 'observational';
+  let suggestedTest = `Choose a readout from the linked pathway record, test a controlled perturbation of ${row.gene} ${scope}${condition}, and compare with matched controls. Validate the transcript result in independent samples.`;
+  if (context.design === 'perturbation') {
+    suggestedTest = `Test ${row.gene} perturbation ${scope}${condition}. If the original intervention and gene perturbation are distinct, include each alone, their combination and matched controls; if they target the same gene, consider a rescue design. Choose a readout from the linked pathway record and validate the transcript result in independent samples.`;
+  } else if (observational) {
+    suggestedTest = `Check sample composition and recorded study covariates ${scope}${condition}; decide which are potential confounders before adjustment. Reassess the gene-expression difference with an appropriate model and validate it in independent matched samples. A separate controlled perturbation would be needed to investigate a causal role for ${row.gene}.`;
+  }
   const question: ExperimentQuestion = {
-    id: `perturbation-${result.id}-${row.gene}`,
-    question: `Does altering ${row.gene} change a readout of ${result.name} in your experimental model?`,
-    premise: `${row.gene}: log₂ fold change ${row.log2FoldChange}, gene FDR ${formatProbability(row.padj!)} in ${analysis.comparison}. It is an exact member of this reference pathway. Pathway FDR: ${formatProbability(result.adjustedPValue, result.logAdjustedPValue)}.`,
+    id: `gene-followup-${result.id}-${row.gene}`,
+    question: observational ? `Does the ${row.gene} RNA difference persist within comparable samples ${scope}${condition}?`
+      : `Does altering ${row.gene} change a readout of ${result.name} ${scope}${condition}?`,
+    premise: `${row.gene}: log₂ fold change ${row.log2FoldChange}, gene FDR ${formatProbability(row.padj!)} in ${analysis.comparison}. It is an exact member of this reference pathway. Pathway FDR: ${formatProbability(result.adjustedPValue, result.logAdjustedPValue)}.${contextNote ? ` ${contextNote}` : ''}`,
     assumptions: ['The uploaded contrast and full tested-gene background are appropriate. Gene symbols match by exact spelling; identity and species were declared, not independently verified.',
       'A suitable model and pathway readout must be chosen. RNA differential expression and membership overrepresentation do not establish pathway activation or a causal role for this gene.',
-      'This is a rule-based question for investigation; novelty and experimental feasibility have not been assessed.'],
-    suggestedTest: `Choose a readout from the linked pathway record, test a controlled perturbation of ${row.gene} in the model used for ${analysis.comparison}, and compare with matched controls. Validate the transcript result in independent samples.`,
+      'This is a rule-based question for investigation; novelty and experimental feasibility have not been assessed.', ...contextualAssumptions],
+    suggestedTest,
     sources: [{ title: result.name, url: result.url }], claimIds: [],
   };
   const questions = [question];
@@ -143,12 +166,12 @@ export function buildExperimentQuestions(snapshot: Snapshot, analysis: Experimen
   if (note && selected.has('APOE') && selected.has('TREM2') && result.overlapGenes.some((gene) => gene === 'APOE' || gene === 'TREM2')) {
     const sourceIds = new Set(note.claim_ids.flatMap((id) => getClaimEvidence(snapshot, id).map(({ source_id }) => source_id)));
     questions.push({ id: 'transcripts-to-apoe-trem2-binding',
-      question: 'Do the APOE and TREM2 transcript changes correspond to changes in protein abundance or binding?',
-      premise: ['APOE', 'TREM2'].map((gene) => { const item = selected.get(gene)!; return `${gene}: log₂ fold change ${item.log2FoldChange}, gene FDR ${formatProbability(item.padj!)}.`; }).join(' ') + ` Literature context: ${note.comparison}`,
+      question: `Do the APOE and TREM2 transcript changes correspond to changes in protein abundance or binding ${scope}${condition}?`,
+      premise: ['APOE', 'TREM2'].map((gene) => { const item = selected.get(gene)!; return `${gene}: log₂ fold change ${item.log2FoldChange}, gene FDR ${formatProbability(item.padj!)}.`; }).join(' ') + ` Literature context: ${note.comparison}${contextNote ? ` ${contextNote}` : ''}`,
       assumptions: ['The input contains RNA-level results, not protein abundance, lipidation, isoform or binding measurements.',
         'The cited wild-type/R47H binding studies are methodological context; they do not establish that this experiment involves R47H or that RNA changes reproduce their results.',
-        'The experimental model, genotype and sample composition need to be checked. This proposal is not a novel or validated mechanism.'],
-      suggestedTest: 'Measure the corresponding proteins in matched samples. If binding is the question, choose and record a defined protein preparation, genotype, controls and readout; compare with the methods and limits of the two cited assays.',
+        'The experimental model, genotype and sample composition need to be checked. This proposal is not a novel or validated mechanism.', ...contextualAssumptions],
+      suggestedTest: `Measure the corresponding proteins in matched samples ${scope}${condition}. If binding is the question, choose and record a defined protein preparation, genotype, controls and readout; compare with the methods and limits of the two cited assays.`,
       sources: snapshot.sources.filter(({ id }) => sourceIds.has(id)).map(({ title, url }) => ({ title, url })), claimIds: [...note.claim_ids] });
   }
   return questions;

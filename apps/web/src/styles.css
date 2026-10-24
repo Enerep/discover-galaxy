@@ -149,6 +149,7 @@ p { line-height: 1.65; }
 .experiment-observation h3 { margin: 0 0 10px; font-size: 14px; font-weight: 550; }
 .experiment-observation p { font-size: 13px; color: var(--secondary-ink); overflow-wrap: anywhere; }
 .experiment-observation .context-list { margin: 12px 0 0; }
+.experiment-observation summary { min-height: 44px; padding-block: 12px; font-size: 13px; color: var(--secondary-ink); cursor: pointer; }
 .explorer { min-width: 0; outline: none; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 25px; }
 .page-heading h1 { font-size: 32px; font-weight: 550; letter-spacing: -1.15px; margin: 0; line-height: 1.2; }

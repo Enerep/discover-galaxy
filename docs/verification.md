@@ -1,5 +1,13 @@
 # Development preview verification
 
+## Optional experiment context — 2026-10-24
+
+**Experiment context (optional)** captures a tissue/cell model, treatment/condition and explicit study design, keeping the main upload/cutoff row compact. A normalized copy belongs to the applied analysis; pending edits and failed applies leave its questions and explorer observations unchanged. Observational designs prompt checks of sample composition and possible confounders, while treatment designs propose controlled perturbation/rescue experiments. Missing context stays unspecified. Context is researcher-supplied, remains distinct from cited-study metadata, and cannot change reference membership or numerical results. The example includes explicitly synthetic context, cleared when a new file is chosen or results are removed.
+
+All **102 native tests** and strict typechecking/production build pass. New checks cover bounded/invalid input, copied metadata, absent versus explicitly chosen design, unchanged measurements/background/selection/full pathway statistics, identical sensitivity/groups, preserved citations and RNA-to-protein limits, and synthetic provenance. Both pinned-reference checks and dependency safeguards pass; no scientific data, reference bytes, lockfile or install policy changed.
+
+Five focused production-browser suites pass: context, the built-in example, existing RNA-seq analysis, Ensembl mapping and worker robustness. They cover keyboard entry/focus, light desktop and 360 px dark touch/WebGL fallback, pending/applied separation, failed-reference recovery, replacement/removal/reload, long-text wrapping and escaped markup, source navigation, and no RNA observations on proteins. Context stays out of numerical worker messages, requests, local/session storage and URLs. Three existing idle samples observed 0 frame requests / 0 WebGL draws. Input/question screenshots were inspected in both layouts. These are local headless Chromium checks, not deployed Vercel, real-device or independent scientific verification.
+
 ## Try the analysis with an example — 2026-10-24
 
 **Try example** opens a 120-gene synthetic table through the normal parser and analysis implementation, with 12 selected genes at the example cutoffs. The values are authored, not experimental observations. Pathway membership uses the existing pinned Reactome reference. Synthetic provenance remains visible beside results and matched-gene observations after changing cutoffs or editing the comparison; generated prompts are labeled **Example questions**. Existing uploads/results cannot be overwritten by the example button, and removing the demonstration restores the entry point. No scientific records, references, dependencies or install policies changed.

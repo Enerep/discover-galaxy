@@ -1250,7 +1250,7 @@ def assert_experiment_analysis(browser, base_url: str, screenshots: Path, public
     observation = page.get_by_role('region', name='Your RNA-seq result', exact=True)
     expect(observation).to_contain_text('QA synthetic RNA numerator / denominator')
     expect(observation).to_contain_text('Meets gene cutoffs')
-    expect(observation.locator('dd')).to_have_text(['2', '0.01', 'Meets gene cutoffs'])
+    expect(observation.locator(':scope > dl > div > dd')).to_have_text(['2', '0.01', 'Meets gene cutoffs'])
     expect(page.locator('.source-link')).to_have_attribute('href', 'https://pubmed.ncbi.nlm.nih.gov/8346443/')
     page.locator('.claim-button').filter(has_text='Encodes · APOE protein').click()
     page.get_by_role('button', name='View APOE protein', exact=True).click()
@@ -1733,6 +1733,131 @@ def assert_experiment_example(browser, base_url: str, screenshots: Path) -> None
     print('PASS: one-click synthetic example supports keyboard/mobile/themes, reference retry, cutoff/group inspection, cited gene navigation, persistent provenance and replacement with an upload without storage or uploads.')
 
 
+def assert_experiment_context(browser, base_url: str, screenshots: Path) -> None:
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
+                                      reduced_motion='reduce', is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light')
+        context.add_init_script('''
+          window.__contextMessages = [];
+          const OriginalWorker = window.Worker;
+          window.Worker = class extends OriginalWorker {
+            postMessage(message, ...rest) { window.__contextMessages.push(JSON.stringify(message)); return super.postMessage(message, ...rest); }
+          };
+        ''')
+        if mobile:
+            context.add_init_script('''const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                    return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+                };''')
+        page = context.new_page()
+        errors, requests = [], []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+        page.goto(base_url, wait_until='networkidle')
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        workspace.get_by_role('button', name='Try example', exact=True).click()
+        expect(workspace.locator('#experiment-results-title')).to_have_text('Synthetic example: treatment / control')
+        inputs = form.locator('.experiment-context-input')
+        summary = inputs.locator('summary')
+        expect(inputs).not_to_have_attribute('open', '')
+        summary.focus()
+        page.keyboard.press('Enter')
+        model = inputs.get_by_role('textbox', name='Tissue or cell model', exact=True)
+        condition = inputs.get_by_role('textbox', name='Treatment or condition', exact=True)
+        design = inputs.get_by_role('combobox', name='Study design', exact=True)
+        expect(model).to_have_value('Cultured microglia (synthetic)')
+        expect(design).to_have_value('perturbation')
+        assert_touch_target(summary)
+        for control in [model, condition, design]:
+            assert_touch_target(control)
+            assert_text_contrast(control)
+        page.screenshot(path=str(screenshots / f'context-input-{"mobile" if mobile else "desktop"}.png'))
+        baseline = workspace.locator('.experiment-pathways table').text_content()
+        counts = workspace.locator('.experiment-counts dd')
+        questions = workspace.locator('.experiment-questions')
+        model.fill('QA postmortem cortex')
+        condition.fill('QA AD versus control')
+        design.select_option('observational')
+        expect(form.get_by_role('button', name='Apply changes', exact=True)).to_be_enabled()
+        expect(questions).not_to_contain_text('QA postmortem cortex')
+        form.get_by_role('button', name='Apply changes', exact=True).click()
+        expect(questions.locator('h5').first).to_contain_text('persist within comparable samples in QA postmortem cortex for QA AD versus control')
+        expect(questions).to_contain_text('Researcher-supplied context')
+        expect(counts).to_have_text(['120', '12', '119', '748'])
+        assert workspace.locator('.experiment-pathways table').text_content() == baseline
+        first = questions.locator('article').first
+        first.get_by_text('Assumptions and proposed test', exact=True).click()
+        expect(first).to_contain_text('potential confounders before adjustment')
+        expect(first).to_contain_text('separate controlled perturbation')
+        first.scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f'context-question-{"mobile" if mobile else "desktop"}.png'))
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        # Pending edits must not relabel an applied result or its explorer observation.
+        model.fill('QA pending model')
+        workspace.get_by_role('button', name='View APOE evidence', exact=True).click()
+        observation = page.get_by_role('region', name='Synthetic RNA-seq example', exact=True)
+        observation.get_by_text('Experiment context', exact=True).click()
+        expect(observation).to_contain_text('QA postmortem cortex')
+        expect(observation).not_to_contain_text('QA pending model')
+        expect(observation).to_contain_text('Observational comparison')
+        page.locator('.claim-button').filter(has_text='Encodes · APOE protein').click()
+        page.get_by_role('button', name='View APOE protein', exact=True).click()
+        expect(observation).to_have_count(0)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        expect(model).to_have_value('QA pending model')
+        page.route('**/reactome-pathways-*.json', lambda route: route.abort(), times=1)
+        form.locator('button[type=submit]').click()
+        expect(workspace.get_by_role('alert')).to_contain_text('Unable to load the pathway reference')
+        expect(questions.locator('h5').first).to_contain_text('QA postmortem cortex')
+        methods = workspace.locator('.experiment-methods')
+        methods.get_by_text('Methods and reference', exact=True).click()
+        methods.get_by_text('Applied experiment context', exact=True).click()
+        expect(methods).to_contain_text('QA postmortem cortex')
+        expect(methods).not_to_contain_text('QA pending model')
+        design.select_option('perturbation')
+        model.fill('QA ' + 'W' * 150)
+        condition.fill('<b>QA treatment</b>')
+        form.locator('button[type=submit]').click()
+        expect(questions.locator('h5').first).to_contain_text('Does altering')
+        expect(questions).to_contain_text('<b>QA treatment</b>')
+        expect(questions.locator('b')).to_have_count(0)
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Long context text must wrap.'
+        assert workspace.locator('.experiment-pathways table').text_content() == baseline
+        sensitivity = workspace.locator('.experiment-sensitivity')
+        sensitivity.get_by_text('Threshold sensitivity', exact=True).click()
+        expect(sensitivity.locator('.experiment-sensitivity-count')).to_contain_text('of 9 settings', timeout=15000)
+        assert not any('QA treatment' in message for message in page.evaluate('window.__contextMessages'))
+        # An uploaded replacement must not inherit the example's model or intervention.
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'context-replacement.csv',
+            'mimeType': 'text/csv', 'buffer': b'gene,log2FoldChange,padj\nAPOE,2,.01\nABCA1,.1,.8\n'})
+        expect(model).to_have_value('')
+        expect(condition).to_have_value('')
+        expect(design).to_have_value('unspecified')
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('AD versus control')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        form.locator('button[type=submit]').click()
+        expect(questions.locator('h5').first).to_contain_text('in your experimental model')
+        first = questions.locator('article').first
+        first.get_by_text('Assumptions and proposed test', exact=True).click()
+        expect(first).to_contain_text('Study design is unspecified')
+        expect(questions).not_to_contain_text('QA treatment')
+        form.get_by_role('button', name='Remove results', exact=True).click()
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        assert all(method == 'GET' and data is None and 'QA%20' not in url for method, url, data in requests)
+        assert 'QA ' not in page.evaluate('JSON.stringify({ local: {...localStorage}, session: {...sessionStorage} })')
+        assert 'QA' not in page.url
+        page.reload(wait_until='networkidle')
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        assert not errors, errors
+        context.close()
+    print('PASS: optional study context changes proposed questions, preserves statistics, separates pending/applied metadata, retains citation/RNA limits, escapes and wraps input, resets on replacement/removal, and stays out of worker messages, requests and storage on desktop/mobile/fallback.')
+
+
 def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path | None = None) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -2041,6 +2166,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_identifier_mapping(browser, base_url, screenshots)
         assert_experiment_robustness(browser, base_url, screenshots)
         assert_experiment_example(browser, base_url, screenshots)
+        assert_experiment_context(browser, base_url, screenshots)
         if public_ad_table is not None:
             assert_public_ad_results(browser, base_url, screenshots, public_ad_table)
         browser.close()

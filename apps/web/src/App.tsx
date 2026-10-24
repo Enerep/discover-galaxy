@@ -335,7 +335,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
           onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection}
           pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin}
-          experimentObservation={experiment && observation ? { comparison: experiment.comparison, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
+          experimentObservation={experiment && observation ? { comparison: experiment.comparison, context: experiment.context, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
             selected: experiment.selected.some(({ gene }) => gene === observation.gene) } : null} />
       </div>
 
