@@ -43,14 +43,14 @@ The owner reports a working Vercel development deployment. **The curated evidenc
 ## Analyze an experiment
 
 1. Open **Analyze results** and choose a UTF-8 CSV or TSV of gene-level differential-expression results.
-2. Provide human gene symbols, `log2FoldChange` and `padj`. The CSV template contains synthetic format examples. Raw counts, Ensembl IDs and duplicate symbols need preprocessing before this version can use them.
+2. Provide human gene symbols or Ensembl gene IDs, `log2FoldChange` and `padj`. Choose the identifier column when several are present; unnamed R row-name columns are supported. The CSV template contains synthetic format examples. Raw counts and duplicate gene identities require preprocessing.
 3. Name the comparison in numerator / denominator order and confirm that the file contains the full tested table, including nonsignificant genes.
 4. Choose gene FDR and absolute fold-change cutoffs, then run the analysis. Open a pathway to inspect its eligible member genes, original Reactome record and questions to investigate.
 5. Where the curated library covers a gene, choose **View … evidence** to inspect the uploaded transcript result beside the original findings. Protein nodes do not inherit RNA measurements.
 
 The enrichment background includes all uploaded genes with complete fold-change and adjusted-p statistics, before applying either cutoff. Incomplete rows are retained in the input and reported as excluded from enrichment. Eligible genes without matching annotations still count in the background. BH correction covers every pathway with an eligible member, including zero-hit pathways. Original gene padj values are not recalculated. **Methods and reference** records the actual thresholds, background, family size, reference and limitations; enrichment does not measure pathway activity or establish causality. Up/down changes are pooled for this membership test and remain visible individually.
 
-Inputs are limited to 5 MiB and 50,000 rows. Matching uses exact symbol spelling; syntax does not verify HGNC identity or species. The workflow works without WebGL, an AI key or a backend. Switching workspaces retains the analysis in memory; reloading the page drops the uploaded table. Proposed questions are deterministic starting points, not scientific approvals or claims of novelty. This tool interprets an existing differential-expression analysis and does not rerun DESeq2 or analyze raw reads/counts.
+Inputs are limited to 5 MiB and 50,000 rows. Symbols match exactly. Ensembl IDs use a [pinned HGNC cross-reference](docs/experimental-validation.md#pinned-identifiers), retaining original IDs and version suffixes in the audit. Unresolved/ambiguous IDs remain unannotated after explicit acknowledgement, and duplicate gene mappings block analysis. Neither mapping nor syntax verifies sample species or the experiment's annotation release. The workflow works without WebGL, an AI key or a backend. Switching workspaces retains the analysis in memory; reloading the page drops the uploaded table. Proposed questions are deterministic starting points, not scientific approvals or claims of novelty. This tool interprets an existing differential-expression analysis and does not rerun DESeq2 or analyze raw reads/counts.
 
 ## Run locally
 
@@ -158,6 +158,7 @@ These resources help find and contextualize evidence. Database associations, met
 | --- | --- |
 | [steps.md](steps.md) | Ordered milestones, dependencies, and completion criteria |
 | [Checkpoint plan](docs/checkpoints.md) | Experimental-data interpretation, evidence comparison, and future coverage |
+| [Experimental validation](docs/experimental-validation.md) | HGNC identity mapping, public AD/airway calculations, provenance and reproducible QA |
 | [Pathway reference](data/reference/README.md) | Pinned Reactome data, CC0 reuse, preparation, and external validation provenance |
 | [Product specification](docs/product.md) | Audience, user journeys, scope, and release criteria |
 | [Design guide](docs/design.md) | Simple workflows, clean presentation, plain language, and purposeful motion |

@@ -87,7 +87,9 @@ This is a user writing workflow. It does not add curator-reviewed questions, est
 - [x] Inspect signed member results, source records and rule-based follow-up questions with assumptions; link covered genes to a separate transcript observation in the existing evidence panel.
 - [x] Validate numerical results against independent SciPy calculations on a real public human RNA-seq reanalysis, with conversion/provenance limits recorded and no raw table bundled.
 - [x] Exercise upload/recovery/privacy, keyboard/themes/mobile/WebGL fallback and existing explorer flows in browser QA; record final observations in verification.
-- [ ] Add pinned HGNC/Ensembl identity mapping with explicit ambiguity reports, then assess an AD validation dataset, threshold sensitivity and pathway redundancy.
+- [x] Add pinned HGNC/Ensembl mapping, explicit column choice, original-ID/version traceability, ambiguity acknowledgement and blocked duplicate mappings.
+- [x] Validate supplied public MAYO AD and original Ensembl airway results against independent SciPy calculations; record conversions, source scopes and rejected data-quality candidates.
+- [ ] Assess threshold sensitivity and pathway redundancy without treating related terms as independent mechanisms.
 
 This workflow interprets processed results; it does not run raw-count differential expression, verify input species/identity, model gene-length/expression selection bias, prove pathway activity or promote questions into the curated scientific snapshot. No backend, upload service or live AI model was added.
 

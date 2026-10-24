@@ -1,5 +1,7 @@
 # Human pathway analysis reference
 
+The separate [HGNC Ensembl reference](../../docs/experimental-validation.md#pinned-identifiers) supports identifier resolution without rewriting Reactome memberships. Its preparation, CC0 attribution, pinned hashes and public AD/airway validation results are documented separately.
+
 [reactome-pathways.json](reactome-pathways.json) is a bounded reference for interpreting uploaded human gene-level results. It is separate from the Alzheimer's knowledge-graph snapshot, its claims and its scientific-review records. It contains **2,751 human Reactome pathway IDs and 11,727 distinct original member strings**. It is a broad pathway collection, not a comprehensive list of human genes or an Alzheimer's-specific mechanism map.
 
 ## Provenance and reuse

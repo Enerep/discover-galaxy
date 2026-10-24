@@ -14,7 +14,7 @@ The primary audience is researchers interpreting processed human RNA-seq differe
 
 ## Experimental-data journey
 
-Upload a full human-symbol results table, name the contrast, declare its completeness and choose gene-level cutoffs. Inspect overrepresented pathways against the eligible tested genes, then examine signed member-level results and the linked pathway record. Follow covered genes into the curated explorer without turning RNA changes into genetic-risk or protein-binding claims. Investigate rule-based questions with explicit premises, assumptions and suggested tests. The uploaded table stays in this tab and creates no scientific record or review attestation.
+Upload a full human-symbol or Ensembl results table, name the contrast, declare its completeness and choose gene-level cutoffs. Inspect overrepresented pathways against the eligible tested genes, then examine signed member-level results and the linked pathway record. Follow covered genes into the curated explorer without turning RNA changes into genetic-risk or protein-binding claims. Investigate rule-based questions with explicit premises, assumptions and suggested tests. The uploaded table stays in this tab and creates no scientific record or review attestation.
 
 The initial analysis uses a pinned broad Reactome library with unknown exact upstream release. It tests threshold-selected genes in either direction with right-tailed hypergeometric probabilities and BH correction over all pathways with eligible members, including zero hits. Incomplete statistics exclude a row from ORA eligibility; unannotated eligible genes remain in the background. Gene FDR input and adjusted pathway p-values are distinct. Gene-length/expression selection bias, annotation coverage and overlapping pathways limit interpretation; significant rows are not independent mechanisms or activity measurements.
 
@@ -36,7 +36,7 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 | Capability | Required behavior |
 | --- | --- |
 | 3D exploration | Select and focus entities; distinguish entity types; expose labeled relationship details |
-| Experimental-data interpretation | Parse a full human-symbol RNA-seq results table locally, test pathway overrepresentation with declared eligibility and multiple-testing correction, inspect measurements and propose source-linked follow-up questions |
+| Experimental-data interpretation | Parse a full human-symbol or Ensembl RNA-seq results table locally, test pathway overrepresentation with declared eligibility and multiple-testing correction, inspect measurements and propose source-linked follow-up questions |
 | Search and filters | Search labels, aliases, and curated identifiers; show active filters and no-result states |
 | Evidence inspection | Show exact claims, evidence direction, context, uncertainty, and links to original references |
 | Finding comparison | Align claim scope and source-specific context without pooling participants or inferring agreement, conflict, independence, or strength; preserve citations in a downloadable brief |

@@ -1400,7 +1400,128 @@ def assert_experiment_analysis(browser, base_url: str, screenshots: Path, public
     print('PASS: RNA-seq analysis uses the eligible tested universe while retaining missing input and unannotated eligible genes, separates RNA observations from original claims, proposes cited questions, retains results after failed replacement/reference fetch, and supports keyboard, themes, touch and unavailable WebGL without uploading or saving input.')
 
 
-def run(base_url: str, executable: str, screenshots: Path) -> None:
+def assert_identifier_mapping(browser, base_url: str, screenshots: Path) -> None:
+    csv = ('gene_id,symbol,log2FoldChange,padj\nENSG00000130203.12,WRONGSYMBOL,2,.01\n'
+           'ENSG00000095970,TREM2,-1.5,.02\nENSG00000165029,ABCA1,.1,.7\n'
+           'ENSG99999999999,SYNTHETICUNKNOWN,.3,.8\nENSG00000230417,SYNTHETICAMBIGUOUS,1.2,.03\n'
+           'ENSG00000011600,TYROBP,NA,NA\n')
+    reference = json.loads((Path(__file__).resolve().parents[1] / 'data/reference/reactome-pathways.json').read_text())
+    eligible = {'APOE', 'TREM2', 'ABCA1', 'ENSG99999999999', 'ENSG00000230417'}
+    family = sum(bool(eligible.intersection(row['genes'])) for row in reference['pathways'])
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000}, reduced_motion='reduce', color_scheme='dark' if mobile else 'light', is_mobile=mobile, has_touch=mobile)
+        context.add_init_script(RENDER_COUNTERS)
+        page = context.new_page()
+        requests = []
+        errors = []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+        page.goto(base_url, wait_until='networkidle')
+        assert not any('hgnc-ensembl' in url for _, url, _ in requests)
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        upload = form.get_by_label('Human RNA-seq results', exact=True)
+        upload.set_input_files({'name': 'synthetic-ensembl.csv', 'mimeType': 'text/csv', 'buffer': csv.encode()})
+        column = form.get_by_role('combobox', name='Gene identifier column', exact=True)
+        expect(column).to_be_visible()
+        submit = form.locator('button[type=submit]')
+        expect(submit).to_be_disabled()
+        column.select_option('0')
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('Synthetic Ensembl / control')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        page.route('**/hgnc-ensembl*.json', lambda route: route.abort('failed'))
+        submit.click()
+        expect(form.get_by_role('alert')).to_contain_text('Unable to load gene identifier mappings')
+        page.unroute('**/hgnc-ensembl*.json')
+        submit.click()
+        review = form.get_by_role('region', name='Identifier review', exact=True)
+        expect(review).to_be_focused()
+        expect(review).to_contain_text('4 mapped · 2 unresolved')
+        expect(review).to_contain_text('LINC00595')
+        expect(review).to_contain_text('LINC00856')
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        assert not any('reactome-pathways' in url for _, url, _ in requests)
+        review.get_by_role('checkbox', name='Unresolved or duplicate only', exact=True).uncheck()
+        expect(review.get_by_role('rowheader', name='ENSG00000130203.12', exact=True).locator('..')).to_contain_text('APOE (HGNC:613)')
+        review.get_by_role('searchbox', name='Find identifiers', exact=True).fill('apoe')
+        expect(review.get_by_role('region', name='Gene identifier mappings').locator('tbody tr')).to_have_count(1)
+        expect(review.get_by_role('rowheader', name='ENSG00000130203.12', exact=True)).to_be_visible()
+        review.get_by_role('searchbox', name='Find identifiers', exact=True).fill('')
+        submit.click()
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        acknowledgement = form.get_by_role('checkbox', name='Keep unresolved IDs unannotated in the eligible background', exact=True)
+        if mobile:
+            assert_touch_target(acknowledgement.locator('..'))
+            assert_touch_target(review.get_by_role('link', name='APOE (HGNC:613)', exact=True))
+        page.screenshot(path=str(screenshots / f'identifiers-review-{"mobile" if mobile else "desktop"}.png'))
+        acknowledgement.check()
+        submit.click()
+        counts = workspace.locator('.experiment-counts dd')
+        expect(counts).to_have_text(['5', '3', '3', str(family)])
+        expect(workspace.locator('#experiment-results-title')).to_be_focused()
+        expect(review).to_have_count(0)
+        workspace.get_by_role('searchbox', name='Find pathways', exact=True).fill('Plasma lipoprotein assembly, remodeling, and clearance')
+        workspace.get_by_role('button', name='Plasma lipoprotein assembly, remodeling, and clearance', exact=True).click()
+        workspace.get_by_role('button', name='View APOE evidence', exact=True).click()
+        observation = page.get_by_role('region', name='Your RNA-seq result', exact=True)
+        expect(observation).to_contain_text('ENSG00000130203.12')
+        expect(observation).to_contain_text('Meets gene cutoffs')
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        upload.set_input_files({'name': 'synthetic-duplicate-versions.csv', 'mimeType': 'text/csv', 'buffer': b'gene,log2FC,padj\nENSG00000130203.1,2,.01\nENSG00000130203.2,-2,.01'})
+        expect(column).to_have_count(0)
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        submit.click()
+        expect(form.get_by_role('alert')).to_contain_text('Resolve duplicate gene mappings')
+        expect(review).to_contain_text('2 duplicate rows')
+        expect(counts).to_have_text(['5', '3', '3', str(family)])
+        expect(review.get_by_role('checkbox', name='Keep unresolved IDs unannotated in the eligible background', exact=True)).to_have_count(0)
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        assert all(method == 'GET' and body is None for method, _, body in requests)
+        assert not any('Synthetic%20Ensembl' in url or 'ENSG99999999999' in url for _, url, _ in requests)
+        assert 'Synthetic Ensembl' not in page.evaluate('JSON.stringify(localStorage)')
+        if not mobile:
+            assert_idle(page, 'Graph after Ensembl mapping and evidence navigation')
+        assert not errors, errors
+        context.close()
+    print('PASS: Ensembl column selection, pinned lazy mapping, retry/focus, unresolved acknowledgement, full eligible background, original IDs in gene evidence and blocked duplicate versions work on desktop/mobile without upload or persistence.')
+
+
+def assert_public_ad_results(browser, base_url: str, screenshots: Path, table: Path) -> None:
+    import hashlib
+    assert hashlib.sha256(table.read_bytes()).hexdigest() == '0f084d65603e1608c8293300ce0b00ccf5dab6d3bf93321cbd3179d688f61c09', 'Use the documented, unfiltered MAYO validation conversion.'
+    context = browser.new_context(viewport={'width': 1440, 'height': 1000}, reduced_motion='reduce')
+    page = context.new_page()
+    requests, errors = [], []
+    page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.goto(base_url, wait_until='networkidle')
+    page.get_by_role('navigation', name='Workspace').get_by_role('button', name='Analyze results', exact=True).click()
+    workspace = page.get_by_role('main', name='Analyze results', exact=True)
+    form = workspace.get_by_role('form', name='RNA-seq analysis')
+    form.get_by_label('Human RNA-seq results', exact=True).set_input_files(table)
+    form.get_by_role('textbox', name='Comparison', exact=True).fill('MAYO temporal cortex: author-coded AD / Control')
+    form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+    form.locator('button[type=submit]').click()
+    review = form.get_by_role('region', name='Identifier review', exact=True)
+    expect(review).to_contain_text('26,347 mapped · 6,260 unresolved', timeout=20000)
+    expect(review.get_by_role('region', name='Gene identifier mappings').locator('tbody tr')).to_have_count(20)
+    form.get_by_role('checkbox', name='Keep unresolved IDs unannotated in the eligible background', exact=True).check()
+    form.locator('button[type=submit]').click()
+    expect(workspace.locator('.experiment-counts dd')).to_have_text(['32,607', '397', '10,786', '2,720'], timeout=20000)
+    workspace.get_by_role('checkbox', name='Pathway FDR ≤ 0.05', exact=True).check()
+    expect(workspace.locator('.experiment-pagination').first).to_contain_text('1–20 of 71')
+    expect(workspace.get_by_role('region', name='Pathway results').locator('tbody tr').first).to_contain_text('1.54e-15')
+    page.screenshot(path=str(screenshots / 'public-mayo-ad-results.png'))
+    assert all(method == 'GET' and data is None for method, _, data in requests)
+    assert 'MAYO temporal cortex' not in page.evaluate('JSON.stringify(localStorage)')
+    assert not errors, errors
+    context.close()
+    print('PASS: public MAYO AD results retain all 32,607 input genes, report 6,260 unresolved mappings, and reproduce 397 selected genes, 2,720 tested pathways and 71 pathway-BH results ≤0.05. This validates interpretation of supplied results, not the upstream disease model.')
+
+
+def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path | None = None) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
@@ -1705,6 +1826,9 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         assert_study_context_note(browser, base_url, screenshots)
         assert_research_brief(browser, base_url, screenshots)
         assert_experiment_analysis(browser, base_url, screenshots)
+        assert_identifier_mapping(browser, base_url, screenshots)
+        if public_ad_table is not None:
+            assert_public_ad_results(browser, base_url, screenshots, public_ad_table)
         browser.close()
 
 
@@ -1713,5 +1837,6 @@ if __name__ == "__main__":
     parser.add_argument("--url", default="http://127.0.0.1:5173/")
     parser.add_argument("--chromium", default="/usr/bin/chromium")
     parser.add_argument("--screenshots", type=Path, default=Path("artifacts/browser"))
+    parser.add_argument("--mayo-table", type=Path, help="Optional externally held, documented MAYO validation conversion; never bundled.")
     options = parser.parse_args()
-    run(options.url, options.chromium, options.screenshots)
+    run(options.url, options.chromium, options.screenshots, options.mayo_table)

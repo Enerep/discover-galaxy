@@ -2,17 +2,21 @@
 
 ## Current checkpoint: interpret experimental data
 
-The main user is a researcher interpreting experimental results and looking for ideas to investigate. **Analyze results** now accepts a full human-symbol RNA-seq differential-expression table, a named comparison and gene-level cutoffs. It tests pathway overrepresentation against a separate pinned Reactome library of 2,751 pathways, shows signed member-level measurements and links covered genes into the curated evidence explorer.
+The main user is a researcher interpreting experimental results and looking for ideas to investigate. **Analyze results** now accepts a full human-symbol or Ensembl RNA-seq differential-expression table, a named comparison and gene-level cutoffs. It tests pathway overrepresentation against a separate pinned Reactome library of 2,751 pathways, shows signed member-level measurements and links covered genes into the curated evidence explorer.
 
 The statistical background is uploaded genes with complete log2FC and padj, before applying either cutoff; incomplete rows remain in the input and are reported as excluded. Eligible unannotated genes remain in N. Right-tailed hypergeometric tests and BH correction cover every pathway with an eligible member, including zero-hit pathways. Gene-level padj values are preserved, and pathway enrichment is not an activity or causality score. The exact upstream Reactome release is unknown; the immutable mirror and digests identify the reference actually used.
 
-Source-linked questions identify measured premises, assumptions and possible tests. They are rule-based proposals outside the curated claims/hypotheses, with no novelty or experimental-validation claim. RNA measurements never transfer to protein nodes or imply a genotype. Files stay in browser memory, with no upload, automatic storage, raw-count analysis, Ensembl mapping or live AI service. The existing AD evidence library and brief workspace remain available.
+Source-linked questions identify measured premises, assumptions and possible tests. They are rule-based proposals outside the curated claims/hypotheses, with no novelty or experimental-validation claim. RNA measurements never transfer to protein nodes or imply a genotype. Files stay in browser memory, with no upload, automatic storage, raw-count analysis or live AI service. The existing AD evidence library and brief workspace remain available.
 
 Observed numerical and browser checks belong in [verification](verification.md). The real public airway dataset used for validation is not AD data and is not bundled; the pinned reference and actual conversion limits are documented in [reference provenance](../data/reference/README.md).
 
-## Next checkpoint: improve identifiers and experimental context
+## Completed checkpoint: identifiers and a public AD results table
 
-Prioritize a pinned HGNC/Ensembl mapping workflow with explicit ambiguity/unmapped reporting, so researchers can use standard differential-expression output without silently merging genes. Validate the workflow on a public AD dataset with recorded contrast and eligibility, then assess threshold sensitivity and more informative pathway grouping. Rank-based analysis and RNA-seq selection-bias correction need their own statistical validation. These are informatics tasks; additional brief-sharing features are not the current priority.
+A pinned HGNC reference now maps human Ensembl IDs while retaining original versions, unknown/ambiguous identities and the full eligible denominator. Duplicate stable IDs/gene mappings block analysis, and multiple identifier columns require a choice. [Public MAYO AD and original airway tables](experimental-validation.md) match independent SciPy calculations; actual backgrounds, author-coded contrasts and source limitations remain explicit. No experimental rows enter the curated graph.
+
+## Next checkpoint: test robustness of the interpretation
+
+Show how conclusions change with gene FDR/effect cutoffs, and group overlapping pathways without implying that related terms are independent mechanisms. Keep each result tied to its original input, eligible universe, reference and selected genes. This makes follow-up ideas easier to judge than a long list of significant pathways. Rank-based analysis and RNA-seq selection-bias correction need their own statistical validation. More sharing and extra disease nodes are not the current priority.
 
 ## Existing workflow: build a research argument
 

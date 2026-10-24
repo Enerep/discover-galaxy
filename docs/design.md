@@ -10,6 +10,8 @@ The primary research task is now **upload processed results → inspect pathway 
 
 The evidence-reading flow remains **search → select an entity → read a finding → open the original study**. Preserve that route when connecting experimental results to the explorer.
 
+When a file has multiple candidate identifier columns, show one native selector beside the file. For Ensembl inputs, retain original IDs and show mapping issues before results. Focus the committed review only while its workspace is active. Keep unresolved IDs in the eligible universe after explicit acknowledgement; duplicate mappings need a corrected file. Search/paginate the mapping report and move its audit into Methods after applying results, avoiding repeated reports in the primary view. A gene's Inspector observation retains the original input ID.
+
 - Group one search field, one entity-type filter, and one graph/list switch in the same toolbar. On narrow screens, use a full-width search followed by the filter and switch.
 - Use a single main workspace and a readable evidence panel. A single collection does not need a permanent navigation sidebar.
 - Make node selection obvious. Search results, graph selection, list selection, and the evidence panel must agree.
