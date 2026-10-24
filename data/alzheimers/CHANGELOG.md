@@ -1,5 +1,26 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.7.0 — 2026-10-24
+
+**40 entities, 41 claims/evidence records, 34 sources and one unchanged draft study-context comparison.** Adds COL1A1, COL1A2, COL3A1 and SAA1 genes with separate canonical protein identities, four HGNC gene/product cross-references and four gene-level scavenger-pathway annotations. All earlier scientific records remain unchanged; no new paper, empirical finding, AD-risk association, conflict or hypothesis is added.
+
+These four genes were uncovered selected members in the documented public MAYO AD result's leading pathway (`R-HSA-2173782`) at gene FDR ≤0.05 and |log₂FC| ≥1. This prioritizes coverage; it does not establish a disease mechanism or independent replication. No uploaded RNA statistics enter graph claims.
+
+| Gene | Inspected approved HGNC row | UniProt product cross-reference | Reactome annotation |
+| --- | --- | --- | --- |
+| COL1A1 | HGNC:2197; ENSG00000108821; NCBI 1277 | P02452 | Exact gene symbol in R-HSA-2173782 |
+| COL1A2 | HGNC:2198; ENSG00000164692; NCBI 1278 | P08123 | Exact gene symbol in R-HSA-2173782 |
+| COL3A1 | HGNC:2201; ENSG00000168542; NCBI 1281 | P02461 | Exact gene symbol in R-HSA-2173782 |
+| SAA1 | HGNC:10513; ENSG00000173432; NCBI 6288 | P0DJI8 | Exact gene symbol in R-HSA-2173782 |
+
+Identity fields were inspected in the gzip archive whose raw SHA-256 is `6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b`. Memberships were checked against the existing Reactome reference's normalized SHA-256 `f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6`, with its raw GMT digest/immutable mirror commit retained. The [bounded seed extract](../annotations/README.md) reproduces from those bytes and does not generate graph claims. Both mirrors' exact official upstream releases remain unverified.
+
+The participation claims have **gene endpoints** and explicit `annotation_level: gene`. Protein forms, compartments, mature chains, complexes, reactions and direct physical interactions are not resolved by this gene-set source. Protein nodes retain identity mappings only. Gene → protein → pathway transitive inference is deliberately not added. Browser enrichment still uses the same complete pinned reference and eligible tested background.
+
+Check date: **2026-10-24**. HGNC's official data-use/attribution policy and Reactome data terms (CC0, section 1(c)) were inspected. Retained material is identity facts, four literal memberships, stable links and project-authored factual summaries; no sequences, function prose, source text, artwork or paper content. The eight new claims/evidence records retain `draft` / `human_reviewed: false`; all 83 scientific records remain draft. Original-paper source/reuse/publication checks are unchanged.
+
+The new UniProt/Reactome/Open Targets API tools are staging-only. All three direct CLI probes failed at the configured proxy before returning API data; offline normalization and simulated transport tests do not establish a successful live request. This published development diff is accurately sourced to **pinned reference extracts**, not relabeled as API data. A future successful API intake needs its actual response provenance and a separately inspected snapshot diff.
+
 ## alzheimers-source-checked-0.6.0 — 2026-10-24
 
 **32 entities, 33 claims/evidence records, 32 sources and one unchanged draft study-context comparison.** Adds MARCO, SCARA5 and APOB genes with separate canonical proteins, the human scavenger-receptor pathway, and [Cheng et al. (2021)](https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/), DOI `10.1016/j.jbc.2021.100948`, PMID `34252459`. All earlier entities, claims, evidence, sources and context comparisons are unchanged.

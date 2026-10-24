@@ -1,8 +1,12 @@
 # Alzheimer's source-checked snapshot
 
-`dataset.json` is **alzheimers-source-checked-0.6.0**: 32 entities, 33 claims, 33 evidence records, 32 sources, and one draft study-context comparison. It contains one disease, ten human genes, ten distinct human proteins, three pathways, and eight paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
+`dataset.json` is **alzheimers-source-checked-0.7.0**: 40 entities, 41 claims, 41 evidence records, 34 sources, and one draft study-context comparison. It contains one disease, fourteen human genes, fourteen distinct human proteins, three pathways, and eight paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
 The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and five assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Reference-derived coverage in 0.7.0
+
+COL1A1, COL1A2, COL3A1 and SAA1 add eight gene/protein nodes and eight draft database assertions. Their approved HGNC identities and UniProt product cross-references come from the same verified archive used for identifier mapping. Gene → pathway annotations retain literal membership in the pinned Reactome GMT, without assuming a molecular state or moving that annotation to a protein. **Annotated to / Annotated gene** names the distinction in the inspector. These records now appear in 3D, List, search and the analysis coverage audit; none adds original-paper coverage or an AD-risk claim. [The reproducible seed](../annotations/README.md) and [change record](CHANGELOG.md#alzheimers-source-checked-070--2026-10-24) preserve source hashes, unknown upstream releases and actual inspection limits. Live API requests remain blocked; this batch is not presented as an API retrieval.
 
 ## Scavenger-receptor evidence in 0.6.0
 
@@ -62,7 +66,7 @@ The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wile
 
 The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), keeps six publications ready for the next AD source pass. The two earlier pathway candidates were added through the separately checked dataset diff in 0.2.0. The remaining papers need assay-level extraction; their metadata is not experimental graph evidence. Use `npm run curation:coverage:check` to verify the packet's references and generated output.
 
-Use the [generated source-review packet](review-packet.md) for all 33 findings, their source-specific context and 32 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
+Use the [generated source-review packet](review-packet.md) for all 41 findings, their source-specific context and 34 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
 
 Further draft additions require actual source inspection, scoped context and limitations, identifiers, locators, and source reuse assessment. Keep unknowns explicit and record a new dataset version. Do not add automatic approval attestations or promote staged metadata into experimental evidence.
 

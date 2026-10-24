@@ -122,7 +122,7 @@ function makeLabel(entity: Entity): { texture: CanvasTexture; aspect: number; li
   return { texture, aspect: canvas.width / canvas.height, lines: lines.length };
 }
 
-function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion, compactLabels }: {
+function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion, compactLabels, denseLabels }: {
   entity: Entity;
   position: Position;
   selected: boolean;
@@ -130,6 +130,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   glow: CanvasTexture;
   reducedMotion: boolean;
   compactLabels: boolean;
+  denseLabels: boolean;
 }) {
   const { gl, camera, size, invalidate } = useThree();
   const hovered = useRef(false);
@@ -144,12 +145,13 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   const worldPosition = useMemo(() => new Vector3(...position), [position]);
   const labelPosition = useMemo(() => new Vector3(), []);
   const showCompactLabel = compactLabels || (entity.type === 'gene' && ['gene-apoe', 'gene-abca1', 'gene-trem2'].includes(entity.id));
+  const quietLabel = denseLabels && entity.type === 'protein';
   const colors = useMemo(() => ({ normal: new Color(ENTITY_COLORS[entity.type]), selected: new Color('#f0fff8') }), [entity.type]);
   const radius = entity.type === 'disease' ? 0.34 : entity.type === 'paper' ? 0.14 : 0.23;
-  const initial = useRef({ scale: selected ? 1.1 : 1, glow: selected ? 0.85 : 0.37, ring: selected ? 0.75 : 0, color: selected ? '#f0fff8' : ENTITY_COLORS[entity.type], labelOpacity: selected ? 1 : size.width < 520 && !showCompactLabel ? 0 : 0.85 });
+  const initial = useRef({ scale: selected ? 1.1 : 1, glow: selected ? 0.85 : 0.37, ring: selected ? 0.75 : 0, color: selected ? '#f0fff8' : ENTITY_COLORS[entity.type], labelOpacity: selected ? 1 : quietLabel || (size.width < 520 && !showCompactLabel) ? 0 : 0.85 });
 
   useEffect(() => () => { label.texture.dispose(); gl.domElement.style.cursor = 'grab'; }, [label, gl]);
-  useLayoutEffect(() => invalidate(), [selected, reducedMotion, size.width, invalidate]);
+  useLayoutEffect(() => invalidate(), [selected, reducedMotion, size.width, quietLabel, invalidate]);
 
   useFrame((_, delta) => {
     const alpha = reducedMotion ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 16);
@@ -199,7 +201,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
       labelPosition.unproject(camera).sub(worldPosition);
       labelSprite.current.position.copy(labelPosition);
       const material = labelSprite.current.material as SpriteMaterial;
-      const opacity = compact && !showCompactLabel && !emphasis ? 0 : emphasis ? 1 : 0.85;
+      const opacity = !emphasis && (quietLabel || (compact && !showCompactLabel)) ? 0 : emphasis ? 1 : 0.85;
       material.opacity = approach(material.opacity, opacity, alpha);
       labelSprite.current.visible = material.opacity > 0.001;
       labelSprite.current.raycast = labelSprite.current.visible ? Sprite.prototype.raycast : ignoreRaycast;
@@ -451,7 +453,7 @@ function Scene(props: GalaxyProps) {
     })}
     {entities.map((entity) => {
       const position = positions.get(entity.id);
-      return position ? <EntityNode key={entity.id} entity={entity} position={position} selected={selectedId === entity.id} onSelect={onSelect} glow={glow} reducedMotion={props.reducedMotion} compactLabels={entities.length <= 8} /> : null;
+      return position ? <EntityNode key={entity.id} entity={entity} position={position} selected={selectedId === entity.id} onSelect={onSelect} glow={glow} reducedMotion={props.reducedMotion} compactLabels={entities.length <= 8} denseLabels={entities.length > 32} /> : null;
     })}
   </>;
 }

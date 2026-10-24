@@ -19,13 +19,13 @@ const table = () => parseExperiment('gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2
 const options = () => ({ comparison: 'Synthetic numerator / denominator', allTestedGenes: true, thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 } });
 
 test('pathway evidence uses selected members, counts one paper for shared findings, and preserves source-specific assays', () => {
-  const input = parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\nAPOB,1.2,.03\nCOL1A1,2,.01\nAPOE,.1,.8\nTYROBP,2,.01\n', 'synthetic-evidence.csv');
+  const input = parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\nAPOB,1.2,.03\nHBA1,2,.01\nAPOE,.1,.8\nTYROBP,2,.01\n', 'synthetic-evidence.csv');
   const result = runExperimentAnalysis(input, options(), reference);
   const before = JSON.stringify({ snapshot, result });
   const report = buildPathwayEvidence(snapshot, result, 'R-HSA-2173782');
-  assert.deepEqual(report.genes.map(({ gene }) => gene), ['APOB', 'COL1A1', 'MARCO', 'SCARA5']);
+  assert.deepEqual(report.genes.map(({ gene }) => gene), ['APOB', 'HBA1', 'MARCO', 'SCARA5']);
   assert.equal(report.genes.filter(({ paperIds }) => paperIds.length).length, 3);
-  assert.equal(coverageLabel(report.genes.find(({ gene }) => gene === 'COL1A1')!), 'Outside library');
+  assert.equal(coverageLabel(report.genes.find(({ gene }) => gene === 'HBA1')!), 'Outside library');
   assert.equal(report.papers.length, 1);
   assert.equal(report.papers[0].source.id, 'source-cheng-2021');
   assert.equal(report.papers[0].source.reuse.permission_status, 'pending_review');
@@ -209,7 +209,7 @@ test('the analysis reference has pinned provenance and keeps original descriptiv
   assert.equal(reference.upstream_release, null);
   assert.equal(reference.source.license, 'CC0-1.0');
   assert.ok(reference.pathways.some(({ genes }) => genes.includes('CSF2 gene')));
-  assert.equal(snapshot.entities.length, 32);
+  assert.equal(snapshot.entities.length, 40);
   assert.throws(() => validatePathwayReference({ ...reference, source: { ...reference.source, sha256: 'unverified' } }));
   assert.throws(() => validatePathwayReference({ ...reference, pathways: [reference.pathways[0], reference.pathways[0]] }));
 });

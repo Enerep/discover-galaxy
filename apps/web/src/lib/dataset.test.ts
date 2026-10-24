@@ -128,12 +128,38 @@ test('the source-checked snapshot preserves typed pathway journeys and remains a
   assert.equal(data.hypotheses.length, 0);
 });
 
+test('reference-derived coverage keeps gene-set membership separate from protein states and paper findings', async () => {
+  const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  const seed = JSON.parse(await readFile(new URL('../../../../data/annotations/coverage-seed.json', import.meta.url), 'utf8'));
+  for (const row of seed.genes) {
+    const key = row.symbol.toLowerCase();
+    const gene = snapshot.entities.find(({ id }) => id === `gene-${key}`)!;
+    const protein = snapshot.entities.find(({ id }) => id === `protein-${key}`)!;
+    assert.ok(gene.external_ids.some(({ namespace, value }) => namespace === 'HGNC' && value === row.hgnc_id));
+    assert.ok(protein.external_ids.some(({ namespace, value }) => namespace === 'UniProt' && value === row.uniprot_accession));
+    const membership = snapshot.claims.find(({ id }) => id === `claim-${key}-scavenger-gene-set`)!;
+    assert.equal(membership.subject_id, gene.id);
+    assert.equal(membership.context.annotation_level, 'gene');
+    assert.equal(membership.object_id, 'pathway-scavenger-receptors');
+    const evidence = getClaimEvidence(snapshot, membership.id)[0];
+    assert.equal(evidence.study_context.normalized_reference_sha256, seed.reactome_normalized_sha256);
+    assert.equal(evidence.study_context.protein_form, null);
+    assert.equal(snapshot.sources.find(({ id }) => id === evidence.source_id)?.kind, 'database_record');
+    assert.ok(!getEntityClaims(snapshot, protein.id).some(({ predicate }) => predicate === 'participates_in'));
+    assert.ok(getEntityClaims(snapshot, gene.id).every((claim) => getClaimEvidence(snapshot, claim.id).every((e) => snapshot.sources.find(({ id }) => id === e.source_id)?.kind === 'database_record')));
+    assert.equal(membership.review.status, 'draft');
+    assert.equal(membership.review.human_reviewed, false);
+  }
+  assert.equal(snapshot.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 8);
+});
+
 test('scavenger evidence connects typed genes and proteins to APOE without promoting RNA results into AD-risk claims', async () => {
   const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
   const pathway = data.entities.find(({ id }) => id === 'pathway-scavenger-receptors')!;
   assert.deepEqual(pathway.external_ids, [{ namespace: 'Reactome', value: 'R-HSA-2173782' }]);
   const members = getEntityClaims(data, pathway.id);
-  assert.deepEqual(members.map(({ subject_id }) => subject_id).sort(), ['protein-apob', 'protein-apoe', 'protein-marco', 'protein-scara5']);
+  assert.deepEqual(members.map(({ subject_id }) => subject_id).sort(), ['gene-col1a1', 'gene-col1a2', 'gene-col3a1', 'gene-saa1', 'protein-apob', 'protein-apoe', 'protein-marco', 'protein-scara5']);
   for (const symbol of ['MARCO', 'SCARA5', 'APOB']) {
     const gene = searchEntities(data, symbol, 'gene').find(({ label }) => label === symbol)!;
     assert.ok(gene);

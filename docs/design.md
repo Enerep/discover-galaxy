@@ -47,6 +47,7 @@ Offer Light, Dark, and System in one appearance control. Light uses neutral surf
 - Keep the graph dark and preserve the meaning of node and edge colors across themes. Exported evidence images retain a light citation card for readable sharing, independent of the interface theme.
 - Keep the active filter, selection, empty state, and data-review status easy to find.
 - Distinguish genes, proteins and pathways in filters, labels, icons and the legend. Use separate stable layout rings, outer paper arcs and compact labels; narrow graphs emphasize the main gene anchors and the selected/hovered entity. Never crop a selected label at the canvas edge.
+- When more than 32 entities are visible, keep unselected protein labels quiet to avoid duplicated gene/product names crowding the overview. Protein nodes remain selectable; hover/selection reveals their labels, while smaller searched/filtered views restore ordinary labels. This is a display-density rule, not an evidence-strength signal.
 - Remove decoration that competes with reading: artificial collection numbers, repeated headings, marketing cards, and unrelated navigation.
 - Keep decorative stars quiet and noninteractive. Spatial distance, size, brightness, and animation never imply evidence strength.
 

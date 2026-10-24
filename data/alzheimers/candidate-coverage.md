@@ -3,7 +3,7 @@
 Generated from candidate-coverage.json and the current snapshot. Edit the JSON, then regenerate. This is a reading plan: candidates are unreviewed, outside the graph, and do not establish support for any existing or proposed claim.
 
 - **Prepared:** 2026-10-24
-- **Baseline snapshot:** alzheimers-source-checked-0.6.0
+- **Baseline snapshot:** alzheimers-source-checked-0.7.0
 - **Staged sources:** 6 (6 publications, 0 pathway records)
 - **Selection:** Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.
 
@@ -14,7 +14,7 @@ Generated from candidate-coverage.json and the current snapshot. Edit the JSON, 
 - Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.
 - Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.
 - Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.
-- These staging questions are not novel hypotheses or classified contradictions. The 32-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone.
+- These staging questions are not novel hypotheses or classified contradictions. The 40-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone.
 
 ## Existing findings and recorded review status
 
@@ -36,6 +36,12 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-bailey-trem2-r47h-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |
 | claim-cheng-marco-modified-apob-binding | [34252459](https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/) | draft | draft | No |
 | claim-cheng-scara5-modified-apob-binding | [34252459](https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/) | draft | draft | No |
+| claim-col1a1-encodes | [source-hgnc-coverage-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
+| claim-col1a1-scavenger-gene-set | [source-reactome-scavenger-gene-set](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt) | draft | draft | No |
+| claim-col1a2-encodes | [source-hgnc-coverage-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
+| claim-col1a2-scavenger-gene-set | [source-reactome-scavenger-gene-set](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt) | draft | draft | No |
+| claim-col3a1-encodes | [source-hgnc-coverage-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
+| claim-col3a1-scavenger-gene-set | [source-reactome-scavenger-gene-set](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt) | draft | draft | No |
 | claim-lessard-trem2-r47h-apoe3-binding | [30341064](https://link.springer.com/article/10.15252/emmm.201809027) | draft | draft | No |
 | claim-marco-encodes | [source-hgnc-scavenger-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
 | claim-marco-scavenger-pathway | [source-reactome-marco-binding](https://reactome.org/content/detail/R-HSA-2173781) | draft | draft | No |
@@ -45,6 +51,8 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-nr1h3-encodes | [source-reactome-nr1h3-protein](https://reactome.org/content/detail/R-HSA-8854957) | draft | draft | No |
 | claim-rxra-cholesterol-pathway | [source-reactome-rxra-protein](https://reactome.org/content/detail/R-HSA-381319) | draft | draft | No |
 | claim-rxra-encodes | [source-uniprot-rxra](https://rest.uniprot.org/uniprotkb/P19793.txt) | draft | draft | No |
+| claim-saa1-encodes | [source-hgnc-coverage-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
+| claim-saa1-scavenger-gene-set | [source-reactome-scavenger-gene-set](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt) | draft | draft | No |
 | claim-scara5-encodes | [source-hgnc-scavenger-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
 | claim-scara5-scavenger-pathway | [source-reactome-scara5-binding](https://reactome.org/content/detail/R-HSA-2187266) | draft | draft | No |
 | claim-trem2-apoe-binding | [26374899](https://pubmed.ncbi.nlm.nih.gov/26374899/) | draft | draft | No |

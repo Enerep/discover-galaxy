@@ -1757,7 +1757,7 @@ def assert_experiment_example(browser, base_url: str, screenshots: Path) -> None
 def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
     # Invented measurements exercise library matching; they are not scientific evidence.
     csv = ('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\nAPOB,1.2,.03\n'
-           'COL1A1,2,.01\nNR1H2,2,.01\nAPOE,.1,.8\n')
+           'HBA1,2,.01\nNR1H2,2,.01\nAPOE,.1,.8\n')
     for mobile in [False, True]:
         context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
                                       reduced_motion='reduce', is_mobile=mobile, has_touch=mobile,
@@ -1807,7 +1807,7 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         page.keyboard.press('Enter')
         coverage_table = evidence.get_by_role('region', name='Selected gene evidence coverage', exact=True)
         expect(coverage_table.locator('tbody tr')).to_have_count(4)
-        expect(coverage_table.get_by_role('rowheader', name='COL1A1', exact=True).locator('..')).to_contain_text('Outside library')
+        expect(coverage_table.get_by_role('rowheader', name='HBA1', exact=True).locator('..')).to_contain_text('Outside library')
         expect(coverage_table.get_by_role('rowheader', name='MARCO', exact=True).locator('..')).to_contain_text('1 paper')
         expect(evidence).to_contain_text('missing coverage does not establish a scientific research gap')
         paper = evidence.locator('.experiment-paper[data-source-id="source-cheng-2021"]')
@@ -2020,6 +2020,83 @@ def assert_experiment_context(browser, base_url: str, screenshots: Path) -> None
         assert not errors, errors
         context.close()
     print('PASS: optional study context changes proposed questions, preserves statistics, separates pending/applied metadata, retains citation/RNA limits, escapes and wraps input, resets on replacement/removal, and stays out of worker messages, requests and storage on desktop/mobile/fallback.')
+
+
+def assert_annotation_expansion(browser, base_url: str, screenshots: Path) -> None:
+    seed = json.loads((Path(__file__).resolve().parents[1] / 'data/annotations/coverage-seed.json').read_text())
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
+                                      reduced_motion='reduce', is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light')
+        context.add_init_script(RENDER_COUNTERS)
+        if mobile:
+            context.add_init_script('''const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                    return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+                };''')
+        page = context.new_page()
+        errors, requests = [], []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+        page.goto(base_url, wait_until='networkidle')
+        for row in seed['genes']:
+            symbol = row['symbol']
+            search = page.get_by_role('combobox', name='Search entities', exact=True)
+            search.fill(symbol)
+            search.press('Enter')
+            expect(page.locator('.selected-title')).to_have_text(symbol)
+            if mobile: page.get_by_role('button', name='View evidence', exact=True).click()
+            page.locator('.claim-button').filter(has_text='Annotated to · Scavenger-receptor binding and uptake').click()
+            expect(page.locator('.finding-statement')).to_contain_text(f'lists {symbol}')
+            expect(page.locator('.source-link')).to_have_attribute('href', seed['reactome_source']['url'])
+            page.get_by_text('Study details and limitations', exact=True).click()
+            expect(page.locator('.study-context')).to_contain_text('curated gene-set annotation')
+            expect(page.locator('.study-context')).to_contain_text('not a resolved protein/complex/compartment annotation')
+            page.get_by_role('button', name='View Scavenger-receptor binding and uptake', exact=True).click()
+            expect(page.locator('.claim-button[aria-pressed=true]')).to_have_text(f'Annotated gene · {symbol}')
+            page.get_by_role('button', name=f'View {symbol}', exact=True).click()
+            page.locator('.claim-button').filter(has_text=f'Encodes · {symbol} protein').click()
+            page.get_by_role('button', name=f'View {symbol} protein', exact=True).click()
+            expect(page.locator('.selected-title')).to_have_text(f'{symbol} protein')
+            expect(page.locator('.finding-statement')).to_contain_text(row['uniprot_accession'])
+            expect(page.locator('.source-link')).to_have_attribute('href', seed['hgnc_source']['url'])
+            expect(page.locator('.claim-list')).to_have_count(0)
+            if mobile: page.get_by_role('button', name='Back to graph', exact=True).click()
+        if not mobile:
+            page.get_by_role('combobox', name='Search entities', exact=True).fill('')
+            page.screenshot(path=str(screenshots / 'reference-expansion-network.png'))
+            assert_idle(page, 'Graph after reference-derived coverage expansion')
+        # Invented RNA values verify database-only coverage without promoting new paper findings.
+        csv = 'gene,log2FoldChange,padj\n' + ''.join(f'{row["symbol"]},2,.01\n' for row in seed['genes']) + 'MARCO,2,.01\nSCARA5,-2,.02\nAPOE,.1,.8\n'
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'synthetic-reference-coverage.csv', 'mimeType': 'text/csv', 'buffer': csv.encode()})
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('QA reference coverage contrast')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        form.locator('button[type=submit]').click()
+        expect(workspace.locator('.experiment-counts dd').nth(1)).to_have_text('6', timeout=15000)
+        workspace.get_by_role('searchbox', name='Find pathways', exact=True).fill('R-HSA-2173782')
+        workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
+        evidence = workspace.get_by_role('region', name='Pathway evidence', exact=True)
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('2 of 6 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-paper')).to_have_count(1)
+        evidence.get_by_text('Coverage by selected gene', exact=True).click()
+        coverage = evidence.get_by_role('region', name='Selected gene evidence coverage', exact=True)
+        for row in seed['genes']:
+            expect(coverage.get_by_role('rowheader', name=row['symbol'], exact=True).locator('..')).to_contain_text('Database records only')
+        workspace.get_by_role('button', name='View COL1A1 evidence', exact=True).click()
+        expect(page.get_by_role('region', name='Your RNA-seq result', exact=True)).to_contain_text('QA reference coverage contrast')
+        page.locator('.claim-button').filter(has_text='Encodes · COL1A1 protein').click()
+        page.get_by_role('button', name='View COL1A1 protein', exact=True).click()
+        expect(page.get_by_role('region', name='Your RNA-seq result', exact=True)).to_have_count(0)
+        assert all(method == 'GET' and data is None for method, _, data in requests)
+        assert not any(any(host in url for host in ['rest.uniprot.org', 'api.platform.opentargets.org', 'reactome.org/ContentService']) for _, url, _ in requests)
+        assert 'QA reference coverage contrast' not in page.evaluate('JSON.stringify({ local: {...localStorage}, session: {...sessionStorage} })')
+        assert not errors, errors
+        context.close()
+    print('PASS: four reference-derived genes/products are searchable in 3D/list/fallback, retain exact identity provenance and gene-level pathway labels, improve database coverage without new papers, and keep RNA off proteins without browser API requests or persistence.')
 
 
 def assert_scavenger_evidence(browser, base_url: str, screenshots: Path) -> None:
@@ -2387,6 +2464,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_experiment_context(browser, base_url, screenshots)
         assert_pathway_evidence(browser, base_url, screenshots)
         assert_scavenger_evidence(browser, base_url, screenshots)
+        assert_annotation_expansion(browser, base_url, screenshots)
         if public_ad_table is not None:
             assert_public_ad_results(browser, base_url, screenshots, public_ad_table)
         browser.close()

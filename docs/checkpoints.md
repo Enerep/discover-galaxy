@@ -40,6 +40,10 @@ Snapshot 0.6.0 adds MARCO and SCARA5, which pass the applied cutoffs in the publ
 
 The selected pathway now has an **Evidence** section with a selected-gene coverage audit and original-paper findings grouped by citation. MARCO/SCARA5/APOB lead to one Cheng paper with the distinct modified-apoB findings; database-only genes do not borrow neighbouring genes' papers. Exact gene/product mappings connect the input to the curated library without converting RNA changes into protein results. **View finding** opens the corresponding graph/list inspector record and preserves the applied analysis when returning. Existing curated study-context notes require all their findings/evidence; no automated contradiction or research-gap detection is claimed. Coverage, source terms and numerical/reference boundaries remain unchanged.
 
+## Completed checkpoint: reproducible database expansion
+
+Bounded UniProt/Reactome/Open Targets tools now stage provider facts with exact identity checks, response digests, archived replay and separate database/experimental meanings. Live requests remain blocked by the current cloud network policy, so no successful API import is claimed. The first real expansion instead uses the checksum-pinned HGNC/Reactome seed: COL1A1/COL1A2/COL3A1/SAA1, separate proteins and eight scoped database assertions bring the graph to 40 entities and 41 claims. Gene-set annotations stay on genes; protein identities do not acquire unsupported protein-state, activity, interaction or AD-risk claims. The analysis coverage audit improves without changing paper counts or enrichment statistics. [Source checks and reuse](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-070--2026-10-24) remain distinct from API normalization and future scientific release.
+
 ## Existing workflow: build a research argument
 
 The research brief workspace adds a complete working flow on top of the existing Alzheimer's evidence:
@@ -99,7 +103,7 @@ The development snapshot meets the **20–50 entity size target**. Next, inspect
 
 Candidate discovery should begin with the existing genes and the pathway questions their reviewed sources actually support. A candidate's name, a database hit, or a generated summary does not establish a relationship. Keep genes, proteins, and variant contexts distinct. Curate disagreements only when study contexts support a meaningful comparison.
 
-A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 33 findings, the context comparison and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
+A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 41 findings, the context comparison and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
 
 `npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. The prior content checkpoint extended the three-study binding evidence with one source-checked contextual comparison, preserving page-vs-indexed access. A future data pass can inspect the staged ABCA1/APOE lipid-handling papers for a precisely scoped experiment, keeping organism, model and preparation explicit. Such an experiment would not establish the cause of the R47H assay difference. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
 

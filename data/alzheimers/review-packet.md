@@ -3,11 +3,11 @@
 Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.
 Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.
 
-- **Dataset:** alzheimers-source-checked-0.6.0
+- **Dataset:** alzheimers-source-checked-0.7.0
 - **Schema:** 0.1.0
 - **Snapshot date:** 2026-10-24
 - **Release status:** development
-- **Coverage:** 32 entities, 33 claims, 33 evidence records, 32 sources
+- **Coverage:** 40 entities, 41 claims, 41 evidence records, 34 sources
 - **Disease:** Alzheimer's disease
 - **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021.
 
@@ -34,6 +34,7 @@ Each row is one source record, not an independent experiment or cohort. Database
 | source-cheng-2021 | publication | claim-cheng-marco-modified-apob-binding; claim-cheng-scara5-modified-apob-binding | paper-cheng-2021 | pending\_review | not\_checked |
 | source-corder-1993 | publication | claim-apoe-e4-risk | paper-corder-1993 | pending\_review | not\_checked |
 | source-corder-1994 | publication | claim-apoe-e2-risk | paper-corder-1994 | pending\_review | not\_checked |
+| source-hgnc-coverage-identities | database\_record | claim-col1a1-encodes; claim-col1a2-encodes; claim-col3a1-encodes; claim-saa1-encodes | gene-col1a1; gene-col1a2; gene-col3a1; gene-saa1; protein-col1a1; protein-col1a2; protein-col3a1; protein-saa1 | permitted | not\_checked |
 | source-hgnc-scavenger-identities | database\_record | claim-apob-encodes; claim-marco-encodes; claim-scara5-encodes | gene-apob; gene-marco; gene-scara5; protein-apob; protein-marco; protein-scara5 | permitted | not\_checked |
 | source-jonsson-2013 | publication | claim-trem2-r47h-risk | paper-jonsson-2013 | pending\_review | not\_checked |
 | source-lessard-2018 | publication | claim-lessard-trem2-r47h-apoe3-binding | paper-lessard-2018 | permitted | not\_checked |
@@ -53,6 +54,7 @@ Each row is one source record, not an independent experiment or cohort. Database
 | source-reactome-nr1h3-protein | database\_record | claim-nr1h3-cholesterol-pathway; claim-nr1h3-encodes | gene-nr1h3; protein-nr1h3 | permitted | not\_checked |
 | source-reactome-rxra-protein | database\_record | claim-rxra-cholesterol-pathway | Not recorded | permitted | not\_checked |
 | source-reactome-scara5-binding | database\_record | claim-scara5-scavenger-pathway | Not recorded | permitted | not\_checked |
+| source-reactome-scavenger-gene-set | database\_record | claim-col1a1-scavenger-gene-set; claim-col1a2-scavenger-gene-set; claim-col3a1-scavenger-gene-set; claim-saa1-scavenger-gene-set | Not recorded | permitted | not\_checked |
 | source-reactome-scavenger-pathway | database\_record | None | pathway-scavenger-receptors | permitted | not\_checked |
 | source-reactome-trem2-dap12 | database\_record | claim-trem2-dap12-binding | Not recorded | permitted | not\_checked |
 | source-reactome-trem2-protein | database\_record | claim-trem2-dap12-pathway | Not recorded | permitted | not\_checked |
@@ -1111,6 +1113,435 @@ Evidence limitations:
 - [ ] Check source reuse terms, attribution, and correction/retraction status.
 - [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
 
+### claim-col1a1-encodes
+
+**COL1A1 → COL1A1 protein · encodes**
+
+HGNC links the approved human COL1A1 gene to the UniProt gene product P02452.
+
+**Summary:** Canonical identity cross-reference.
+
+#### Claim context
+
+- **assertion type:** curated database cross-reference
+- **gene id:** 1277
+- **organism:** Homo sapiens
+- **protein accession:** P02452
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Evidence: evidence-col1a1-encodes
+
+- **Original source:** [HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
+- **Source record:** source-hgnc-coverage-identities
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Approved HGNC row HGNC:2197 (COL1A1); symbol, name, ensembl\_gene\_id, entrez\_id and uniprot\_ids columns.
+
+HGNC links the approved human COL1A1 gene to the UniProt gene product P02452.
+
+Source-specific study context:
+
+- **experimental system:** Not recorded
+- **hgnc id:** HGNC:2197
+- **organism:** Homo sapiens
+- **sample size:** Not recorded
+- **source sha256:** 6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b
+- **study design:** database identity annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-col1a1-scavenger-gene-set
+
+**COL1A1 → Scavenger-receptor binding and uptake · participates\_in**
+
+The pinned Reactome gene-set reference lists COL1A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+**Summary:** Literal gene-level pathway annotation in the pinned reference.
+
+#### Claim context
+
+- **annotation level:** gene
+- **assertion type:** curated gene-set annotation
+- **organism:** Homo sapiens
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **upstream release:** Not recorded
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Evidence: evidence-col1a1-scavenger-gene-set
+
+- **Original source:** [Pinned Reactome human GMT: scavenger-receptor gene-set annotations](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt)
+- **Source record:** source-reactome-scavenger-gene-set
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Pinned Reactome JSON pathways\[id=R-HSA-2173782\].genes contains exact symbol COL1A1. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.
+
+The pinned Reactome gene-set reference lists COL1A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+Source-specific study context:
+
+- **annotation level:** gene
+- **experimental system:** Not recorded
+- **normalized reference sha256:** f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6
+- **organism:** Homo sapiens
+- **protein form:** Not recorded
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **sample size:** Not recorded
+- **study design:** database gene-set annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-col1a2-encodes
+
+**COL1A2 → COL1A2 protein · encodes**
+
+HGNC links the approved human COL1A2 gene to the UniProt gene product P08123.
+
+**Summary:** Canonical identity cross-reference.
+
+#### Claim context
+
+- **assertion type:** curated database cross-reference
+- **gene id:** 1278
+- **organism:** Homo sapiens
+- **protein accession:** P08123
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Evidence: evidence-col1a2-encodes
+
+- **Original source:** [HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
+- **Source record:** source-hgnc-coverage-identities
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Approved HGNC row HGNC:2198 (COL1A2); symbol, name, ensembl\_gene\_id, entrez\_id and uniprot\_ids columns.
+
+HGNC links the approved human COL1A2 gene to the UniProt gene product P08123.
+
+Source-specific study context:
+
+- **experimental system:** Not recorded
+- **hgnc id:** HGNC:2198
+- **organism:** Homo sapiens
+- **sample size:** Not recorded
+- **source sha256:** 6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b
+- **study design:** database identity annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-col1a2-scavenger-gene-set
+
+**COL1A2 → Scavenger-receptor binding and uptake · participates\_in**
+
+The pinned Reactome gene-set reference lists COL1A2 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+**Summary:** Literal gene-level pathway annotation in the pinned reference.
+
+#### Claim context
+
+- **annotation level:** gene
+- **assertion type:** curated gene-set annotation
+- **organism:** Homo sapiens
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **upstream release:** Not recorded
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Evidence: evidence-col1a2-scavenger-gene-set
+
+- **Original source:** [Pinned Reactome human GMT: scavenger-receptor gene-set annotations](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt)
+- **Source record:** source-reactome-scavenger-gene-set
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Pinned Reactome JSON pathways\[id=R-HSA-2173782\].genes contains exact symbol COL1A2. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.
+
+The pinned Reactome gene-set reference lists COL1A2 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+Source-specific study context:
+
+- **annotation level:** gene
+- **experimental system:** Not recorded
+- **normalized reference sha256:** f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6
+- **organism:** Homo sapiens
+- **protein form:** Not recorded
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **sample size:** Not recorded
+- **study design:** database gene-set annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-col3a1-encodes
+
+**COL3A1 → COL3A1 protein · encodes**
+
+HGNC links the approved human COL3A1 gene to the UniProt gene product P02461.
+
+**Summary:** Canonical identity cross-reference.
+
+#### Claim context
+
+- **assertion type:** curated database cross-reference
+- **gene id:** 1281
+- **organism:** Homo sapiens
+- **protein accession:** P02461
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Evidence: evidence-col3a1-encodes
+
+- **Original source:** [HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
+- **Source record:** source-hgnc-coverage-identities
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Approved HGNC row HGNC:2201 (COL3A1); symbol, name, ensembl\_gene\_id, entrez\_id and uniprot\_ids columns.
+
+HGNC links the approved human COL3A1 gene to the UniProt gene product P02461.
+
+Source-specific study context:
+
+- **experimental system:** Not recorded
+- **hgnc id:** HGNC:2201
+- **organism:** Homo sapiens
+- **sample size:** Not recorded
+- **source sha256:** 6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b
+- **study design:** database identity annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-col3a1-scavenger-gene-set
+
+**COL3A1 → Scavenger-receptor binding and uptake · participates\_in**
+
+The pinned Reactome gene-set reference lists COL3A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+**Summary:** Literal gene-level pathway annotation in the pinned reference.
+
+#### Claim context
+
+- **annotation level:** gene
+- **assertion type:** curated gene-set annotation
+- **organism:** Homo sapiens
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **upstream release:** Not recorded
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Evidence: evidence-col3a1-scavenger-gene-set
+
+- **Original source:** [Pinned Reactome human GMT: scavenger-receptor gene-set annotations](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt)
+- **Source record:** source-reactome-scavenger-gene-set
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Pinned Reactome JSON pathways\[id=R-HSA-2173782\].genes contains exact symbol COL3A1. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.
+
+The pinned Reactome gene-set reference lists COL3A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+Source-specific study context:
+
+- **annotation level:** gene
+- **experimental system:** Not recorded
+- **normalized reference sha256:** f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6
+- **organism:** Homo sapiens
+- **protein form:** Not recorded
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **sample size:** Not recorded
+- **study design:** database gene-set annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
 ### claim-lessard-trem2-r47h-apoe3-binding
 
 **TREM2 protein → APOE protein · interacts\_with**
@@ -1737,6 +2168,149 @@ Evidence limitations:
 
 - Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.
 - Database annotations are not independent experimental replication or evidence of treatment benefit.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-saa1-encodes
+
+**SAA1 → SAA1 protein · encodes**
+
+HGNC links the approved human SAA1 gene to the UniProt gene product P0DJI8.
+
+**Summary:** Canonical identity cross-reference.
+
+#### Claim context
+
+- **assertion type:** curated database cross-reference
+- **gene id:** 6288
+- **organism:** Homo sapiens
+- **protein accession:** P0DJI8
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Evidence: evidence-saa1-encodes
+
+- **Original source:** [HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
+- **Source record:** source-hgnc-coverage-identities
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Approved HGNC row HGNC:10513 (SAA1); symbol, name, ensembl\_gene\_id, entrez\_id and uniprot\_ids columns.
+
+HGNC links the approved human SAA1 gene to the UniProt gene product P0DJI8.
+
+Source-specific study context:
+
+- **experimental system:** Not recorded
+- **hgnc id:** HGNC:10513
+- **organism:** Homo sapiens
+- **sample size:** Not recorded
+- **source sha256:** 6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b
+- **study design:** database identity annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-saa1-scavenger-gene-set
+
+**SAA1 → Scavenger-receptor binding and uptake · participates\_in**
+
+The pinned Reactome gene-set reference lists SAA1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+**Summary:** Literal gene-level pathway annotation in the pinned reference.
+
+#### Claim context
+
+- **annotation level:** gene
+- **assertion type:** curated gene-set annotation
+- **organism:** Homo sapiens
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **upstream release:** Not recorded
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+#### Claim limitations
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
+
+#### Evidence: evidence-saa1-scavenger-gene-set
+
+- **Original source:** [Pinned Reactome human GMT: scavenger-receptor gene-set annotations](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt)
+- **Source record:** source-reactome-scavenger-gene-set
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Pinned Reactome JSON pathways\[id=R-HSA-2173782\].genes contains exact symbol SAA1. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.
+
+The pinned Reactome gene-set reference lists SAA1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).
+
+Source-specific study context:
+
+- **annotation level:** gene
+- **experimental system:** Not recorded
+- **normalized reference sha256:** f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6
+- **organism:** Homo sapiens
+- **protein form:** Not recorded
+- **reference id:** reactome-human-mrbiomics-f5d9af14b2f8
+- **sample size:** Not recorded
+- **study design:** database gene-set annotation
+- **upstream release:** Not recorded
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-10-24
+- **Human reviewed:** false
+- **Review rationale:** Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review.
+
+Evidence limitations:
+
+- Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.
+- The source mirrors have not been reconciled to exact official upstream releases.
+- Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.
+- Selection from an AD results table does not establish an AD-risk or causal association.
 
 #### Pending review tasks
 
@@ -2590,6 +3164,25 @@ Comparison review record:
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
 
+### source-hgnc-coverage-identities
+
+[HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
+
+- **Kind:** database\_record
+- **Identifiers:** SHA-256: 6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** HGNC (pinned mirror) / gene-tidy mirror commit 37b375b4e4f70445cbb9e40b273a510467b798ae; original HGNC release/date not independently verified
+- **Retrieved:** 2026-10-24
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://www.genenames.org/about/
+- **Reuse checked:** 2026-10-24
+- **Attribution:** HUGO Gene Nomenclature Committee at the University of Cambridge, HGNC (RRID:SCR\_002827), https://www.genenames.org/. Approved symbols and cross-references from the same verified pinned archive used by the identifier reference; no gene-tidy software copied.
+- **Retained content:** Approved identity facts, stable cross-references and short project-authored locators/summaries only; no sequence, protein-function prose, software or article content.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
 ### source-hgnc-scavenger-identities
 
 [HGNC approved MARCO, SCARA5 and APOB gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
@@ -2947,6 +3540,25 @@ Comparison review record:
 - **Reuse checked:** 2026-10-24
 - **Attribution:** Reactome Pathway Database, CC0 data. Identifiers, links and project-authored factual summaries only; no diagrams or source prose.
 - **Retained content:** Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-reactome-scavenger-gene-set
+
+[Pinned Reactome human GMT: scavenger-receptor gene-set annotations](https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt)
+
+- **Kind:** database\_record
+- **Identifiers:** SHA-256: f5d9af14b2f8d373201372b2e63e3c7b2c5b535d30af1459fddfdba22015cd7d
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Reactome (pinned mirror) / MrBiomics commit fbe2f70935496c73ed21337af70e97e633c2f4d3; exact upstream Reactome release unknown
+- **Retrieved:** 2026-10-24
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://reactome.org/license
+- **Reuse checked:** 2026-10-24
+- **Attribution:** Reactome annotation data, mirrored by Computational Epigenetics / MrBiomics; exact upstream release unknown.
+- **Retained content:** Four literal gene-symbol memberships, stable pathway identifiers, links and project-authored summaries. No artwork, source prose, protein states or original-paper interpretations.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded

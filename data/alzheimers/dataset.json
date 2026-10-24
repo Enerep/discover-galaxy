@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1.0",
-  "dataset_version": "alzheimers-source-checked-0.6.0",
+  "dataset_version": "alzheimers-source-checked-0.7.0",
   "created_at": "2026-10-24",
   "release_status": "development",
   "scope": {
@@ -66,6 +66,14 @@
       "source_url": "https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz",
       "reuse_terms_url": "https://www.genenames.org/about/",
       "attribution": "HGNC, HUGO Gene Nomenclature Committee at the University of Cambridge, RRID:SCR_002827. Approved identity cross-references only."
+    },
+    {
+      "provider": "Reactome (pinned human GMT mirror)",
+      "release": null,
+      "accessed_at": "2026-10-24",
+      "source_url": "https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt",
+      "reuse_terms_url": "https://reactome.org/license",
+      "attribution": "Reactome annotation data, mirrored by Computational Epigenetics / MrBiomics; exact upstream release unknown."
     }
   ],
   "entities": [
@@ -736,6 +744,182 @@
       "source_id": "source-cheng-2021",
       "provenance_source_ids": [
         "source-cheng-2021"
+      ]
+    },
+    {
+      "id": "gene-col1a1",
+      "type": "gene",
+      "label": "COL1A1",
+      "aliases": [
+        "collagen type I alpha 1 chain"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:2197"
+        },
+        {
+          "namespace": "NCBI Gene",
+          "value": "1277"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000108821"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "protein-col1a1",
+      "type": "protein",
+      "label": "COL1A1 protein",
+      "aliases": [
+        "P02452"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P02452"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "gene-col1a2",
+      "type": "gene",
+      "label": "COL1A2",
+      "aliases": [
+        "collagen type I alpha 2 chain"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:2198"
+        },
+        {
+          "namespace": "NCBI Gene",
+          "value": "1278"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000164692"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "protein-col1a2",
+      "type": "protein",
+      "label": "COL1A2 protein",
+      "aliases": [
+        "P08123"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P08123"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "gene-col3a1",
+      "type": "gene",
+      "label": "COL3A1",
+      "aliases": [
+        "collagen type III alpha 1 chain"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:2201"
+        },
+        {
+          "namespace": "NCBI Gene",
+          "value": "1281"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000168542"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "protein-col3a1",
+      "type": "protein",
+      "label": "COL3A1 protein",
+      "aliases": [
+        "P02461"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P02461"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "gene-saa1",
+      "type": "gene",
+      "label": "SAA1",
+      "aliases": [
+        "serum amyloid A1"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:10513"
+        },
+        {
+          "namespace": "NCBI Gene",
+          "value": "6288"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000173432"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "protein-saa1",
+      "type": "protein",
+      "label": "SAA1 protein",
+      "aliases": [
+        "P0DJI8"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P0DJI8"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-coverage-identities"
       ]
     }
   ],
@@ -1745,6 +1929,242 @@
         "date": "2026-10-24",
         "human_reviewed": false,
         "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-col1a1-encodes",
+      "subject_id": "gene-col1a1",
+      "object_id": "protein-col1a1",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human COL1A1 gene to the UniProt gene product P02452.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "1277",
+        "protein_accession": "P02452"
+      },
+      "evidence_ids": [
+        "evidence-col1a1-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-col1a1-scavenger-gene-set",
+      "subject_id": "gene-col1a1",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "The pinned Reactome gene-set reference lists COL1A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated gene-set annotation",
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "upstream_release": null
+      },
+      "evidence_ids": [
+        "evidence-col1a1-scavenger-gene-set"
+      ],
+      "summary": "Literal gene-level pathway annotation in the pinned reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-col1a2-encodes",
+      "subject_id": "gene-col1a2",
+      "object_id": "protein-col1a2",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human COL1A2 gene to the UniProt gene product P08123.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "1278",
+        "protein_accession": "P08123"
+      },
+      "evidence_ids": [
+        "evidence-col1a2-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-col1a2-scavenger-gene-set",
+      "subject_id": "gene-col1a2",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "The pinned Reactome gene-set reference lists COL1A2 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated gene-set annotation",
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "upstream_release": null
+      },
+      "evidence_ids": [
+        "evidence-col1a2-scavenger-gene-set"
+      ],
+      "summary": "Literal gene-level pathway annotation in the pinned reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-col3a1-encodes",
+      "subject_id": "gene-col3a1",
+      "object_id": "protein-col3a1",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human COL3A1 gene to the UniProt gene product P02461.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "1281",
+        "protein_accession": "P02461"
+      },
+      "evidence_ids": [
+        "evidence-col3a1-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-col3a1-scavenger-gene-set",
+      "subject_id": "gene-col3a1",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "The pinned Reactome gene-set reference lists COL3A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated gene-set annotation",
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "upstream_release": null
+      },
+      "evidence_ids": [
+        "evidence-col3a1-scavenger-gene-set"
+      ],
+      "summary": "Literal gene-level pathway annotation in the pinned reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-saa1-encodes",
+      "subject_id": "gene-saa1",
+      "object_id": "protein-saa1",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human SAA1 gene to the UniProt gene product P0DJI8.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "6288",
+        "protein_accession": "P0DJI8"
+      },
+      "evidence_ids": [
+        "evidence-saa1-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "claim-saa1-scavenger-gene-set",
+      "subject_id": "gene-saa1",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "The pinned Reactome gene-set reference lists SAA1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated gene-set annotation",
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "upstream_release": null
+      },
+      "evidence_ids": [
+        "evidence-saa1-scavenger-gene-set"
+      ],
+      "summary": "Literal gene-level pathway annotation in the pinned reference.",
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
       }
     }
   ],
@@ -2781,6 +3201,254 @@
         "date": "2026-10-24",
         "human_reviewed": false,
         "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-col1a1-encodes",
+      "claim_id": "claim-col1a1-encodes",
+      "source_id": "source-hgnc-coverage-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human COL1A1 gene to the UniProt gene product P02452.",
+      "locator": "Approved HGNC row HGNC:2197 (COL1A1); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database identity annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "hgnc_id": "HGNC:2197",
+        "source_sha256": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b"
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-col1a1-scavenger-gene-set",
+      "claim_id": "claim-col1a1-scavenger-gene-set",
+      "source_id": "source-reactome-scavenger-gene-set",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The pinned Reactome gene-set reference lists COL1A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol COL1A1. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database gene-set annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "normalized_reference_sha256": "f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6",
+        "protein_form": null
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-col1a2-encodes",
+      "claim_id": "claim-col1a2-encodes",
+      "source_id": "source-hgnc-coverage-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human COL1A2 gene to the UniProt gene product P08123.",
+      "locator": "Approved HGNC row HGNC:2198 (COL1A2); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database identity annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "hgnc_id": "HGNC:2198",
+        "source_sha256": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b"
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-col1a2-scavenger-gene-set",
+      "claim_id": "claim-col1a2-scavenger-gene-set",
+      "source_id": "source-reactome-scavenger-gene-set",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The pinned Reactome gene-set reference lists COL1A2 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol COL1A2. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database gene-set annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "normalized_reference_sha256": "f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6",
+        "protein_form": null
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-col3a1-encodes",
+      "claim_id": "claim-col3a1-encodes",
+      "source_id": "source-hgnc-coverage-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human COL3A1 gene to the UniProt gene product P02461.",
+      "locator": "Approved HGNC row HGNC:2201 (COL3A1); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database identity annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "hgnc_id": "HGNC:2201",
+        "source_sha256": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b"
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-col3a1-scavenger-gene-set",
+      "claim_id": "claim-col3a1-scavenger-gene-set",
+      "source_id": "source-reactome-scavenger-gene-set",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The pinned Reactome gene-set reference lists COL3A1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol COL3A1. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database gene-set annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "normalized_reference_sha256": "f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6",
+        "protein_form": null
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-saa1-encodes",
+      "claim_id": "claim-saa1-encodes",
+      "source_id": "source-hgnc-coverage-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human SAA1 gene to the UniProt gene product P0DJI8.",
+      "locator": "Approved HGNC row HGNC:10513 (SAA1); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database identity annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "hgnc_id": "HGNC:10513",
+        "source_sha256": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b"
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-saa1-scavenger-gene-set",
+      "claim_id": "claim-saa1-scavenger-gene-set",
+      "source_id": "source-reactome-scavenger-gene-set",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The pinned Reactome gene-set reference lists SAA1 in Binding and Uptake of Ligands by Scavenger Receptors (R-HSA-2173782).",
+      "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol SAA1. The original GMT row is identified by the same stable pathway ID; source raw/normalized digests are retained.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "database gene-set annotation",
+        "experimental_system": null,
+        "sample_size": null,
+        "upstream_release": null,
+        "annotation_level": "gene",
+        "reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+        "normalized_reference_sha256": "f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6",
+        "protein_form": null
+      },
+      "limitations": [
+        "Identity and annotation records do not measure RNA, protein abundance, translation or a disease effect.",
+        "The source mirrors have not been reconciled to exact official upstream releases.",
+        "Gene-set membership is not a resolved protein/complex/compartment annotation, direct physical interaction or pathway-activity measurement.",
+        "Selection from an AD results table does not establish an AD-risk or causal association."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
       }
     }
   ],
@@ -3853,6 +4521,64 @@
         "notice_url": null
       },
       "publication_type": "primary_research"
+    },
+    {
+      "id": "source-hgnc-coverage-identities",
+      "kind": "database_record",
+      "title": "HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)",
+      "url": "https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz",
+      "identifiers": [
+        {
+          "namespace": "SHA-256",
+          "value": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "HGNC (pinned mirror)",
+      "release": "gene-tidy mirror commit 37b375b4e4f70445cbb9e40b273a510467b798ae; original HGNC release/date not independently verified",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://www.genenames.org/about/",
+        "attribution": "HUGO Gene Nomenclature Committee at the University of Cambridge, HGNC (RRID:SCR_002827), https://www.genenames.org/. Approved symbols and cross-references from the same verified pinned archive used by the identifier reference; no gene-tidy software copied.",
+        "retained_content": "Approved identity facts, stable cross-references and short project-authored locators/summaries only; no sequence, protein-function prose, software or article content.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-scavenger-gene-set",
+      "kind": "database_record",
+      "title": "Pinned Reactome human GMT: scavenger-receptor gene-set annotations",
+      "url": "https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt",
+      "identifiers": [
+        {
+          "namespace": "SHA-256",
+          "value": "f5d9af14b2f8d373201372b2e63e3c7b2c5b535d30af1459fddfdba22015cd7d"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome (pinned mirror)",
+      "release": "MrBiomics commit fbe2f70935496c73ed21337af70e97e633c2f4d3; exact upstream Reactome release unknown",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome annotation data, mirrored by Computational Epigenetics / MrBiomics; exact upstream release unknown.",
+        "retained_content": "Four literal gene-symbol memberships, stable pathway identifiers, links and project-authored summaries. No artwork, source prose, protein states or original-paper interpretations.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
     }
   ],
   "conflicts": [

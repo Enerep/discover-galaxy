@@ -1,6 +1,6 @@
 # Implementation steps
 
-**Current stage: human RNA-seq interpretation is implemented beside the 32-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
+**Current stage: human RNA-seq interpretation is implemented beside the 40-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
@@ -29,7 +29,7 @@ The smallest useful flow is: search → select an entity → inspect a relations
 - [x] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
 - [x] Run the implemented checks and exercise the search-to-evidence flow in desktop/mobile browser tests, including WebGL failure. See [verification](docs/verification.md).
 
-The current snapshot has 32 source-linked entities and 33 draft claims, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
+The current snapshot has 40 source-linked entities and 41 draft claims, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
 
 **Done when:** a clean local setup runs with no service credentials, and a user can search for Alzheimer's, select APOE, inspect a source-checked draft relationship, and open its cited evidence through graph or list. Independent scientific approval belongs to the future release milestone.
 
@@ -104,6 +104,7 @@ This workflow interprets processed results; it does not run raw-count differenti
 - [x] Add bounded, identity-checked UniProt/Reactome/Open Targets adapters with archived-response replay, byte digests, actual/offline retrieval provenance and separate database/experimental meanings.
 - [x] Test malformed/partial responses, species/identity mismatches, duplicate mappings, first-page scope, secret-safe errors, response/timeout limits and no automatic scientific promotion.
 - [x] Extract a reproducible four-gene identity/membership seed from the existing pinned HGNC and Reactome references, without changing the broad enrichment reference or claiming a live API result.
+- [x] Inspect and add that bounded seed through a separate source-checked snapshot diff: four genes, four separate proteins, four identity cross-references and four gene-level pathway annotations, with no new empirical/disease claim.
 - [ ] Complete a successful bounded live provider request after the environment permits its hosts; inspect the real packet before using it in a source-checked snapshot diff.
 
 ### Prepare the next AD evidence pass

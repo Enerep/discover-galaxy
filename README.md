@@ -18,9 +18,11 @@ Each analyzed pathway now has an **Evidence** view: coverage of its selected gen
 
 [Database intake tooling](tools/curation/README.md#gene-and-protein-api-intake) supports bounded UniProt, Reactome and Open Targets responses with archived replay and source provenance. These tools run outside the browser and stage facts for a separate snapshot diff. Live provider access is blocked in this workspace; the [first reproducible seed](data/annotations/README.md) uses existing pinned HGNC/Reactome references instead, without changing pathway statistics or transmitting uploaded genes.
 
-**The source-checked explorer contains 32 entities and 33 cited claims.** It covers one disease, ten genes, ten distinct proteins, three pathways, and eight papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The source-checked explorer contains 40 entities and 41 cited claims.** It covers one disease, fourteen genes, fourteen distinct proteins, three pathways, and eight papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
-The latest evidence expansion adds **MARCO, SCARA5 and APOB**, separate proteins, a scavenger-receptor pathway and two cited modified-apoB binding findings. MARCO/SCARA5 were prioritized from the validated public AD analysis; RNA values stay separate from the curated network. [Source checks and scope](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-060--2026-10-24) distinguish database participation from the original protein assays.
+The latest batch adds **COL1A1, COL1A2, COL3A1 and SAA1** with separate proteins, approved identity cross-references and gene-level scavenger-pathway annotations. These use the [reproducible pinned-reference seed](data/annotations/README.md); they are database records, not new paper findings or a successful live API import. They appear in the 3D/list explorer and analysis coverage audit.
+
+The earlier evidence expansion adds **MARCO, SCARA5 and APOB**, separate proteins, a scavenger-receptor pathway and two cited modified-apoB binding findings. MARCO/SCARA5 were prioritized from the validated public AD analysis; RNA values stay separate from the curated network. [Source checks and scope](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-060--2026-10-24) distinguish database participation from the original protein assays.
 
 One toolbar groups search, the type filter and Graph/List. The selected entity, finding and original citation lead the evidence panel; **Entity details** and **Study details and limitations** hold the extra metadata. Keyboard search, visible camera controls and explicit mobile navigation support the search-to-study flow. Selection and camera transitions ease between states, respect reduced motion, and stop rendering when idle. The [design guide](docs/design.md) applies the standing rule to cut taglines/helper text and improve UX, DX and AX together.
 
@@ -34,7 +36,7 @@ Pasting the website link into a compatible social app uses a separate **1200 × 
 
 **Research brief** turns selected evidence into a working document. Pin findings or add a comparison, write your question, explanation, assumptions and proposed experiment, then download a cited Markdown brief. One draft with up to 12 findings and one comparison is saved on this browser/device; no account or AI key is needed. Notes stay separate from the scientific records and retain their user-authored status in the export. Download the file to share it or keep a copy: explorer links and PNG sharing do not include your notes, and device storage is not cloud sync or a backup.
 
-The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the database assertions include ten gene–protein mappings, eleven pathway-participation annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
+The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the database assertions include fourteen gene–protein mappings, eleven protein-level pathway-participation annotations, four gene-level pathway annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
 
 Four findings connect APOE and TREM2 proteins through the binding assays reported by Atagi and Bailey (2015), with baseline and R47H results kept separate. Source-specific protein preparations, surface presentation and replicate units remain attached to the original paper. Bailey's plasma-derived APOE isoform is unknown, and its triplicate wells are not three independent studies. The source records its in-article correction and the actual inspection limits.
 
@@ -89,9 +91,9 @@ npm run build
 npm run preview
 ```
 
-`npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. There is no lint command yet.
+`npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. Tests and offline curation/reference checks also require Python 3 (standard library only). There is no lint command yet.
 
-The [AD source-review packet](data/alzheimers/review-packet.md) collects the 24 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 41 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check

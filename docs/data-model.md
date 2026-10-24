@@ -1,6 +1,6 @@
 # Knowledge graph data model
 
-Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.6.0** contains 32 entities, 33 draft claims/evidence records, 32 sources, and one draft context comparison; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
+Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.7.0** contains 40 entities, 41 draft claims/evidence records, 34 sources, and one draft context comparison; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
 
 ## Model boundaries
 
@@ -68,6 +68,8 @@ Identity labels and aliases have their own `provenance_source_ids`; they do not 
 Start with narrowly defined predicates such as `associated_with`, `encodes`, `participates_in`, `interacts_with`, and `targets`. Document direction and semantics before using each one: storage subject/object order does not make `associated_with` causal or directional. `targets` describes a molecular relationship, not clinical efficacy. Add treatment-outcome predicates only with a separate definition and appropriately scoped evidence.
 
 Do not turn graph paths into new claims automatically. Parallel claims with different contexts are valid; deduplicate only when meaning and scope match. A rendered biological edge resolves to its claim ID. A paper-to-claim citation link is visibly a citation relationship, not an additional biological assertion.
+
+Snapshot 0.7.0 uses already-permitted gene → pathway `participates_in` endpoints for literal GMT gene-set annotations. They retain `context.annotation_level: gene`, exact reference/digests, unknown upstream release and unresolved protein state. A canonical `encodes` cross-reference does not permit transferring gene-level membership to a protein/complex/form. The inspector labels these **Annotated to / Annotated gene**, separate from protein-level **Part of / Participant** records. No schema change or disease-effect inference is made.
 
 An approved review validates the record and interpretation, not the truth of the assertion. The reviewed summary and visible relationship state must distinguish supported, contested, challenged, and undetermined interpretations. A claim with only refuting or unclear findings cannot appear as an established positive relationship.
 

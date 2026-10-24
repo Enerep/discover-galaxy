@@ -50,7 +50,9 @@ function connectionLabel(snapshot: Snapshot, claim: Claim, selected: Entity): st
   const isSubject = claim.subject_id === selected.id;
   const other = snapshot.entities.find(({ id }) => id === (isSubject ? claim.object_id : claim.subject_id));
   const label = claim.predicate === 'encodes' ? isSubject ? 'Encodes' : 'Encoded by'
-    : claim.predicate === 'participates_in' ? isSubject ? 'Part of' : 'Participant'
+    : claim.predicate === 'participates_in' ? claim.context.annotation_level === 'gene'
+      ? isSubject ? 'Annotated to' : 'Annotated gene'
+      : isSubject ? 'Part of' : 'Participant'
       : claim.predicate === 'interacts_with' ? 'Interacts with' : 'Associated with';
   return `${label} · ${other?.label ?? ''}`;
 }
