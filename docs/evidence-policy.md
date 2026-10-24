@@ -68,6 +68,8 @@ Right-tailed hypergeometric tests and BH correction cover every pathway with an 
 
 Rule-based questions identify their uploaded observations, reference membership, assumptions and possible test. They are not curated `Hypothesis` records, validated mechanisms or evidence that a question is novel. A cited protein-binding study provides assay context; RNA measurements do not reproduce its genotype or readout. Missing annotations and uncovered genes do not establish a research gap.
 
+Threshold sensitivity fixes the eligible background and full pathway family while changing only gene selection cutoffs. Recalculate pathway BH separately in each setting, preserve supplied gene padj, and identify the applied setting. The grid has no correction across settings; repeated passes are not confidence, replication or pathway activity. Overlap groups use full eligible membership against a representative, preserve every pathway's original q-value, and must not be called independent mechanisms, Reactome hierarchy or combined significance. Incomplete/unannotated identifiers follow the same background rules in every calculation.
+
 ## Source access and reuse
 
 Start with these upstream resources:

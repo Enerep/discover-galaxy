@@ -92,6 +92,42 @@ python3 tools/browser-smoke.py --url http://127.0.0.1:5173/ --mayo-table /tmp/ma
 
 The numerical oracle requires an existing SciPy; browser QA requires the existing Playwright/system-Chromium environment described in [verification](verification.md). Neither is a frontend dependency, and these commands install nothing. Ordinary browser QA uses synthetic inputs; `--mayo-table` explicitly adds the externally held real table and verifies its hash.
 
+## Threshold sensitivity and overlap validation
+
+The same normalized MAYO input and pinned references were used for the robustness checkpoint. Default applied cutoffs produce the grid below. Every cell keeps **N=32,607** and **2,720 tested pathways**, including zero-overlap pathways. Original gene padj values are not recalculated; pathway BH is recalculated separately in each cell. These settings are dependent descriptive comparisons with no correction across the grid.
+
+| Gene FDR | Minimum absolute log2FC | Selected genes | Pathways at BH ≤0.05 |
+| --- | --- | --- | --- |
+| 0.025 | 0.5 | 1,621 | 100 |
+| 0.025 | 1 | 363 | 76 |
+| 0.025 | 1.5 | 117 | 44 |
+| 0.05 | 0.5 | 1,804 | 105 |
+| 0.05 | 1 (applied) | 397 | 71 |
+| 0.05 | 1.5 | 128 | 47 |
+| 0.1 | 0.5 | 2,066 | 94 |
+| 0.1 | 1 | 427 | 69 |
+| 0.1 | 1.5 | 138 | 45 |
+
+All **24,480 pathway-setting combinations** matched independent SciPy BH and overlap calculations, with maximum absolute/relative q-value errors 1.02e-9/1.42e-9. The applied result is unchanged; the leading `R-HSA-2173782` passes all nine settings. That count is not a confidence level or evidence of replication. Larger selected sets need not produce more significant pathways, as the grid demonstrates.
+
+An independent Python set implementation also reproduced all **1,673 groups** over the 2,720 original pathways, including every representative/member identity, shared count and Jaccard. The app uses an inverted candidate index; the oracle deliberately searches all existing representatives. Groups use Jaccard ≥0.5 on full eligible memberships, including unselected genes. Each member must meet the cutoff against its original representative; similarity to another member cannot create a transitive chain. At the applied cutoffs, the 71 pathways at BH ≤0.05 appear as **37 groups**, preserving every original statistic and member. This is a display rule, not a biological hierarchy, independent-mechanism count or pooled test.
+
+The axes halve/double the applied gene FDR (capping at 1) and subtract/add 0.5 to absolute log2FC (flooring at 0). Duplicate settings are removed, so boundary inputs can have fewer than nine cells. Derived neighboring values are rounded to 15 significant digits for ordinary cutoffs to remove floating-point artifacts; the exact applied cutoffs are preserved. The native tests also cover custom/extreme cutoffs, missing statistics, empty annotation families, exact hypergeometric fractions and non-transitive grouping boundaries.
+
+After producing `result` in the Node example above, export both reports:
+
+```js
+const {analyzeThresholdSensitivity, groupOverlappingPathways} = await import('./apps/web/src/lib/experiment-robustness.ts');
+const input = {rows: result.rows, backgroundGenes: result.backgroundGenes, pathways: pathways.pathways, thresholds: result.thresholds, baseline: result.pathways};
+await writeFile('/tmp/mayo-robustness.json', JSON.stringify({sensitivity: analyzeThresholdSensitivity(input), grouping: groupOverlappingPathways(input), baseline: result.pathways}));
+```
+
+```sh
+python3 tools/analysis/validate-robustness.py --input /tmp/mayo-validation.csv --results /tmp/mayo-robustness.json --sha256 0f084d65603e1608c8293300ce0b00ccf5dab6d3bf93321cbd3179d688f61c09
+```
+
+This optional oracle requires the existing SciPy environment, installs nothing and fetches nothing. Reports and input stay outside Git. The browser suite exercises the actual bundled local worker, failure/retry, cached results across pathway selection, replacement/removal cancellation, stale-response rejection, mobile/WebGL fallback and the real MAYO grid/group counts. Focused screenshots and exact observed checks are recorded in [verification](verification.md).
+
 ## Rejected AD validation candidate
 
 The GSE53697 reanalysis at [CyrilleMesue, commit a66062f](https://github.com/CyrilleMesue/differentially-expressed-genes-in-Alzheimers/tree/a66062fb6401a1796daeea5bd60b2841d9d0f411) supplies `output_files/DGE/Deseq2-results-all.tsv`, 1,857,651 bytes, SHA-256 `37b73fbb9f44c6b525f34e45e9779ddada493191d3959a42ba64e4e5091f71e8`. It has 15,943 rows, including 99 names rejected by current symbol syntax, with date-like strings such as `7-Sep` and other historic/nonstandard labels. It was not used for enrichment validation; no guesses, automatic repairs or dropped-row substitute were made. [GEO GSE53697](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE53697) describes 17 samples; the reanalysis's retained metadata has 13 (5 control, 8 AD). These are distinct source scopes, not interchangeable sample counts.

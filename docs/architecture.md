@@ -104,6 +104,14 @@ Dataset-version mismatches keep the user's notes and referenced IDs. The workspa
 
 `buildResearchBrief` requires a question and resolvable pinned evidence from the current snapshot. User notes are escaped and blockquoted in their own sections. The shared complete finding renderer and existing comparison exporter retain scientific statements, contexts, locators, source/notice URLs, unknowns and actual review metadata. An included comparison keeps its curated context note. The exported document labels user reasoning as a draft and does not attest novelty, feasibility or support for that reasoning. Downloads use a local Blob; notes are never included in explorer links or PNG exports and are not uploaded.
 
+## Threshold sensitivity and overlap groups
+
+`experiment-robustness.ts` owns pure computations over an already applied analysis. Sensitivity preserves resolved observations, eligible N and the complete pathway family across at most nine distinct cutoff settings; each has a separately calculated pathway BH. The exact applied result is reused without mutation. Counts are descriptive; the grid is not jointly corrected across settings or a confidence estimate. `ThresholdSensitivity` displays a pathway-specific matrix, the applied cell and optional counts/method details.
+
+Grouping uses all eligible pathway members, including genes outside the selected set. A greedy algorithm visits pathways by ascending applied log-BH, log-p and ID, assigns to the most similar existing representative at Jaccard ≥0.5, and resolves ties by representative order. An inverted gene index avoids unrelated comparisons. Members never become new representatives within their group, preventing transitive-chain collapse. Groups preserve all original results, with no pooled statistic or new testing family. Filtered search can show an original representative with matching members; pagination counts groups and pathways separately.
+
+`useExperimentRobustness` starts the bundled module worker only when requested, shares it between operations for one applied analysis, caches successful reports and reports recoverable errors without replacing the input. It terminates the worker and releases old owner state on result replacement/removal; replies from an old worker cannot repopulate the UI. Calculations and message payloads stay in this tab. Workers make no data request and write no storage. Existing graph/list/evidence flows remain mounted and usable.
+
 ## Sharing
 
 Image export captures the current graph on demand and combines it with the selected entity, full finding, source references, dataset version, and explicit draft status. The image renderer uses local Canvas APIs; it does not fetch paper content or upload the image. List view and unavailable WebGL use an evidence card without pretending to capture a graph. Native file sharing is optional; PNG download remains available.

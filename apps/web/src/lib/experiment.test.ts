@@ -89,6 +89,15 @@ test('thresholds are inclusive and cannot silently accept invalid probability or
     { adjustedPMax: 0.05, minAbsLog2FoldChange: Infinity }]) assert.throws(() => selectExperimentHits(table, thresholds), /adjusted p-value/);
 });
 
+test('nonzero underflow cannot silently become a reported zero or bypass probability bounds', () => {
+  for (const [fold, padj] of [['1e-999', '.01'], ['1', '1e-999'], ['1', '-1e-999']]) {
+    assert.throws(() => parseExperiment(`${HEADER}\nAPOE,${fold},${padj}`, 'synthetic.csv'), /too small to represent/);
+  }
+  const table = parseExperiment(`${HEADER}\nAPOE,1,5e-324\nABCA1,0e-999,0e-999`, 'synthetic.csv');
+  assert.ok(table.rows[0].padj! > 0);
+  assert.equal(table.rows[1].padj, 0);
+});
+
 test('file bytes and row limits are bounded while blank physical lines do not add genes', () => {
   assert.throws(() => parseExperiment('x'.repeat(MAX_EXPERIMENT_BYTES + 1), 'synthetic.csv'), /5 MiB/);
   assert.throws(() => parseExperiment('é'.repeat(Math.floor(MAX_EXPERIMENT_BYTES / 2) + 1), 'synthetic.csv'), /5 MiB/);

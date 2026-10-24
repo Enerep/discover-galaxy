@@ -89,7 +89,10 @@ This is a user writing workflow. It does not add curator-reviewed questions, est
 - [x] Exercise upload/recovery/privacy, keyboard/themes/mobile/WebGL fallback and existing explorer flows in browser QA; record final observations in verification.
 - [x] Add pinned HGNC/Ensembl mapping, explicit column choice, original-ID/version traceability, ambiguity acknowledgement and blocked duplicate mappings.
 - [x] Validate supplied public MAYO AD and original Ensembl airway results against independent SciPy calculations; record conversions, source scopes and rejected data-quality candidates.
-- [ ] Assess threshold sensitivity and pathway redundancy without treating related terms as independent mechanisms.
+- [x] Compare nearby gene cutoffs in local workers while preserving the eligible background and complete pathway-BH family.
+- [x] Group overlapping eligible pathway memberships with original statistics, explicit similarity and access to every member; avoid claims of independent mechanisms.
+
+This completes the product milestone for a **public research preview**: processed human RNA-seq input → identifier audit → pathway analysis → sensitivity/overlap inspection → cited evidence and follow-up questions. Observed numerical/browser checks remain distinct from scientific release approval. Hosting requires the normal production build; no server or AI key is needed.
 
 This workflow interprets processed results; it does not run raw-count differential expression, verify input species/identity, model gene-length/expression selection bias, prove pathway activity or promote questions into the curated scientific snapshot. No backend, upload service or live AI model was added.
 

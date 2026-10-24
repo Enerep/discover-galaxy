@@ -1513,12 +1513,134 @@ def assert_public_ad_results(browser, base_url: str, screenshots: Path, table: P
     workspace.get_by_role('checkbox', name='Pathway FDR ≤ 0.05', exact=True).check()
     expect(workspace.locator('.experiment-pagination').first).to_contain_text('1–20 of 71')
     expect(workspace.get_by_role('region', name='Pathway results').locator('tbody tr').first).to_contain_text('1.54e-15')
+    sensitivity = workspace.locator('.experiment-sensitivity')
+    sensitivity.get_by_text('Threshold sensitivity', exact=True).click()
+    expect(sensitivity).to_contain_text('Pathway FDR ≤ 0.05 in 9 of 9 settings', timeout=20000)
+    expect(sensitivity.locator('td[data-applied=true]')).to_contain_text('1.54e-15')
+    workspace.get_by_role('checkbox', name='Group overlaps', exact=True).check()
+    expect(workspace.locator('.experiment-pagination').first).to_contain_text('1–20 of 37 groups (71 pathways)', timeout=20000)
+    expect(workspace.locator('.experiment-counts dd')).to_have_text(['32,607', '397', '10,786', '2,720'])
     page.screenshot(path=str(screenshots / 'public-mayo-ad-results.png'))
     assert all(method == 'GET' and data is None for method, _, data in requests)
     assert 'MAYO temporal cortex' not in page.evaluate('JSON.stringify(localStorage)')
     assert not errors, errors
     context.close()
     print('PASS: public MAYO AD results retain all 32,607 input genes, report 6,260 unresolved mappings, and reproduce 397 selected genes, 2,720 tested pathways and 71 pathway-BH results ≤0.05. This validates interpretation of supplied results, not the upstream disease model.')
+
+
+def assert_experiment_robustness(browser, base_url: str, screenshots: Path) -> None:
+    csv = ('gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,-1.8,.02\nABCA1,-1.2,.03\n'
+           'TYROBP,.4,.5\nNR1H2,.7,.04\nNR1H3,1.1,.08\nRXRA,.3,.6\nPLCG2,1.1,.04\nSPP1,-.1,.8\nFKBP5,NA,NA\n')
+    csv += ''.join(f'SYNTHETICUNMAPPED{i},.1,.9\n' for i in range(90))
+    instrumentation = '''
+      window.__workerQA = {created:0, terminated:0, block:true, hold:false, pending:[], results:{}};
+      const NativeWorker = window.Worker;
+      window.Worker = class extends NativeWorker {
+        constructor(...args) { if (window.__workerQA.block) throw new Error('QA worker unavailable'); super(...args); window.__workerQA.created++; }
+        set onmessage(handler) { super.onmessage = event => {
+          window.__workerQA.results[event.data.kind] = event.data.result;
+          if (window.__workerQA.hold) window.__workerQA.pending.push(() => handler(event));
+          else handler(event);
+        }; }
+        terminate() { window.__workerQA.terminated++; super.terminate(); }
+      };
+    '''
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width':360 if mobile else 1440, 'height':844 if mobile else 1000}, reduced_motion='reduce', is_mobile=mobile, has_touch=mobile, color_scheme='dark' if mobile else 'light')
+        context.add_init_script(RENDER_COUNTERS)
+        context.add_init_script(instrumentation)
+        if mobile:
+            context.add_init_script('''const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                    return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+                };''')
+        page = context.new_page()
+        requests, errors = [], []
+        page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.goto(base_url, wait_until='networkidle')
+        page.get_by_role('navigation', name='Workspace').get_by_role('button', name='Analyze results', exact=True).click()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name':'synthetic-robustness.csv','mimeType':'text/csv','buffer':csv.encode()})
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('Synthetic robustness / control')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        form.locator('button[type=submit]').click()
+        counts = workspace.locator('.experiment-counts dd')
+        expect(counts.nth(0)).to_have_text('99')
+        expect(counts.nth(1)).to_have_text('4')
+        initial_counts = counts.all_text_contents()
+        assert not any('experiment-robustness.worker' in url for _, url, _ in requests)
+        search = workspace.get_by_role('searchbox', name='Find pathways', exact=True)
+        search.fill('Plasma lipoprotein assembly, remodeling, and clearance')
+        detail = workspace.locator('.experiment-pathway-detail')
+        baseline_q = workspace.get_by_role('region', name='Pathway results', exact=True).locator('tbody tr').first.locator('td').last.inner_text()
+        sensitivity = detail.locator('.experiment-sensitivity')
+        toggle = sensitivity.get_by_text('Threshold sensitivity', exact=True)
+        if mobile: assert_touch_target(toggle)
+        toggle.focus(); page.keyboard.press('Enter')
+        expect(sensitivity.get_by_role('alert')).to_contain_text('Unable to check thresholds')
+        expect(counts).to_have_text(initial_counts)
+        page.evaluate('window.__workerQA.block = false')
+        sensitivity.get_by_role('button', name='Retry threshold check', exact=True).click()
+        expect(toggle).to_be_focused()
+        expect(sensitivity.locator('.experiment-sensitivity-count')).to_contain_text('of 9 settings', timeout=15000)
+        matrix = sensitivity.get_by_role('region', name='Pathway threshold sensitivity', exact=True)
+        expect(matrix.locator('td[data-applied=true]')).to_have_count(1)
+        expect(matrix.locator('td[data-applied=true]')).to_contain_text(baseline_q)
+        expect(matrix.locator('tbody th')).to_have_text(['0.025','0.05','0.1'])
+        assert page.evaluate('window.__workerQA.created') == 1
+        assert_text_contrast(sensitivity.locator('.experiment-sensitivity-count'))
+        assert_text_contrast(matrix.locator('td[data-applied=true]'))
+        sensitivity.get_by_text('Counts and method', exact=True).click()
+        count_rows = sensitivity.get_by_role('region', name='Threshold setting counts', exact=True).locator('tbody tr')
+        assert [row.locator('td').nth(1).inner_text() for row in count_rows.all()] == ['2','2','2','5','4','2','6','5','2']
+        sensitivity.get_by_text('Counts and method', exact=True).click()
+        expect(counts).to_have_text(initial_counts)
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        page.screenshot(path=str(screenshots / f'robustness-{"mobile" if mobile else "desktop"}.png'))
+        search.fill('')
+        group = workspace.get_by_role('checkbox', name='Group overlaps', exact=True)
+        if mobile: assert_touch_target(group.locator('..'))
+        group.check()
+        expect(workspace.locator('.experiment-pagination').first).to_contain_text('groups (', timeout=15000)
+        assert page.evaluate('window.__workerQA.created') == 1, 'Both operations should reuse the same applied-analysis worker.'
+        result = page.evaluate('window.__workerQA.results.grouping')
+        related_group = next(item for item in result['groups'] if len(item['members']) > 1)
+        child = next(item['id'] for item in related_group['members'] if item['id'] != related_group['representativeId'])
+        reference = json.loads((Path(__file__).resolve().parents[1] / 'data/reference/reactome-pathways.json').read_text())
+        child_record = next(row for row in reference['pathways'] if row['id'] == child)
+        search.fill(child_record['name'])
+        choice = workspace.get_by_role('button', name=child_record['name'], exact=True)
+        expect(choice).to_be_visible()
+        choice.click()
+        expect(detail.locator('h3')).to_have_text(child_record['name'])
+        expect(detail.locator('.experiment-source-link')).to_have_attribute('href', child_record['url'])
+        expect(matrix).to_be_visible()
+        expect(counts).to_have_text(initial_counts)
+        group.uncheck()
+        expect(workspace.locator('.experiment-pagination').first).not_to_contain_text('groups')
+        form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0')
+        form.locator('button[type=submit]').click()
+        expect(counts.nth(1)).to_have_text('0')
+        expect(group).not_to_be_checked()
+        expect(sensitivity).not_to_have_attribute('open', '')
+        page.wait_for_function('window.__workerQA.terminated >= 1')
+        page.evaluate('window.__workerQA.hold = true')
+        toggle.click()
+        page.wait_for_function('window.__workerQA.pending.length > 0')
+        expect(sensitivity.get_by_role('status')).to_contain_text('Checking thresholds')
+        form.get_by_role('button', name='Remove results', exact=True).click()
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        page.wait_for_function('window.__workerQA.terminated >= 2')
+        page.evaluate('window.__workerQA.hold = false; window.__workerQA.pending.splice(0).forEach(deliver => deliver())')
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        assert all(method == 'GET' and data is None for method, _, data in requests)
+        assert 'Synthetic robustness' not in page.evaluate('JSON.stringify(localStorage)')
+        if not mobile: assert_idle(page, 'Graph after cutoff checks, overlap grouping and worker cancellation')
+        assert not errors, errors
+        context.close()
+    print('PASS: local-worker sensitivity/grouping preserve applied data and citations, retry when workers are unavailable, support keyboard/themes/mobile/fallback, and discard stale results after replacement/removal without uploads or persistence.')
 
 
 def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path | None = None) -> None:
@@ -1827,6 +1949,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_research_brief(browser, base_url, screenshots)
         assert_experiment_analysis(browser, base_url, screenshots)
         assert_identifier_mapping(browser, base_url, screenshots)
+        assert_experiment_robustness(browser, base_url, screenshots)
         if public_ad_table is not None:
             assert_public_ad_results(browser, base_url, screenshots, public_ad_table)
         browser.close()

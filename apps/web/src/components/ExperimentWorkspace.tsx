@@ -10,6 +10,9 @@ import { Icon } from './ui.tsx';
 import { loadGeneIdentityReference, resolveGeneIdentifiers } from '../lib/gene-identifiers.ts';
 import type { GeneIdentityReference, GeneMappingReport } from '../lib/gene-identifiers.ts';
 import { GeneMappingDetails } from './GeneMappingDetails.tsx';
+import { ThresholdSensitivity } from './ThresholdSensitivity.tsx';
+import { PathwayGroupMembers } from './PathwayGroupMembers.tsx';
+import { useExperimentRobustness } from '../lib/useExperimentRobustness.ts';
 import './experiment-workspace.css';
 
 interface Props {
@@ -34,6 +37,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const fileInput = useRef<HTMLInputElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
   const detailHeading = useRef<HTMLHeadingElement>(null);
+  const groupToggle = useRef<HTMLInputElement>(null);
   const readSequence = useRef(0);
   const pendingResultFocus = useRef(false);
   const mappingRegion = useRef<HTMLDivElement>(null);
@@ -57,7 +61,14 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   const [page, setPage] = useState(0);
   const [pathwayId, setPathwayId] = useState<string | null>(null);
   const [memberPage, setMemberPage] = useState(0);
+  const [groupOverlaps, setGroupOverlaps] = useState(false);
+  const [sensitivityOpen, setSensitivityOpen] = useState(false);
+  const robustness = useExperimentRobustness(analysis);
   const reducedMotion = useReducedMotion();
+
+  useLayoutEffect(() => {
+    if (groupOverlaps) setPage(0);
+  }, [robustness.grouping.result]);
 
   useLayoutEffect(() => {
     if (!mapping || !pendingMappingFocus.current) return;
@@ -84,8 +95,21 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     if (sort === 'hits') rows.sort((a, b) => b.overlapSize - a.overlapSize || a.logAdjustedPValue - b.logAdjustedPValue || a.id.localeCompare(b.id, 'en-US'));
     return rows;
   }, [analysis, query, sort, significantOnly]);
-  const visibleRows = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const selectedPathway = filtered.find(({ id }) => id === pathwayId) ?? filtered[0];
+  const pathwayLookup = useMemo(() => new Map(analysis?.pathways.map((row) => [row.id, row]) ?? []), [analysis]);
+  const listed = useMemo(() => {
+    if (!groupOverlaps || !robustness.grouping.result) return filtered.map((row) => ({ row, group: null }));
+    const groupsById = new Map(robustness.grouping.result.groups.flatMap((group) => group.members.map(({ id }) => [id, group] as const)));
+    const visible = new Set(filtered.map(({ id }) => id));
+    const seen = new Set<string>();
+    return filtered.flatMap((row) => {
+      const group = groupsById.get(row.id)!;
+      if (seen.has(group.representativeId)) return [];
+      seen.add(group.representativeId);
+      return [{ row: pathwayLookup.get(group.representativeId)!, group: { ...group, members: group.members.filter(({ id }) => visible.has(id)) } }];
+    });
+  }, [filtered, groupOverlaps, robustness.grouping.result, pathwayLookup]);
+  const visibleRows = listed.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const selectedPathway = (pathwayId ? pathwayLookup.get(pathwayId) : null) ?? filtered[0];
   const selectedGenes = useMemo(() => new Set(analysis?.selected.map(({ gene }) => gene) ?? []), [analysis]);
   const eligibleGenes = useMemo(() => new Set(analysis?.backgroundGenes ?? []), [analysis]);
   const eligibleMembers = useMemo(() => {
@@ -153,6 +177,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
       pendingResultFocus.current = true;
       setAnalysis(result); onResults(result);
       setQuery(''); setPage(0); setMemberPage(0); setPathwayId(null); setSignificantOnly(false);
+      setGroupOverlaps(false); setSensitivityOpen(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'The analysis could not be completed. Your previous results are still available.');
     } finally { setBusy(null); }
@@ -164,6 +189,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     pendingMappingFocus.current = false;
     setPendingTable(null); setAnalysis(null); setAllTestedGenes(false); setBusy(null); setError('');
     setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
+    setGroupOverlaps(false); setSensitivityOpen(false);
     if (fileInput.current) fileInput.current.value = '';
     onResults(null); fileInput.current?.focus();
   }
@@ -184,7 +210,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   }
 
   function changePage(next: number) {
-    setPage(next); setPathwayId(filtered[next * PAGE_SIZE]?.id ?? null); setMemberPage(0);
+    setPage(next); setPathwayId(listed[next * PAGE_SIZE]?.row.id ?? null); setMemberPage(0);
   }
 
   return <main ref={workspace} className="experiment-workspace" id="experiment-workspace" tabIndex={-1} aria-labelledby="experiment-title">
@@ -234,19 +260,26 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
             <label><span className="sr-only">Sort pathways</span><select aria-label="Sort pathways" value={sort} onChange={(event) => { setSort(event.target.value); setPage(0); setPathwayId(null); setMemberPage(0); }}>
               <option value="fdr">Pathway FDR</option><option value="hits">Selected hits</option><option value="name">Pathway name</option>
             </select></label>
-            <label className="experiment-significance"><input type="checkbox" checked={significantOnly} onChange={(event) => { setSignificantOnly(event.target.checked); setPage(0); setPathwayId(null); setMemberPage(0); }} />Pathway FDR ≤ 0.05</label>
+            <div className="experiment-pathway-options">
+              <label className="experiment-significance"><input type="checkbox" checked={significantOnly} onChange={(event) => { setSignificantOnly(event.target.checked); setPage(0); setPathwayId(null); setMemberPage(0); }} />Pathway FDR ≤ 0.05</label>
+              <label className="experiment-significance"><input ref={groupToggle} type="checkbox" checked={groupOverlaps} onChange={(event) => { setGroupOverlaps(event.target.checked); setPage(0); if (event.target.checked) robustness.request('grouping'); }} />Group overlaps</label>
+            </div>
           </div>
+          {groupOverlaps && robustness.grouping.status === 'running' && <p role="status">Grouping pathways…</p>}
+          {groupOverlaps && robustness.grouping.status === 'error' && <div role="alert"><p>{robustness.grouping.error}</p><button className="secondary-button" type="button" onClick={() => { groupToggle.current?.focus({ preventScroll: true }); robustness.request('grouping'); }}>Retry pathway grouping</button></div>}
           {visibleRows.length ? <>
             <div className="experiment-table-scroll" role="region" aria-label="Pathway results" tabIndex={0}>
               <table className="experiment-table"><thead><tr><th scope="col">Pathway</th><th scope="col">Selected hits</th><th scope="col">Eligible members</th><th scope="col">Pathway FDR</th></tr></thead>
-                <tbody>{visibleRows.map((row) => <tr key={row.id} data-selected={row.id === selectedPathway?.id}>
-                  <th scope="row"><button type="button" className="experiment-pathway-choice" aria-pressed={row.id === selectedPathway?.id} onClick={() => choosePathway(row.id)}>{row.name}</button></th>
+                <tbody>{visibleRows.map(({ row, group }) => <tr key={row.id} data-selected={row.id === selectedPathway?.id || group?.members.some(({ id }) => id === selectedPathway?.id)}>
+                  <th scope="row"><button type="button" className="experiment-pathway-choice" aria-pressed={row.id === selectedPathway?.id} onClick={() => choosePathway(row.id)}>{row.name}</button>
+                    {group && <PathwayGroupMembers group={group} lookup={pathwayLookup} selectedId={selectedPathway?.id} searching={Boolean(query.trim())} onChoose={choosePathway} />}
+                  </th>
                   <td>{integer(row.overlapSize)}</td><td>{integer(row.pathwayMeasuredSize)}</td><td>{formatProbability(row.adjustedPValue, row.logAdjustedPValue)}</td>
                 </tr>)}</tbody>
               </table>
             </div>
-            <div className="experiment-pagination"><span>{integer(page * PAGE_SIZE + 1)}–{integer(Math.min((page + 1) * PAGE_SIZE, filtered.length))} of {integer(filtered.length)}</span>
-              <nav aria-label="Pathway result pages"><button className="secondary-button" type="button" disabled={page === 0} onClick={() => changePage(page - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(page + 1) * PAGE_SIZE >= filtered.length} onClick={() => changePage(page + 1)}>Next</button></nav>
+            <div className="experiment-pagination"><span>{integer(page * PAGE_SIZE + 1)}–{integer(Math.min((page + 1) * PAGE_SIZE, listed.length))} of {integer(listed.length)}{groupOverlaps && robustness.grouping.result ? ` groups (${integer(filtered.length)} pathways)` : ''}</span>
+              <nav aria-label="Pathway result pages"><button className="secondary-button" type="button" disabled={page === 0} onClick={() => changePage(page - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(page + 1) * PAGE_SIZE >= listed.length} onClick={() => changePage(page + 1)}>Next</button></nav>
             </div>
           </> : <div className="experiment-empty" role="status"><h3>{query.trim() ? 'No matching pathways' : significantOnly ? 'No pathways pass this FDR cutoff' : 'No eligible genes map to the pathway reference'}</h3>
             {(query || significantOnly) && <button className="secondary-button" type="button" onClick={() => { setQuery(''); setSignificantOnly(false); setPage(0); }}>Show all tested pathways</button>}
@@ -256,6 +289,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
           <h3 ref={detailHeading} tabIndex={-1} id="experiment-pathway-title">{selectedPathway.name}</h3>
           <a className="experiment-source-link" href={selectedPathway.url} target="_blank" rel="noreferrer">{selectedPathway.id}<Icon name="external" size={14} /></a>
           <p className="experiment-pathway-summary">{integer(selectedPathway.overlapSize)} selected of {integer(selectedPathway.pathwayMeasuredSize)} eligible members</p>
+          <ThresholdSensitivity pathway={selectedPathway} open={sensitivityOpen} onToggle={(open) => { setSensitivityOpen(open); if (open) robustness.request('sensitivity'); }} status={robustness.sensitivity.status} report={robustness.sensitivity.result} error={robustness.sensitivity.error} onRetry={() => robustness.request('sensitivity')} />
           <div className="experiment-table-scroll" role="region" aria-label="Eligible pathway members" tabIndex={0}>
             <table className="experiment-table experiment-member-table"><thead><tr><th scope="col">Gene</th><th scope="col">log₂FC</th><th scope="col">Gene FDR</th><th scope="col">Selected</th></tr></thead>
               <tbody>{eligibleMembers.slice(memberPage * MEMBER_PAGE_SIZE, (memberPage + 1) * MEMBER_PAGE_SIZE).map((row) => <tr key={row.gene}>
@@ -276,6 +310,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
           <div><dt>Selected set</dt><dd>Gene FDR ≤ {analysis.thresholds.adjustedPMax}; |log₂ fold change| ≥ {analysis.thresholds.minAbsLog2FoldChange}. Supplied gene adjusted p-values are used without recalculation.</dd></div>
           <div><dt>Eligible background</dt><dd>{integer(analysis.backgroundGenes.length)} unique symbols with complete log2FoldChange and padj values, including unannotated eligible genes. {integer(analysis.table.missingStatisticsCount)} incomplete rows remain in the uploaded input and are excluded from the enrichment background and selected set.</dd></div>
           <div><dt>Pathway correction</dt><dd>Right-tailed hypergeometric tests; Benjamini–Hochberg correction across all {integer(analysis.pathways.length)} pathways with eligible members, including zero-overlap pathways.</dd></div>
+          <div><dt>Overlap groups</dt><dd>Greedy groups use Jaccard ≥0.5 (shared genes / union) on complete eligible pathway membership, including genes outside the selected set. Representatives are chosen by ascending pathway BH, raw p-value, then ID; each member meets the cutoff against its original representative. Groups are navigation aids, not independent mechanisms or Reactome hierarchy. Original pathway statistics and the full BH family are unchanged. Search can show a group representative beside matching members; Jaccard values always refer to that original representative.</dd></div>
           <div><dt>Interpretation</dt><dd>Up/down genes are pooled for membership testing; signed changes remain visible individually. Pathway FDR tests overrepresentation, not pathway activity. Overlapping parent/child pathways are not independent mechanisms. RNA-seq gene-length and expression-dependent selection bias are not modeled. Questions are proposals for investigation; novelty and experimental feasibility have not been established.</dd></div>
           <div><dt>Reference</dt><dd>{analysis.reference.reference_id}</dd></div>
           <div><dt>Upstream Reactome release</dt><dd>{analysis.reference.upstream_release ?? 'Not recorded'}</dd></div>

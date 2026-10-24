@@ -18,6 +18,8 @@ Upload a full human-symbol or Ensembl results table, name the contrast, declare 
 
 The initial analysis uses a pinned broad Reactome library with unknown exact upstream release. It tests threshold-selected genes in either direction with right-tailed hypergeometric probabilities and BH correction over all pathways with eligible members, including zero hits. Incomplete statistics exclude a row from ORA eligibility; unannotated eligible genes remain in the background. Gene FDR input and adjusted pathway p-values are distinct. Gene-length/expression selection bias, annotation coverage and overlapping pathways limit interpretation; significant rows are not independent mechanisms or activity measurements.
 
+Inspect a pathway's FDR across nearby gene cutoffs without changing the applied analysis, and optionally group overlapping eligible memberships while retaining every original result. These descriptive local checks make repeated terms and cutoff-dependent interpretations easier to inspect. They do not supply confidence, independent replication or a pooled group statistic. Together with identifier audits and cited follow-up questions, this completes the product milestone for a public research preview; it does not complete the future scientific-release attestations.
+
 ## Core journey
 
 1. Open a restrained galaxy view with a visible search field, legend, and list-view option.
@@ -37,6 +39,7 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 | --- | --- |
 | 3D exploration | Select and focus entities; distinguish entity types; expose labeled relationship details |
 | Experimental-data interpretation | Parse a full human-symbol or Ensembl RNA-seq results table locally, test pathway overrepresentation with declared eligibility and multiple-testing correction, inspect measurements and propose source-linked follow-up questions |
+| Interpretation checks | Inspect pathway FDR across nearby cutoffs with a fixed eligible universe, and navigate representative overlap groups without changing original statistics or inferring independent mechanisms |
 | Search and filters | Search labels, aliases, and curated identifiers; show active filters and no-result states |
 | Evidence inspection | Show exact claims, evidence direction, context, uncertainty, and links to original references |
 | Finding comparison | Align claim scope and source-specific context without pooling participants or inferring agreement, conflict, independence, or strength; preserve citations in a downloadable brief |

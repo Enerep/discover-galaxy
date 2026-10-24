@@ -114,6 +114,7 @@ function numberValue(value: string, line: number, column: string, adjustedP: boo
   if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/iu.test(trimmed)
     || !Number.isFinite(Number(trimmed))) throw new Error(`Row ${line}, ${column}: enter a finite decimal number or NA.`);
   const number = Number(trimmed);
+  if (number === 0 && /[1-9]/u.test(trimmed.split(/[eE]/u)[0])) throw new Error(`Row ${line}, ${column}: this nonzero value is too small to represent. Use a representable value or NA; it cannot be treated as a reported zero.`);
   if (adjustedP && (number < 0 || number > 1)) throw new Error(`Row ${line}, ${column}: adjusted p-values must be between 0 and 1.`);
   return number;
 }
@@ -169,7 +170,7 @@ export function parseExperiment(text: string, filename: string, options: { ident
 }
 
 /** Literal inclusive thresholds; zero remains unchanged even if selected at a zero minimum. */
-export function selectExperimentHits(table: ExperimentTable, thresholds: ExperimentThresholds): ExperimentRow[] {
+export function selectExperimentHits(table: Pick<ExperimentTable, 'rows'>, thresholds: ExperimentThresholds): ExperimentRow[] {
   if (!Number.isFinite(thresholds.adjustedPMax) || thresholds.adjustedPMax < 0 || thresholds.adjustedPMax > 1
     || !Number.isFinite(thresholds.minAbsLog2FoldChange) || thresholds.minAbsLog2FoldChange < 0) throw new Error('Use an adjusted p-value between 0 and 1 and a finite, nonnegative fold-change minimum.');
   return table.rows.filter(({ padj, log2FoldChange }) => padj !== null && log2FoldChange !== null

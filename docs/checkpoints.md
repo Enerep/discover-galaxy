@@ -14,9 +14,19 @@ Observed numerical and browser checks belong in [verification](verification.md).
 
 A pinned HGNC reference now maps human Ensembl IDs while retaining original versions, unknown/ambiguous identities and the full eligible denominator. Duplicate stable IDs/gene mappings block analysis, and multiple identifier columns require a choice. [Public MAYO AD and original airway tables](experimental-validation.md) match independent SciPy calculations; actual backgrounds, author-coded contrasts and source limitations remain explicit. No experimental rows enter the curated graph.
 
-## Next checkpoint: test robustness of the interpretation
+## Public research-preview milestone
 
-Show how conclusions change with gene FDR/effect cutoffs, and group overlapping pathways without implying that related terms are independent mechanisms. Keep each result tied to its original input, eligible universe, reference and selected genes. This makes follow-up ideas easier to judge than a long list of significant pathways. Rank-based analysis and RNA-seq selection-bias correction need their own statistical validation. More sharing and extra disease nodes are not the current priority.
+The complete working path is processed human RNA-seq input → identifier audit → pathway analysis → threshold sensitivity/overlap inspection → published evidence and questions to investigate. This is suitable to publish as a public research preview. It remains a tool for interpreting supplied data; it does not run differential expression, establish pathway activity, independently verify source models or validate discoveries. The existing Source-checked draft label and accessible reference/source limitations remain. Independent scientific review and the strict scientific-release gates are separate future work, as the owner requested.
+
+**Threshold sensitivity** compares gene FDR half/applied/double (capped at 1) and absolute log2FC minus/applied/plus 0.5 (floored at 0). Duplicate boundary settings are removed. The exact applied values are retained; every cell uses the same eligible N and full pathway family, recalculating pathway BH separately. Counts across cells describe cutoff sensitivity, not confidence or independent replication. No correction across settings is applied.
+
+**Group overlaps** uses eligible-member Jaccard ≥0.5 against a deterministic representative ranked by applied BH, raw p-value and ID. Members must meet the cutoff against that representative; transitive chains do not collapse into a group. Groups retain every pathway's original statistics and are navigation aids, not independent mechanisms or Reactome hierarchy. Search reveals matching members beside the original representative. Both operations use an on-demand local worker, preserve the applied analysis and discard stale work after replacement/removal.
+
+On the public MAYO table, all nine settings × 2,720 pathways matched independent SciPy calculations. Independent Python sets also matched all 1,673 groups. At the applied cutoffs, its 71 pathways at BH ≤0.05 appear as 37 groups, with every underlying result retained. These are input/reference-specific observations, not benchmarks or disease claims; full provenance and reproduction are in [experimental validation](experimental-validation.md).
+
+## Next checkpoint: experimental context and public use
+
+Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Explicit tissue/cell model and perturbation context can make follow-up questions more useful. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.
 
 ## Existing workflow: build a research argument
 
