@@ -4,9 +4,13 @@
 
 Discovery Galaxy is an interactive map of scientific evidence in development. Glowing objects represent biological entities and papers; connections lead to the original studies, source-specific context, and limitations behind a finding.
 
+Researchers can also bring their own processed human RNA-seq results into **Analyze results**: test pathway overrepresentation, inspect signed gene changes, and investigate source-linked questions. This is the current product focus. The curated evidence library remains Alzheimer's-specific; human pathway analysis does not depend on that small graph for its statistical background.
+
 The first version focuses on **Alzheimer's disease**, with a release target of **20–50 curated entities**. Its value comes from making evidence easy to follow: every scientific relationship and explanation must lead back to its sources.
 
 ## Project status
+
+**Human RNA-seq interpretation is implemented.** A local CSV/TSV table connects to a [pinned 2,751-pathway Reactome reference](data/reference/README.md), with explicit background eligibility, separate gene/pathway FDR values, source records and rule-based follow-up questions. Files stay in this browser tab and are not uploaded or automatically saved. The exact upstream Reactome release is recorded as unknown; the mirror commit and file digests identify the reproducible reference used here.
 
 **The source-checked explorer contains 24 entities and 24 cited claims.** It covers one disease, seven genes, seven distinct proteins, two pathways, and seven papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
@@ -34,7 +38,19 @@ Independent scientific review is deferred to a future milestone, as requested by
 
 See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.
 
-The owner reports a working Vercel development deployment. **We are expanding within Alzheimer's first.** The [checkpoint plan](docs/checkpoints.md) now prioritizes using evidence to build a research brief; additional disease coverage and scientific source work remain separate milestones.
+The owner reports a working Vercel development deployment. **The curated evidence library remains Alzheimer's-focused.** The [checkpoint plan](docs/checkpoints.md) now prioritizes interpreting experimental data and developing grounded follow-up questions; broader curated disease coverage remains separate work.
+
+## Analyze an experiment
+
+1. Open **Analyze results** and choose a UTF-8 CSV or TSV of gene-level differential-expression results.
+2. Provide human gene symbols, `log2FoldChange` and `padj`. The CSV template contains synthetic format examples. Raw counts, Ensembl IDs and duplicate symbols need preprocessing before this version can use them.
+3. Name the comparison in numerator / denominator order and confirm that the file contains the full tested table, including nonsignificant genes.
+4. Choose gene FDR and absolute fold-change cutoffs, then run the analysis. Open a pathway to inspect its eligible member genes, original Reactome record and questions to investigate.
+5. Where the curated library covers a gene, choose **View … evidence** to inspect the uploaded transcript result beside the original findings. Protein nodes do not inherit RNA measurements.
+
+The enrichment background includes all uploaded genes with complete fold-change and adjusted-p statistics, before applying either cutoff. Incomplete rows are retained in the input and reported as excluded from enrichment. Eligible genes without matching annotations still count in the background. BH correction covers every pathway with an eligible member, including zero-hit pathways. Original gene padj values are not recalculated. **Methods and reference** records the actual thresholds, background, family size, reference and limitations; enrichment does not measure pathway activity or establish causality. Up/down changes are pooled for this membership test and remain visible individually.
+
+Inputs are limited to 5 MiB and 50,000 rows. Matching uses exact symbol spelling; syntax does not verify HGNC identity or species. The workflow works without WebGL, an AI key or a backend. Switching workspaces retains the analysis in memory; reloading the page drops the uploaded table. Proposed questions are deterministic starting points, not scientific approvals or claims of novelty. This tool interprets an existing differential-expression analysis and does not rerun DESeq2 or analyze raw reads/counts.
 
 ## Run locally
 
@@ -53,6 +69,7 @@ Open the printed local address, normally `http://localhost:5173`. The explorer r
 ```sh
 npm test
 npm run validate:data
+npm run reference:check
 npm run build
 npm run preview
 ```
@@ -140,7 +157,8 @@ These resources help find and contextualize evidence. Database associations, met
 | Document | Purpose |
 | --- | --- |
 | [steps.md](steps.md) | Ordered milestones, dependencies, and completion criteria |
-| [Checkpoint plan](docs/checkpoints.md) | Research brief workspace, evidence comparison, and future coverage |
+| [Checkpoint plan](docs/checkpoints.md) | Experimental-data interpretation, evidence comparison, and future coverage |
+| [Pathway reference](data/reference/README.md) | Pinned Reactome data, CC0 reuse, preparation, and external validation provenance |
 | [Product specification](docs/product.md) | Audience, user journeys, scope, and release criteria |
 | [Design guide](docs/design.md) | Simple workflows, clean presentation, plain language, and purposeful motion |
 | [Architecture](docs/architecture.md) | Data flow, technical boundaries, and planned layout |

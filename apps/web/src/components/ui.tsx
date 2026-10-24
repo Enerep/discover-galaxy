@@ -33,6 +33,7 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
     compare: <><path d="M5 7h14l-4-4M19 17H5l4 4M19 7v4M5 17v-4" /></>,
     pin: <><path d="m8 3 8 0-1 6 4 4v2H5v-2l4-4-1-6M12 15v7" /></>,
     brief: <><path d="M6 3h13v18H6a3 3 0 0 1 0-6h13M6 3a3 3 0 0 0-3 3v12M9 7h6M9 11h6" /></>,
+    analysis: <><path d="M4 3v17h17M8 15l4-6 4 3 5-8" /><circle cx="8" cy="15" r="1" /><circle cx="12" cy="9" r="1" /><circle cx="16" cy="12" r="1" /></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"

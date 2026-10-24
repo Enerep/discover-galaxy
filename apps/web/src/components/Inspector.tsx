@@ -7,6 +7,8 @@ import type { Claim, Context, Entity, Snapshot } from '../lib/types.ts';
 import { Icon, TYPE_LABELS } from './ui.tsx';
 import { PublicationStatus } from './PublicationStatus.tsx';
 import { StudyContextNote } from './StudyContextNote.tsx';
+import { formatProbability } from '../lib/experiment-analysis.ts';
+import type { ExperimentObservation } from '../lib/experiment-analysis.ts';
 
 function Disclosure({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -130,9 +132,10 @@ interface Props {
   onFollow: (entityId: string, claimId: string) => void;
   pinnedClaimIds: string[];
   onPin: (claimId: string) => void;
+  experimentObservation: ExperimentObservation | null;
 }
 
-export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin }: Props) {
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin, experimentObservation }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
   useLayoutEffect(() => {
@@ -149,6 +152,15 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
           <h2 className={`selected-title ${selected.type === 'paper' ? 'paper-title' : ''}`} tabIndex={-1}>{selected.label}</h2>
         </div>
         {!visible && <button className="show-selected" onClick={onShowSelected}>Show in the current view <Icon name="arrow" size={14} /></button>}
+        {experimentObservation && <section className="experiment-observation" aria-label="Your RNA-seq result">
+          <h3>Your RNA-seq result</h3><p>{experimentObservation.comparison}</p>
+          <dl className="context-list">
+            <div><dt>log₂ fold change</dt><dd>{experimentObservation.row.log2FoldChange ?? 'Not recorded'}</dd></div>
+            <div><dt>Gene FDR</dt><dd>{experimentObservation.row.padj === null ? 'Not recorded' : formatProbability(experimentObservation.row.padj)}</dd></div>
+            <div><dt>Selection</dt><dd>{experimentObservation.row.log2FoldChange === null || experimentObservation.row.padj === null ? 'Incomplete statistics'
+              : experimentObservation.selected ? 'Meets gene cutoffs' : 'Outside gene cutoffs'}</dd></div>
+          </dl>
+        </section>}
         <section className="findings" aria-label="Findings">
           {active && snapshot.claims.length > 1 && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
           {claims.length > 1 && (

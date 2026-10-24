@@ -1133,6 +1133,273 @@ def assert_research_brief(browser, base_url: str, screenshots: Path) -> None:
     print('PASS: research briefs pin cited findings and comparisons, retain user notes across reloads, export complete evidence, and recover explicitly from blocked/corrupt storage, dataset changes and other tabs; keyboard, themes, mobile and WebGL fallback work.')
 
 
+def assert_experiment_analysis(browser, base_url: str, screenshots: Path, public_table: Path | None = None) -> None:
+    # Synthetic workflow values are confined to browser inputs, never graph claims.
+    csv = ('gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,-1.8,.02\nABCA1,-1.2,.03\n'
+           'TYROBP,.4,.5\nNR1H2,.1,.9\nNR1H3,.2,.7\nRXRA,.3,.6\nPLCG2,1.1,.04\n'
+           'SPP1,-.1,.8\nFKBP5,NA,NA\nSYNTHETICUNMAPPED,0,.9\n')
+    pathway_name = 'Plasma lipoprotein assembly, remodeling, and clearance'
+    pathway_id = 'R-HSA-174824'
+    reference = json.loads((Path(__file__).resolve().parents[1] / 'data/reference/reactome-pathways.json').read_text())
+    # All uploaded rows are retained, but incomplete statistics cannot enter the
+    # selected set and are therefore ineligible for this threshold-based universe.
+    background = {parts[0] for parts in (line.split(',') for line in csv.splitlines()[1:]) if 'NA' not in parts[1:]}
+    annotated = {gene for pathway in reference['pathways'] for gene in pathway['genes']}
+    family_size = sum(bool(background.intersection(pathway['genes'])) for pathway in reference['pathways'])
+    context = browser.new_context(viewport={'width': 1440, 'height': 1000}, reduced_motion='reduce')
+    context.add_init_script(RENDER_COUNTERS)
+    page = context.new_page()
+    errors = []
+    requests = []
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+    page.goto(base_url, wait_until='networkidle')
+    nav = page.get_by_role('navigation', name='Workspace', exact=True)
+    assert not any('reactome-pathways' in url for _, url, _ in requests), 'Reference must load only for explicit analysis.'
+    page.get_by_role('button', name='TREM2', exact=True).click()
+    expect(page.locator('.selected-title')).to_have_text('TREM2')
+    nav.get_by_role('button', name='Analyze results', exact=True).focus()
+    page.keyboard.press('Enter')
+    workspace = page.get_by_role('main', name='Analyze results', exact=True)
+    # A retained but hidden explorer must not swallow browser shortcuts.
+    for modifier in ['ctrlKey', 'metaKey']:
+        assert page.evaluate('modifier => { const event = new KeyboardEvent("keydown", {key: "k", [modifier]: true, bubbles: true, cancelable: true}); window.dispatchEvent(event); return event.defaultPrevented; }', modifier) is False
+    form = workspace.get_by_role('form', name='RNA-seq analysis')
+    submit = form.locator('button[type=submit]')
+    expect(submit).to_be_disabled()
+    with page.expect_download() as pending:
+        workspace.get_by_role('button', name='CSV template', exact=True).click()
+    template = screenshots / 'synthetic-rnaseq-format-template.csv'
+    pending.value.save_as(template)
+    assert 'synthetic' in template.read_text() and 'synthetic' in pending.value.suggested_filename
+    expect(workspace.locator('.experiment-results')).to_have_count(0)
+    upload = form.get_by_label('Human RNA-seq results', exact=True)
+    upload.set_input_files({'name': 'synthetic-rnaseq-workflow.csv', 'mimeType': 'text/csv', 'buffer': csv.encode()})
+    expect(submit).to_be_enabled()
+    form.get_by_role('textbox', name='Comparison', exact=True).fill('QA synthetic RNA numerator / denominator')
+    declaration = form.get_by_role('checkbox', name='This table contains all tested genes', exact=True)
+    submit.click()
+    expect(declaration).not_to_be_checked()
+    assert not any('reactome-pathways' in url for _, url, _ in requests), 'A selected-only list must not bypass the background declaration.'
+    declaration.check()
+    submit.click()
+    heading = workspace.locator('#experiment-results-title')
+    expect(heading).to_have_text('QA synthetic RNA numerator / denominator', timeout=15000)
+    expect(heading).to_be_focused()
+    expect(workspace.locator('.experiment-results-heading')).to_contain_text('11 uploaded rows')
+    counts = workspace.locator('.experiment-counts dd')
+    expect(counts).to_have_text(['10', '4', str(len(background & annotated)), str(family_size)])
+    assert any('reactome-pathways' in url for _, url, _ in requests)
+    # Workspace anchors preserve the current work; scientific share hashes
+    # deliberately reveal their destination in the evidence explorer.
+    skip = page.get_by_role('link', name='Skip to workspace', exact=True)
+    skip.focus()
+    page.keyboard.press('Enter')
+    expect(page).to_have_url(re.compile(r'#experiment-workspace$'))
+    expect(nav.get_by_role('button', name='Analyze results', exact=True)).to_have_attribute('aria-pressed', 'true')
+    expect(page.locator('#experiment-workspace')).to_be_focused()
+    expect(page.locator('.selected-title')).to_have_text('TREM2')
+    expect(heading).to_have_text('QA synthetic RNA numerator / denominator')
+    page.evaluate("location.hash = 'entity=gene-abca1&claim=claim-abca1-n1800h-risk&type=gene&view=graph'")
+    expect(nav.get_by_role('button', name='Explore', exact=True)).to_have_attribute('aria-pressed', 'true')
+    expect(page.locator('.selected-title')).to_have_text('ABCA1')
+    expect(page.get_by_role('combobox', name='Filter by entity type')).to_have_value('gene')
+    expect(page.get_by_role('button', name='Graph view', exact=True)).to_have_attribute('aria-pressed', 'true')
+    skip.focus()
+    page.keyboard.press('Enter')
+    expect(page).to_have_url(re.compile(r'#explorer$'))
+    expect(page.locator('.selected-title')).to_have_text('ABCA1')
+    nav.get_by_role('button', name='Analyze results', exact=True).click()
+    expect(heading).to_have_text('QA synthetic RNA numerator / denominator')
+    expect(counts).to_have_text(['10', '4', str(len(background & annotated)), str(family_size)])
+    expect(workspace.get_by_role('region', name='Pathway results', exact=True).locator('tbody tr')).to_have_count(20)
+    search = workspace.get_by_role('searchbox', name='Find pathways', exact=True)
+    assert_no_scroll(page, search, lambda: search.fill(pathway_name), 'Pathway search typing')
+    workspace.get_by_role('button', name=pathway_name, exact=True).click()
+    detail = workspace.locator('.experiment-pathway-detail')
+    expect(detail.get_by_role('heading', name=pathway_name, exact=True)).to_be_visible()
+    expect(detail.locator('.experiment-source-link')).to_have_attribute('href', f'https://reactome.org/content/detail/{pathway_id}')
+    members = detail.get_by_role('region', name='Eligible pathway members', exact=True)
+    expect(members.get_by_role('rowheader', name='APOE', exact=True).locator('..')).to_contain_text('+2')
+    expect(members.get_by_role('rowheader', name='ABCA1', exact=True).locator('..')).to_contain_text('-1.2')
+    questions = detail.get_by_role('region', name='Questions to investigate', exact=True)
+    expect(questions.locator('article')).to_have_count(2)
+    expect(questions).to_contain_text('Do the APOE and TREM2 transcript changes correspond')
+    questions.get_by_text('Assumptions and proposed test', exact=True).last.click()
+    expect(questions).to_contain_text('do not establish that this experiment involves R47H')
+    urls = questions.locator('a').evaluate_all('links => links.map(link => link.href)')
+    assert 'https://pubmed.ncbi.nlm.nih.gov/26374899/' in urls
+    assert 'https://link.springer.com/article/10.15252/emmm.201809027' in urls
+    methods = workspace.locator('.experiment-methods')
+    methods.get_by_text('Methods and reference', exact=True).click()
+    expect(methods).to_contain_text('including unannotated eligible genes')
+    expect(methods).to_contain_text('excluded')
+    expect(methods).to_contain_text(f'all {family_size} pathways with eligible members, including zero-overlap pathways')
+    expect(methods).to_contain_text('Not recorded')
+    expect(methods).to_contain_text(reference['reference_id'])
+    for theme in ['light', 'dark']:
+        page.get_by_role('combobox', name='Color theme').select_option(theme)
+        for control in [form.get_by_role('textbox', name='Comparison'), counts.first, detail.locator('h3'), detail.locator('.experiment-source-link'), questions.locator('h5').first]:
+            assert_text_contrast(control)
+        heading.scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f'rnaseq-{theme}.png'))
+    detail.get_by_role('button', name='View APOE evidence', exact=True).click()
+    expect(nav.get_by_role('button', name='Explore', exact=True)).to_have_attribute('aria-pressed', 'true')
+    expect(page.locator('.selected-title')).to_have_text('APOE')
+    expect(page.locator('.selected-title')).to_be_focused()
+    observation = page.get_by_role('region', name='Your RNA-seq result', exact=True)
+    expect(observation).to_contain_text('QA synthetic RNA numerator / denominator')
+    expect(observation).to_contain_text('Meets gene cutoffs')
+    expect(observation.locator('dd')).to_have_text(['2', '0.01', 'Meets gene cutoffs'])
+    expect(page.locator('.source-link')).to_have_attribute('href', 'https://pubmed.ncbi.nlm.nih.gov/8346443/')
+    page.locator('.claim-button').filter(has_text='Encodes · APOE protein').click()
+    page.get_by_role('button', name='View APOE protein', exact=True).click()
+    expect(page.locator('.selected-title')).to_have_text('APOE protein')
+    expect(observation).to_have_count(0)
+    nav.get_by_role('button', name='Analyze results', exact=True).click()
+    expect(search).to_have_value(pathway_name)
+    expect(heading).to_have_text('QA synthetic RNA numerator / denominator')
+    assert_idle(page, 'Graph after switching between experiment analysis and cited evidence')
+    form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0')
+    submit.click()
+    expect(counts.nth(1)).to_have_text('0')
+    expect(workspace.locator('.experiment-questions')).to_have_count(0)
+    workspace.get_by_role('checkbox', name='Pathway FDR ≤ 0.05', exact=True).check()
+    expect(workspace).to_contain_text('No pathways pass this FDR cutoff')
+    workspace.get_by_role('button', name='Show all tested pathways', exact=True).click()
+    upload.set_input_files({'name': 'synthetic-duplicate.csv', 'mimeType': 'text/csv', 'buffer': b'gene,log2FoldChange,padj\nAPOE,2,.01\nAPOE,-2,.01\n'})
+    expect(form.get_by_role('alert')).to_contain_text('duplicate symbol')
+    expect(counts.nth(1)).to_have_text('0')
+    expect(heading).to_have_text('QA synthetic RNA numerator / denominator')
+    upload.set_input_files({'name': 'synthetic-retry.csv', 'mimeType': 'text/csv', 'buffer': csv.encode()})
+    form.get_by_role('textbox', name='Comparison', exact=True).fill('QA synthetic retry / control')
+    form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0.05')
+    declaration.check()
+    page.route('**/reactome-pathways*.json', lambda route: route.abort('failed'))
+    submit.click()
+    expect(form.get_by_role('alert')).to_be_visible()
+    expect(heading).to_have_text('QA synthetic RNA numerator / denominator')
+    page.unroute('**/reactome-pathways*.json')
+    submit.click()
+    expect(heading).to_have_text('QA synthetic retry / control')
+    expect(counts.nth(1)).to_have_text('4')
+    held_reference = []
+    page.route('**/reactome-pathways*.json', lambda route: held_reference.append(route))
+    form.get_by_role('textbox', name='Comparison', exact=True).fill('QA synthetic delayed / control')
+    submit.click()
+    expect(submit).to_have_text('Analyzing…')
+    explore = nav.get_by_role('button', name='Explore', exact=True)
+    explore.click()
+    expect(explore).to_be_focused()
+    assert held_reference, 'Analysis reference request should be held for the navigation test.'
+    held_reference[0].continue_()
+    expect(page.locator('#experiment-results-title')).to_have_text('QA synthetic delayed / control')
+    expect(explore).to_be_focused()
+    page.unroute('**/reactome-pathways*.json')
+    nav.get_by_role('button', name='Analyze results', exact=True).click()
+    expect(heading).to_have_text('QA synthetic delayed / control')
+    form.get_by_role('button', name='Remove results', exact=True).click()
+    expect(workspace.locator('.experiment-results')).to_have_count(0)
+    nav.get_by_role('button', name='Explore', exact=True).click()
+    expect(page.locator('.experiment-context')).to_have_count(0)
+    expect(page.locator('.experiment-observation')).to_have_count(0)
+    nav.get_by_role('button', name='Analyze results', exact=True).click()
+    upload.set_input_files({'name': 'synthetic-unmapped.tsv', 'mimeType': 'text/tab-separated-values', 'buffer': b'gene\tlog2FC\tFDR\nSYNTHETICUNMAPPED\t2\t.01\n'})
+    declaration.check()
+    submit.click()
+    expect(counts).to_have_text(['1', '1', '0', '0'])
+    expect(workspace).to_contain_text('No eligible genes map to the pathway reference')
+    expect(workspace.locator('.experiment-questions')).to_have_count(0)
+    if public_table is not None:
+        assert public_table.is_file(), 'Explicit public validation table is missing.'
+        upload.set_input_files(public_table)
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('Public airway: dexamethasone / untreated')
+        declaration.check()
+        submit.click()
+        expect(counts).to_have_text(['13,587', '710', '7,682', '2,581'], timeout=20000)
+        workspace.get_by_role('checkbox', name='Pathway FDR ≤ 0.05', exact=True).check()
+        expect(workspace.get_by_role('region', name='Pathway results', exact=True).locator('tbody tr')).to_have_count(14)
+        expect(workspace.locator('.experiment-pagination').first).to_contain_text('1–14 of 14')
+        expect(workspace.get_by_role('region', name='Pathway results', exact=True).locator('tbody tr').first).to_contain_text('1.69e-5')
+        page.screenshot(path=str(screenshots / 'rnaseq-public-airway.png'))
+        print('PASS: public human airway table uploads and produces 13,587 measured genes, 710 selected genes, 2,581 tested pathways and 14 pathway-FDR results ≤0.05; this is not an AD experiment.')
+    assert all(method == 'GET' and data is None for method, _, data in requests), 'Experimental input must not be uploaded.'
+    assert not any('QA%20synthetic' in url or 'SYNTHETICUNMAPPED' in url for _, url, _ in requests)
+    assert 'QA synthetic' not in page.evaluate('JSON.stringify(localStorage)')
+    page.reload(wait_until='networkidle')
+    nav.get_by_role('button', name='Analyze results', exact=True).click()
+    expect(workspace.locator('.experiment-results')).to_have_count(0)
+    expect(form.get_by_role('textbox', name='Comparison', exact=True)).to_have_value('')
+    assert not errors, errors
+    context.close()
+
+    for fallback in [False, True]:
+        mobile = browser.new_context(viewport={'width': 360, 'height': 844}, reduced_motion='reduce', color_scheme='dark', is_mobile=True, has_touch=True)
+        if fallback:
+            mobile.add_init_script("""const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                    return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+                };""")
+        page = mobile.new_page()
+        mobile_errors = []
+        page.on('pageerror', lambda error: mobile_errors.append(str(error)))
+        page.goto(base_url, wait_until='networkidle')
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        trigger = nav.get_by_role('button', name='Analyze results', exact=True)
+        assert_touch_target(trigger)
+        trigger.tap()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        mobile_csv = csv.replace('APOE,2,.01', 'APOE,-0.000001234,.0000000000001')
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'synthetic-mobile.csv', 'mimeType': 'text/csv', 'buffer': mobile_csv.encode()})
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('QA mobile / control')
+        form.get_by_role('spinbutton', name='|log₂ fold change|', exact=True).fill('0')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        assert_touch_target(form.locator('.experiment-background'))
+        submit = form.locator('button[type=submit]')
+        assert_touch_target(submit)
+        submit.tap()
+        expect(workspace.locator('#experiment-results-title')).to_have_text('QA mobile / control', timeout=15000)
+        expect(workspace.locator('.experiment-counts dd')).to_have_text(['10', '4', str(len(background & annotated)), str(family_size)])
+        workspace.get_by_role('searchbox', name='Find pathways', exact=True).fill(pathway_name)
+        choice = workspace.get_by_role('button', name=pathway_name, exact=True)
+        assert_touch_target(choice)
+        choice.tap()
+        detail = workspace.locator('.experiment-pathway-detail')
+        expect(detail.locator('h3')).to_be_focused()
+        box = detail.locator('h3').bounding_box()
+        assert box and 0 <= box['y'] < 844
+        assert_touch_target(detail.locator('.experiment-source-link'))
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        members = detail.get_by_role('region', name='Eligible pathway members', exact=True)
+        # Names, signs and leading zeros must all be readable together. A sticky
+        # gene column must never cover the start of an adjacent measurement.
+        expect(members.get_by_role('rowheader', name='APOE', exact=True).locator('..').locator('td')).to_have_text(['-1.234e-6', '1.00e-13', 'Yes'])
+        assert members.evaluate('''element => {
+            const bounds = element.getBoundingClientRect();
+            return Array.from(element.querySelectorAll('th, td')).every(cell => {
+                const cellBounds = cell.getBoundingClientRect();
+                const text = document.createRange(); text.selectNodeContents(cell);
+                const rects = Array.from(text.getClientRects());
+                return (cell.tagName !== 'TD' || rects.length === 1) && rects.every(rect =>
+                    rect.left >= Math.max(bounds.left, cellBounds.left) - 1 &&
+                    rect.right <= Math.min(bounds.right, cellBounds.right) + 1);
+            });
+        }'''), 'Member names and full numeric values must remain inside their visible cells.'
+        page.screenshot(path=str(screenshots / f'rnaseq-mobile-{"fallback" if fallback else "graph"}.png'))
+        evidence = detail.get_by_role('button', name='View APOE evidence', exact=True)
+        assert_touch_target(evidence)
+        evidence.tap()
+        expect(page.locator('.selected-title')).to_be_focused()
+        expect(page.get_by_role('region', name='Your RNA-seq result', exact=True)).to_contain_text('QA mobile / control')
+        expect(page.get_by_role('button', name='List view', exact=True)).to_have_attribute('aria-pressed', str(fallback).lower())
+        nav.get_by_role('button', name='Analyze results', exact=True).tap()
+        expect(workspace.locator('#experiment-results-title')).to_have_text('QA mobile / control')
+        assert not mobile_errors, mobile_errors
+        mobile.close()
+    print('PASS: RNA-seq analysis uses the eligible tested universe while retaining missing input and unannotated eligible genes, separates RNA observations from original claims, proposes cited questions, retains results after failed replacement/reference fetch, and supports keyboard, themes, touch and unavailable WebGL without uploading or saving input.')
+
+
 def run(base_url: str, executable: str, screenshots: Path) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -1437,6 +1704,7 @@ def run(base_url: str, executable: str, screenshots: Path) -> None:
         assert_binding_findings(browser, base_url, screenshots)
         assert_study_context_note(browser, base_url, screenshots)
         assert_research_brief(browser, base_url, screenshots)
+        assert_experiment_analysis(browser, base_url, screenshots)
         browser.close()
 
 

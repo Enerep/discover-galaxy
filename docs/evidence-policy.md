@@ -56,6 +56,16 @@ The research brief workspace lets a user collect existing findings and a compari
 
 Pinned evidence and exports retain exact statements, source-specific context, locators, limitations, correction links and actual review metadata. User text remains visibly separate in the exported draft. References do not prove support for that text, novelty of a question, comparability of experiments or feasibility of a proposed test. The app performs no automated assessment of those properties. A dataset refresh resolves pinned IDs against the current snapshot; it is not a fresh literature review. Notes are excluded from the graph and explorer sharing URLs.
 
+## Experimental measurements and pathway analysis
+
+Uploaded processed RNA-seq results are user-supplied observations, not curated claims or independent evidence that a mechanism is true. Preserve the named contrast, signed effect and supplied adjusted p-value; gene symbols and organism are declared rather than independently verified. Keep input outside the scientific snapshot and review metadata. A gene's transcript result must not be transferred to its protein, genetic variant, binding assay or clinical outcome.
+
+Require the full tested table. ORA eligibility requires complete log2FoldChange and padj before either selection cutoff is applied; incomplete rows remain in the input and are reported as excluded. Keep eligible unannotated genes in the denominator. Use the pinned broad pathway reference, not the small explorer, and retain original member spelling rather than inventing aliases. The exact upstream Reactome release is unknown; the immutable mirror/hash identifies the reference actually used.
+
+Right-tailed hypergeometric tests and BH correction cover every pathway with an eligible member, including zero-hit pathways. Gene padj values are not recalculated. Up/down genes are pooled for membership testing. Enrichment is not activation, causal proof or independent replication; overlapping pathways and gene-length/expression selection bias remain limitations. Report calculated extreme tails from their logarithms, and distinguish a reported input zero from inferred precision.
+
+Rule-based questions identify their uploaded observations, reference membership, assumptions and possible test. They are not curated `Hypothesis` records, validated mechanisms or evidence that a question is novel. A cited protein-binding study provides assay context; RNA measurements do not reproduce its genotype or readout. Missing annotations and uncovered genes do not establish a research gap.
+
 ## Source access and reuse
 
 Start with these upstream resources:

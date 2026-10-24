@@ -2,6 +2,8 @@
 
 Status: the 24-entity **Source-checked draft** explorer is implemented; the owner reports a working Vercel deployment. Independent scientific review is deferred to a future milestone and does not block development work. See [product scope](product.md), [build steps](../steps.md), [checkpoints](checkpoints.md), and [dataset notes](../data/alzheimers/README.md).
 
+The primary product workflow now interprets processed human RNA-seq results. Its separate analysis reference and uploaded observations do not expand or modify the curated scientific snapshot.
+
 ## Current static explorer
 
 The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.2, Three.js 0.186.1, and React Three Fiber 9.8.1. Native Three.js `OrbitControls` provides camera navigation; Drei is not installed. The root npm workspace manages `apps/web/` with an exact-version lockfile, Node 24, and npm 11.9.0. See the [dependency security policy](npm-security.md) before installing or updating packages.
@@ -23,6 +25,10 @@ flowchart LR
     Inspector --> Brief[Research brief: pinned references and user notes]
     Comparison --> Brief
     Brief --> Local[Device-local draft and Markdown export]
+    Input[Local processed RNA-seq table] --> Analysis[Eligible background, ORA and BH]
+    Reference[Pinned Reactome gene sets] --> Analysis
+    Analysis --> Questions[Source-linked question proposals]
+    Analysis --> Inspector
 ```
 
 The diagram shows the current application. The galaxy, list, and inspector are views of the same local records. A structural validation pass permits development use; it does not establish scientific validity. See the [data model](data-model.md) for schema `0.1.0` and the [evidence policy](evidence-policy.md) for publication rules.
@@ -39,8 +45,9 @@ The diagram shows the current application. The galaxy, list, and inspector are v
 | Finding comparison | Align two findings' recorded context and preserve source-specific values, limitations, review fields, and publication identities in the view and Markdown brief. |
 | Sharing | Capture the graph on demand, generate a cited PNG in the browser, and encode validated explorer state in a shareable URL fragment. |
 | Research brief | Own bounded user notes and claim references separately from scientific records; save locally and export complete cited evidence. |
+| Experimental analysis | Parse local results, declare eligible background, calculate source-specific membership overrepresentation and present measurements/questions without changing the graph. |
 
-The development snapshot meets M2's 20–50 entity size target and includes typed pathway journeys. The current workflow adds user-authored research briefs; further source expansion and independent scientific review are separate future work. M3 adds justified disagreement comparisons and curator-reviewed research-question cards, separate from evidence-backed claims and without invented consensus scores.
+The development snapshot meets M2's 20–50 entity size target and includes typed pathway journeys. Experimental analysis and user-authored research briefs are separate working tools; further source expansion and independent scientific review remain future work. M3 adds justified disagreement comparisons and curator-reviewed research-question cards, separate from evidence-backed claims and without invented consensus scores.
 
 At this size, local indexes and a bounded graph traversal are sufficient. A graph database, distributed processing, and microservices add little value before the exploration flow works. The adapter allows a future HTTP source to replace the local loader without coupling the UI to an upstream provider's response shape.
 
@@ -58,6 +65,18 @@ The [design guide](design.md) is the standing interface standard. The interface 
 - Following **View …** keeps the current claim, clears filters that would hide the target, preserves graph/list mode and focuses the target's heading without scrolling the document. Labels retain direction: a protein is **Encoded by** its gene; a pathway lists a **Participant**.
 
 The graph/list/evidence flows and presentation refinements have browser coverage. Future refinements still need their own browser QA; do not infer their usability or smoothness from a passing build. Keyboard interaction, reduced-motion behavior, and fallback checks must be recorded separately from build and unit-test results.
+
+## Experimental-data interpretation
+
+`ExperimentWorkspace` loads lazily behind **Analyze results** and stays mounted while users inspect covered genes in **Explore**. Pending file/form values are separate from applied results; read/reference failures preserve the last successful analysis. A layout effect focuses committed results only after the DOM exists and only when the workspace is visible. Shared entity links return to Explore; workspace skip links do not reset selection. Data is held in memory, excluded from localStorage, URLs and image/brief exports, and dropped on reload.
+
+`experiment.ts` parses bounded CSV/TSV, including quoted cells, BOM and common header aliases. It preserves exact human-style symbol spelling, null statistics and all accepted rows; duplicate/unsupported IDs or malformed values fail with row/column errors. Syntax does not verify HGNC identity or species. The input contains already-computed gene log2FC/padj, not raw counts or a differential-expression pipeline.
+
+`experiment-analysis.ts` requires a named numerator/denominator contrast and full-tested-table declaration. Background eligibility requires complete log2FC and padj before p/effect cutoffs; incomplete rows remain in the input and are reported separately. Eligible unannotated genes stay in N. `enrichment.ts` calculates right-tailed hypergeometric probabilities in log space and applies BH across all pathways with eligible members, including zero hits. No gene-level adjustment is recomputed. Numeric underflow retains finite log probabilities; a reported input zero is not assigned invented precision.
+
+The [Reactome reference](../data/reference/README.md) is a separate local asset fetched only when analysis is requested. It contains 2,751 pathway sets with pinned mirror commit/raw digest and a checked normalized digest; exact upstream release remains unknown. Original descriptive/viral member labels remain literal and cannot become guessed human aliases. `npm run reference:check` verifies the prepared bytes without network; native analysis tests also check the full digest. No live provider or credential is required.
+
+Results show eligible/selected/mapped denominators, the complete tested family, paginated pathway/member tables and signed transcript measurements. Gene and pathway FDR are distinct. A matched gene's **Your RNA-seq result** is separate from its literature findings; protein nodes receive no RNA measurement. `buildExperimentQuestions` uses the selected input and pathway membership, optionally retaining the original APOE/TREM2 assay comparison and its limits. Proposals stay outside the graph's `Hypothesis` collection and do not establish novelty, activity or a causal mechanism. Pooled directions, overlapping pathways and gene-length/expression selection bias are disclosed in methods.
 
 ## Finding comparison
 

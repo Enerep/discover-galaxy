@@ -15,8 +15,10 @@ import { buildShareUrl, parseShareState } from './lib/share-state.ts';
 import type { ExplorerShareState } from './lib/share-state.ts';
 import { findComparisonPartner } from './lib/compare-evidence.ts';
 import { useResearchBrief } from './lib/useResearchBrief.ts';
+import type { ExperimentAnalysis } from './lib/experiment-analysis.ts';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
+const ExperimentWorkspace = lazy(() => import('./components/ExperimentWorkspace.tsx'));
 const FILTERS: { value: EntityType | 'all'; label: string }[] = [
   { value: 'all', label: 'All types' }, { value: 'gene', label: 'Genes' },
   { value: 'protein', label: 'Proteins' }, { value: 'pathway', label: 'Pathways' },
@@ -62,6 +64,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [comparisonIds, setComparisonIds] = useState<[string, string] | null>(null);
   const [briefOpen, setBriefOpen] = useState(false);
+  const [workspace, setWorkspace] = useState<'explore' | 'analysis'>('explore');
+  const [analysisVisited, setAnalysisVisited] = useState(false);
+  const [experiment, setExperiment] = useState<ExperimentAnalysis | null>(null);
   const research = useResearchBrief(snapshot);
   const graphCapture = useRef<(() => HTMLCanvasElement) | null>(null);
   const receiveCapture = useCallback((capture: (() => HTMLCanvasElement) | null) => { graphCapture.current = capture; }, []);
@@ -85,6 +90,8 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   }, [snapshot, selected.id, activeClaim?.id, query, filter, view]);
   const paperCount = snapshot.entities.filter(({ type }) => type === 'paper').length;
   const filtered = !!query.trim() || filter !== 'all';
+  const experimentRows = useMemo(() => new Map(experiment?.table.rows.map((row) => [row.gene, row]) ?? []), [experiment]);
+  const observation = selected.type === 'gene' ? experimentRows.get(selected.label) : undefined;
 
   useLayoutEffect(() => {
     if (!focusConnection.current) return;
@@ -114,6 +121,18 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     // A dialog can also return to the currently selected record.
     requestAnimationFrame(openEvidence);
   }
+  function openAnalysis() {
+    setAnalysisVisited(true);
+    setWorkspace('analysis');
+  }
+  function inspectExperimentGene(gene: string) {
+    const entity = snapshot.entities.find((entity) => entity.type === 'gene' && entity.label === gene);
+    if (!entity) return;
+    setWorkspace('explore');
+    clearFilters();
+    selectEntity(entity.id);
+    requestAnimationFrame(openEvidence);
+  }
 
   function openComparison() {
     if (!activeClaim) return;
@@ -129,8 +148,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
   useEffect(() => {
     const restore = () => {
-      if (window.location.hash === '#explorer') return;
+      if (['#explorer', '#experiment-workspace'].includes(window.location.hash)) return;
       const next = parseShareState(new URL(window.location.href), snapshot) ?? defaultState;
+      setWorkspace('explore');
       setQuery(next.query);
       setFilter(next.filter);
       setSelectedId(next.entityId);
@@ -192,7 +212,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#explorer">Skip to explorer</a>
+      <a className="skip-link" href={workspace === 'explore' ? '#explorer' : '#experiment-workspace'}>Skip to workspace</a>
       <header className="app-header">
         <a className="brand" href="/" aria-label="Discovery Galaxy home"><Icon name="galaxy" size={29} /><span>Discovery Galaxy</span></a>
         <div className="header-actions">
@@ -204,7 +224,16 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         </div>
       </header>
 
-      <div className="workspace">
+      <nav className="workspace-navigation" aria-label="Workspace">
+        <button aria-pressed={workspace === 'explore'} onClick={() => setWorkspace('explore')}><Icon name="galaxy" size={17} />Explore</button>
+        <button aria-pressed={workspace === 'analysis'} onClick={openAnalysis}><Icon name="analysis" size={17} />Analyze results</button>
+      </nav>
+      {analysisVisited && <div className="analysis-view" hidden={workspace !== 'analysis'}>
+        <Suspense fallback={<p className="workspace-loading" role="status">Loading analysis…</p>}>
+          <ExperimentWorkspace snapshot={snapshot} onInspectGene={inspectExperimentGene} onResults={setExperiment} />
+        </Suspense>
+      </div>}
+      <div className="workspace" hidden={workspace !== 'explore'}>
         <main className="explorer" id="explorer" tabIndex={-1}>
           <div className="page-heading">
             <h1>Alzheimer’s disease</h1>
@@ -215,6 +244,10 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
               <button className="secondary-button share-trigger" onClick={() => setShareOpen(true)}><Icon name="share" size={17} />Share</button>
             </div>
           </div>
+          {experiment && <section className="experiment-context" aria-label="Active experiment">
+            <div><strong>{experiment.comparison}</strong><span>{experiment.table.filename}</span></div>
+            <button className="text-button" onClick={openAnalysis}>Analysis results<Icon name="arrow" size={14} /></button>
+          </section>}
           <div className="explorer-tools">
             <EntitySearch query={query} matches={matches} onQuery={setQuery} onSelect={selectEntity} />
             <div className="type-filter">
@@ -301,7 +334,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
         <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
           onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection}
-          pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin} />
+          pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin}
+          experimentObservation={experiment && observation ? { comparison: experiment.comparison, row: observation, thresholds: experiment.thresholds,
+            selected: experiment.selected.some(({ gene }) => gene === observation.gene) } : null} />
       </div>
 
       <dialog className="data-dialog" ref={aboutRef} aria-labelledby="data-title">

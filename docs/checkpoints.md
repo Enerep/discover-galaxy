@@ -1,6 +1,20 @@
 # Checkpoints
 
-## Current checkpoint: build a research argument
+## Current checkpoint: interpret experimental data
+
+The main user is a researcher interpreting experimental results and looking for ideas to investigate. **Analyze results** now accepts a full human-symbol RNA-seq differential-expression table, a named comparison and gene-level cutoffs. It tests pathway overrepresentation against a separate pinned Reactome library of 2,751 pathways, shows signed member-level measurements and links covered genes into the curated evidence explorer.
+
+The statistical background is uploaded genes with complete log2FC and padj, before applying either cutoff; incomplete rows remain in the input and are reported as excluded. Eligible unannotated genes remain in N. Right-tailed hypergeometric tests and BH correction cover every pathway with an eligible member, including zero-hit pathways. Gene-level padj values are preserved, and pathway enrichment is not an activity or causality score. The exact upstream Reactome release is unknown; the immutable mirror and digests identify the reference actually used.
+
+Source-linked questions identify measured premises, assumptions and possible tests. They are rule-based proposals outside the curated claims/hypotheses, with no novelty or experimental-validation claim. RNA measurements never transfer to protein nodes or imply a genotype. Files stay in browser memory, with no upload, automatic storage, raw-count analysis, Ensembl mapping or live AI service. The existing AD evidence library and brief workspace remain available.
+
+Observed numerical and browser checks belong in [verification](verification.md). The real public airway dataset used for validation is not AD data and is not bundled; the pinned reference and actual conversion limits are documented in [reference provenance](../data/reference/README.md).
+
+## Next checkpoint: improve identifiers and experimental context
+
+Prioritize a pinned HGNC/Ensembl mapping workflow with explicit ambiguity/unmapped reporting, so researchers can use standard differential-expression output without silently merging genes. Validate the workflow on a public AD dataset with recorded contrast and eligibility, then assess threshold sensitivity and more informative pathway grouping. Rank-based analysis and RNA-seq selection-bias correction need their own statistical validation. These are informatics tasks; additional brief-sharing features are not the current priority.
+
+## Existing workflow: build a research argument
 
 The research brief workspace adds a complete working flow on top of the existing Alzheimer's evidence:
 
@@ -13,7 +27,7 @@ The workspace supports up to 12 pinned findings and one comparison. It keeps use
 
 This checkpoint changes the research workflow without adding more source records. Browser and model checks are recorded in [verification](verification.md); a working brief does not establish novelty or experimentally validate its argument.
 
-## Next checkpoint: reuse and refine research briefs
+## Future brief refinements
 
 Use the complete pin → compare → write → download flow for a concrete lab-meeting question. Check whether the resulting document makes the evidence, assumptions and proposed controls easy to discuss. Prioritize the next workflow change from that use: multiple saved questions or reopening a portable draft are natural extensions, but neither is implemented here. Keep the current single-device storage boundary explicit and preserve cited context in any future import/export format. More source records and broader disease coverage are separate work.
 
@@ -29,7 +43,7 @@ The [candidate-source coverage packet](../data/alzheimers/candidate-coverage.md)
 
 ## Implemented foundation: compare the evidence behind a connection
 
-The app covers **Alzheimer's disease only**. Comparison helps a reader inspect what two findings or annotations actually describe before interpreting them together.
+The curated evidence library covers **Alzheimer's disease only**; the separate human pathway analysis is not a disease-specific evidence library. Comparison helps a reader inspect what two findings or annotations actually describe before interpreting them together.
 
 The owner reports a working Vercel deployment. Sharing and Light / Dark / System are part of the existing foundation. The current checkpoint's observed checks belong in [verification](verification.md); hosting and interface completion do not change the dataset's review status.
 

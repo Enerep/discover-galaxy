@@ -2,15 +2,21 @@
 
 ## Goal
 
-Help researchers navigate a small, evidence-traceable map of Alzheimer's research, understand why entities are connected, and formulate questions they can investigate. The broader “galaxy of humanity's knowledge” is the long-term direction; the initial product covers one deliberately curated slice.
+Help researchers interpret experimental data by connecting measured gene changes to pathway annotations, source-specific findings and questions they can investigate. Human RNA-seq results are the first supported input; the curated literature map remains an Alzheimer's slice.
 
-The central product promise is **from a visible connection to its supporting evidence in a few clear interactions**.
+The central product promise is **from experimental results to a traceable explanation and a question to test**.
 
-The product direction is to help a researcher turn findings into an argument they can discuss and test: collect evidence, compare methods, state their explanation and assumptions, then describe an experiment. The research brief workspace implements that workflow with local saving and a portable cited document. It does not establish a question's novelty or an experiment's validity, and the product makes no claim that these capabilities are exclusive to Discovery Galaxy.
+The analysis workspace connects a researcher's measurements to pathway statistics, original annotations and experimental context. The existing brief supports recording an explanation, assumptions and proposed experiment. Statistical enrichment and rule-based questions do not establish a mechanism or novelty; the product's value depends on helping the researcher inspect and challenge an interpretation.
 
 ## Audience
 
-The initial audience is biomedical researchers, research trainees, and scientifically literate readers exploring relationships across genetics, disease biology, pathways, and literature. The product supports literature orientation and research planning. It does not evaluate individual patients or recommend treatment.
+The primary audience is researchers interpreting processed human RNA-seq differential-expression results and developing follow-up experiments. Research trainees and scientifically literate literature readers are secondary audiences. The product supports analysis interpretation and research planning; it does not evaluate individual patients or recommend treatment.
+
+## Experimental-data journey
+
+Upload a full human-symbol results table, name the contrast, declare its completeness and choose gene-level cutoffs. Inspect overrepresented pathways against the eligible tested genes, then examine signed member-level results and the linked pathway record. Follow covered genes into the curated explorer without turning RNA changes into genetic-risk or protein-binding claims. Investigate rule-based questions with explicit premises, assumptions and suggested tests. The uploaded table stays in this tab and creates no scientific record or review attestation.
+
+The initial analysis uses a pinned broad Reactome library with unknown exact upstream release. It tests threshold-selected genes in either direction with right-tailed hypergeometric probabilities and BH correction over all pathways with eligible members, including zero hits. Incomplete statistics exclude a row from ORA eligibility; unannotated eligible genes remain in the background. Gene FDR input and adjusted pathway p-values are distinct. Gene-length/expression selection bias, annotation coverage and overlapping pathways limit interpretation; significant rows are not independent mechanisms or activity measurements.
 
 ## Core journey
 
@@ -30,6 +36,7 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 | Capability | Required behavior |
 | --- | --- |
 | 3D exploration | Select and focus entities; distinguish entity types; expose labeled relationship details |
+| Experimental-data interpretation | Parse a full human-symbol RNA-seq results table locally, test pathway overrepresentation with declared eligibility and multiple-testing correction, inspect measurements and propose source-linked follow-up questions |
 | Search and filters | Search labels, aliases, and curated identifiers; show active filters and no-result states |
 | Evidence inspection | Show exact claims, evidence direction, context, uncertainty, and links to original references |
 | Finding comparison | Align claim scope and source-specific context without pooling participants or inferring agreement, conflict, independence, or strength; preserve citations in a downloadable brief |
@@ -43,6 +50,8 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 ## Dataset scope
 
 The release target is 20–50 entities, including any displayed paper nodes. Claims, evidence, sources, and provenance are separate records and do not count as additional visible entities unless a source is explicitly represented as a paper node.
+
+The pathway analysis reference and uploaded measurements are separate from that curated entity budget. Broad human pathway coverage does not establish disease-specific empirical evidence or expand the curated graph's disease coverage.
 
 Alzheimer's disease, APOE, ABCA1, and TREM2 are curation priorities. Other genes, proteins, pathways, drugs, and papers are included only when they support a useful, reviewed journey. Variants remain explicit claim and study context in the initial schema; separate variant nodes require a later contract extension. Coverage is selective, not a comprehensive statement of the field. No particular connection, conflict, or drug claim is approved by naming a candidate here.
 

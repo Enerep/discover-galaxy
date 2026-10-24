@@ -1,10 +1,10 @@
 # Implementation steps
 
-**Current stage: the 24-entity Source-checked draft explorer includes a locally saved research brief workspace; independent scientific review is a future milestone.**
+**Current stage: human RNA-seq interpretation is implemented beside the 24-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
-The [checkpoint plan](docs/checkpoints.md) now prioritizes turning pinned evidence into a research argument. Coverage remains Alzheimer's-only. Further scientific source work, independent review and other diseases remain separate future milestones.
+The [checkpoint plan](docs/checkpoints.md) now prioritizes interpreting experimental results and developing ideas to investigate. The curated evidence library remains Alzheimer's-only; a separate broad human pathway reference supports analysis. Further source curation and independent review remain separate future milestones.
 
 ## M0 — Establish the foundation
 
@@ -77,6 +77,19 @@ This work provides a reading and curation workflow. It does not add reviewed cla
 - [x] Verify keyboard, themes, mobile touch, WebGL fallback, saved-state recovery and downloaded Markdown in browser checks.
 
 This is a user writing workflow. It does not add curator-reviewed questions, establish novelty, supply a live AI service or complete M3's scientific-content criteria. Notes remain device-local; Markdown download is the current sharing option, with imports and multiple saved briefs deferred.
+
+### Experimental-data interpretation
+
+- [x] Parse bounded local human-symbol RNA-seq CSV/TSV results with explicit nulls, duplicate/identifier errors and complete input retention.
+- [x] Pin a broad Reactome reference independently of the curated graph, recording immutable bytes, CC0 attribution and unknown upstream release.
+- [x] Require a named contrast and full-tested-table declaration; define background from complete statistics before cutoffs, retain eligible unmapped genes and report incomplete exclusions.
+- [x] Implement right-tailed hypergeometric ORA and BH across the complete eligible pathway family, with stable extreme tails and separate input gene/pathway FDR values.
+- [x] Inspect signed member results, source records and rule-based follow-up questions with assumptions; link covered genes to a separate transcript observation in the existing evidence panel.
+- [x] Validate numerical results against independent SciPy calculations on a real public human RNA-seq reanalysis, with conversion/provenance limits recorded and no raw table bundled.
+- [x] Exercise upload/recovery/privacy, keyboard/themes/mobile/WebGL fallback and existing explorer flows in browser QA; record final observations in verification.
+- [ ] Add pinned HGNC/Ensembl identity mapping with explicit ambiguity reports, then assess an AD validation dataset, threshold sensitivity and pathway redundancy.
+
+This workflow interprets processed results; it does not run raw-count differential expression, verify input species/identity, model gene-length/expression selection bias, prove pathway activity or promote questions into the curated scientific snapshot. No backend, upload service or live AI model was added.
 
 ### Prepare the next AD evidence pass
 

@@ -132,6 +132,18 @@ One draft is stored under `discovery-galaxy:research-brief:v1`. There are at mos
 
 The Markdown export requires a question and at least one current, resolvable pin. It keeps user reasoning in escaped, blockquoted sections, then includes complete source-backed finding or comparison records with their actual context and review metadata. This associates references with a working document; it does not validate support for each user statement, approve a hypothesis or establish novelty. There is no import, cloud synchronization or promotion into the scientific dataset.
 
+## Experimental analysis contracts
+
+These are separate client-side contracts, outside knowledge-graph schema `0.1.0` and its scientific-review records:
+
+- `ExperimentTable` stores filename, recognized columns and all parsed `{gene, log2FoldChange, padj}` rows, with null statistics retained and an incomplete-row count. Inputs are bounded to 5 MiB/50,000 unique human-style symbols. Identity/species are not verified; Ensembl IDs and duplicate symbols require resolution before input.
+- `PathwayReference` stores a versioned provenance envelope and `{id, name, url, genes}` sets. The bundled reference has a pinned mirror/raw digest, CC0 attribution and unknown exact upstream release. Original member strings stay unchanged; descriptive labels are not aliases. Its whole-file digest is checked separately from shape validation.
+- `ExperimentAnalysis` records the applied contrast/cutoffs, input, reference, eligible `backgroundGenes`, selected rows, mapped eligible count, pathway results, client run time and `full_tested_table_supplied` declaration. Eligibility requires complete log2FC/padj before either cutoff, with eligible unannotated genes retained. The declaration cannot certify an experiment's actual completeness. Input gene padj values are never recalculated.
+- Each `EnrichmentResult` keeps N/n/K/k, exact overlapping genes, raw/adjusted pathway p-values and their natural logarithms. BH includes all pathways with eligible members, including zero hits. Underflowing calculated probabilities must use logs; a reported input zero remains distinguishable from inferred precision.
+- `ExperimentQuestion` keeps its input-derived premise, assumptions, proposed test, source links and any existing claim IDs used as context. It is a deterministic proposal, not a curator-approved hypothesis or new scientific claim.
+
+Uploaded observations and proposed questions stay in memory in this tab. They are not written to localStorage, shared links, exported evidence cards or the scientific dataset. A gene measurement can be shown beside matching curated gene evidence; it must not be transferred to the encoded protein, a genetic variant or a clinical outcome. Reference annotation coverage does not establish the validity or novelty of a biological interpretation.
+
 ## Required validation before release
 
 1. Validate the contract version, required fields, types, enum values, ID uniqueness, dates, and reference integrity. Every endpoint, evidence link, source link, and annotation reference must resolve.

@@ -35,7 +35,7 @@ export function EntitySearch({ query, matches, onQuery, onSelect }: Props) {
 
   useEffect(() => {
     const focusSearch = (event: globalThis.KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && input.current?.getClientRects().length) {
         event.preventDefault();
         input.current?.focus();
         input.current?.select();

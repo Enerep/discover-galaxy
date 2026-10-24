@@ -136,6 +136,19 @@ p { line-height: 1.65; }
 .project-link { display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 12px; color: var(--muted); }
 .project-link:hover { color: var(--ink); }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; padding: 34px 40px 32px; align-items: start; }
+.workspace[hidden], .analysis-view[hidden] { display: none; }
+.workspace-navigation { display: flex; gap: 6px; padding: 12px 40px 0; }
+.workspace-navigation button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border-bottom: 2px solid transparent; padding: 0 14px; color: var(--muted); font-size: 13px; }
+.workspace-navigation button[aria-pressed=true] { color: var(--accent); border-bottom-color: var(--accent); }
+.workspace-navigation button:hover { background: var(--hover-surface); }
+.workspace-loading { padding: 24px 40px; color: var(--muted); }
+.experiment-context { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); padding: 0 0 14px; margin-bottom: 18px; }
+.experiment-context strong { font-weight: 550; font-size: 14px; }
+.experiment-context span { display: block; color: var(--muted); font-size: 12px; margin-top: 5px; overflow-wrap: anywhere; }
+.experiment-observation { margin: 20px 0; padding: 18px 0; border-block: 1px solid var(--border); }
+.experiment-observation h3 { margin: 0 0 10px; font-size: 14px; font-weight: 550; }
+.experiment-observation p { font-size: 13px; color: var(--secondary-ink); overflow-wrap: anywhere; }
+.experiment-observation .context-list { margin: 12px 0 0; }
 .explorer { min-width: 0; outline: none; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 25px; }
 .page-heading h1 { font-size: 32px; font-weight: 550; letter-spacing: -1.15px; margin: 0; line-height: 1.2; }
@@ -407,6 +420,7 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
   .inspector { padding-left: 36px; }
 }
 @media (max-width: 1200px) {
+  .workspace-navigation { padding-inline: 28px; }
   .workspace { grid-template-columns: minmax(0, 1fr) 330px; gap: 24px; padding: 28px; }
   .app-header { padding: 0 28px; }
   .inspector { padding-left: 24px; }
@@ -431,6 +445,7 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
   .viewport { height: 560px; }
 }
 @media (max-width: 600px) {
+  .workspace-navigation { padding-inline: 18px; }
   .app-header { height: 67px; padding: 0 19px; }
   .brand { font-size: 16px; gap: 8px; letter-spacing: -.5px; }
   .brand svg { width: 25px; }
