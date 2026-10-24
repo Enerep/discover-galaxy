@@ -1,5 +1,13 @@
 # Development preview verification
 
+## Database annotation intake — 2026-10-24
+
+Three bounded adapters now stage UniProt identity facts, Reactome human pathway mappings and the first 20 direct Open Targets disease-association summaries. Packets retain declared/requested identities, exact request, response-byte SHA-256, actual completed versus offline retrieval, provider release when available, source attribution and score definitions. They create no graph claim, source inspection, human-review attestation or browser request. Their primary contracts/terms and the pinned official source-code commits inspected are recorded in [curation tooling](../tools/curation/README.md#gene-and-protein-api-intake).
+
+All **117 native tests** pass, including seven new checks of identity/species/schema disagreements, duplicate mapping rejection, GraphQL errors, first-page limits, preserved provider scores/releases, stripped unrelated fields, bounded streams/timeouts, fixed-host requests and secret-safe failures. A separate strict TypeScript check covers the new tool/test files. Dependency safeguards and `git diff --check` pass; no dependencies, lockfile or install policy changed. These are offline/simulated-network checks, not a successful live integration.
+
+The four-gene seed reproduces byte-for-byte from the checksum-verified HGNC gzip and existing pinned Reactome reference; its independent committed-digest check also passes. It retains approved COL1A1/COL1A2/COL3A1/SAA1 gene/product identities and literal gene-level memberships without expression values, protein states or inferred disease effects. The generator never writes graph claims. Direct CLI probes to all three providers failed at the configured proxy before returning API data; their hosts are absent from its enforced allowlist. Existing reference bytes and the scientific snapshot are unchanged at this tooling checkpoint. Further source-checked dataset changes are recorded separately below.
+
 ## Evidence for an analyzed pathway — 2026-10-24
 
 Each selected pathway now summarizes original-paper findings for its selected genes and their explicitly mapped proteins. The coverage audit distinguishes paper findings, database-only records, genes without linked findings and genes outside the library. Shared citations/findings are grouped without an independence claim; exact **View finding** navigation preserves the applied analysis. Covered genes are actionable in the member table, replacing the repeated link list. Existing curated study-context notes require every named finding and evidence record. This is selective library coverage, not a comprehensive literature search or pathway-activity validation.

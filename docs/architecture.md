@@ -35,6 +35,8 @@ The diagram shows the current application. The galaxy, list, and inspector are v
 
 ## Component boundaries
 
+Database expansion uses an offline curation boundary: `biomedical-intake.ts` builds fixed UniProt/Reactome/Open Targets requests, normalizes allowlisted facts and writes source-linked staging packets. It never runs in the browser, reads experiments or promotes scientific records. The bounded [reference seed](../data/annotations/README.md) is reproducible from existing HGNC/Reactome bytes and explicitly distinct from API retrieval. Live provider access is blocked in the current cloud workspace; archived/simulated-response checks are separate from a successful live integration. A separate source-checked snapshot diff is required to display facts in the explorer.
+
 | Boundary | Responsibility |
 | --- | --- |
 | Dataset adapter | Validate the imported snapshot and expose typed entities, claims, evidence, and sources. Invalid data produces a load-error state. |
@@ -132,7 +134,7 @@ Introduce Python and NetworkX curation tooling in M2 for normalization, bounded 
 
 `tools/curation/openalex-intake.ts` is the first candidate-source adapter. It requests one bounded page of selected OpenAlex metadata fields or normalizes an explicitly supplied archived response. Its allowlist excludes abstracts, full text, and unrelated payload fields. The output retains query/retrieval provenance, canonical publication identifiers, and provider flags; records stay unreviewed and outside the graph. A provider retraction flag is not an independent correction/retraction check. The live API has no immutable release identifier, and an offline input must not be described as a verified live lookup. Current access requirements and observed checks are documented in [curation tooling](../tools/curation/README.md) and [verification](verification.md).
 
-Open Targets and Reactome adapters remain planned. Import only reviewed records into a published scientific snapshot. Preserve upstream identifiers, release information, retrieval dates, and applicable attribution and redistribution terms. Verify current upstream API access and licensing before implementing each adapter.
+The separate bounded UniProt/Reactome/Open Targets adapters now stage database annotations with archived replay, byte digests and actual/offline request provenance. They do not promote claims, transmit user experiments or establish a successful live integration in this network-restricted workspace. A source-checked draft requires a separately inspected dataset diff; the future scientific release retains its actual review/reuse gates. Preserve source identifiers, reported releases, retrieval limits and score definitions.
 
 The client makes no upstream scientific API requests. The checked-in snapshot makes local exploration reproducible and independent of those services; opening an original external reference still requires network access.
 

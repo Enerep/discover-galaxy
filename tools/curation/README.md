@@ -19,6 +19,35 @@ The [generated coverage table](../../data/alzheimers/candidate-coverage.md) incl
 
 This targeted lookup is **separate from the OpenAlex adapter below**. Neither a retrieved web page nor this coverage validator establishes that the API adapter completed a live request. Draft pathway annotations may retain an explicitly unknown release with inspected record/participant locators and access dates; do not claim an immutable upstream snapshot. Resolve gene/protein/state meanings and inspect original sources before adding experimental claims. Independent scientific review is a deferred future milestone; no tooling may fabricate its attestations.
 
+## Gene and protein API intake
+
+`biomedical-intake.ts` makes one fixed, bounded provider request for an explicitly identified human gene/product, or normalizes a saved JSON response. It writes a staging packet to stdout and never modifies the scientific snapshot, invokes a browser request or receives uploaded experiment data. No new npm dependency, API key, server or install hook is required.
+
+```sh
+# Live request in an environment whose network policy permits the provider.
+npm run --silent curation:annotations -- --provider uniprot --symbol COL1A1 --ensembl ENSG00000108821 --uniprot P02452
+
+# Replay a legitimately saved provider JSON response; no network request.
+npm run --silent curation:annotations -- --provider reactome --symbol COL1A1 --ensembl ENSG00000108821 --uniprot P02452 --input /path/to/reactome-response.json
+
+# Direct association summaries; only page zero, size 20, enableIndirect=false.
+npm run --silent curation:annotations -- --provider opentargets --symbol COL1A1 --ensembl ENSG00000108821 --uniprot P02452
+```
+
+Keep output in ignored `data/staging/`. The CLI validates the declared symbol, stable Ensembl ID and canonical UniProt accession. UniProt must match accession, primary gene symbol and human taxon; explicit Ensembl cross-references must agree. Missing Ensembl cross-references remain unverified. Reactome accepts human pathway objects only, retaining record revisions when supplied; mappings do not imply a molecular state or direct binding. Open Targets must match both gene identifiers, reject GraphQL errors/partial error responses, and preserve overall/data-source scores under their provider definitions. A score is not a causal or therapeutic-success probability. First-page truncation is explicit; no citation count or independent-study claim is derived.
+
+Packets retain actual processing time, exact request, response-byte SHA-256, provider-reported release when available, source terms/attribution and original IDs. Offline packets keep `retrieved_at: null` and label request provenance as declared, since processing an archive does not verify when or how it was fetched. Live packets record actual completed retrieval. UniProt captures `X-UniProt-Release`; entry version/update date are separate. Open Targets requests `meta.dataVersion`; Reactome global release is unknown. No result is called an immutable provider snapshot.
+
+Every API packet stays `unreviewed` / `not_in_graph`. Normalization is not source inspection or scientific approval. It retains identity names, identifiers, pathway mappings and association summaries only, discarding sequences, function prose, abstracts, full text and arbitrary fields. Source-checked draft promotion requires a separate reviewable dataset diff; independent human scientific review remains the deferred release milestone. The [four-gene seed](../../data/annotations/README.md) instead uses already pinned HGNC/Reactome references and records that distinct origin honestly.
+
+Requests use inherited proxy/CA settings, HTTPS and fixed hosts, a 15-second timeout covering fetch/body reading, no redirects/retries and a 5 MiB streamed response cap. Reactome caps mappings at 1,000; Open Targets requests at most 20 rows. Non-success responses, identity mismatches and invalid shapes fail without printing provider bodies, transport details or secrets. Builds and the hosted app never fetch upstream data. Direct probes to all three providers failed at this workspace's configured proxy on 2026-10-24; offline and simulated-request tests do **not** establish live availability. Allow `rest.uniprot.org`, `reactome.org` and `api.platform.opentargets.org` through the supported environment configuration before performing a real import; never bypass its proxy.
+
+Source contracts and terms inspected on 2026-10-24:
+
+- [UniProt API help](https://www.uniprot.org/help/api_queries) and [license](https://rest.uniprot.org/help/license): entry JSON identity/audit fields, CC BY 4.0 attribution. The JavaScript help page was a fallback; the REST license document was readable.
+- [Reactome's official Python client mapping method](https://github.com/reactome/reactome2py/blob/b3cbc27bb381b79153b80078a382c3dac5097b45/reactome2py/content.py): `/data/mapping/UniProt/{accession}/pathways?species=9606` returns lower-level pathway mappings. [Reactome data terms](https://reactome.org/license), section 1(c), are CC0.
+- [Open Targets GraphQL documentation](https://platform-docs.opentargets.org/data-access/graphql-api), [official association query](https://github.com/opentargets/platform-api/blob/253d0d5f16512074f7a86f9181663ab6d58de9dc/test/resources/gqlQueries/TargetAssociations_TargetAssociationsQuery.gql) and [schema version fields](https://github.com/opentargets/platform-api/blob/253d0d5f16512074f7a86f9181663ab6d58de9dc/app/models/gql/Objects.scala): POST target variables, pagination, direct-association flag and provider data version. [Open Targets licence](https://platform-docs.opentargets.org/licence) marks data CC0. Contract/source-code inspection is separate from testing the live endpoint.
+
 ## OpenAlex candidate intake
 
 The intake tool makes one bounded request to the OpenAlex works API or normalizes a locally archived response. It retains bibliographic metadata only: identifiers, title, publication date/year, work type, provider update time, and the provider's retraction flag. No abstracts, article text, similarity/relevance scores, or inferred scientific relationships are retained.

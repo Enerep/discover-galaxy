@@ -1,0 +1,8 @@
+{
+  "schema_version": "annotation-seed-plan-1",
+  "baseline_dataset_version": "alzheimers-source-checked-0.6.0",
+  "prepared_at": "2026-10-24",
+  "symbols": ["COL1A1", "COL1A2", "COL3A1", "SAA1"],
+  "pathway_id": "R-HSA-2173782",
+  "selection_method": "Uncovered selected genes in the leading scavenger-receptor pathway from the documented public MAYO AD input at gene FDR <=0.05 and absolute log2FC >=1. This prioritizes library coverage, not AD causality or pathway activity. Uploaded expression values are not imported."
+}

@@ -1,0 +1,106 @@
+{
+  "schema_version": "annotation-reference-seed-1",
+  "prepared_at": "2026-10-24",
+  "baseline_dataset_version": "alzheimers-source-checked-0.6.0",
+  "selection_method": "Uncovered selected genes in the leading scavenger-receptor pathway from the documented public MAYO AD input at gene FDR <=0.05 and absolute log2FC >=1. This prioritizes library coverage, not AD causality or pathway activity. Uploaded expression values are not imported.",
+  "data_origin": "pinned_reference_extract",
+  "retrieved_at": null,
+  "scientific_review": "not_performed_by_generator",
+  "hgnc_source": {
+    "url": "https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz",
+    "commit": "37b375b4e4f70445cbb9e40b273a510467b798ae",
+    "sha256": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b",
+    "retrieved_at": "2026-10-24",
+    "metadata_url": "https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_version.json",
+    "terms_url": "https://hgnc.genenames.org/about/license/",
+    "license": "CC0-1.0",
+    "attribution": "HGNC (RRID:SCR_002827), approved Ensembl cross-references; gene-tidy mirror reports source date 2026-06-20. Not verified against the official archive."
+  },
+  "reactome_source": {
+    "url": "https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt",
+    "commit": "fbe2f70935496c73ed21337af70e97e633c2f4d3",
+    "sha256": "f5d9af14b2f8d373201372b2e63e3c7b2c5b535d30af1459fddfdba22015cd7d",
+    "retrieved_at": "2026-10-23T11:42:08Z",
+    "terms_url": "https://reactome.org/license",
+    "license": "CC0-1.0",
+    "attribution": "Reactome annotation data, mirrored by Computational Epigenetics / MrBiomics; exact upstream release unknown."
+  },
+  "reactome_reference_id": "reactome-human-mrbiomics-f5d9af14b2f8",
+  "reactome_normalized_sha256": "f19f3f37b142e1f0d0a6ef84118f1ae586334b04545897627c6d9236c7a739c6",
+  "upstream_releases": {
+    "hgnc": null,
+    "reactome": null
+  },
+  "genes": [
+    {
+      "symbol": "COL1A1",
+      "gene_name": "collagen type I alpha 1 chain",
+      "hgnc_id": "HGNC:2197",
+      "ensembl_gene_id": "ENSG00000108821",
+      "ncbi_gene_id": "1277",
+      "uniprot_accession": "P02452",
+      "identity_locator": "Approved HGNC row HGNC:2197 (COL1A1); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "pathway_membership": {
+        "id": "R-HSA-2173782",
+        "name": "Binding and Uptake of Ligands by Scavenger Receptors",
+        "url": "https://reactome.org/content/detail/R-HSA-2173782",
+        "level": "gene_set_annotation",
+        "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol COL1A1."
+      }
+    },
+    {
+      "symbol": "COL1A2",
+      "gene_name": "collagen type I alpha 2 chain",
+      "hgnc_id": "HGNC:2198",
+      "ensembl_gene_id": "ENSG00000164692",
+      "ncbi_gene_id": "1278",
+      "uniprot_accession": "P08123",
+      "identity_locator": "Approved HGNC row HGNC:2198 (COL1A2); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "pathway_membership": {
+        "id": "R-HSA-2173782",
+        "name": "Binding and Uptake of Ligands by Scavenger Receptors",
+        "url": "https://reactome.org/content/detail/R-HSA-2173782",
+        "level": "gene_set_annotation",
+        "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol COL1A2."
+      }
+    },
+    {
+      "symbol": "COL3A1",
+      "gene_name": "collagen type III alpha 1 chain",
+      "hgnc_id": "HGNC:2201",
+      "ensembl_gene_id": "ENSG00000168542",
+      "ncbi_gene_id": "1281",
+      "uniprot_accession": "P02461",
+      "identity_locator": "Approved HGNC row HGNC:2201 (COL3A1); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "pathway_membership": {
+        "id": "R-HSA-2173782",
+        "name": "Binding and Uptake of Ligands by Scavenger Receptors",
+        "url": "https://reactome.org/content/detail/R-HSA-2173782",
+        "level": "gene_set_annotation",
+        "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol COL3A1."
+      }
+    },
+    {
+      "symbol": "SAA1",
+      "gene_name": "serum amyloid A1",
+      "hgnc_id": "HGNC:10513",
+      "ensembl_gene_id": "ENSG00000173432",
+      "ncbi_gene_id": "6288",
+      "uniprot_accession": "P0DJI8",
+      "identity_locator": "Approved HGNC row HGNC:10513 (SAA1); symbol, name, ensembl_gene_id, entrez_id and uniprot_ids columns.",
+      "pathway_membership": {
+        "id": "R-HSA-2173782",
+        "name": "Binding and Uptake of Ligands by Scavenger Receptors",
+        "url": "https://reactome.org/content/detail/R-HSA-2173782",
+        "level": "gene_set_annotation",
+        "locator": "Pinned Reactome JSON pathways[id=R-HSA-2173782].genes contains exact symbol SAA1."
+      }
+    }
+  ],
+  "limitations": [
+    "Extraction is reproducible, not a live API request or scientific approval.",
+    "HGNC identity cross-references do not measure expression, translation or disease association.",
+    "Reactome memberships are gene-level annotations from a pinned mirror of unknown upstream release. They do not identify molecular states, direct physical binding or pathway activity.",
+    "Any displayed scientific record requires a separate, source-checked snapshot diff. No claims, review attestations or graph changes are generated."
+  ]
+}

@@ -99,6 +99,13 @@ This completes the product milestone for a **public research preview**: processe
 
 This workflow interprets processed results; it does not run raw-count differential expression, verify input species/identity, model gene-length/expression selection bias, prove pathway activity or promote questions into the curated scientific snapshot. No backend, upload service or live AI model was added.
 
+### Reproducible database annotation intake
+
+- [x] Add bounded, identity-checked UniProt/Reactome/Open Targets adapters with archived-response replay, byte digests, actual/offline retrieval provenance and separate database/experimental meanings.
+- [x] Test malformed/partial responses, species/identity mismatches, duplicate mappings, first-page scope, secret-safe errors, response/timeout limits and no automatic scientific promotion.
+- [x] Extract a reproducible four-gene identity/membership seed from the existing pinned HGNC and Reactome references, without changing the broad enrichment reference or claiming a live API result.
+- [ ] Complete a successful bounded live provider request after the environment permits its hosts; inspect the real packet before using it in a source-checked snapshot diff.
+
 ### Prepare the next AD evidence pass
 
 - [x] Stage a bounded, source-linked reading list: six publications and two Reactome pathway records, with lookup dates, actual access limits, and unknown context preserved.
