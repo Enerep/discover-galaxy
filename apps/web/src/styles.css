@@ -272,7 +272,7 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .connection-link span { flex: 1; }
 .connection-link:hover span { text-decoration: underline; text-underline-offset: 3px; }
 .study-context-note { margin: 20px 0; padding: 18px 0; border-block: 1px solid var(--border); }
-.study-context-note h3 { font-size: 14px; font-weight: 550; line-height: 1.6; margin: 0 0 10px; color: var(--ink); }
+.study-context-note .context-note-heading { font-size: 14px; font-weight: 550; line-height: 1.6; margin: 0 0 10px; color: var(--ink); }
 .study-context-note .draft-label { display: inline-block; margin-left: 8px; vertical-align: middle; }
 .study-context-note > p, .comparison-dialog .study-context-note > p { font-size: 13px; line-height: 1.75; color: var(--secondary-ink); margin: 0; }
 .context-note-sources { display: flex; flex-wrap: wrap; column-gap: 20px; }

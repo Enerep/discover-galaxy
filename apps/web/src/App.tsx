@@ -133,6 +133,15 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     selectEntity(entity.id);
     requestAnimationFrame(openEvidence);
   }
+  function inspectExperimentFinding(claimId: string) {
+    const claim = snapshot.claims.find(({ id }) => id === claimId);
+    if (!claim) return;
+    setWorkspace('explore');
+    clearFilters();
+    setSelectedId(claim.subject_id);
+    setSelectedClaimId(claim.id);
+    requestAnimationFrame(openEvidence);
+  }
 
   function openComparison() {
     if (!activeClaim) return;
@@ -230,7 +239,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       </nav>
       {analysisVisited && <div className="analysis-view" hidden={workspace !== 'analysis'}>
         <Suspense fallback={<p className="workspace-loading" role="status">Loading analysis…</p>}>
-          <ExperimentWorkspace snapshot={snapshot} onInspectGene={inspectExperimentGene} onResults={setExperiment} />
+          <ExperimentWorkspace snapshot={snapshot} onInspectGene={inspectExperimentGene} onInspectFinding={inspectExperimentFinding} onResults={setExperiment} />
         </Suspense>
       </div>}
       <div className="workspace" hidden={workspace !== 'explore'}>

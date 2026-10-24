@@ -17,11 +17,13 @@ import { createExampleExperiment, EXAMPLE_COMPARISON, EXAMPLE_CONTEXT } from '..
 import { MAX_CONTEXT_LENGTH, normalizeExperimentContext, STUDY_DESIGN_LABELS } from '../lib/experiment-context.ts';
 import type { ExperimentContext } from '../lib/experiment-context.ts';
 import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
+import { PathwayEvidence } from './PathwayEvidence.tsx';
 import './experiment-workspace.css';
 
 interface Props {
   snapshot: Snapshot;
   onInspectGene: (gene: string) => void;
+  onInspectFinding: (claimId: string) => void;
   onResults: (result: ExperimentAnalysis | null) => void;
 }
 
@@ -36,7 +38,7 @@ const foldChange = (value: number | null) => {
   return `${value > 0 ? '+' : ''}${formatted}`;
 };
 
-export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults }: Props) {
+export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspectFinding, onResults }: Props) {
   const workspace = useRef<HTMLElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
@@ -336,12 +338,14 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
           <div className="experiment-table-scroll" role="region" aria-label="Eligible pathway members" tabIndex={0}>
             <table className="experiment-table experiment-member-table"><thead><tr><th scope="col">Gene</th><th scope="col">log₂FC</th><th scope="col">Gene FDR</th><th scope="col">Selected</th></tr></thead>
               <tbody>{eligibleMembers.slice(memberPage * MEMBER_PAGE_SIZE, (memberPage + 1) * MEMBER_PAGE_SIZE).map((row) => <tr key={row.gene}>
-                <th scope="row">{row.gene}</th><td>{foldChange(row.log2FoldChange)}</td><td>{row.padj === null ? 'Not recorded' : formatProbability(row.padj)}</td><td>{selectedGenes.has(row.gene) ? 'Yes' : 'No'}</td>
+                <th scope="row" aria-label={row.gene} className={curatedGenes.has(row.gene) ? 'experiment-member-linked' : undefined}>{curatedGenes.has(row.gene)
+                  ? <button type="button" className="experiment-member-gene" aria-label={`View ${row.gene} evidence`} onClick={() => onInspectGene(row.gene)}><span>{row.gene}</span><Icon name="arrow" size={13} /></button>
+                  : row.gene}</th><td>{foldChange(row.log2FoldChange)}</td><td>{row.padj === null ? 'Not recorded' : formatProbability(row.padj)}</td><td>{selectedGenes.has(row.gene) ? 'Yes' : 'No'}</td>
               </tr>)}</tbody>
             </table>
           </div>
           {eligibleMembers.length > MEMBER_PAGE_SIZE && <div className="experiment-pagination"><span>{integer(memberPage * MEMBER_PAGE_SIZE + 1)}–{integer(Math.min((memberPage + 1) * MEMBER_PAGE_SIZE, eligibleMembers.length))} of {integer(eligibleMembers.length)}</span><nav aria-label="Eligible member pages"><button className="secondary-button" type="button" disabled={memberPage === 0} onClick={() => setMemberPage(memberPage - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(memberPage + 1) * MEMBER_PAGE_SIZE >= eligibleMembers.length} onClick={() => setMemberPage(memberPage + 1)}>Next</button></nav></div>}
-          <div className="experiment-evidence-links">{eligibleMembers.filter(({ gene }) => curatedGenes.has(gene)).map(({ gene }) => <button className="text-button" type="button" key={gene} onClick={() => onInspectGene(gene)}>View {gene} evidence<Icon name="arrow" size={14} /></button>)}</div>
+          <PathwayEvidence key={`${analysis.createdAt}-${selectedPathway.id}`} snapshot={snapshot} analysis={analysis} pathwayId={selectedPathway.id} onInspectFinding={onInspectFinding} />
           {questions.length > 0 && <section className="experiment-questions" aria-label={analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}><h4>{analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}</h4>
             {questions.map((item) => <article key={item.id}><h5>{item.question}</h5><p>{item.premise}</p><details><summary>Assumptions and proposed test</summary><ul>{item.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul><p>{item.suggestedTest}</p></details><ul className="experiment-question-sources">{item.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a></li>)}</ul></article>)}
           </section>}

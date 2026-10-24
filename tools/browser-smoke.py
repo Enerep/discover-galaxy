@@ -1754,6 +1754,149 @@ def assert_experiment_example(browser, base_url: str, screenshots: Path) -> None
     print('PASS: one-click synthetic example supports keyboard/mobile/themes, reference retry, cutoff/group inspection, cited gene navigation, persistent provenance and replacement with an upload without storage or uploads.')
 
 
+def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
+    # Invented measurements exercise library matching; they are not scientific evidence.
+    csv = ('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\nAPOB,1.2,.03\n'
+           'COL1A1,2,.01\nNR1H2,2,.01\nAPOE,.1,.8\n')
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
+                                      reduced_motion='reduce', is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light')
+        context.add_init_script(RENDER_COUNTERS)
+        page = context.new_page()
+        errors, requests = [], []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+        if mobile:
+            page.add_init_script("""
+                const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(type, ...args) {
+                    return /webgl/i.test(type) ? null : original.call(this, type, ...args);
+                };
+            """)
+        page.goto(base_url, wait_until='networkidle')
+        if mobile:
+            expect(page.locator('.fallback-notice')).to_be_visible()
+        else:
+            page.get_by_role('button', name='List view', exact=True).click()
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'synthetic-pathway-evidence.csv', 'mimeType': 'text/csv', 'buffer': csv.encode()})
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('QA pathway evidence contrast')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        form.locator('button[type=submit]').click()
+        heading = workspace.locator('#experiment-results-title')
+        expect(heading).to_have_text('QA pathway evidence contrast', timeout=15000)
+        search = workspace.get_by_role('searchbox', name='Find pathways', exact=True)
+        search.fill('R-HSA-2173782')
+        workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
+        evidence = workspace.get_by_role('region', name='Pathway evidence', exact=True)
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('3 of 4 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-paper')).to_have_count(1)
+        gene_action = workspace.get_by_role('region', name='Eligible pathway members', exact=True).get_by_role('button', name='View APOE evidence', exact=True)
+        expect(gene_action).to_be_visible()
+        assert_touch_target(gene_action)
+        if mobile:
+            for symbol in ['MARCO', 'SCARA5']:
+                label = workspace.get_by_role('button', name=f'View {symbol} evidence', exact=True).locator('span')
+                assert label.evaluate('el => el.getBoundingClientRect().height <= parseFloat(getComputedStyle(el).lineHeight) + 1'), 'Short gene symbols must fit on one line.'
+        coverage = evidence.get_by_text('Coverage by selected gene', exact=True)
+        coverage.focus()
+        page.keyboard.press('Enter')
+        coverage_table = evidence.get_by_role('region', name='Selected gene evidence coverage', exact=True)
+        expect(coverage_table.locator('tbody tr')).to_have_count(4)
+        expect(coverage_table.get_by_role('rowheader', name='COL1A1', exact=True).locator('..')).to_contain_text('Outside library')
+        expect(coverage_table.get_by_role('rowheader', name='MARCO', exact=True).locator('..')).to_contain_text('1 paper')
+        expect(evidence).to_contain_text('missing coverage does not establish a scientific research gap')
+        paper = evidence.locator('.experiment-paper[data-source-id="source-cheng-2021"]')
+        paper.locator(':scope > summary').focus()
+        page.keyboard.press('Enter')
+        expect(paper.get_by_role('link', name='Original paper', exact=True)).to_have_attribute('href', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/')
+        expect(paper.locator('article')).to_have_count(2)
+        marco = paper.locator('article[data-claim-id="claim-cheng-marco-modified-apob-binding"]')
+        expect(marco.locator('.experiment-finding-genes')).to_have_text('Selected genes: APOB, MARCO')
+        expect(marco).to_contain_text('modified')
+        expect(evidence).to_contain_text('do not establish this pathway’s behavior in your samples')
+        assert_text_contrast(evidence.locator('.experiment-coverage-summary'))
+        assert_text_contrast(paper.locator(':scope > summary > span').last)
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Pathway evidence must fit the viewport.'
+        evidence.scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f'pathway-evidence-{"mobile" if mobile else "desktop"}.png'), full_page=True)
+        workspace.get_by_role('region', name='Eligible pathway members', exact=True).screenshot(path=str(screenshots / f'pathway-evidence-genes-{"mobile" if mobile else "desktop"}.png'))
+        view_finding = marco.get_by_role('button', name=re.compile('^View finding:'))
+        assert_touch_target(view_finding)
+        view_finding.focus()
+        page.keyboard.press('Enter')
+        expect(page.locator('.selected-title')).to_have_text('MARCO protein')
+        expect(page.locator('.selected-title')).to_be_focused()
+        expect(page.locator('.claim-button[aria-pressed=true]')).to_contain_text('MARCO SRCR with modified apoB')
+        expect(page.locator('.source-link')).to_have_attribute('href', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/')
+        expect(page.get_by_role('region', name='Your RNA-seq result', exact=True)).to_have_count(0)
+        expect(page.get_by_role('button', name='List view', exact=True)).to_have_attribute('aria-pressed', 'true')
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        expect(heading).to_have_text('QA pathway evidence contrast')
+        expect(paper).to_have_attribute('open', '')
+        expect(coverage_table).to_be_visible()
+        # A pathway whose selected gene has only database annotations must not borrow APOE's papers.
+        search.fill('R-HSA-9029569')
+        workspace.get_by_role('button', name='NR1H3 & NR1H2 regulate gene expression linked to cholesterol transport and efflux', exact=True).click()
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('0 of 1 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-paper')).to_have_count(0)
+        evidence.get_by_text('Coverage by selected gene', exact=True).click()
+        expect(coverage_table.get_by_role('rowheader', name='NR1H2', exact=True).locator('..')).to_contain_text('Database records only')
+        search.fill('R-HSA-2173782')
+        workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
+        form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0.015')
+        form.locator('button[type=submit]').click()
+        expect(workspace.locator('.experiment-counts dd').nth(1)).to_have_text('3')
+        search.fill('R-HSA-2173782')
+        workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('1 of 2 selected genes have paper findings in this library.')
+        paper.locator(':scope > summary').click()
+        expect(paper.locator('article')).to_have_count(1)
+        expect(marco.locator('.experiment-finding-genes')).to_have_text('Selected gene: MARCO')
+        form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0.001')
+        form.locator('button[type=submit]').click()
+        expect(workspace.locator('.experiment-counts dd').nth(1)).to_have_text('0')
+        search.fill('R-HSA-2173782')
+        workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('No selected genes in this pathway at the applied cutoffs.')
+        expect(evidence.locator('.experiment-paper')).to_have_count(0)
+        expect(coverage_table).to_have_count(0)
+        # Gene-level literature can include variant/protein studies and curated assay notes.
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'synthetic-paper-context.csv', 'mimeType': 'text/csv',
+            'buffer': b'gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,.1,.8\n'})
+        form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0.05')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        form.locator('button[type=submit]').click()
+        expect(workspace.locator('.experiment-counts dd').nth(1)).to_have_text('1')
+        search.fill('R-HSA-174824')
+        workspace.get_by_role('button', name='Plasma lipoprotein assembly, remodeling, and clearance', exact=True).click()
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('1 of 1 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-paper')).to_have_count(5)
+        expect(evidence.locator('.experiment-paper[data-source-id="source-cheng-2021"]')).to_have_count(0)
+        note = evidence.locator('.study-context-note')
+        expect(note).to_have_count(1)
+        expect(note.locator('h5')).to_contain_text('Different R47H binding results')
+        note.get_by_text('What differs', exact=True).click()
+        expect(note).to_contain_text('a non-significant result is not an equivalence test')
+        bailey = evidence.locator('.experiment-paper[data-source-id="source-bailey-2015"]')
+        bailey.locator(':scope > summary').click()
+        expect(bailey.locator('.publication-status')).to_contain_text('Correction recorded')
+        notice = next(source for source in SNAPSHOT['sources'] if source['id'] == 'source-bailey-2015')['publication_status']['notice_url']
+        expect(bailey.get_by_role('link', name='View notice', exact=True)).to_have_attribute('href', notice)
+        form.get_by_role('button', name='Remove results', exact=True).click()
+        expect(evidence).to_have_count(0)
+        assert all(method == 'GET' and data is None for method, _, data in requests)
+        storage = page.evaluate('JSON.stringify({ local: {...localStorage}, session: {...sessionStorage} })')
+        assert 'QA pathway evidence contrast' not in storage and 'synthetic-pathway-evidence' not in storage
+        assert not errors, errors
+        context.close()
+    print('PASS: pathway evidence groups shared papers, audits selected-gene coverage, distinguishes database-only/uncovered genes, follows exact findings and preserves applied results across keyboard/mobile/themes/WebGL fallback without uploads or storage.')
+
+
 def assert_experiment_context(browser, base_url: str, screenshots: Path) -> None:
     for mobile in [False, True]:
         context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
@@ -2242,6 +2385,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_experiment_robustness(browser, base_url, screenshots)
         assert_experiment_example(browser, base_url, screenshots)
         assert_experiment_context(browser, base_url, screenshots)
+        assert_pathway_evidence(browser, base_url, screenshots)
         assert_scavenger_evidence(browser, base_url, screenshots)
         if public_ad_table is not None:
             assert_public_ad_results(browser, base_url, screenshots, public_ad_table)

@@ -9,6 +9,7 @@ import { createExampleExperiment, EXAMPLE_COMPARISON } from './experiment-exampl
 import { describeExperimentContext, MAX_CONTEXT_LENGTH, normalizeExperimentContext } from './experiment-context.ts';
 import type { ExperimentContext } from './experiment-context.ts';
 import { analyzeThresholdSensitivity, groupOverlappingPathways } from './experiment-robustness.ts';
+import { buildPathwayEvidence, coverageLabel } from './pathway-evidence.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const referenceBytes = await readFile(new URL('../../../../data/reference/reactome-pathways.json', import.meta.url));
@@ -16,6 +17,98 @@ const reference = validatePathwayReference(JSON.parse(referenceBytes.toString('u
 // This is an explicitly synthetic workflow fixture, never a public experimental finding.
 const table = () => parseExperiment('gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,-1.5,.02\nABCA1,.1,.7\nSYNTHETICUNMAPPED,.1,.8\nSYNTHETICINCOMPLETE,NA,NA\n', 'synthetic-workflow.csv');
 const options = () => ({ comparison: 'Synthetic numerator / denominator', allTestedGenes: true, thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 } });
+
+test('pathway evidence uses selected members, counts one paper for shared findings, and preserves source-specific assays', () => {
+  const input = parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\nAPOB,1.2,.03\nCOL1A1,2,.01\nAPOE,.1,.8\nTYROBP,2,.01\n', 'synthetic-evidence.csv');
+  const result = runExperimentAnalysis(input, options(), reference);
+  const before = JSON.stringify({ snapshot, result });
+  const report = buildPathwayEvidence(snapshot, result, 'R-HSA-2173782');
+  assert.deepEqual(report.genes.map(({ gene }) => gene), ['APOB', 'COL1A1', 'MARCO', 'SCARA5']);
+  assert.equal(report.genes.filter(({ paperIds }) => paperIds.length).length, 3);
+  assert.equal(coverageLabel(report.genes.find(({ gene }) => gene === 'COL1A1')!), 'Outside library');
+  assert.equal(report.papers.length, 1);
+  assert.equal(report.papers[0].source.id, 'source-cheng-2021');
+  assert.equal(report.papers[0].source.reuse.permission_status, 'pending_review');
+  assert.equal(report.papers[0].findings.length, 2);
+  const marco = report.papers[0].findings.find(({ claim }) => claim.id === 'claim-cheng-marco-modified-apob-binding')!;
+  assert.deepEqual(marco.genes, ['APOB', 'MARCO']);
+  assert.equal(marco.evidence.length, 1);
+  assert.ok(marco.claim.statement.includes('modified'));
+  assert.ok(marco.evidence[0].locator.includes('Figure 7'));
+  assert.ok(marco.claim.limitations.length);
+  assert.equal(report.contextNotes.length, 0);
+  assert.ok(!report.papers.some(({ source }) => source.id === 'source-atagi-2015'), 'Do not traverse to an unselected interaction neighbour.');
+  assert.equal(JSON.stringify({ snapshot, result }), before);
+});
+
+test('database-only genes do not borrow papers through shared pathways or protein interactions', () => {
+  const result = runExperimentAnalysis(parseExperiment('gene,log2FoldChange,padj\nNR1H2,2,.01\nAPOE,.1,.8\n', 'synthetic-database-only.csv'), options(), reference);
+  const pathway = result.pathways.find(({ overlapGenes }) => overlapGenes.includes('NR1H2'))!;
+  const report = buildPathwayEvidence(snapshot, result, pathway.id);
+  assert.equal(report.genes.length, 1);
+  assert.equal(coverageLabel(report.genes[0]), 'Database records only');
+  assert.ok(report.genes[0].databaseClaimIds.includes('claim-nr1h2-encodes'));
+  assert.equal(report.papers.length, 0);
+  assert.equal(report.contextNotes.length, 0);
+});
+
+test('literature matching requires exact gene identity and an explicitly supported encoding relationship', () => {
+  const result = runExperimentAnalysis(parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\n', 'synthetic-identity.csv'), options(), reference);
+  const changed = structuredClone(snapshot);
+  const marco = changed.entities.find(({ id }) => id === 'gene-marco')!;
+  marco.label = 'OTHER_SYMBOL'; marco.aliases.push('MARCO');
+  let report = buildPathwayEvidence(changed, result, 'R-HSA-2173782');
+  assert.equal(report.genes[0].entityId, null);
+  assert.equal(report.papers.length, 0, 'An alias or protein label must not silently establish gene identity.');
+  marco.label = 'MARCO';
+  changed.evidence.find(({ claim_id }) => claim_id === 'claim-marco-encodes')!.relation = 'unclear';
+  report = buildPathwayEvidence(changed, result, 'R-HSA-2173782');
+  assert.equal(coverageLabel(report.genes[0]), 'Database records only');
+  assert.equal(report.papers.length, 0, 'Do not bridge an unsupported encoding assertion.');
+  changed.claims = changed.claims.filter(({ id }) => id !== 'claim-marco-encodes');
+  report = buildPathwayEvidence(changed, result, 'R-HSA-2173782');
+  assert.equal(coverageLabel(report.genes[0]), 'No linked findings');
+});
+
+test('curated comparison notes require both displayed findings and their cited evidence', () => {
+  const result = runExperimentAnalysis(table(), options(), reference);
+  const pathway = result.pathways.find(({ overlapGenes }) => overlapGenes.includes('APOE'))!;
+  const report = buildPathwayEvidence(snapshot, result, pathway.id);
+  assert.deepEqual(report.contextNotes.map(({ id }) => id), ['conflict-r47h-binding-context']);
+  assert.equal(report.papers.filter(({ source }) => source.id === 'source-atagi-2015').length, 1);
+  const bailey = report.papers.find(({ source }) => source.id === 'source-bailey-2015')!;
+  assert.equal(bailey.source.publication_status.status, 'corrected');
+  assert.ok(bailey.source.publication_status.notice_url);
+  const changed = structuredClone(snapshot);
+  changed.evidence = changed.evidence.filter(({ claim_id }) => claim_id !== 'claim-lessard-trem2-r47h-apoe3-binding');
+  assert.equal(buildPathwayEvidence(changed, result, pathway.id).contextNotes.length, 0);
+});
+
+test('repeated evidence retains its relation without multiplying a paper or its finding', () => {
+  const result = runExperimentAnalysis(parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\nAPOB,2,.01\n', 'synthetic-repeat.csv'), options(), reference);
+  const changed = structuredClone(snapshot);
+  const item = structuredClone(changed.evidence.find(({ claim_id }) => claim_id === 'claim-cheng-marco-modified-apob-binding')!);
+  item.id = 'synthetic-second-evidence'; item.relation = 'mixed';
+  changed.evidence.push(item);
+  changed.claims.find(({ id }) => id === item.claim_id)!.evidence_ids.push(item.id);
+  const report = buildPathwayEvidence(changed, result, 'R-HSA-2173782');
+  assert.equal(report.papers.length, 1);
+  const finding = report.papers[0].findings.find(({ claim }) => claim.id === item.claim_id)!;
+  assert.equal(finding.evidence.length, 2);
+  assert.deepEqual(finding.evidence.map(({ relation }) => relation), ['supports', 'mixed']);
+  assert.deepEqual(finding.genes, ['APOB', 'MARCO']);
+});
+
+test('applied cutoffs and an empty selection clear pathway literature instead of reusing stale coverage', () => {
+  const input = parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\n', 'synthetic-cutoffs.csv');
+  const base = runExperimentAnalysis(input, options(), reference);
+  assert.equal(buildPathwayEvidence(snapshot, base, 'R-HSA-2173782').genes.length, 2);
+  const strict = runExperimentAnalysis(input, { ...options(), thresholds: { adjustedPMax: 0.001, minAbsLog2FoldChange: 1 } }, reference);
+  assert.equal(strict.backgroundGenes.length, 2);
+  for (const id of ['R-HSA-2173782', 'NOT_A_PATHWAY']) {
+    assert.deepEqual(buildPathwayEvidence(snapshot, strict, id), { genes: [], papers: [], contextNotes: [] });
+  }
+});
 
 test('optional experiment context is bounded and copied without guessing design or accepting malformed values', () => {
   assert.deepEqual(normalizeExperimentContext(), { model: '', condition: '', design: 'unspecified' });

@@ -36,6 +36,10 @@ Use the public preview with actual processed research tables and refine input co
 
 Snapshot 0.6.0 adds MARCO and SCARA5, which pass the applied cutoffs in the public MAYO input's leading scavenger-receptor pathway. APOB provides ligand context for two original Cheng 2021 ELISA findings; three genes, separate proteins, the pathway and a paper add eight nodes. Four attributed participation records join the branch to existing APOE evidence. The 3D/list explorer and analysis evidence links use these records without changing the broad reference or numerical results. [The change record](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-060--2026-10-24) retains identity provenance, mouse inference, modified/domain constructs, repeat units and reuse limits. No new AD-risk, activity, cure or novelty claim is inferred from gene selection.
 
+## Completed checkpoint: evidence for an analyzed pathway
+
+The selected pathway now has an **Evidence** section with a selected-gene coverage audit and original-paper findings grouped by citation. MARCO/SCARA5/APOB lead to one Cheng paper with the distinct modified-apoB findings; database-only genes do not borrow neighbouring genes' papers. Exact gene/product mappings connect the input to the curated library without converting RNA changes into protein results. **View finding** opens the corresponding graph/list inspector record and preserves the applied analysis when returning. Existing curated study-context notes require all their findings/evidence; no automated contradiction or research-gap detection is claimed. Coverage, source terms and numerical/reference boundaries remain unchanged.
+
 ## Existing workflow: build a research argument
 
 The research brief workspace adds a complete working flow on top of the existing Alzheimer's evidence:

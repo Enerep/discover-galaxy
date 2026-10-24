@@ -4,14 +4,15 @@ import { sourceCitation } from '../lib/source-format.ts';
 import { Icon } from './ui.tsx';
 
 /** A curated comparison of named findings, separate from automatic field labels. */
-export function StudyContextNote({ snapshot, note }: { snapshot: Snapshot; note: Conflict }) {
+export function StudyContextNote({ snapshot, note, headingLevel = 3 }: { snapshot: Snapshot; note: Conflict; headingLevel?: 3 | 4 | 5 }) {
   const titleId = useId();
+  const Heading = `h${headingLevel}` as 'h3' | 'h4' | 'h5';
   const sourceIds = new Set(note.evidence_ids.map((id) => snapshot.evidence.find((item) => item.id === id)!.source_id));
   const sources = snapshot.sources.filter(({ id }) => sourceIds.has(id));
   const draft = note.review.status !== 'approved' || note.review.human_reviewed !== true;
   return (
     <section className="study-context-note" aria-labelledby={titleId} data-note-id={note.id}>
-      <h3 id={titleId}>{note.label}{draft && <span className="draft-label">Draft</span>}</h3>
+      <Heading className="context-note-heading" id={titleId}>{note.label}{draft && <span className="draft-label">Draft</span>}</Heading>
       <p>{note.comparison}</p>
       <div className="context-note-sources" aria-label="Compared original studies">
         {sources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer">

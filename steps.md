@@ -93,6 +93,7 @@ This is a user writing workflow. It does not add curator-reviewed questions, est
 - [x] Group overlapping eligible pathway memberships with original statistics, explicit similarity and access to every member; avoid claims of independent mechanisms.
 - [x] Add a one-click synthetic example using the normal analysis, sensitivity, grouping and evidence-navigation flows, with persistent synthetic provenance.
 - [x] Capture optional tissue/cell model, treatment/condition and explicit study design; scope follow-up questions while preserving numerical results, applied provenance and tab-only privacy.
+- [x] Summarize original-paper findings for each pathway's selected genes, distinguish database-only/uncovered library coverage, retain cited study-context notes and navigate to exact findings without changing analysis statistics or creating scientific records.
 
 This completes the product milestone for a **public research preview**: processed human RNA-seq input → identifier audit → pathway analysis → sensitivity/overlap inspection → cited evidence and follow-up questions. Observed numerical/browser checks remain distinct from scientific release approval. Hosting requires the normal production build; no server or AI key is needed.
 
