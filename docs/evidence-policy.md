@@ -1,6 +1,6 @@
 # Scientific evidence policy
 
-Status: policy for the Alzheimer's explorer. The [24-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
+Status: policy for the Alzheimer's explorer. The [32-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
 
 Discovery Galaxy helps researchers inspect published evidence and formulate testable questions. It does not establish causality, discover treatments, or provide clinical recommendations. A visually prominent object, short graph path, or AI explanation is not evidence of biological importance.
 
@@ -90,4 +90,4 @@ Open metadata does not imply permission to redistribute paper full text. Retain 
 
 A scientific dataset release must pass the validation rules in [the data model](data-model.md), have no displayed claim without approved human-reviewed evidence, and state its curation date, coverage, and known gaps. It must meet the 20–50 entity MVP boundary, complete source reuse review, and record publication-status checks. The interface must expose citations and limitations without requiring an AI service.
 
-Release validation is enforced both by an explicit `{ release: true }` option and automatically for an envelope marked `released`. The current 24-entity snapshot meets the size boundary while retaining draft records and outstanding source checks; it does not claim the deferred scientific-release approvals. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a review.
+Release validation is enforced both by an explicit `{ release: true }` option and automatically for an envelope marked `released`. The current 32-entity snapshot meets the size boundary while retaining draft records and outstanding source checks; it does not claim the deferred scientific-release approvals. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a review.

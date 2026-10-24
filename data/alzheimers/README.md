@@ -1,8 +1,14 @@
 # Alzheimer's source-checked snapshot
 
-`dataset.json` is **alzheimers-source-checked-0.5.0**: 24 entities, 24 claims, 24 evidence records, 25 sources, and one draft study-context comparison. It contains one disease, seven human genes, seven distinct human proteins, two pathways, and seven paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
+`dataset.json` is **alzheimers-source-checked-0.6.0**: 32 entities, 33 claims, 33 evidence records, 32 sources, and one draft study-context comparison. It contains one disease, ten human genes, ten distinct human proteins, three pathways, and eight paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
 The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and five assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Scavenger-receptor evidence in 0.6.0
+
+The public AD analysis's leading pathway exposed missing MARCO and SCARA5 coverage. Both now connect through separate proteins to scavenger-receptor binding/uptake; APOB supplies the ligand identity for two [Cheng 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/) modified-protein ELISA findings. An attributed APOE participation record joins this branch to the existing network. Gene/product identities come from the checked pinned HGNC rows, not inferred RNA/protein effects.
+
+New records appear in 3D, List, search, comparison/brief citations and **View … evidence** from analysis. The numerical pathway reference and enrichment remain unchanged. The [0.6.0 change record](CHANGELOG.md#alzheimers-source-checked-060--2026-10-24) preserves mouse-inferred database scope, recombinant/modified protein forms, repeat units, access limits and source terms. These protein assays do not establish an AD mechanism or turn the public table's expression values into graph claims.
 
 ## Different assay reports in 0.5.0
 
@@ -56,7 +62,7 @@ The [NCBI policies](https://www.ncbi.nlm.nih.gov/home/about/policies/) and [Wile
 
 The separate [candidate-source coverage packet](candidate-coverage.md), backed by [staging JSON](candidate-coverage.json), keeps six publications ready for the next AD source pass. The two earlier pathway candidates were added through the separately checked dataset diff in 0.2.0. The remaining papers need assay-level extraction; their metadata is not experimental graph evidence. Use `npm run curation:coverage:check` to verify the packet's references and generated output.
 
-Use the [generated source-review packet](review-packet.md) for all 24 findings, their source-specific context and 25 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
+Use the [generated source-review packet](review-packet.md) for all 33 findings, their source-specific context and 32 sources. Run `npm run curation:check` to verify it is current. Source-check records belong in `dataset.json`; regenerate the packet after changes. Generation performs structural checks, not source inspection.
 
 Further draft additions require actual source inspection, scoped context and limitations, identifiers, locators, and source reuse assessment. Keep unknowns explicit and record a new dataset version. Do not add automatic approval attestations or promote staged metadata into experimental evidence.
 

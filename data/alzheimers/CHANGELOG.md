@@ -1,5 +1,28 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.6.0 — 2026-10-24
+
+**32 entities, 33 claims/evidence records, 32 sources and one unchanged draft study-context comparison.** Adds MARCO, SCARA5 and APOB genes with separate canonical proteins, the human scavenger-receptor pathway, and [Cheng et al. (2021)](https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/), DOI `10.1016/j.jbc.2021.100948`, PMID `34252459`. All earlier entities, claims, evidence, sources and context comparisons are unchanged.
+
+### Why these genes
+
+In the already documented [public MAYO validation input](../../docs/experimental-validation.md), the leading pathway is `R-HSA-2173782`. At gene FDR ≤0.05 and |log₂FC| ≥1, MARCO and SCARA5 are two of its 20 selected genes among 99 eligible members. Their source rows report log₂FC approximately +1.25/+3.68 and padj approximately 1.62e-6/1.49e-26 respectively. This is a prioritization observation from the supplied author-coded AD/Control table, not a new graph association or replication of an AD mechanism. APOB is included as the measured ligand context for the original protein experiment; no selected-APOB or AD-risk claim is added.
+
+### Sources and retained scope
+
+| Source | Inspected location | Added assertions |
+| --- | --- | --- |
+| Pinned HGNC archive, raw SHA-256 `6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b` | Approved rows `HGNC:6895`, `HGNC:28701`, `HGNC:603`; symbol/NCBI/Ensembl/UniProt fields | Three canonical gene/product cross-references |
+| [Reactome pathway](https://reactome.org/content/detail/R-HSA-2173782), [MARCO reaction](https://reactome.org/content/detail/R-HSA-2173781), [SCARA5 reaction](https://reactome.org/content/detail/R-HSA-2187266) | Human species, pathway location, participant trimers and Inferred From fields | MARCO/SCARA5 pathway participation; both human reactions explicitly retain mouse inference |
+| Reactome [APOB form](https://reactome.org/content/detail/R-HSA-2512789) and [APOE form](https://reactome.org/content/detail/R-HSA-3221641) | Human identity and the MSR1 ligand-set/endocytic pathway location | Two scoped pathway memberships connecting the new branch to existing APOE evidence |
+| Cheng 2021 | Figure 7G–H caption, adjacent Results, protein-expression, ligand-preparation and ELISA methods | Two cell-free binding findings for human MARCO/SCARA5 SRCR domains and chemically modified human apoB |
+
+The protein experiment uses GFP-tagged human receptor domains expressed in insect cells and commercial human apoB, acetylated or oxidized in vitro, with unmodified apoB controls. The ligand is plate-presented. Figure 7 describes representative data from three repeated ELISA experiments; technical replicate count, replicate independence, patient/sample count and the retained apoB isoform are unresolved. No affinity estimate, brain result, native full-length interaction or AD-treatment claim is imported. The two findings share one paper identity.
+
+Check date: **2026-10-24**. The PMC article body became readable after an initial challenge; selected text/captions and methods were inspected, not raw figure images, supplements or underlying data. PubMed indexed metadata corroborated authors/identifiers; direct publisher/PubMed opens were unavailable. HGNC mirror bytes were checked against the existing pinned digest; an exact official HGNC release/date remains unverified. Reactome record versions/release remain unknown. Its canonical SCARA5 subunit page was unavailable; identity is grounded in the inspected HGNC row rather than a claimed full UniProt inspection.
+
+Reactome data terms (CC0) and HGNC's official data-use/attribution policy were inspected. Only identifiers, links and project-authored factual summaries are retained. Cheng's article notice and [CC BY-NC-ND 4.0 terms](https://creativecommons.org/licenses/by-nc-nd/4.0/) were inspected; article-specific reuse remains `pending_review`, with no source prose, figure, table or full-text payload redistributed. Publication-status checking remains `not_checked`. All 67 scientific records remain draft without human/independent approval; no conflict or hypothesis was added.
+
 ## alzheimers-source-checked-0.5.0 — 2026-10-23
 
 **24 entities, 24 claims/evidence records, 25 sources and one draft study-context comparison.** Adds [Lessard et al. (2018)](https://link.springer.com/article/10.15252/emmm.201809027), DOI `10.15252/emmm.201809027`, PMID `30341064`, PMCID `PMC6220267`. Prior entity, claim, evidence and source records are unchanged.

@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1.0",
-  "dataset_version": "alzheimers-source-checked-0.5.0",
-  "created_at": "2026-10-23",
+  "dataset_version": "alzheimers-source-checked-0.6.0",
+  "created_at": "2026-10-24",
   "release_status": "development",
   "scope": {
     "disease": "Alzheimer's disease",
-    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison.",
+    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021.",
     "limitations": [
       "Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.",
       "The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
@@ -14,7 +14,8 @@
       "Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.",
       "Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.",
       "One draft study-context comparison records different R47H assay reports. It does not establish a settled contradiction, the cause of the difference, or clinical effects. No research hypotheses are included.",
-      "Different publication identifiers do not establish independent replication. Assay preparations, surface presentation and replicate units remain source-specific; a recorded correction does not mean a comprehensive notice search is complete."
+      "Different publication identifiers do not establish independent replication. Assay preparations, surface presentation and replicate units remain source-specific; a recorded correction does not mean a comprehensive notice search is complete.",
+      "MARCO/SCARA5 inclusion was prioritized using a public AD differential-expression table. Those input statistics are not graph claims; the Cheng protein assays were not an AD patient or brain experiment, and mouse-inferred Reactome annotations retain their inference scope."
     ]
   },
   "upstream_releases": [
@@ -57,6 +58,14 @@
       "source_url": "https://rest.uniprot.org/uniprotkb/P02649.txt",
       "reuse_terms_url": "https://rest.uniprot.org/help/license",
       "attribution": "The UniProt Consortium, UniProtKB, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Project-authored summaries; no sequence/source prose retained."
+    },
+    {
+      "provider": "HGNC (pinned mirror)",
+      "release": "gene-tidy commit 37b375b4e4f70445cbb9e40b273a510467b798ae; raw gzip SHA-256 6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b; original HGNC release/date not independently verified",
+      "accessed_at": "2026-10-24",
+      "source_url": "https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz",
+      "reuse_terms_url": "https://www.genenames.org/about/",
+      "attribution": "HGNC, HUGO Gene Nomenclature Committee at the University of Cambridge, RRID:SCR_002827. Approved identity cross-references only."
     }
   ],
   "entities": [
@@ -537,6 +546,196 @@
       "source_id": "source-lessard-2018",
       "provenance_source_ids": [
         "source-lessard-2018"
+      ]
+    },
+    {
+      "id": "gene-marco",
+      "type": "gene",
+      "label": "MARCO",
+      "aliases": [
+        "SCARA2",
+        "macrophage receptor with collagenous structure"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "8685"
+        },
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:6895"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000019169"
+        }
+      ],
+      "description": "Human gene · HGNC:6895",
+      "description_claim_ids": [
+        "claim-marco-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-hgnc-scavenger-identities"
+      ]
+    },
+    {
+      "id": "protein-marco",
+      "type": "protein",
+      "label": "MARCO protein",
+      "aliases": [
+        "MARCO gene product",
+        "Q9UEW3"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "Q9UEW3"
+        }
+      ],
+      "description": "Human protein · UniProt Q9UEW3",
+      "description_claim_ids": [
+        "claim-marco-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-hgnc-scavenger-identities"
+      ]
+    },
+    {
+      "id": "gene-scara5",
+      "type": "gene",
+      "label": "SCARA5",
+      "aliases": [
+        "scavenger receptor class A member 5"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "286133"
+        },
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:28701"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000168079"
+        }
+      ],
+      "description": "Human gene · HGNC:28701",
+      "description_claim_ids": [
+        "claim-scara5-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-hgnc-scavenger-identities"
+      ]
+    },
+    {
+      "id": "protein-scara5",
+      "type": "protein",
+      "label": "SCARA5 protein",
+      "aliases": [
+        "SCARA5 gene product",
+        "Q6ZMJ2"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "Q6ZMJ2"
+        }
+      ],
+      "description": "Human protein · UniProt Q6ZMJ2",
+      "description_claim_ids": [
+        "claim-scara5-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-hgnc-scavenger-identities"
+      ]
+    },
+    {
+      "id": "gene-apob",
+      "type": "gene",
+      "label": "APOB",
+      "aliases": [
+        "apolipoprotein B"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBI Gene",
+          "value": "338"
+        },
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:603"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000084674"
+        }
+      ],
+      "description": "Human gene · HGNC:603",
+      "description_claim_ids": [
+        "claim-apob-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-hgnc-scavenger-identities"
+      ]
+    },
+    {
+      "id": "protein-apob",
+      "type": "protein",
+      "label": "APOB protein",
+      "aliases": [
+        "APOB gene product",
+        "P04114"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P04114"
+        }
+      ],
+      "description": "Human protein · UniProt P04114",
+      "description_claim_ids": [
+        "claim-apob-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-hgnc-scavenger-identities"
+      ]
+    },
+    {
+      "id": "pathway-scavenger-receptors",
+      "type": "pathway",
+      "label": "Scavenger-receptor binding and uptake",
+      "aliases": [
+        "Binding and Uptake of Ligands by Scavenger Receptors",
+        "R-HSA-2173782"
+      ],
+      "external_ids": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2173782"
+        }
+      ],
+      "description": "Curated human pathway",
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-reactome-scavenger-pathway"
+      ]
+    },
+    {
+      "id": "paper-cheng-2021",
+      "type": "paper",
+      "label": "Cheng et al. · 2021",
+      "aliases": [
+        "34252459",
+        "10.1016/j.jbc.2021.100948",
+        "Recognition of lipoproteins by scavenger receptor class A members"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-cheng-2021",
+      "provenance_source_ids": [
+        "source-cheng-2021"
       ]
     }
   ],
@@ -1268,6 +1467,284 @@
         "date": "2026-10-23",
         "human_reviewed": false,
         "rationale": "Publisher Results around Figure 2C, BioLayer interferometry methods, Figure 2 caption and Discussion inspected as readable article text; metadata cross-checked with PubMed. Selected passages only: numerical figure tables, raw curves, supplements and underlying data were not reviewed. Publication-status search remains incomplete."
+      }
+    },
+    {
+      "id": "claim-marco-encodes",
+      "subject_id": "gene-marco",
+      "object_id": "protein-marco",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human MARCO gene to the UniProt gene product Q9UEW3.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "8685",
+        "protein_accession": "Q9UEW3"
+      },
+      "evidence_ids": [
+        "evidence-marco-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Canonical gene/product identity only; molecular forms and assay constructs remain in evidence context.",
+        "The pinned mirror has not been reconciled against an official HGNC release archive."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-scara5-encodes",
+      "subject_id": "gene-scara5",
+      "object_id": "protein-scara5",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human SCARA5 gene to the UniProt gene product Q6ZMJ2.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "286133",
+        "protein_accession": "Q6ZMJ2"
+      },
+      "evidence_ids": [
+        "evidence-scara5-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Canonical gene/product identity only; molecular forms and assay constructs remain in evidence context.",
+        "The pinned mirror has not been reconciled against an official HGNC release archive."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-apob-encodes",
+      "subject_id": "gene-apob",
+      "object_id": "protein-apob",
+      "predicate": "encodes",
+      "statement": "HGNC links the approved human APOB gene to the UniProt gene product P04114.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database cross-reference",
+        "gene_id": "338",
+        "protein_accession": "P04114"
+      },
+      "evidence_ids": [
+        "evidence-apob-encodes"
+      ],
+      "summary": "Canonical identity cross-reference.",
+      "limitations": [
+        "Canonical gene/product identity only; molecular forms and assay constructs remain in evidence context.",
+        "The pinned mirror has not been reconciled against an official HGNC release archive."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-marco-scavenger-pathway",
+      "subject_id": "protein-marco",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "Reactome places MARCO in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "molecular_context": "MARCO trimer, plasma membrane",
+        "inferred_from": "Mus musculus reaction"
+      },
+      "evidence_ids": [
+        "evidence-marco-scavenger-pathway"
+      ],
+      "summary": "Source-specific pathway membership.",
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The cited human reaction is explicitly inferred from a mouse reaction; its annotation is not direct experimental evidence in human brain."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-scara5-scavenger-pathway",
+      "subject_id": "protein-scara5",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "Reactome places SCARA5 in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "molecular_context": "SCARA5 trimer, plasma membrane",
+        "inferred_from": "Mus musculus reaction"
+      },
+      "evidence_ids": [
+        "evidence-scara5-scavenger-pathway"
+      ],
+      "summary": "Source-specific pathway membership.",
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The cited human reaction is explicitly inferred from a mouse reaction; its annotation is not direct experimental evidence in human brain."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-apob-scavenger-pathway",
+      "subject_id": "protein-apob",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "Reactome places APOB in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "molecular_context": "APOB(28-4563), endocytic vesicle lumen",
+        "inferred_from": null
+      },
+      "evidence_ids": [
+        "evidence-apob-scavenger-pathway"
+      ],
+      "summary": "Source-specific pathway membership.",
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The source describes a specific protein form/compartment in a ligand set; the displayed node represents its canonical human gene product."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-apoe-scavenger-pathway",
+      "subject_id": "protein-apoe",
+      "object_id": "pathway-scavenger-receptors",
+      "predicate": "participates_in",
+      "statement": "Reactome places APOE in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "context": {
+        "organism": "Homo sapiens",
+        "assertion_type": "curated database annotation",
+        "molecular_context": "APOE, endocytic vesicle lumen",
+        "inferred_from": null
+      },
+      "evidence_ids": [
+        "evidence-apoe-scavenger-pathway"
+      ],
+      "summary": "Source-specific pathway membership.",
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The source describes a specific protein form/compartment in a ligand set; the displayed node represents its canonical human gene product."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-cheng-marco-modified-apob-binding",
+      "subject_id": "protein-marco",
+      "object_id": "protein-apob",
+      "predicate": "interacts_with",
+      "statement": "Cheng et al. reported ELISA binding of the human MARCO SRCR domain to acetylated and oxidized apoB, with unmodified apoB as a control.",
+      "context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "ELISA binding signal for modified apoB",
+        "variant": null,
+        "assay": "ELISA",
+        "binding_condition": "MARCO SRCR with modified apoB",
+        "protein_form": "Human MARCO SRCR domain fused to GFP; purified human apoB",
+        "ligand_preparation": "Commercial human apoB, acetylated or oxidized in vitro; unmodified apoB control",
+        "immobilized_partner": "ApoB preparations coated on a 96-well plate",
+        "expression_system": "Baculovirus/High Five insect cells for human receptor domains"
+      },
+      "evidence_ids": [
+        "evidence-cheng-marco-modified-apob-binding"
+      ],
+      "summary": "Assay-scoped recognition of modified apoB.",
+      "limitations": [
+        "The assay uses a recombinant receptor domain and chemically modified ligand on a plate; it does not establish native full-length binding kinetics or an AD mechanism.",
+        "Raw figure images, supplements and underlying measurements were not reviewed; no affinity or effect estimate is imported.",
+        "Both receptor findings come from the same paper. Three reported ELISA repeats are not three studies or human participants; replicate independence and apoB isoform remain unresolved."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "claim-cheng-scara5-modified-apob-binding",
+      "subject_id": "protein-scara5",
+      "object_id": "protein-apob",
+      "predicate": "interacts_with",
+      "statement": "Cheng et al. reported ELISA binding of the human SCARA5 SRCR domain to acetylated and oxidized apoB, with unmodified apoB as a control.",
+      "context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "ELISA binding signal for modified apoB",
+        "variant": null,
+        "assay": "ELISA",
+        "binding_condition": "SCARA5 SRCR with modified apoB",
+        "protein_form": "Human SCARA5 SRCR domain fused to GFP; purified human apoB",
+        "ligand_preparation": "Commercial human apoB, acetylated or oxidized in vitro; unmodified apoB control",
+        "immobilized_partner": "ApoB preparations coated on a 96-well plate",
+        "expression_system": "Baculovirus/High Five insect cells for human receptor domains"
+      },
+      "evidence_ids": [
+        "evidence-cheng-scara5-modified-apob-binding"
+      ],
+      "summary": "Assay-scoped recognition of modified apoB.",
+      "limitations": [
+        "The assay uses a recombinant receptor domain and chemically modified ligand on a plate; it does not establish native full-length binding kinetics or an AD mechanism.",
+        "Raw figure images, supplements and underlying measurements were not reviewed; no affinity or effect estimate is imported.",
+        "Both receptor findings come from the same paper. Three reported ELISA repeats are not three studies or human participants; replicate independence and apoB isoform remain unresolved."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
       }
     }
   ],
@@ -2019,6 +2496,291 @@
         "date": "2026-10-23",
         "human_reviewed": false,
         "rationale": "Publisher Results around Figure 2C, BioLayer interferometry methods, Figure 2 caption and Discussion inspected as readable article text; metadata cross-checked with PubMed. Selected passages only: numerical figure tables, raw curves, supplements and underlying data were not reviewed. Publication-status search remains incomplete."
+      }
+    },
+    {
+      "id": "evidence-marco-encodes",
+      "claim_id": "claim-marco-encodes",
+      "source_id": "source-hgnc-scavenger-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human MARCO gene to the UniProt gene product Q9UEW3.",
+      "locator": "Pinned HGNC TSV: approved HGNC:6895 row; symbol, entrez_id, ensembl_gene_id and uniprot_ids fields.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated identity cross-reference",
+        "source_record": "HGNC:6895",
+        "upstream_release": null
+      },
+      "limitations": [
+        "Canonical gene/product identity only; molecular forms and assay constructs remain in evidence context.",
+        "The pinned mirror has not been reconciled against an official HGNC release archive."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-scara5-encodes",
+      "claim_id": "claim-scara5-encodes",
+      "source_id": "source-hgnc-scavenger-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human SCARA5 gene to the UniProt gene product Q6ZMJ2.",
+      "locator": "Pinned HGNC TSV: approved HGNC:28701 row; symbol, entrez_id, ensembl_gene_id and uniprot_ids fields.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated identity cross-reference",
+        "source_record": "HGNC:28701",
+        "upstream_release": null
+      },
+      "limitations": [
+        "Canonical gene/product identity only; molecular forms and assay constructs remain in evidence context.",
+        "The pinned mirror has not been reconciled against an official HGNC release archive."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-apob-encodes",
+      "claim_id": "claim-apob-encodes",
+      "source_id": "source-hgnc-scavenger-identities",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "HGNC links the approved human APOB gene to the UniProt gene product P04114.",
+      "locator": "Pinned HGNC TSV: approved HGNC:603 row; symbol, entrez_id, ensembl_gene_id and uniprot_ids fields.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated identity cross-reference",
+        "source_record": "HGNC:603",
+        "upstream_release": null
+      },
+      "limitations": [
+        "Canonical gene/product identity only; molecular forms and assay constructs remain in evidence context.",
+        "The pinned mirror has not been reconciled against an official HGNC release archive."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-marco-scavenger-pathway",
+      "claim_id": "claim-marco-scavenger-pathway",
+      "source_id": "source-reactome-marco-binding",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome places MARCO in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "locator": "Species, Locations in the PathwayBrowser, Participants and Inferred From where present; parent R-HSA-2173782.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated pathway annotation",
+        "molecular_context": "MARCO trimer, plasma membrane",
+        "upstream_release": null,
+        "inferred_from": "Mus musculus reaction"
+      },
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The cited human reaction is explicitly inferred from a mouse reaction; its annotation is not direct experimental evidence in human brain."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-scara5-scavenger-pathway",
+      "claim_id": "claim-scara5-scavenger-pathway",
+      "source_id": "source-reactome-scara5-binding",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome places SCARA5 in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "locator": "Species, Locations in the PathwayBrowser, Participants and Inferred From where present; parent R-HSA-2173782.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated pathway annotation",
+        "molecular_context": "SCARA5 trimer, plasma membrane",
+        "upstream_release": null,
+        "inferred_from": "Mus musculus reaction"
+      },
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The cited human reaction is explicitly inferred from a mouse reaction; its annotation is not direct experimental evidence in human brain."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-apob-scavenger-pathway",
+      "claim_id": "claim-apob-scavenger-pathway",
+      "source_id": "source-reactome-apob-scavenger",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome places APOB in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "locator": "Species, Locations in the PathwayBrowser, Participants and Inferred From where present; parent R-HSA-2173782.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated pathway annotation",
+        "molecular_context": "APOB(28-4563), endocytic vesicle lumen",
+        "upstream_release": null,
+        "inferred_from": null
+      },
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The source describes a specific protein form/compartment in a ligand set; the displayed node represents its canonical human gene product."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-apoe-scavenger-pathway",
+      "claim_id": "claim-apoe-scavenger-pathway",
+      "source_id": "source-reactome-apoe-scavenger",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Reactome places APOE in the human scavenger-receptor ligand-binding and uptake pathway.",
+      "locator": "Species, Locations in the PathwayBrowser, Participants and Inferred From where present; parent R-HSA-2173782.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Curated pathway annotation",
+        "molecular_context": "APOE, endocytic vesicle lumen",
+        "upstream_release": null,
+        "inferred_from": null
+      },
+      "limitations": [
+        "Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.",
+        "The exact Reactome database release and record revision were not captured.",
+        "The source describes a specific protein form/compartment in a ligand set; the displayed node represents its canonical human gene product."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-cheng-marco-modified-apob-binding",
+      "claim_id": "claim-cheng-marco-modified-apob-binding",
+      "source_id": "source-cheng-2021",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Cheng et al. reported ELISA binding of the human MARCO SRCR domain to acetylated and oxidized apoB, with unmodified apoB as a control.",
+      "locator": "Figure 7G–H and caption; Results on modified apoB recognition; Protein expression and purification, Preparation of the modified lipoproteins, and ELISA experiments.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "ELISA binding signal for modified apoB",
+        "variant": null,
+        "assay": "ELISA",
+        "binding_condition": "MARCO SRCR with modified apoB",
+        "protein_form": "Human MARCO SRCR domain fused to GFP; purified human apoB",
+        "ligand_preparation": "Commercial human apoB, acetylated or oxidized in vitro; unmodified apoB control",
+        "immobilized_partner": "ApoB preparations coated on a 96-well plate",
+        "expression_system": "Baculovirus/High Five insect cells for human receptor domains",
+        "experiments_reported": 3,
+        "assay_replicates": null,
+        "sample_size": null,
+        "replicate_unit": "Figure 7 describes representative data from three repeated ELISA experiments; technical replicate counts and independence are not resolved.",
+        "controls": "Unmodified human apoB",
+        "ligand_isoform": null
+      },
+      "limitations": [
+        "The assay uses a recombinant receptor domain and chemically modified ligand on a plate; it does not establish native full-length binding kinetics or an AD mechanism.",
+        "Raw figure images, supplements and underlying measurements were not reviewed; no affinity or effect estimate is imported.",
+        "Both receptor findings come from the same paper. Three reported ELISA repeats are not three studies or human participants; replicate independence and apoB isoform remain unresolved."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
+      }
+    },
+    {
+      "id": "evidence-cheng-scara5-modified-apob-binding",
+      "claim_id": "claim-cheng-scara5-modified-apob-binding",
+      "source_id": "source-cheng-2021",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Cheng et al. reported ELISA binding of the human SCARA5 SRCR domain to acetylated and oxidized apoB, with unmodified apoB as a control.",
+      "locator": "Figure 7G–H and caption; Results on modified apoB recognition; Protein expression and purification, Preparation of the modified lipoproteins, and ELISA experiments.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "experimental_system": "Cell-free protein assay",
+        "study_design": "Biochemical binding assay",
+        "population": null,
+        "tissue": null,
+        "intervention": null,
+        "outcome": "ELISA binding signal for modified apoB",
+        "variant": null,
+        "assay": "ELISA",
+        "binding_condition": "SCARA5 SRCR with modified apoB",
+        "protein_form": "Human SCARA5 SRCR domain fused to GFP; purified human apoB",
+        "ligand_preparation": "Commercial human apoB, acetylated or oxidized in vitro; unmodified apoB control",
+        "immobilized_partner": "ApoB preparations coated on a 96-well plate",
+        "expression_system": "Baculovirus/High Five insect cells for human receptor domains",
+        "experiments_reported": 3,
+        "assay_replicates": null,
+        "sample_size": null,
+        "replicate_unit": "Figure 7 describes representative data from three repeated ELISA experiments; technical replicate counts and independence are not resolved.",
+        "controls": "Unmodified human apoB",
+        "ligand_isoform": null
+      },
+      "limitations": [
+        "The assay uses a recombinant receptor domain and chemically modified ligand on a plate; it does not establish native full-length binding kinetics or an AD mechanism.",
+        "Raw figure images, supplements and underlying measurements were not reviewed; no affinity or effect estimate is imported.",
+        "Both receptor findings come from the same paper. Three reported ELISA repeats are not three studies or human participants; replicate independence and apoB isoform remain unresolved."
+      ],
+      "source_metrics": [],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-10-24",
+        "human_reviewed": false,
+        "rationale": "Targeted source locations inspected on 2026-10-24. Canonical identities, database inference and assay scope are retained separately. Raw figures, supplements and underlying data were not reviewed; independent scientific review remains a future milestone."
       }
     }
   ],
@@ -2871,6 +3633,226 @@
         "checked_at": null,
         "notice_url": null
       }
+    },
+    {
+      "id": "source-hgnc-scavenger-identities",
+      "kind": "database_record",
+      "title": "HGNC approved MARCO, SCARA5 and APOB gene/product cross-references (pinned mirror)",
+      "url": "https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz",
+      "identifiers": [
+        {
+          "namespace": "SHA-256",
+          "value": "6bb2951c56204cd7b387c4e40b8d46107f6bdc422e77b8e4f2088a5d39e1be4b"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "HGNC (pinned mirror)",
+      "release": "gene-tidy mirror commit 37b375b4e4f70445cbb9e40b273a510467b798ae; original HGNC release/date not independently verified",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://www.genenames.org/about/",
+        "attribution": "HUGO Gene Nomenclature Committee at the University of Cambridge, HGNC (RRID:SCR_002827), https://www.genenames.org/. Approved symbols and cross-references from the same verified pinned archive used by the identifier reference; no gene-tidy software copied.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-scavenger-pathway",
+      "kind": "database_record",
+      "title": "Reactome R-HSA-2173782 — Binding and Uptake of Ligands by Scavenger Receptors",
+      "url": "https://reactome.org/content/detail/R-HSA-2173782",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2173782"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Accessed 2026-10-24; exact Reactome release and record revision not captured",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database, CC0 data. Identifiers, links and project-authored factual summaries only; no diagrams or source prose.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-marco-binding",
+      "kind": "database_record",
+      "title": "Reactome R-HSA-2173781 — MARCO (SCARA2) binds ligands",
+      "url": "https://reactome.org/content/detail/R-HSA-2173781",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2173781"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Accessed 2026-10-24; exact Reactome release and record revision not captured",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database, CC0 data. Identifiers, links and project-authored factual summaries only; no diagrams or source prose.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-scara5-binding",
+      "kind": "database_record",
+      "title": "Reactome R-HSA-2187266 — SCARA5 binds ligands",
+      "url": "https://reactome.org/content/detail/R-HSA-2187266",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2187266"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Accessed 2026-10-24; exact Reactome release and record revision not captured",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database, CC0 data. Identifiers, links and project-authored factual summaries only; no diagrams or source prose.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-apob-scavenger",
+      "kind": "database_record",
+      "title": "Reactome R-HSA-2512789 — APOB(28-4563) [endocytic vesicle lumen]",
+      "url": "https://reactome.org/content/detail/R-HSA-2512789",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-2512789"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Accessed 2026-10-24; exact Reactome release and record revision not captured",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database, CC0 data. Identifiers, links and project-authored factual summaries only; no diagrams or source prose.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-apoe-scavenger",
+      "kind": "database_record",
+      "title": "Reactome R-HSA-3221641 — APOE [endocytic vesicle lumen]",
+      "url": "https://reactome.org/content/detail/R-HSA-3221641",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-3221641"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Accessed 2026-10-24; exact Reactome release and record revision not captured",
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database, CC0 data. Identifiers, links and project-authored factual summaries only; no diagrams or source prose.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-cheng-2021",
+      "kind": "publication",
+      "title": "Recognition of lipoproteins by scavenger receptor class A members",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "34252459"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1016/j.jbc.2021.100948"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC8353498"
+        }
+      ],
+      "authors": [
+        "Chen Cheng",
+        "Enlin Zheng",
+        "Bowen Yu",
+        "Ze Zhang",
+        "Yuanyuan Wang",
+        "Yingbin Liu",
+        "Yongning He"
+      ],
+      "year": 2021,
+      "provider": "PubMed Central",
+      "release": null,
+      "retrieved_at": "2026-10-24",
+      "reuse": {
+        "terms_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "attribution": "Cheng, Zheng, Yu, Zhang, Wang, Liu and He, Journal of Biological Chemistry, 2021, DOI 10.1016/j.jbc.2021.100948. Article notice: © 2021 The Authors, CC BY-NC-ND 4.0. Retained material is limited to bibliographic facts and project-authored factual paraphrases; no article prose, image, table or full text is redistributed. Article-specific reuse review remains pending.",
+        "retained_content": "Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.",
+        "date_checked": "2026-10-24",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      },
+      "publication_type": "primary_research"
     }
   ],
   "conflicts": [

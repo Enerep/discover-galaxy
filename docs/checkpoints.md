@@ -32,6 +32,10 @@ Optional tissue/cell model, treatment/condition and explicit study design now sc
 
 Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Expand curated gene evidence where those inputs reveal useful coverage gaps, with source-specific review. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.
 
+## Completed expansion: genes from a public AD pathway result
+
+Snapshot 0.6.0 adds MARCO and SCARA5, which pass the applied cutoffs in the public MAYO input's leading scavenger-receptor pathway. APOB provides ligand context for two original Cheng 2021 ELISA findings; three genes, separate proteins, the pathway and a paper add eight nodes. Four attributed participation records join the branch to existing APOE evidence. The 3D/list explorer and analysis evidence links use these records without changing the broad reference or numerical results. [The change record](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-060--2026-10-24) retains identity provenance, mouse inference, modified/domain constructs, repeat units and reuse limits. No new AD-risk, activity, cure or novelty claim is inferred from gene selection.
+
 ## Existing workflow: build a research argument
 
 The research brief workspace adds a complete working flow on top of the existing Alzheimer's evidence:
@@ -91,7 +95,7 @@ The development snapshot meets the **20–50 entity size target**. Next, inspect
 
 Candidate discovery should begin with the existing genes and the pathway questions their reviewed sources actually support. A candidate's name, a database hit, or a generated summary does not establish a relationship. Keep genes, proteins, and variant contexts distinct. Curate disagreements only when study contexts support a meaningful comparison.
 
-A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 24 findings, the context comparison and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
+A [generated AD source-review packet](../data/alzheimers/review-packet.md) collects all 33 findings, the context comparison and source-check records. `npm run curation:check` verifies it matches the snapshot; `npm run --silent curation:packet` prints a replacement. Generation performs no source lookup or review.
 
 `npm run curation:coverage:check` verifies the six remaining candidates and their baseline references. The prior content checkpoint extended the three-study binding evidence with one source-checked contextual comparison, preserving page-vs-indexed access. A future data pass can inspect the staged ABCA1/APOE lipid-handling papers for a precisely scoped experiment, keeping organism, model and preparation explicit. Such an experiment would not establish the cause of the R47H assay difference. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
 

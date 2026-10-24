@@ -21,12 +21,14 @@ test('the packet is deterministic and cannot silently modify scientific review s
 
 test('each finding keeps its original citation, locator, and source-specific context', () => {
   const packet = renderReviewPacket(snapshot);
+  // Compare readable text after Markdown punctuation escapes, including column names.
+  const readable = packet.replace(/\\([\\`*_{}\[\]()#+.!|>-])/gu, '$1');
   for (const evidence of snapshot.evidence) {
     const source = snapshot.sources.find(({ id }) => id === evidence.source_id)!;
     assert.ok(packet.includes(`(${source.url})`));
     assert.ok(packet.includes(evidence.id));
-    assert.ok(packet.includes(evidence.locator));
-    assert.ok(packet.includes(evidence.finding));
+    assert.ok(readable.includes(evidence.locator));
+    assert.ok(readable.includes(evidence.finding));
     for (const value of Object.values(evidence.study_context)) {
       if (typeof value === 'number') assert.ok(packet.includes(String(value)));
     }

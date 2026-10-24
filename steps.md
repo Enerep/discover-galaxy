@@ -1,6 +1,6 @@
 # Implementation steps
 
-**Current stage: human RNA-seq interpretation is implemented beside the 24-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
+**Current stage: human RNA-seq interpretation is implemented beside the 32-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
@@ -29,7 +29,7 @@ The smallest useful flow is: search → select an entity → inspect a relations
 - [x] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
 - [x] Run the implemented checks and exercise the search-to-evidence flow in desktop/mobile browser tests, including WebGL failure. See [verification](docs/verification.md).
 
-The current snapshot has 24 source-linked entities and 24 draft claims, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
+The current snapshot has 32 source-linked entities and 33 draft claims, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
 
 **Done when:** a clean local setup runs with no service credentials, and a user can search for Alzheimer's, select APOE, inspect a source-checked draft relationship, and open its cited evidence through graph or list. Independent scientific approval belongs to the future release milestone.
 
@@ -114,11 +114,13 @@ Snapshot 0.4.0 adds Bailey 2015's baseline and R47H plate-binding findings, with
 
 Snapshot 0.5.0 adds Lessard 2018's scoped APOE3 BLI finding and one source-checked draft context comparison with Atagi's R47H report. Unknown run totals, source-specific readouts and limits on interpreting non-significance remain explicit. The separate future scientific-release approvals are unchanged.
 
+- [x] Expand coverage from a real public AD pathway result: MARCO/SCARA5, APOB ligand context, separate proteins, the scavenger-receptor pathway and two original modified-apoB binding findings; retain database inference and assay-specific limits in the 32-entity snapshot.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
-Future content work can continue from the 24-finding source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
+Future content work can continue from the 33-finding source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
 
-- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 24 total, with scope and original references retained.
+- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 32 total, with scope and original references retained.
 - [x] Add two human Reactome pathways and seven distinct proteins with source-linked participation and state context; variant nodes remain deferred.
 - [x] Record access dates, observed entry versions where obtained, attribution, source context and actual check status. Exact Reactome release provenance remains unresolved.
 - [x] Expose all current entity types in one filter, with active state visible.

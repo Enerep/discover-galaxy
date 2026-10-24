@@ -103,7 +103,7 @@ test('the source-checked snapshot preserves typed pathway journeys and remains a
   assert.equal(validateDataset(snapshot, { release: true }).valid, false);
   const data = loadDataset(snapshot);
   assert(data.entities.length >= 20 && data.entities.length <= 50);
-  for (const key of ['apoe', 'abca1', 'trem2', 'tyrobp', 'nr1h2', 'nr1h3', 'rxra']) {
+  for (const key of ['apoe', 'abca1', 'trem2', 'tyrobp', 'nr1h2', 'nr1h3', 'rxra', 'marco', 'scara5', 'apob']) {
     const gene = data.entities.find(({ id }) => id === `gene-${key}`)!;
     const protein = data.entities.find(({ id }) => id === `protein-${key}`)!;
     assert.equal(gene.type, 'gene');
@@ -126,6 +126,56 @@ test('the source-checked snapshot preserves typed pathway journeys and remains a
   assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
   assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
+});
+
+test('scavenger evidence connects typed genes and proteins to APOE without promoting RNA results into AD-risk claims', async () => {
+  const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  const pathway = data.entities.find(({ id }) => id === 'pathway-scavenger-receptors')!;
+  assert.deepEqual(pathway.external_ids, [{ namespace: 'Reactome', value: 'R-HSA-2173782' }]);
+  const members = getEntityClaims(data, pathway.id);
+  assert.deepEqual(members.map(({ subject_id }) => subject_id).sort(), ['protein-apob', 'protein-apoe', 'protein-marco', 'protein-scara5']);
+  for (const symbol of ['MARCO', 'SCARA5', 'APOB']) {
+    const gene = searchEntities(data, symbol, 'gene').find(({ label }) => label === symbol)!;
+    assert.ok(gene);
+    assert.ok(getEntityClaims(data, gene.id).every(({ predicate }) => predicate === 'encodes'));
+    const identity = data.evidence.find(({ claim_id }) => claim_id === `claim-${symbol.toLowerCase()}-encodes`)!;
+    assert.equal(identity.source_id, 'source-hgnc-scavenger-identities');
+  }
+  for (const receptor of ['marco', 'scara5']) {
+    const annotation = members.find(({ subject_id }) => subject_id === `protein-${receptor}`)!;
+    assert.equal(annotation.context.inferred_from, 'Mus musculus reaction');
+    assert.ok(annotation.limitations.some((text) => text.includes('not direct experimental evidence in human brain')));
+  }
+  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.hypotheses.length, 0);
+});
+
+test('Cheng findings preserve modified ligand/domain scope, one paper identity and unresolved replicate independence', async () => {
+  const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  const claims = getEntityClaims(data, 'paper-cheng-2021');
+  assert.equal(claims.length, 2);
+  for (const claim of claims) {
+    assert.equal(claim.predicate, 'interacts_with');
+    assert.equal(claim.object_id, 'protein-apob');
+    assert.ok(claim.statement.includes('acetylated and oxidized apoB'));
+    assert.ok(claim.context.protein_form?.toString().includes('SRCR domain fused to GFP'));
+    assert.equal(claim.context.experimental_system, 'Cell-free protein assay');
+    assert.equal(claim.review.status, 'draft');
+    assert.equal(claim.review.human_reviewed, false);
+    const evidence = getClaimEvidence(data, claim.id)[0];
+    assert.equal(evidence.source_id, 'source-cheng-2021');
+    assert.ok(evidence.locator.includes('Figure 7G–H'));
+    assert.equal(evidence.study_context.experiments_reported, 3);
+    assert.equal(evidence.study_context.assay_replicates, null);
+    assert.equal(evidence.study_context.sample_size, null);
+    assert.equal(evidence.study_context.ligand_isoform, null);
+    assert.ok(evidence.study_context.replicate_unit?.toString().includes('independence are not resolved'));
+  }
+  const source = data.sources.find(({ id }) => id === 'source-cheng-2021')!;
+  assert.ok(source.identifiers.some(({ namespace, value }) => namespace === 'PMID' && value === '34252459'));
+  assert.equal(source.publication_status.status, 'not_checked');
+  assert.equal(source.reuse.permission_status, 'pending_review');
+  assert.ok(source.reuse.attribution.includes('CC BY-NC-ND 4.0'));
 });
 
 test('optional metadata cannot smuggle malformed values past the typed adapter', () => {

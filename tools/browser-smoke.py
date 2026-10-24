@@ -15,6 +15,13 @@ from urllib.parse import parse_qs, urlsplit, urlunsplit
 from playwright.sync_api import Locator, Page, expect, sync_playwright
 
 
+SNAPSHOT = json.loads((Path(__file__).resolve().parents[1] / "data/alzheimers/dataset.json").read_text())
+ENTITY_COUNT = len(SNAPSHOT["entities"])
+PAPER_COUNT = sum(entity["type"] == "paper" for entity in SNAPSHOT["entities"])
+GENE_COUNT = sum(entity["type"] == "gene" for entity in SNAPSHOT["entities"])
+DATASET_VERSION = SNAPSHOT["dataset_version"]
+
+
 RENDER_COUNTERS = """
 window.__browserQA = { raf: 0, draws: 0 };
 const originalRAF = window.requestAnimationFrame;
@@ -514,7 +521,7 @@ def assert_comparisons(browser, base_url: str, screenshots: Path) -> None:
     destination = screenshots / "comparison-abca1-trem2.md"
     pending_download.value.save_as(destination)
     brief = destination.read_text()
-    for text in ["alzheimers-source-checked-0.5.0", "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
+    for text in [DATASET_VERSION, "claim-abca1-n1800h-risk", "claim-trem2-r47h-risk",
                  "https://pubmed.ncbi.nlm.nih.gov/26079414/", "https://pubmed.ncbi.nlm.nih.gov/23150908/",
                  "Draft comparison", "Study-specific context", "independence"]:
         assert text in brief, text
@@ -611,7 +618,7 @@ def assert_pathways(browser, base_url: str, screenshots: Path) -> None:
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(base_url, wait_until="networkidle")
-    expect(page.locator(".result-status")).to_have_text("24 entities · 7 papers")
+    expect(page.locator(".result-status")).to_have_text(f"{ENTITY_COUNT} entities · {PAPER_COUNT} papers")
     page.get_by_role("combobox", name="Filter by entity type").select_option("gene")
     page.locator(".claim-button").filter(has_text="Encodes · APOE protein").click()
     expect(page.locator(".source-card")).to_contain_text("Database annotation")
@@ -647,7 +654,8 @@ def assert_pathways(browser, base_url: str, screenshots: Path) -> None:
     assert_idle(page, "Pathway graph after navigation and capture")
     filter_control = page.get_by_role("combobox", name="Filter by entity type")
     page.get_by_role("button", name="List view", exact=True).click()
-    for value, count in [("protein", 7), ("pathway", 2)]:
+    for value in ["protein", "pathway"]:
+        count = sum(entity['type'] == value for entity in SNAPSHOT['entities'])
         filter_control.select_option(value)
         expect(page.locator(".entity-row")).to_have_count(count)
     assert not errors, errors
@@ -734,7 +742,7 @@ def assert_binding_findings(browser, base_url: str, screenshots: Path) -> None:
     destination = screenshots / "comparison-binding.md"
     pending.value.save_as(destination)
     brief = destination.read_text()
-    for text in ["26374899", "26374897", "Figure 1A", "Figure 5D", "assay replicates: 3", "Triplicate wells", "Publication status: corrected", "Publication notice: https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/", "alzheimers-source-checked-0.5.0"]:
+    for text in ["26374899", "26374897", "Figure 1A", "Figure 5D", "assay replicates: 3", "Triplicate wells", "Publication status: corrected", "Publication notice: https://pmc.ncbi.nlm.nih.gov/articles/PMC4646256/", DATASET_VERSION]:
         assert text in brief, text
     dialog.evaluate("element => { element.scrollTop = 0; }")
     page.screenshot(path=str(screenshots / "comparison-binding-dark.png"), full_page=True)
@@ -1521,6 +1529,19 @@ def assert_public_ad_results(browser, base_url: str, screenshots: Path, table: P
     expect(workspace.locator('.experiment-pagination').first).to_contain_text('1–20 of 37 groups (71 pathways)', timeout=20000)
     expect(workspace.locator('.experiment-counts dd')).to_have_text(['32,607', '397', '10,786', '2,720'])
     page.screenshot(path=str(screenshots / 'public-mayo-ad-results.png'))
+    for symbol, original_id in [('MARCO', 'ENSG00000019169'), ('SCARA5', 'ENSG00000168079')]:
+        workspace.get_by_role('button', name=f'View {symbol} evidence', exact=True).click()
+        expect(page.locator('.selected-title')).to_have_text(symbol)
+        observation = page.get_by_role('region', name='Your RNA-seq result', exact=True)
+        expect(observation).to_contain_text(original_id)
+        expect(observation).to_contain_text('Meets gene cutoffs')
+        page.get_by_role('button', name=f'View {symbol} protein', exact=True).click()
+        expect(page.locator('.experiment-observation')).to_have_count(0)
+        page.locator('.claim-button').filter(has_text=f'Cheng et al. 2021 · {symbol} SRCR with modified apoB').click()
+        expect(page.locator('.source-link')).to_have_attribute('href', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/')
+        expect(page.locator('.finding-statement')).to_contain_text('acetylated and oxidized apoB')
+        page.get_by_role('navigation', name='Workspace').get_by_role('button', name='Analyze results', exact=True).click()
+        expect(workspace.locator('.experiment-counts dd')).to_have_text(['32,607', '397', '10,786', '2,720'])
     assert all(method == 'GET' and data is None for method, _, data in requests)
     assert 'MAYO temporal cortex' not in page.evaluate('JSON.stringify(localStorage)')
     assert not errors, errors
@@ -1858,6 +1879,59 @@ def assert_experiment_context(browser, base_url: str, screenshots: Path) -> None
     print('PASS: optional study context changes proposed questions, preserves statistics, separates pending/applied metadata, retains citation/RNA limits, escapes and wraps input, resets on replacement/removal, and stays out of worker messages, requests and storage on desktop/mobile/fallback.')
 
 
+def assert_scavenger_evidence(browser, base_url: str, screenshots: Path) -> None:
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
+                                      reduced_motion='reduce', is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light')
+        context.add_init_script(RENDER_COUNTERS)
+        if mobile:
+            context.add_init_script('''const original = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function(kind, ...args) {
+                    return kind.startsWith('webgl') ? null : original.call(this, kind, ...args);
+                };''')
+        page = context.new_page()
+        errors = []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.goto(base_url, wait_until='networkidle')
+        if not mobile:
+            expect(page.locator('canvas')).to_be_visible()
+            assert page.evaluate('window.__browserQA.draws > 0')
+        for symbol in ['MARCO', 'SCARA5', 'APOB']:
+            search = page.get_by_role('combobox', name='Search entities', exact=True)
+            search.fill(symbol)
+            search.press('Enter')
+            expect(page.locator('.selected-title')).to_have_text(symbol)
+            if mobile: page.get_by_role('button', name='View evidence', exact=True).click()
+            page.get_by_role('button', name=f'View {symbol} protein', exact=True).click()
+            expect(page.locator('.selected-title')).to_have_text(f'{symbol} protein')
+            receptor = symbol if symbol != 'APOB' else 'MARCO'
+            page.locator('.claim-button').filter(has_text=f'Cheng et al. 2021 · {receptor} SRCR with modified apoB').click()
+            expect(page.locator('.source-link')).to_have_attribute('href', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8353498/')
+            expect(page.locator('.finding-statement')).to_contain_text('acetylated and oxidized apoB')
+            page.get_by_text('Study details and limitations', exact=True).click()
+            expect(page.locator('.study-context')).to_contain_text('Figure 7G–H')
+            expect(page.locator('.study-context')).to_contain_text('High Five insect cells')
+            expect(page.locator('.study-context')).to_contain_text('not three studies or human participants')
+            if symbol != 'APOB':
+                page.get_by_role('button', name='View APOB protein', exact=True).click()
+                expect(page.locator('.selected-title')).to_have_text('APOB protein')
+            page.locator('.claim-button').filter(has_text='Part of · Scavenger-receptor binding and uptake').click()
+            page.get_by_role('button', name='View Scavenger-receptor binding and uptake', exact=True).click()
+            expect(page.locator('.selected-title')).to_have_text('Scavenger-receptor binding and uptake')
+            page.locator('.claim-button').filter(has_text='Participant · APOE protein').click()
+            page.get_by_role('button', name='View APOE protein', exact=True).click()
+            expect(page.locator('.selected-title')).to_have_text('APOE protein')
+            if mobile: page.get_by_role('button', name='Back to graph', exact=True).click()
+        if not mobile:
+            page.get_by_role('combobox', name='Search entities', exact=True).fill('')
+            page.screenshot(path=str(screenshots / 'scavenger-network.png'))
+            assert_idle(page, 'Expanded scavenger-receptor graph')
+        assert not errors, errors
+        context.close()
+    print('PASS: MARCO, SCARA5 and APOB are searchable in the graph/list, retain separate protein identities and scoped citations, and connect through the scavenger pathway to APOE on desktop/mobile/fallback.')
+
+
 def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path | None = None) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -1928,7 +2002,8 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
 
         # Long study details must not leave the next entity's heading offscreen.
         details.click()
-        page.wait_for_timeout(300)
+        expect(details).to_have_attribute('aria-expanded', 'true')
+        page.wait_for_function("document.querySelector('.inspector').scrollHeight > document.querySelector('.inspector').clientHeight")
         inspector = page.locator(".inspector")
         assert inspector.evaluate("element => element.scrollHeight > element.clientHeight")
         apoe_shortcut = page.get_by_role("button", name="APOE", exact=True)
@@ -1949,12 +2024,12 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         search.fill("e")
         results = page.get_by_role("listbox")
         options = results.get_by_role("option")
-        expect(options).to_have_count(24)
+        expect(options).to_have_count(ENTITY_COUNT)
         assert results.evaluate("element => element.scrollHeight > element.clientHeight")
         page_scroll = page.evaluate("window.scrollY")
-        for _ in range(23):
+        for _ in range(ENTITY_COUNT - 1):
             search.press("ArrowDown")
-        expect(options.nth(23)).to_have_attribute("aria-selected", "true")
+        expect(options.nth(ENTITY_COUNT - 1)).to_have_attribute("aria-selected", "true")
         assert results.evaluate("element => element.scrollTop > 0")
         active_visible = "element => { const bounds = element.getBoundingClientRect(); const active = element.querySelector('[aria-selected=true]').getBoundingClientRect(); const top = bounds.top + element.clientTop; return active.top >= top - 1 && active.bottom <= top + element.clientHeight + 1; }"
         assert results.evaluate(active_visible)
@@ -1963,7 +2038,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(options.nth(0)).to_have_attribute("aria-selected", "true")
         assert results.evaluate(active_visible)
         search.press("ArrowUp")
-        expect(options.nth(23)).to_have_attribute("aria-selected", "true")
+        expect(options.nth(ENTITY_COUNT - 1)).to_have_attribute("aria-selected", "true")
         assert results.evaluate("element => element.scrollTop > 0")
         assert results.evaluate(active_visible)
         assert abs(page.evaluate("window.scrollY") - page_scroll) <= 2
@@ -1978,7 +2053,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(page.locator(".claim-button")).to_have_count(4)
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
-        expect(page.locator(".result-status")).to_have_text("24 entities · 7 papers")
+        expect(page.locator(".result-status")).to_have_text(f"{ENTITY_COUNT} entities · {PAPER_COUNT} papers")
         search.fill("APOE")
         expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(7)
         search.press("ArrowDown")
@@ -2001,7 +2076,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(search).to_have_value("")
 
         page.get_by_role("button", name="List view", exact=True).click()
-        expect(page.locator(".entity-row")).to_have_count(24)
+        expect(page.locator(".entity-row")).to_have_count(ENTITY_COUNT)
         page.locator('.entity-row[data-entity-id="paper-corder-1994"]').click()
         expect(page.locator(".selected-title")).to_have_text("Corder et al. · 1994")
         expect(page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/7920638/")
@@ -2011,12 +2086,12 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(page.locator(".selected-title")).to_have_text("ABCA1")
         expect(page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/26079414/")
         filter_control.select_option("gene")
-        expect(page.locator(".entity-row")).to_have_count(7)
+        expect(page.locator(".entity-row")).to_have_count(GENE_COUNT)
         filter_control.select_option("paper")
-        expect(page.locator(".entity-row")).to_have_count(7)
+        expect(page.locator(".entity-row")).to_have_count(PAPER_COUNT)
         page.get_by_role("button", name="Show in the current view").click()
         expect(filter_control).to_have_value("all")
-        expect(page.locator(".entity-row")).to_have_count(24)
+        expect(page.locator(".entity-row")).to_have_count(ENTITY_COUNT)
         page.get_by_role("button", name="About the data").click()
         expect(page.get_by_role("dialog")).to_be_visible()
         expect(page.get_by_role("dialog")).to_contain_text("Source-checked draft")
@@ -2085,7 +2160,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         mobile_filter = mobile_page.get_by_role("combobox", name="Filter by entity type")
         assert_no_scroll(mobile_page, mobile_filter, lambda: mobile_filter.select_option("gene"), "Mobile filter")
         mobile_page.get_by_role("button", name="List view", exact=True).tap()
-        expect(mobile_page.locator(".entity-row")).to_have_count(7)
+        expect(mobile_page.locator(".entity-row")).to_have_count(GENE_COUNT)
         mobile_row = mobile_page.locator('.entity-row[data-entity-id="gene-trem2"]')
         assert_no_scroll(mobile_page, mobile_row, mobile_row.tap, "Mobile list selection")
         expect(mobile_page.locator(".selected-title")).to_have_text("TREM2")
@@ -2113,7 +2188,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         fallback_page = fallback.new_page()
         fallback_page.goto(base_url, wait_until="networkidle")
         expect(fallback_page.locator(".fallback-notice")).to_be_visible()
-        expect(fallback_page.locator(".entity-row")).to_have_count(24)
+        expect(fallback_page.locator(".entity-row")).to_have_count(ENTITY_COUNT)
         expect(fallback_page.get_by_role("button", name="Graph view", exact=True)).to_be_disabled()
         fallback_page.locator('.entity-row[data-entity-id="gene-trem2"]').click()
         expect(fallback_page.locator(".selected-title")).to_have_text("TREM2")
@@ -2167,6 +2242,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_experiment_robustness(browser, base_url, screenshots)
         assert_experiment_example(browser, base_url, screenshots)
         assert_experiment_context(browser, base_url, screenshots)
+        assert_scavenger_evidence(browser, base_url, screenshots)
         if public_ad_table is not None:
             assert_public_ad_results(browser, base_url, screenshots, public_ad_table)
         browser.close()
