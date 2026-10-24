@@ -44,6 +44,8 @@ The owner reports a working Vercel development deployment. **The curated evidenc
 
 ## Analyze an experiment
 
+Choose **Try example** to open a synthetic 120-gene result immediately, then inspect pathways, signed gene changes, threshold sensitivity and overlap groups. Its measurements are invented and remain labeled as an example in both workspaces; the real Reactome memberships and analysis code are shared with uploaded results. **Remove results** returns to the empty form. The example is a demonstration, not an Alzheimer's experiment or scientific evidence.
+
 1. Open **Analyze results** and choose a UTF-8 CSV or TSV of gene-level differential-expression results.
 2. Provide human gene symbols or Ensembl gene IDs, `log2FoldChange` and `padj`. Choose the identifier column when several are present; unnamed R row-name columns are supported. The CSV template contains synthetic format examples. Raw counts and duplicate gene identities require preprocessing.
 3. Name the comparison in numerator / denominator order and confirm that the file contains the full tested table, including nonsignificant genes.

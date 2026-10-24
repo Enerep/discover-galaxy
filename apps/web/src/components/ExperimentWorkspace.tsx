@@ -13,6 +13,7 @@ import { GeneMappingDetails } from './GeneMappingDetails.tsx';
 import { ThresholdSensitivity } from './ThresholdSensitivity.tsx';
 import { PathwayGroupMembers } from './PathwayGroupMembers.tsx';
 import { useExperimentRobustness } from '../lib/useExperimentRobustness.ts';
+import { createExampleExperiment, EXAMPLE_COMPARISON } from '../lib/experiment-example.ts';
 import './experiment-workspace.css';
 
 interface Props {
@@ -126,6 +127,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (pendingTable?.isSynthetic) setComparison('');
     const sequence = ++readSequence.current;
     setBusy('reading'); setError(''); setPendingTable(null); setAllTestedGenes(false);
     setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
@@ -174,12 +176,32 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
       const reference = await loadPathwayReference();
       const result = runExperimentAnalysis(pendingTable, { comparison, allTestedGenes, allowUnresolvedIds,
         thresholds: { adjustedPMax: Number(geneFdr), minAbsLog2FoldChange: Number(minimumFoldChange) } }, reference, identities);
-      pendingResultFocus.current = true;
-      setAnalysis(result); onResults(result);
-      setQuery(''); setPage(0); setMemberPage(0); setPathwayId(null); setSignificantOnly(false);
-      setGroupOverlaps(false); setSensitivityOpen(false);
+      applyAnalysis(result);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'The analysis could not be completed. Your previous results are still available.');
+    } finally { setBusy(null); }
+  }
+
+  function applyAnalysis(result: ExperimentAnalysis) {
+    pendingResultFocus.current = true;
+    setAnalysis(result); onResults(result);
+    setQuery(''); setPage(0); setMemberPage(0); setPathwayId(null); setSignificantOnly(false);
+    setGroupOverlaps(false); setSensitivityOpen(false);
+  }
+
+  async function tryExample() {
+    if (busy || pendingTable || analysis || columnInput) return;
+    setBusy('analyzing'); setError('');
+    try {
+      const reference = await loadPathwayReference();
+      const table = createExampleExperiment();
+      const result = runExperimentAnalysis(table, { comparison: EXAMPLE_COMPARISON, allTestedGenes: true,
+        thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 } }, reference);
+      setPendingTable(table); setComparison(EXAMPLE_COMPARISON); setAllTestedGenes(true);
+      setGeneFdr('0.05'); setMinimumFoldChange('1');
+      applyAnalysis(result);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Unable to load the example. Try again.');
     } finally { setBusy(null); }
   }
 
@@ -187,6 +209,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     ++readSequence.current;
     pendingResultFocus.current = false;
     pendingMappingFocus.current = false;
+    if (pendingTable?.isSynthetic) setComparison('');
     setPendingTable(null); setAnalysis(null); setAllTestedGenes(false); setBusy(null); setError('');
     setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
     setGroupOverlaps(false); setSensitivityOpen(false);
@@ -215,7 +238,10 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
 
   return <main ref={workspace} className="experiment-workspace" id="experiment-workspace" tabIndex={-1} aria-labelledby="experiment-title">
     <div className="experiment-heading"><h1 id="experiment-title">Analyze results</h1>
-      <button className="secondary-button" type="button" onClick={template}><Icon name="download" size={16} />CSV template</button>
+      <div className="experiment-heading-actions">
+        {!analysis && !pendingTable && !columnInput && <button className="secondary-button" type="button" onClick={tryExample} disabled={busy !== null}>{busy === 'analyzing' ? 'Loading example…' : 'Try example'}</button>}
+        <button className="text-button" type="button" onClick={template}><Icon name="download" size={16} />CSV template</button>
+      </div>
     </div>
     <form className="experiment-input" onSubmit={analyze} aria-label="RNA-seq analysis">
       <label className="experiment-file"><span>Human RNA-seq results</span>
@@ -246,7 +272,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
     </form>
 
     {analysis && <section className="experiment-results" aria-labelledby="experiment-results-title">
-      <div className="experiment-results-heading"><h2 ref={resultHeading} tabIndex={-1} id="experiment-results-title">{analysis.comparison}</h2><span>{analysis.table.filename} · {integer(analysis.table.rows.length)} uploaded rows</span></div>
+      <div className="experiment-results-heading"><h2 ref={resultHeading} tabIndex={-1} id="experiment-results-title">{analysis.comparison}</h2><span>{analysis.table.isSynthetic ? 'Synthetic example · invented measurements' : analysis.table.filename} · {integer(analysis.table.rows.length)} {analysis.table.isSynthetic ? 'example' : 'uploaded'} rows</span></div>
       <dl className="experiment-counts">
         <div><dt>Eligible tested genes</dt><dd>{integer(analysis.backgroundGenes.length)}</dd></div>
         <div><dt>Selected genes</dt><dd>{integer(analysis.selected.length)}</dd></div>
@@ -299,7 +325,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
           </div>
           {eligibleMembers.length > MEMBER_PAGE_SIZE && <div className="experiment-pagination"><span>{integer(memberPage * MEMBER_PAGE_SIZE + 1)}–{integer(Math.min((memberPage + 1) * MEMBER_PAGE_SIZE, eligibleMembers.length))} of {integer(eligibleMembers.length)}</span><nav aria-label="Eligible member pages"><button className="secondary-button" type="button" disabled={memberPage === 0} onClick={() => setMemberPage(memberPage - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(memberPage + 1) * MEMBER_PAGE_SIZE >= eligibleMembers.length} onClick={() => setMemberPage(memberPage + 1)}>Next</button></nav></div>}
           <div className="experiment-evidence-links">{eligibleMembers.filter(({ gene }) => curatedGenes.has(gene)).map(({ gene }) => <button className="text-button" type="button" key={gene} onClick={() => onInspectGene(gene)}>View {gene} evidence<Icon name="arrow" size={14} /></button>)}</div>
-          {questions.length > 0 && <section className="experiment-questions" aria-label="Questions to investigate"><h4>Questions to investigate</h4>
+          {questions.length > 0 && <section className="experiment-questions" aria-label={analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}><h4>{analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}</h4>
             {questions.map((item) => <article key={item.id}><h5>{item.question}</h5><p>{item.premise}</p><details><summary>Assumptions and proposed test</summary><ul>{item.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul><p>{item.suggestedTest}</p></details><ul className="experiment-question-sources">{item.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a></li>)}</ul></article>)}
           </section>}
         </section>}
@@ -307,6 +333,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onResults
       <details className="experiment-methods"><summary>Methods and reference</summary>
         {analysis.identifierMapping && <GeneMappingDetails key={analysis.createdAt} report={analysis.identifierMapping} />}
         <dl className="context-list">
+          {analysis.table.isSynthetic && <div><dt>Example data</dt><dd>All measurements are invented. This small demonstration background is not a real experiment. Pathway memberships use the same pinned reference as uploaded analyses.</dd></div>}
           <div><dt>Selected set</dt><dd>Gene FDR ≤ {analysis.thresholds.adjustedPMax}; |log₂ fold change| ≥ {analysis.thresholds.minAbsLog2FoldChange}. Supplied gene adjusted p-values are used without recalculation.</dd></div>
           <div><dt>Eligible background</dt><dd>{integer(analysis.backgroundGenes.length)} unique symbols with complete log2FoldChange and padj values, including unannotated eligible genes. {integer(analysis.table.missingStatisticsCount)} incomplete rows remain in the uploaded input and are excluded from the enrichment background and selected set.</dd></div>
           <div><dt>Pathway correction</dt><dd>Right-tailed hypergeometric tests; Benjamini–Hochberg correction across all {integer(analysis.pathways.length)} pathways with eligible members, including zero-overlap pathways.</dd></div>

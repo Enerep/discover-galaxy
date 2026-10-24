@@ -5,6 +5,7 @@ import test from 'node:test';
 import { loadDataset } from './dataset.ts';
 import { parseExperiment } from './experiment.ts';
 import { buildExperimentQuestions, formatProbability, runExperimentAnalysis, validatePathwayReference } from './experiment-analysis.ts';
+import { createExampleExperiment, EXAMPLE_COMPARISON } from './experiment-example.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const referenceBytes = await readFile(new URL('../../../../data/reference/reactome-pathways.json', import.meta.url));
@@ -12,6 +13,25 @@ const reference = validatePathwayReference(JSON.parse(referenceBytes.toString('u
 // This is an explicitly synthetic workflow fixture, never a public experimental finding.
 const table = () => parseExperiment('gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,-1.5,.02\nABCA1,.1,.7\nSYNTHETICUNMAPPED,.1,.8\nSYNTHETICINCOMPLETE,NA,NA\n', 'synthetic-workflow.csv');
 const options = () => ({ comparison: 'Synthetic numerator / denominator', allTestedGenes: true, thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 } });
+
+test('the demonstration preserves synthetic provenance through cutoff changes without marking uploads or changing evidence', () => {
+  const before = JSON.stringify(snapshot);
+  const example = createExampleExperiment();
+  const result = runExperimentAnalysis(example, { ...options(), comparison: EXAMPLE_COMPARISON }, reference);
+  assert.equal(result.table.isSynthetic, true);
+  assert.equal(result.backgroundGenes.length, 120);
+  assert.equal(result.selected.length, 12);
+  assert.ok(result.selected.some(({ log2FoldChange }) => log2FoldChange! > 0));
+  assert.ok(result.selected.some(({ log2FoldChange }) => log2FoldChange! < 0));
+  assert.ok(result.pathways.some(({ adjustedPValue }) => adjustedPValue <= 0.05));
+  const reapplied = runExperimentAnalysis(example, { ...options(), comparison: 'An edited example label',
+    thresholds: { adjustedPMax: 0.025, minAbsLog2FoldChange: 1.5 } }, reference);
+  assert.equal(reapplied.table.isSynthetic, true);
+  assert.equal(reapplied.backgroundGenes.length, 120);
+  assert.ok(reapplied.selected.length < result.selected.length);
+  assert.equal(parseExperiment('gene,log2FoldChange,padj,data_kind\nAPOE,2,.01,synthetic', example.filename).isSynthetic, undefined);
+  assert.equal(JSON.stringify(snapshot), before);
+});
 
 test('the analysis reference has pinned provenance and keeps original descriptive members outside the curated graph', () => {
   assert.equal(reference.pathways.length, 2751);

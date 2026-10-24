@@ -91,6 +91,7 @@ This is a user writing workflow. It does not add curator-reviewed questions, est
 - [x] Validate supplied public MAYO AD and original Ensembl airway results against independent SciPy calculations; record conversions, source scopes and rejected data-quality candidates.
 - [x] Compare nearby gene cutoffs in local workers while preserving the eligible background and complete pathway-BH family.
 - [x] Group overlapping eligible pathway memberships with original statistics, explicit similarity and access to every member; avoid claims of independent mechanisms.
+- [x] Add a one-click synthetic example using the normal analysis, sensitivity, grouping and evidence-navigation flows, with persistent synthetic provenance.
 
 This completes the product milestone for a **public research preview**: processed human RNA-seq input → identifier audit → pathway analysis → sensitivity/overlap inspection → cited evidence and follow-up questions. Observed numerical/browser checks remain distinct from scientific release approval. Hosting requires the normal production build; no server or AI key is needed.
 

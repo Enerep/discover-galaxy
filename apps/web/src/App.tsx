@@ -245,7 +245,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
             </div>
           </div>
           {experiment && <section className="experiment-context" aria-label="Active experiment">
-            <div><strong>{experiment.comparison}</strong><span>{experiment.table.filename}</span></div>
+            <div><strong>{experiment.comparison}</strong><span>{experiment.table.isSynthetic ? 'Synthetic example · invented measurements' : experiment.table.filename}</span></div>
             <button className="text-button" onClick={openAnalysis}>Analysis results<Icon name="arrow" size={14} /></button>
           </section>}
           <div className="explorer-tools">
@@ -335,7 +335,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
           onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection}
           pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin}
-          experimentObservation={experiment && observation ? { comparison: experiment.comparison, row: observation, thresholds: experiment.thresholds,
+          experimentObservation={experiment && observation ? { comparison: experiment.comparison, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
             selected: experiment.selected.some(({ gene }) => gene === observation.gene) } : null} />
       </div>
 

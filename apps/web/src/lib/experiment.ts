@@ -12,6 +12,8 @@ export interface ExperimentRow {
 
 export interface ExperimentTable {
   filename: string;
+  /** Set only by the built-in demonstration; never inferred from an upload. */
+  isSynthetic?: true;
   delimiter: ',' | '\t';
   columns: { gene: string; log2FoldChange: string; padj: string };
   rows: ExperimentRow[];

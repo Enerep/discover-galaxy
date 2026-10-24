@@ -32,6 +32,7 @@ export interface ExperimentAnalysis {
 }
 export interface ExperimentObservation {
   comparison: string;
+  isSynthetic?: true;
   row: ExperimentRow;
   selected: boolean;
   thresholds: ExperimentThresholds;

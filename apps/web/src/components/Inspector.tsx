@@ -152,8 +152,8 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
           <h2 className={`selected-title ${selected.type === 'paper' ? 'paper-title' : ''}`} tabIndex={-1}>{selected.label}</h2>
         </div>
         {!visible && <button className="show-selected" onClick={onShowSelected}>Show in the current view <Icon name="arrow" size={14} /></button>}
-        {experimentObservation && <section className="experiment-observation" aria-label="Your RNA-seq result">
-          <h3>Your RNA-seq result</h3><p>{experimentObservation.comparison}</p>
+        {experimentObservation && <section className="experiment-observation" aria-label={experimentObservation.isSynthetic ? 'Synthetic RNA-seq example' : 'Your RNA-seq result'}>
+          <h3>{experimentObservation.isSynthetic ? 'Synthetic RNA-seq example' : 'Your RNA-seq result'}</h3><p>{experimentObservation.comparison}</p>
           <dl className="context-list">
             {experimentObservation.row.sourceId && <div><dt>Input ID</dt><dd>{experimentObservation.row.sourceId}</dd></div>}
             <div><dt>log₂ fold change</dt><dd>{experimentObservation.row.log2FoldChange ?? 'Not recorded'}</dd></div>

@@ -1643,6 +1643,96 @@ def assert_experiment_robustness(browser, base_url: str, screenshots: Path) -> N
     print('PASS: local-worker sensitivity/grouping preserve applied data and citations, retry when workers are unavailable, support keyboard/themes/mobile/fallback, and discard stale results after replacement/removal without uploads or persistence.')
 
 
+def assert_experiment_example(browser, base_url: str, screenshots: Path) -> None:
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={'width': 360 if mobile else 1440, 'height': 844 if mobile else 1000},
+                                      reduced_motion='reduce', is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light')
+        page = context.new_page()
+        errors, requests = [], []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+        page.goto(base_url, wait_until='networkidle')
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        workspace = page.get_by_role('main', name='Analyze results', exact=True)
+        form = workspace.get_by_role('form', name='RNA-seq analysis')
+        example = workspace.get_by_role('button', name='Try example', exact=True)
+        expect(example).to_be_visible()
+        assert_touch_target(example)
+        assert not any('reactome-pathways' in url for _, url, _ in requests)
+        page.screenshot(path=str(screenshots / f'example-entry-{"mobile" if mobile else "desktop"}.png'))
+        # Failed reference loading must keep the entry point retryable.
+        page.route('**/reactome-pathways-*.json', lambda route: route.abort(), times=1)
+        example.focus()
+        page.keyboard.press('Enter')
+        expect(workspace.get_by_role('alert')).to_contain_text('Unable to load the pathway reference')
+        expect(workspace.locator('.experiment-results')).to_have_count(0)
+        expect(example).to_be_enabled()
+        example.click()
+        heading = workspace.locator('#experiment-results-title')
+        expect(heading).to_have_text('Synthetic example: treatment / control', timeout=15000)
+        expect(heading).to_be_focused()
+        expect(example).to_have_count(0)
+        expect(workspace.locator('.experiment-counts dd')).to_have_text(['120', '12', '119', '748'])
+        expect(workspace.locator('.experiment-results-heading')).to_contain_text('Synthetic example · invented measurements')
+        expect(workspace.get_by_role('region', name='Example questions', exact=True)).to_be_visible()
+        detail = workspace.locator('.experiment-pathway-detail')
+        expect(detail.locator('.experiment-source-link')).to_have_attribute('href', 'https://reactome.org/content/detail/R-HSA-174824')
+        sensitivity = detail.locator('.experiment-sensitivity')
+        sensitivity.get_by_text('Threshold sensitivity', exact=True).click()
+        expect(sensitivity.locator('.experiment-sensitivity-count')).to_contain_text('of 9 settings', timeout=15000)
+        workspace.get_by_role('checkbox', name='Group overlaps', exact=True).check()
+        expect(workspace.locator('.experiment-pagination').first).to_contain_text('groups (748 pathways)', timeout=15000)
+        assert_text_contrast(workspace.locator('.experiment-results-heading > span'))
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Example must fit the viewport.'
+        heading.scroll_into_view_if_needed()
+        page.screenshot(path=str(screenshots / f'example-results-{"mobile" if mobile else "desktop"}.png'))
+        # The provenance follows the table even if the user removes it from their label.
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('Edited treatment / control')
+        form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0.025')
+        form.locator('button[type=submit]').click()
+        expect(heading).to_have_text('Edited treatment / control')
+        expect(workspace.locator('.experiment-results-heading')).to_contain_text('Synthetic example · invented measurements')
+        detail.get_by_role('button', name='View APOE evidence', exact=True).click()
+        observation = page.get_by_role('region', name='Synthetic RNA-seq example', exact=True)
+        expect(observation).to_be_visible()
+        expect(page.locator('.experiment-context')).to_contain_text('Synthetic example · invented measurements')
+        expect(page.get_by_role('region', name='Your RNA-seq result', exact=True)).to_have_count(0)
+        expect(page.locator('.source-link')).to_have_attribute('href', 'https://pubmed.ncbi.nlm.nih.gov/8346443/')
+        page.locator('.claim-button').filter(has_text='Encodes · APOE protein').click()
+        page.get_by_role('button', name='View APOE protein', exact=True).click()
+        expect(observation).to_have_count(0)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        expect(heading).to_have_text('Edited treatment / control')
+        form.get_by_role('button', name='Remove results', exact=True).click()
+        expect(form.get_by_role('textbox', name='Comparison', exact=True)).to_have_value('')
+        expect(example).to_be_visible()
+        example.click()
+        expect(heading).to_have_text('Synthetic example: treatment / control')
+        # Choosing a real file clears the demonstration contrast and requires declaration.
+        form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'research-results.csv',
+            'mimeType': 'text/csv', 'buffer': b'gene,log2FoldChange,padj\nAPOE,1.1,.01\nABCA1,.1,.8\n'})
+        expect(form.get_by_role('textbox', name='Comparison', exact=True)).to_have_value('')
+        expect(form.get_by_role('checkbox', name='This table contains all tested genes', exact=True)).not_to_be_checked()
+        expect(workspace.locator('.experiment-results-heading')).to_contain_text('Synthetic example · invented measurements')
+        form.get_by_role('textbox', name='Comparison', exact=True).fill('Uploaded treatment / control')
+        form.get_by_role('checkbox', name='This table contains all tested genes', exact=True).check()
+        form.locator('button[type=submit]').click()
+        expect(heading).to_have_text('Uploaded treatment / control')
+        expect(workspace.locator('.experiment-results-heading')).not_to_contain_text('Synthetic example')
+        expect(workspace.get_by_role('region', name='Questions to investigate', exact=True)).to_be_visible()
+        expect(example).to_have_count(0)
+        form.get_by_role('button', name='Remove results', exact=True).click()
+        expect(example).to_be_visible()
+        assert all(method == 'GET' and data is None for method, _, data in requests)
+        storage = page.evaluate('JSON.stringify({ local: {...localStorage}, session: {...sessionStorage} })')
+        assert 'Edited treatment' not in storage and 'synthetic-rnaseq-example' not in storage
+        assert not errors, errors
+        context.close()
+    print('PASS: one-click synthetic example supports keyboard/mobile/themes, reference retry, cutoff/group inspection, cited gene navigation, persistent provenance and replacement with an upload without storage or uploads.')
+
+
 def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path | None = None) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -1950,6 +2040,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_experiment_analysis(browser, base_url, screenshots)
         assert_identifier_mapping(browser, base_url, screenshots)
         assert_experiment_robustness(browser, base_url, screenshots)
+        assert_experiment_example(browser, base_url, screenshots)
         if public_ad_table is not None:
             assert_public_ad_results(browser, base_url, screenshots, public_ad_table)
         browser.close()
