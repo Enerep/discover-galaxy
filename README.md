@@ -4,7 +4,7 @@
 
 Discovery Galaxy is an interactive map of scientific evidence in development. Glowing objects represent biological entities and papers; connections lead to the original studies, source-specific context, and limitations behind a finding.
 
-The 3D view starts with one entity’s direct connections. Expand one level, use Back to retrace a branch, or open Overview and the complete searchable List; original findings and citations remain in the evidence panel.
+The `?` beside Explore and Analyze results explains each workspace with a concrete example. The 3D view starts with one entity’s direct connections. Expand one level, use Back to retrace a branch, or open Overview and the complete searchable List; original findings and citations remain in the evidence panel.
 
 Researchers can also bring their own processed human RNA-seq results into **Analyze results**: test pathway overrepresentation, inspect signed gene changes, and investigate source-linked questions. This is the current product focus. The curated evidence library remains Alzheimer's-specific; human pathway analysis does not depend on that small graph for its statistical background.
 

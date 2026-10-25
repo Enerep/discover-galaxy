@@ -138,9 +138,25 @@ p { line-height: 1.65; }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; padding: 34px 40px 32px; align-items: start; }
 .workspace[hidden], .analysis-view[hidden] { display: none; }
 .workspace-navigation { display: flex; gap: 6px; padding: 12px 40px 0; }
-.workspace-navigation button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border-bottom: 2px solid transparent; padding: 0 14px; color: var(--muted); font-size: 13px; }
-.workspace-navigation button[aria-pressed=true] { color: var(--accent); border-bottom-color: var(--accent); }
-.workspace-navigation button:hover { background: var(--hover-surface); }
+.workspace-tab { display: flex; align-items: center; border-bottom: 2px solid transparent; }
+.workspace-tab[data-active=true] { border-bottom-color: var(--accent); }
+.workspace-tab > button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 10px; color: var(--muted); font-size: 13px; }
+.workspace-tab > button[aria-pressed=true] { color: var(--accent); }
+.workspace-tab > button:hover { background: var(--hover-surface); }
+.workspace-tab > .workspace-help-trigger { justify-content: center; width: 44px; padding: 0; font-size: 15px; border-radius: 6px; }
+.workspace-help-dialog { max-height: calc(100dvh - 36px); overflow-y: auto; }
+.workspace-help-heading { position: sticky; top: -1px; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface-soft); padding-block: 8px; margin-bottom: 18px; }
+.workspace-help-heading::before { content: ''; position: absolute; inset: -40px -32px 0; background: var(--surface-soft); z-index: -1; }
+.workspace-help-heading h2 { margin: 0; }
+.workspace-help-heading .dialog-close { position: static; }
+.workspace-help-dialog ol { padding-left: 20px; }
+.workspace-help-example { padding-block: 16px; margin-block: 20px; border-block: 1px solid var(--border); }
+.workspace-help-example h3 { margin: 0 0 12px; font-size: 15px; font-weight: 550; }
+.workspace-help-example p:last-child { margin-bottom: 0; }
+.workspace-help-terms { margin-block: 22px; }
+.workspace-help-terms > div + div { margin-top: 14px; }
+.workspace-help-terms dt { font-size: 13px; font-weight: 550; }
+.workspace-help-terms dd { margin: 4px 0 0; color: var(--secondary-ink); font-size: 13px; line-height: 1.75; }
 .workspace-loading { padding: 24px 40px; color: var(--muted); }
 .experiment-context { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); padding: 0 0 14px; margin-bottom: 18px; }
 .experiment-context strong { font-weight: 550; font-size: 14px; }
@@ -451,6 +467,7 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 }
 @media (max-width: 600px) {
   .workspace-navigation { padding-inline: 18px; }
+  .workspace-tab > button { padding-inline: 7px; gap: 6px; font-size: 12px; }
   .app-header { height: 67px; padding: 0 19px; }
   .brand { font-size: 16px; gap: 8px; letter-spacing: -.5px; }
   .brand svg { width: 25px; }

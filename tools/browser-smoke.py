@@ -2152,6 +2152,67 @@ def assert_scavenger_evidence(browser, base_url: str, screenshots: Path) -> None
     print('PASS: MARCO, SCARA5 and APOB are searchable in the graph/list, retain separate protein identities and scoped citations, and connect through the scavenger pathway to APOE on desktop/mobile/fallback.')
 
 
+def assert_workspace_help(browser, base_url: str, screenshots: Path) -> None:
+    for mobile, fallback in [(False, False), (True, False), (True, True)]:
+        context = browser.new_context(viewport={"width": 360 if mobile else 1440, "height": 844 if mobile else 1000},
+                                      color_scheme="dark" if mobile else "light", reduced_motion="reduce" if mobile else "no-preference",
+                                      is_mobile=mobile, has_touch=mobile)
+        if fallback:
+            context.add_init_script("const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(type, ...args) { return type.startsWith('webgl') ? null : original.call(this, type, ...args); };")
+        page = context.new_page()
+        errors, requests = [], []
+        page.on("pageerror", lambda error: errors.append(str(error)))
+        page.on("request", lambda request: requests.append(request.url))
+        page.goto(base_url, wait_until="networkidle")
+        nav = page.get_by_role("navigation", name="Workspace", exact=True)
+        for name in ["Explore", "Analyze results"]:
+            trigger = nav.get_by_role("button", name=f"Help with {name}", exact=True)
+            assert_touch_target(trigger)
+            expect(trigger).to_have_attribute("aria-haspopup", "dialog")
+            trigger.focus()
+            page.keyboard.press("Enter")
+            dialog = page.get_by_role("dialog", name=name, exact=True)
+            expect(dialog).to_be_visible()
+            expect(dialog.get_by_role("heading", name="For example", exact=True)).to_be_visible()
+            expect(nav.get_by_role("button", name="Explore", exact=True)).to_have_attribute("aria-pressed", "true")
+            assert not any("reactome-pathways" in url for url in requests), "Help must not load analysis references."
+            assert dialog.evaluate("element => element.contains(document.activeElement)")
+            for _ in range(3):
+                page.keyboard.press("Tab")
+                # Native dialogs allow focus to browser chrome between cycles;
+                # no underlying application control may receive focus.
+                assert dialog.evaluate("element => element.matches(':modal') && (element.contains(document.activeElement) || document.activeElement === document.body)")
+            if name == "Analyze results":
+                expect(dialog).to_contain_text("0.008")
+                expect(dialog).to_contain_text("13 of the 120")
+                expect(dialog).to_contain_text("Files stay in this tab")
+                dialog.evaluate("element => { element.scrollTop = element.scrollHeight; }")
+                expect(dialog.get_by_role("button", name="Close workspace help", exact=True)).to_be_in_viewport()
+                page.screenshot(path=str(screenshots / f'help-analysis-{mobile}-{fallback}.png'))
+            else:
+                expect(dialog).to_contain_text("Encodes · APOE protein")
+                page.screenshot(path=str(screenshots / f'help-explore-{mobile}-{fallback}.png'))
+            page.keyboard.press("Escape")
+            expect(dialog).not_to_be_visible()
+            expect(trigger).to_be_focused()
+            trigger.click()
+            dialog.get_by_role("button", name="Close workspace help", exact=True).click()
+            expect(trigger).to_be_focused()
+        nav.get_by_role("button", name="Analyze results", exact=True).click()
+        workspace = page.get_by_role("main", name="Analyze results", exact=True)
+        expect(workspace.get_by_role("button", name="Try example", exact=True)).to_be_visible()
+        workspace.get_by_role("textbox", name="Comparison", exact=True).fill("Help preserves pending work")
+        trigger = nav.get_by_role("button", name="Help with Analyze results", exact=True)
+        trigger.click()
+        page.keyboard.press("Escape")
+        expect(workspace.get_by_role("textbox", name="Comparison", exact=True)).to_have_value("Help preserves pending work")
+        expect(nav.get_by_role("button", name="Analyze results", exact=True)).to_have_attribute("aria-pressed", "true")
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        assert not errors, errors
+        context.close()
+    print("PASS: on-demand workspace help explains source exploration and processed results with concrete examples, preserves pending work, traps/returns focus, and supports mobile themes/reduced motion/WebGL fallback without loading references.")
+
+
 def assert_focused_graph(browser, base_url: str, screenshots: Path) -> None:
     for mobile in [False, True]:
         context = browser.new_context(viewport={"width": 360 if mobile else 1440, "height": 900 if mobile else 1000},
@@ -2522,6 +2583,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(native_dialog.get_by_role("alert")).to_have_count(0)
         expect(native_dialog).to_be_visible()
         print("PASS: supported native sharing receives a real PNG; cancelling the native sheet is not an error.")
+        assert_workspace_help(browser, base_url, screenshots)
         assert_focused_graph(browser, base_url, screenshots)
         assert_share_links(browser, base_url, screenshots)
         assert_export_retry(browser, base_url, screenshots)

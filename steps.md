@@ -51,6 +51,11 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Keep all entities accessible in Overview/List and original papers available from the evidence panel and explicit paper selection.
 - [x] Draw one visual line per endpoint pair while retaining every original finding, active-claim navigation and source meaning.
 
+### Workspace help
+
+- [x] Add an accessible `?` beside Explore and Analyze results, with purpose, concrete examples and analysis terms available on demand.
+- [x] Preserve active selection and pending/applied work while help is open; keep references lazy and use native dialog keyboard behavior.
+
 ### Sharing and review preparation
 
 - [x] Export the current graph and selected finding as a cited PNG; provide an evidence card in List mode or without WebGL.

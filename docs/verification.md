@@ -1,5 +1,13 @@
 # Development preview verification
 
+## On-demand workspace help — 2026-10-25
+
+A small `?` beside each workspace opens its own native dialog. Explore describes source-linked navigation and follows the existing APOE gene → protein → pathway/binding workflow. Analyze results describes processed full-table input, supplied gene FDR, signed log₂ fold change and calculated pathway FDR. Its concrete example matches the authored demonstration: APOE +2.1 / 0.008, 120 tested genes, 12 selected and 10 selected members of a pathway containing 13 tested genes. Human pathway analysis and the AD-focused curated evidence library remain distinct. These explanations appear only on request.
+
+The strict production build passes; the **123 native tests** and earlier full browser regression remain the graph checkpoint’s baseline. Final focused browser suites pass workspace help, the complete synthetic-example flow, graph navigation, Light/Dark/System behavior and typed pathway/source journeys. Help is checked on desktop Light, 360 px Dark/reduced-motion touch and unavailable WebGL: named triggers, 44 px targets, modal keyboard behavior, Escape/button closing and trigger focus return, a visible Close control while scrolling, readable screenshots and no page overflow. Opening help preserves the active workspace, selection and pending comparison text and does not load the analysis reference. Synthetic results still reproduce the existing counts and retain source/privacy boundaries. The final six graph idle samples request 0 frames and make 0 WebGL draws.
+
+Screenshots of both dialogs were inspected, including the narrow scrolling analysis explanation. No scientific data, numerical analysis, reference bytes, dependencies, lockfile or install policy changed. Dependency safeguards, Markdown file targets and `git diff --check` pass. This is local browser verification, not a check of the Vercel deployment.
+
 ## Focused 3D exploration — 2026-10-25
 
 The default graph shows the selected entity and its direct connections. One optional expansion adds the next navigation level; Collapse and bounded Back history restore earlier scopes. Overview exposes all 40 entities with only the selection’s relationship lines. Explicit paper selection/search preserves citations, the complete searchable List remains available, and the inspector retains every original claim. Endpoint-pair line deduplication preserves the selected claim rather than pooling scientific findings. Navigation rings and distance have no biological/evidence-score meaning. Existing shared-link fields are unchanged; scope/history stay in tab memory.

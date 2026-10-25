@@ -6,7 +6,7 @@ Follow the [canonical design and decision rules](../AGENTS.md#design-standard): 
 
 ## Start with the task
 
-The primary research task is now **upload processed results → inspect pathway statistics and gene measurements → follow evidence → consider an experiment**. Keep **Explore** and **Analyze results** as explicit workspaces, preserving state between them. Group the file, named contrast, gene cutoffs, full-tested-table declaration and Analyze action in one form. Keep input-format, privacy and method details in disclosures. Show applied-result provenance separately from pending replacement files; failed reads or reference loads must preserve previous results.
+The primary research task is now **upload processed results → inspect pathway statistics and gene measurements → follow evidence → consider an experiment**. Keep **Explore** and **Analyze results** as explicit workspaces, preserving state between them. Provide a small `?` beside each workspace for on-demand purpose, concrete examples and key terms. Opening help must preserve the active workspace and pending/applied work, support native dialog focus/Escape/return behavior and avoid loading the analysis reference. Keep these explanations out of the permanent workspace layout. Group the file, named contrast, gene cutoffs, full-tested-table declaration and Analyze action in one form. Keep input-format, privacy and method details in disclosures. Show applied-result provenance separately from pending replacement files; failed reads or reference loads must preserve previous results.
 
 The evidence-reading flow remains **search → select an entity → read a finding → open the original study**. Preserve that route when connecting experimental results to the explorer.
 

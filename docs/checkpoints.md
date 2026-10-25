@@ -32,6 +32,10 @@ Optional tissue/cell model, treatment/condition and explicit study design now sc
 
 The 3D view now starts with a selected entity’s direct connections, with one optional expansion level, Collapse and bounded Back history. Overview retains the complete library with selection-only relationship lines; the complete searchable List and paper selections remain available. Original findings/citations stay in the inspector, and one line per endpoint pair does not combine evidence records. Focus rings are navigation levels, not scientific proximity. Graph scope/history remain transient and existing links retain their entity/finding/query/filter/view contract.
 
+## Completed checkpoint: workspace explanations
+
+A `?` beside each workspace explains its purpose on demand. Explore’s example follows an APOE gene mapping into distinct protein/pathway evidence. Analyze results explains the processed-table input, gene/log₂FC/pathway-FDR terms and the actual synthetic 120-gene example. Opening help retains the current workspace and pending/applied data, with no reference loading or permanent copy added to the workspace.
+
 ## Next checkpoint: public research use
 
 Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Expand curated gene evidence where those inputs reveal useful coverage gaps, with source-specific review. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.

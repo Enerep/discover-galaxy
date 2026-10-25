@@ -5,6 +5,7 @@ import { EntitySearch } from './components/EntitySearch.tsx';
 import { Inspector } from './components/Inspector.tsx';
 import { ShareDialog } from './components/ShareDialog.tsx';
 import { ThemeControl } from './components/ThemeControl.tsx';
+import { WorkspaceHelp } from './components/WorkspaceHelp.tsx';
 import { EvidenceComparison } from './components/EvidenceComparison.tsx';
 import { ResearchBrief } from './components/ResearchBrief.tsx';
 import { Icon, TYPE_LABELS } from './components/ui.tsx';
@@ -259,8 +260,14 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       </header>
 
       <nav className="workspace-navigation" aria-label="Workspace">
-        <button aria-pressed={workspace === 'explore'} onClick={() => setWorkspace('explore')}><Icon name="galaxy" size={17} />Explore</button>
-        <button aria-pressed={workspace === 'analysis'} onClick={openAnalysis}><Icon name="analysis" size={17} />Analyze results</button>
+        <div className="workspace-tab" data-active={workspace === 'explore'}>
+          <button aria-pressed={workspace === 'explore'} onClick={() => setWorkspace('explore')}><Icon name="galaxy" size={17} />Explore</button>
+          <WorkspaceHelp workspace="explore" />
+        </div>
+        <div className="workspace-tab" data-active={workspace === 'analysis'}>
+          <button aria-pressed={workspace === 'analysis'} onClick={openAnalysis}><Icon name="analysis" size={17} />Analyze results</button>
+          <WorkspaceHelp workspace="analysis" />
+        </div>
       </nav>
       {analysisVisited && <div className="analysis-view" hidden={workspace !== 'analysis'}>
         <Suspense fallback={<p className="workspace-loading" role="status">Loading analysis…</p>}>
