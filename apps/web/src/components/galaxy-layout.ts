@@ -51,6 +51,22 @@ export function createGalaxyLayout(entities: Entity[]): Map<string, Position> {
   return positions;
 }
 
+/** A readable neighbourhood; rings are navigation levels, never biological distance. */
+export function createFocusedLayout(entities: Entity[], selectedId: string, directIds: Set<string>): Map<string, Position> {
+  const positions = new Map<string, Position>([[selectedId, [0, 0, 0]]]);
+  const ordered = [...entities].filter(({ id }) => id !== selectedId)
+    .sort((a, b) => a.type.localeCompare(b.type) || a.id.localeCompare(b.id));
+  for (const direct of [true, false]) {
+    const group = ordered.filter(({ id }) => directIds.has(id) === direct);
+    const radius = direct ? 3.4 : 6.5;
+    group.forEach(({ id }, index) => {
+      const angle = Math.PI / 2 + index / Math.max(group.length, 1) * Math.PI * 2;
+      positions.set(id, [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.82, Math.sin(angle * 2) * 0.3]);
+    });
+  }
+  return positions;
+}
+
 export function decorativeStars(count = 650): Float32Array {
   const points = new Float32Array(count * 3);
   let seed = 73;

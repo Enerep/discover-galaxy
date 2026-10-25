@@ -1,5 +1,15 @@
 # Development preview verification
 
+## Focused 3D exploration — 2026-10-25
+
+The default graph shows the selected entity and its direct connections. One optional expansion adds the next navigation level; Collapse and bounded Back history restore earlier scopes. Overview exposes all 40 entities with only the selection’s relationship lines. Explicit paper selection/search preserves citations, the complete searchable List remains available, and the inspector retains every original claim. Endpoint-pair line deduplication preserves the selected claim rather than pooling scientific findings. Navigation rings and distance have no biological/evidence-score meaning. Existing shared-link fields are unchanged; scope/history stay in tab memory.
+
+All **123 native tests**, strict typechecking/production build, development-data validation and locked-dependency safeguards pass. Five graph tests cover direct/expanded scope, unchanged first-ring positions, bounded traversal, endpoint deduplication with exact selected claims, complete overview, paper citation ownership, filters and no-match recovery. Scientific data, numerical analysis/reference assets, dependencies and lockfile are unchanged.
+
+The full production-browser regression passes the existing explorer, source comparison, brief, sharing, theme, upload/mapping/context/example, worker and pathway-evidence flows. New desktop Light and 360 px Dark/reduced-motion checks cover expansion/collapse, Back/search restoration, overview/refocus, separate paper citations and keyboard List access. All 19 observed idle samples requested 0 frames and made 0 WebGL draws. Initial focused, expanded and mobile screenshots were inspected. These are local headless Chromium/software-WebGL observations, not deployed Vercel or scientific review.
+
+Visual review moved camera controls below the canvas to avoid covering long pathway labels. Layout and camera transitions also have finite 450/550 ms bounds, with immediate reduced-motion updates and camera gestures retaining interruption. Final focused browser checks include picking a neighbouring disease on the canvas and returning to APOE, the revised controls and render settling.
+
 ## Reference-derived gene/protein expansion — 2026-10-24
 
 Snapshot **0.7.0** contains **40 entities, 41 claims/evidence records and 34 source records**. The separately inspected COL1A1/COL1A2/COL3A1/SAA1 seed adds eight gene/protein nodes, four approved identity cross-references and four exact gene-level pathway annotations. All previous entities, claims, evidence, sources and context comparisons are semantically unchanged. The original four association claims, eight paper projections and original-paper findings are unchanged. [The dataset change record](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-070--2026-10-24) records source hashes, unknown official releases, reuse and actual check limits. No expression statistics or live API payloads are promoted.

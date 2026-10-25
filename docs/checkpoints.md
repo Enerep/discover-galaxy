@@ -28,6 +28,10 @@ On the public MAYO table, all nine settings × 2,720 pathways matched independen
 
 Optional tissue/cell model, treatment/condition and explicit study design now scope follow-up questions. Observational comparisons prompt sample-composition and potential-confounder checks; treatment/perturbation studies prompt controlled manipulation or rescue designs. Applied context stays separate from pending fields and cited study metadata, and remains available beside a gene's RNA observation. Blank context is not inferred. Selection, membership, pathway statistics, sensitivity and overlap groups are unchanged, and context stays in memory outside worker messages/storage/exports. The example includes explicitly synthetic context.
 
+## Completed checkpoint: focused exploration
+
+The 3D view now starts with a selected entity’s direct connections, with one optional expansion level, Collapse and bounded Back history. Overview retains the complete library with selection-only relationship lines; the complete searchable List and paper selections remain available. Original findings/citations stay in the inspector, and one line per endpoint pair does not combine evidence records. Focus rings are navigation levels, not scientific proximity. Graph scope/history remain transient and existing links retain their entity/finding/query/filter/view contract.
+
 ## Next checkpoint: public research use
 
 Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Expand curated gene evidence where those inputs reveal useful coverage gaps, with source-specific review. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.

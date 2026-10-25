@@ -45,6 +45,12 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Exercise the revised desktop, touch/mobile, and WebGL-fallback flows in browser checks. Scientific release criteria remain pending.
 - [x] Record the owner's copy and UX/DX/AX rules in `AGENTS.md`; group controls, remove repeated labels/instructions, share citation formatting and retain scientific context in disclosures.
 
+### Focused graph navigation
+
+- [x] Start with the selected entity and direct connections, expand one additional level and restore prior graph/search scopes with bounded Back history.
+- [x] Keep all entities accessible in Overview/List and original papers available from the evidence panel and explicit paper selection.
+- [x] Draw one visual line per endpoint pair while retaining every original finding, active-claim navigation and source meaning.
+
 ### Sharing and review preparation
 
 - [x] Export the current graph and selected finding as a cited PNG; provide an evidence card in List mode or without WebGL.

@@ -8,8 +8,10 @@ import { ThemeControl } from './components/ThemeControl.tsx';
 import { EvidenceComparison } from './components/EvidenceComparison.tsx';
 import { ResearchBrief } from './components/ResearchBrief.tsx';
 import { Icon, TYPE_LABELS } from './components/ui.tsx';
-import { getClaimEvidence, getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
+import { getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
+import { buildExplorerGraph } from './lib/explorer-graph.ts';
+import type { GraphScope } from './lib/explorer-graph.ts';
 import { useReducedMotion } from './lib/useReducedMotion.ts';
 import { buildShareUrl, parseShareState } from './lib/share-state.ts';
 import type { ExplorerShareState } from './lib/share-state.ts';
@@ -58,6 +60,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const [selectedId, setSelectedId] = useState(initialState.entityId);
   const [selectedClaimId, setSelectedClaimId] = useState<string | null>(initialState.claimId);
   const [view, setView] = useState<'graph' | 'list'>(initialState.view);
+  const [graphMode, setGraphMode] = useState<GraphScope['mode']>('focus');
+  const [expanded, setExpanded] = useState(false);
+  const [trail, setTrail] = useState<GraphScope[]>([]);
   const [resetKey, setResetKey] = useState(0);
   const [zoomStep, setZoomStep] = useState(0);
   const [webglFailed, setWebglFailed] = useState(false);
@@ -138,7 +143,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     if (!claim) return;
     setWorkspace('explore');
     clearFilters();
-    setSelectedId(claim.subject_id);
+    focusEntity(claim.subject_id);
     setSelectedClaimId(claim.id);
     requestAnimationFrame(openEvidence);
   }
@@ -160,6 +165,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       if (['#explorer', '#experiment-workspace'].includes(window.location.hash)) return;
       const next = parseShareState(new URL(window.location.href), snapshot) ?? defaultState;
       setWorkspace('explore');
+      setGraphMode('focus');
+      setExpanded(false);
+      setTrail([]);
       setQuery(next.query);
       setFilter(next.filter);
       setSelectedId(next.entityId);
@@ -170,38 +178,55 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     return () => window.removeEventListener('hashchange', restore);
   }, [snapshot, defaultState, webglFailed]);
 
-  const graph = useMemo(() => {
-    const ids = new Set(matches.map(({ id }) => id));
-    if (query.trim() && filter === 'all') {
-      const contextClaims = matches.flatMap((entity) => getEntityClaims(snapshot, entity.id));
-      for (const claim of contextClaims) { ids.add(claim.subject_id); ids.add(claim.object_id); }
-      const sourceIds = new Set(contextClaims.flatMap((claim) => getClaimEvidence(snapshot, claim.id).map(({ source_id }) => source_id)));
-      for (const entity of snapshot.entities) {
-        if (entity.type === 'paper' && entity.source_id && sourceIds.has(entity.source_id)) ids.add(entity.id);
-      }
-    }
-    const claims = snapshot.claims.filter(({ subject_id, object_id }) => ids.has(subject_id) && ids.has(object_id));
-    const citationLinks = snapshot.entities.filter(({ type }) => type === 'paper').flatMap((paper) =>
-      snapshot.evidence.filter(({ source_id }) => source_id === paper.source_id).flatMap((evidence) => {
-        const claim = snapshot.claims.find(({ id }) => id === evidence.claim_id);
-        return claim && ids.has(paper.id) && ids.has(claim.subject_id)
-          ? [{ paperId: paper.id, entityId: claim.subject_id, claimId: claim.id }] : [];
-      }),
-    );
-    return { ids, claims, citationLinks, entities: snapshot.entities.filter(({ id }) => ids.has(id)) };
-  }, [snapshot, matches, query, filter]);
+  const graph = useMemo(() => buildExplorerGraph(snapshot, {
+    selectedId, selectedClaimId: activeClaim?.id ?? null, mode: graphMode, expanded, query, filter,
+  }), [snapshot, selectedId, activeClaim?.id, graphMode, expanded, query, filter]);
+
+  function rememberView() {
+    setTrail((current) => [...current.slice(-23), {
+      selectedId, selectedClaimId, mode: graphMode, expanded, query, filter,
+    }]);
+  }
+  function previousView() {
+    const previous = trail.at(-1);
+    if (!previous) return;
+    setTrail((current) => current.slice(0, -1));
+    setSelectedId(previous.selectedId);
+    setSelectedClaimId(previous.selectedClaimId);
+    setGraphMode(previous.mode);
+    setExpanded(previous.expanded);
+    setQuery(previous.query);
+    setFilter(previous.filter);
+  }
+  function focusEntity(id: string) {
+    selectEntity(id);
+    clearFilters();
+    setGraphMode('focus');
+  }
+  function showOverview() {
+    rememberView();
+    clearFilters();
+    setExpanded(false);
+    setGraphMode('overview');
+  }
 
   function selectEntity(id: string) {
+    if (id !== selectedId || graphMode !== 'focus' || filtered) rememberView();
+    setGraphMode('focus');
+    setExpanded(false);
     setSelectedId(id);
     setSelectedClaimId(null);
   }
   function selectClaim(id: string) {
     const claim = snapshot.claims.find((item) => item.id === id);
     if (!claim) return;
-    if (!getEntityClaims(snapshot, selectedId).some((item) => item.id === id)) setSelectedId(claim.subject_id);
+    if (!getEntityClaims(snapshot, selectedId).some((item) => item.id === id)) focusEntity(claim.subject_id);
     setSelectedClaimId(id);
   }
   function followConnection(entityId: string, claimId: string) {
+    if (entityId !== selectedId) rememberView();
+    setGraphMode('focus');
+    setExpanded(false);
     focusConnection.current = true;
     setQuery('');
     setFilter('all');
@@ -258,7 +283,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
             <button className="text-button" onClick={openAnalysis}>Analysis results<Icon name="arrow" size={14} /></button>
           </section>}
           <div className="explorer-tools">
-            <EntitySearch query={query} matches={matches} onQuery={setQuery} onSelect={selectEntity} />
+            <EntitySearch query={query} matches={matches} onQuery={setQuery} onSelect={focusEntity} />
             <div className="type-filter">
               <select aria-label="Filter by entity type" value={filter} onChange={(event) => setFilter(event.target.value as EntityType | 'all')}>
                 {FILTERS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
@@ -281,6 +306,18 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
               {filtered && <button className="clear-filters" onClick={clearFilters}>Clear filters</button>}
             </div>
 
+            {view === 'graph' && matches.length > 0 && <nav className="graph-navigation" aria-label="Graph navigation">
+              <button className="text-button" aria-label="Previous graph view" disabled={!trail.length} onClick={previousView}><Icon name="back" size={16} />Back</button>
+              <strong>{graph.focused ? `${selected.label} connections` : filtered ? 'Search results' : 'Overview'}</strong>
+              <div>
+                {graph.focused && graph.canExpand && <button className="text-button" aria-expanded={expanded} onClick={() => { rememberView(); setExpanded((value) => !value); }}>{expanded ? 'Collapse' : 'Expand connections'}</button>}
+                {graphMode === 'overview' || filtered
+                  ? <button className="text-button" onClick={() => focusEntity(selectedId)}>Focus selection</button>
+                  : <button className="text-button" onClick={showOverview}>Overview</button>}
+              </div>
+              <span className="sr-only" role="status">{graph.entities.length} entities in this graph view</span>
+            </nav>}
+
             <div className={`viewport ${view === 'list' ? 'list-mode' : ''}`}>
               {!matches.length ? (
                 <div className="empty-state" role="status">
@@ -291,17 +328,12 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
                 <>
                   <SceneBoundary onFail={unavailable}>
                     <Suspense fallback={<div className="scene-loading" role="status"><span className="loading-ring" />Loading graph…</div>}>
-                      <Galaxy entities={graph.entities} layoutEntities={snapshot.entities} claims={graph.claims}
-                        selectedId={selectedId} selectedClaimId={activeClaim?.id ?? null} onSelect={selectEntity}
+                      <Galaxy entities={graph.entities} layoutEntities={snapshot.entities} claims={graph.claims} focusId={graph.focused ? selectedId : null} directIds={graph.directIds}
+                        selectedId={selectedId} selectedClaimId={activeClaim?.id ?? null} onSelect={focusEntity}
                         onSelectClaim={selectClaim} reducedMotion={reducedMotion} resetKey={resetKey} zoomStep={zoomStep}
                         onUnavailable={unavailable} citationLinks={graph.citationLinks} onCaptureReady={receiveCapture} />
                     </Suspense>
                   </SceneBoundary>
-                  <div className="camera-controls" aria-label="Graph controls">
-                    <button className="icon-button" aria-label="Zoom in" title="Zoom in" onClick={() => setZoomStep((step) => step + 1)}><Icon name="plus" /></button>
-                    <button className="icon-button" aria-label="Zoom out" title="Zoom out" onClick={() => setZoomStep((step) => step - 1)}><Icon name="minus" /></button>
-                    <button className="icon-button" aria-label="Reset view" title="Reset view" onClick={() => setResetKey((key) => key + 1)}><Icon name="reset" size={17} /></button>
-                  </div>
                 </>
               ) : (
                 <div className="list-content">
@@ -325,7 +357,12 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
               <div className="entity-legend">
                 {(['gene', 'protein', 'pathway', 'disease', 'paper'] as const).map((type) => <span key={type}><i className={`type-dot ${type}`} />{TYPE_LABELS[type]}</span>)}
               </div>
-              <div className="edge-legend"><span><i />Claim</span><span><i className="citation-line" />Citation</span></div>
+              <div className="edge-legend"><span><i />Relationship</span>{graph.citationLinks.length > 0 && <span><i className="citation-line" />Citation</span>}</div>
+              <div className="camera-controls" aria-label="Graph controls">
+                <button className="icon-button" aria-label="Zoom in" title="Zoom in" onClick={() => setZoomStep((step) => step + 1)}><Icon name="plus" /></button>
+                <button className="icon-button" aria-label="Zoom out" title="Zoom out" onClick={() => setZoomStep((step) => step - 1)}><Icon name="minus" /></button>
+                <button className="icon-button" aria-label="Reset view" title="Reset view" onClick={() => setResetKey((key) => key + 1)}><Icon name="reset" size={17} /></button>
+              </div>
             </footer>}
           </section>
 

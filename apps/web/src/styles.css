@@ -177,6 +177,11 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .type-filter > svg { position: absolute; right: 12px; top: 16px; pointer-events: none; color: var(--icon); }
 .graph-card { border: 1px solid var(--border); background: var(--surface); border-radius: 12px; overflow: hidden; scroll-margin-top: 24px; }
 .graph-card:focus { outline: none; }
+.graph-navigation { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 5px 14px; border-bottom: 1px solid var(--border); }
+.graph-navigation > strong { font-size: 13px; font-weight: 550; min-width: 0; overflow-wrap: anywhere; }
+.graph-navigation > div { display: flex; gap: 12px; margin-left: auto; }
+.graph-navigation .text-button { min-height: 44px; flex-shrink: 0; font-size: 12px; }
+.graph-navigation button:disabled { opacity: .45; cursor: default; }
 .view-toolbar { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 13px 4px 18px; }
 .result-status { font-size: 12px; color: var(--muted); margin: 0; }
 .result-status span { color: var(--muted); }
@@ -188,11 +193,10 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .viewport { position: relative; height: clamp(470px, 62vh, 740px); background: radial-gradient(ellipse at 50% 48%, #152329, #0b1217 72%); overflow: hidden; }
 .scene-shell { width: 100%; height: 100%; }
 .scene-shell canvas { touch-action: none; }
-.camera-controls { position: absolute; right: 15px; top: 15px; display: flex; gap: 2px; padding: 3px; background: #182229e8; border: 1px solid #39474d; border-radius: 8px; }
-.camera-controls .icon-button { color: #bccfc8; width: 40px; height: 40px; }
-.camera-controls .icon-button:hover { background: #304139; color: #e9f8ed; }
-.camera-controls .icon-button:focus-visible { outline-color: #b4ddc5; }
-.graph-legend { min-height: 47px; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.camera-controls { display: flex; gap: 2px; margin-left: auto; border: 1px solid var(--border); border-radius: 7px; background: var(--subtle-surface); }
+.camera-controls .icon-button { color: var(--secondary-ink); width: 40px; height: 40px; }
+.camera-controls .icon-button:hover { background: var(--hover-surface); color: var(--accent); }
+.graph-legend { min-height: 47px; padding: 8px 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; }
 .entity-legend, .edge-legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 11px; color: var(--muted); }
 .entity-legend span, .edge-legend span { display: flex; align-items: center; gap: 7px; }
 .type-dot { height: 6px; width: 6px; background: #6b8e7a; border-radius: 50%; flex-shrink: 0; display: inline-block; }
@@ -481,12 +485,14 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
   .search-results button { font-size: 13px; gap: 8px; padding: 10px; }
   .search-results button small { font-size: 11px; }
   .view-toolbar { padding: 4px 9px 4px 12px; gap: 6px; }
+  .graph-navigation { flex-wrap: wrap; gap: 2px 12px; padding: 5px 12px; }
+  .graph-navigation > strong { flex: 1; }
+  .graph-navigation > div { flex-basis: 100%; justify-content: flex-end; }
   .result-status { font-size: 11px; }
   .clear-filters { font-size: 11px; padding: 0 3px; }
   .view-switch button { min-width: 0; padding: 0 8px; gap: 5px; font-size: 12px; }
   .view-switch button svg { width: 14px; }
   .viewport { height: 440px; }
-  .camera-controls { top: 12px; right: 12px; }
   .camera-controls .icon-button { width: 40px; height: 40px; }
   .graph-legend { padding: 11px 13px; min-height: 46px; gap: 8px; }
   .entity-legend { gap: 11px; }

@@ -11,6 +11,7 @@ import {
   LineBasicMaterial,
   LineDashedMaterial,
   Mesh,
+  Group,
   MeshBasicMaterial,
   PerspectiveCamera,
   QuadraticBezierCurve3,
@@ -21,7 +22,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { Claim, Entity } from '../lib/types.ts';
-import { createGalaxyLayout, decorativeStars, ENTITY_COLORS } from './galaxy-layout.ts';
+import { createGalaxyLayout, createFocusedLayout, decorativeStars, ENTITY_COLORS } from './galaxy-layout.ts';
 import type { Position } from './galaxy-layout.ts';
 
 export interface CitationLink {
@@ -43,6 +44,8 @@ export interface GalaxyProps {
   zoomStep?: number;
   citationLinks?: CitationLink[];
   layoutEntities?: Entity[];
+  focusId?: string | null;
+  directIds?: Set<string>;
   onUnavailable?: () => void;
   /** Copy the current camera view on demand without retaining the drawing buffer. */
   onCaptureReady?: (capture: (() => HTMLCanvasElement) | null) => void;
@@ -134,6 +137,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
 }) {
   const { gl, camera, size, invalidate } = useThree();
   const hovered = useRef(false);
+  const group = useRef<Group>(null);
   const sphere = useRef<Mesh>(null);
   const hitArea = useRef<Mesh>(null);
   const ring = useRef<Mesh>(null);
@@ -154,6 +158,8 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   useLayoutEffect(() => invalidate(), [selected, reducedMotion, size.width, quietLabel, invalidate]);
 
   useFrame((_, delta) => {
+    group.current?.position.set(...position);
+    worldPosition.set(...position);
     const alpha = reducedMotion ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 16);
     const emphasis = selected || hovered.current;
     const scale = selected ? 1.1 : hovered.current ? 1.15 : 1;
@@ -221,7 +227,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
     if (event.delta <= 4) onSelect(entity.id);
   }
 
-  return <group position={position}>
+  return <group ref={group} position={position}>
     <sprite scale={[radius * 8, radius * 8, 1]} raycast={() => {}}>
       <spriteMaterial ref={glowMaterial} map={glow} color={ENTITY_COLORS[entity.type]} opacity={initial.current.glow} blending={AdditiveBlending} depthWrite={false} />
     </sprite>
@@ -264,6 +270,8 @@ function Connection({ start, end, selected, citation, index, onClick, reducedMot
     return new BufferGeometry().setFromPoints(new QuadraticBezierCurve3(from, middle, to).getPoints(60));
   }, [start, end, citation, index]);
   useEffect(() => () => geometry.dispose(), [geometry]);
+  const lastEndpoints = useRef([...start, ...end]);
+  const curve = useMemo(() => new QuadraticBezierCurve3(new Vector3(), new Vector3(), new Vector3()), []);
   const material = useMemo(() => citation
     ? new LineDashedMaterial({ color: '#728ba6', transparent: true, opacity: 0.25, dashSize: 0.045, gapSize: 0.075, depthWrite: false })
     : new LineBasicMaterial({ color: '#7ca99b', transparent: true, opacity: 0.4, depthWrite: false }), [citation]);
@@ -277,6 +285,18 @@ function Connection({ start, end, selected, citation, index, onClick, reducedMot
   useLayoutEffect(() => invalidate(), [selected, reducedMotion, invalidate]);
 
   useFrame((_, delta) => {
+    if ([...start, ...end].some((value, index) => value !== lastEndpoints.current[index])) {
+      curve.v0.set(...start);
+      curve.v2.set(...end);
+      curve.v1.copy(curve.v0).lerp(curve.v2, 0.5);
+      const perpendicular = new Vector3(-(end[1] - start[1]), end[0] - start[0], 0).normalize();
+      curve.v1.addScaledVector(perpendicular, citation ? 0.08 : 0.23 + (index % 3) * 0.19);
+      curve.v1.z += citation ? -0.18 : 0.25;
+      geometry.setFromPoints(curve.getPoints(60));
+      line.computeLineDistances();
+      geometry.computeBoundingSphere();
+      lastEndpoints.current = [...start, ...end];
+    }
     const active = selected || hovered.current;
     const alpha = reducedMotion ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 14);
     const opacity = active ? (citation ? 0.68 : 0.9) : (citation ? 0.25 : 0.4);
@@ -333,8 +353,8 @@ function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep =
 }) {
   const { camera, gl, invalidate, raycaster, size } = useThree();
   const controls = useRef<OrbitControls | null>(null);
-  const target = useRef<{ camera: Vector3; center: Vector3 } | null>(null);
-  const previous = useRef({ initialized: false, selectedId, resetKey, zoomStep, width: size.width, height: size.height });
+  const target = useRef<{ camera: Vector3; center: Vector3; startedAt: number } | null>(null);
+  const previous = useRef({ initialized: false, selectedId, positions, resetKey, zoomStep, width: size.width, height: size.height });
   const rememberedCenter = useRef(new Vector3());
   const unavailableCallback = useRef(onUnavailable);
   useEffect(() => { unavailableCallback.current = onUnavailable; }, [onUnavailable]);
@@ -376,15 +396,22 @@ function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep =
     const resized = previous.current.width !== size.width || previous.current.height !== size.height;
     const zoomDelta = zoomStep - previous.current.zoomStep;
     const selectionChanged = previous.current.selectedId !== selectedId;
-    previous.current = { initialized: true, selectedId, resetKey, zoomStep, width: size.width, height: size.height };
+    const layoutChanged = previous.current.positions !== positions;
+    previous.current = { initialized: true, selectedId, positions, resetKey, zoomStep, width: size.width, height: size.height };
     const aspect = size.width / Math.max(size.height, 1);
     const halfFov = camera instanceof PerspectiveCamera ? camera.fov * Math.PI / 360 : 23 * Math.PI / 180;
-    const fitDistance = Math.min(42, Math.max(13.5, 7.2 / (Math.tan(halfFov) * aspect)));
+    const points = [...positions.values()];
+    const minX = Math.min(0, ...points.map(([x]) => x));
+    const maxX = Math.max(0, ...points.map(([x]) => x));
+    const minY = Math.min(0, ...points.map(([, y]) => y));
+    const maxY = Math.max(0, ...points.map(([, y]) => y));
+    const fittedCenter = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, 0);
+    const fitDistance = Math.min(42, Math.max(10, (maxY - minY + 3) / 2 / Math.tan(halfFov), (maxX - minX + 4) / 2 / (Math.tan(halfFov) * aspect)));
     const center = orbit.target.clone();
     const offset = camera.position.clone().sub(orbit.target);
 
-    if (initial || reset) {
-      center.set(0, 0, 0);
+    if (initial || reset || layoutChanged) {
+      center.copy(fittedCenter);
       offset.set(0, 0.3, fitDistance);
     } else if (resized) {
       offset.setLength(fitDistance);
@@ -409,7 +436,7 @@ function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep =
       orbit.target.copy(center);
       target.current = null;
       orbit.update();
-    } else target.current = { camera: destination, center };
+    } else target.current = { camera: destination, center, startedAt: performance.now() };
     invalidate();
   }, [selectedId, positions, resetKey, zoomStep, reducedMotion, camera, invalidate, size.width, size.height]);
 
@@ -417,7 +444,7 @@ function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep =
     const orbit = controls.current;
     const destination = target.current;
     if (orbit && destination) {
-      const step = 1 - Math.exp(-Math.min(delta, 0.05) * 9);
+      const step = performance.now() - destination.startedAt >= 550 ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 9);
       camera.position.lerp(destination.camera, step);
       orbit.target.lerp(destination.center, step);
       if (camera.position.distanceTo(destination.camera) < 0.005 && orbit.target.distanceTo(destination.center) < 0.005) {
@@ -434,12 +461,38 @@ function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep =
 function Scene(props: GalaxyProps) {
   const { entities, claims, selectedId, selectedClaimId, onSelect, onSelectClaim, citationLinks = [] } = props;
   const layoutEntities = props.layoutEntities ?? entities;
-  const positions = useMemo(() => createGalaxyLayout(layoutEntities), [layoutEntities]);
+  const entityKey = entities.map(({ id }) => id).join('|');
+  const directKey = props.focusId ? [...(props.directIds ?? [])].sort().join('|') : '';
+  const visibleIds = useMemo(() => new Set(entityKey.split('|')), [entityKey]);
+  const targets = useMemo(() => props.focusId
+    ? createFocusedLayout(layoutEntities.filter(({ id }) => visibleIds.has(id)), props.focusId, new Set(directKey.split('|')))
+    : createGalaxyLayout(layoutEntities), [layoutEntities, visibleIds, props.focusId, directKey]);
+  const live = useRef(new Map<string, Position>());
+  const positions = live.current;
+  for (const [id, position] of targets) {
+    if (!positions.has(id)) positions.set(id, [...position]);
+  }
+  for (const id of positions.keys()) { if (!targets.has(id)) positions.delete(id); }
+  const { invalidate } = useThree();
+  const layoutStartedAt = useRef(0);
+  useLayoutEffect(() => { layoutStartedAt.current = performance.now(); invalidate(); }, [targets, invalidate]);
+  useFrame((_, delta) => {
+    const alpha = props.reducedMotion || performance.now() - layoutStartedAt.current >= 450 ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 12);
+    let moving = false;
+    for (const [id, destination] of targets) {
+      const point = positions.get(id)!;
+      for (const axis of [0, 1, 2] as const) {
+        point[axis] = approach(point[axis], destination[axis], alpha);
+        moving ||= point[axis] !== destination[axis];
+      }
+    }
+    if (moving) invalidate();
+  }, -2);
   const glow = useMemo(makeGlow, []);
   useEffect(() => () => glow.dispose(), [glow]);
   return <>
     <Capture onReady={props.onCaptureReady} />
-    <Navigation selectedId={selectedId} positions={positions} reducedMotion={props.reducedMotion} resetKey={props.resetKey} zoomStep={props.zoomStep} onUnavailable={props.onUnavailable} />
+    <Navigation selectedId={selectedId} positions={targets} reducedMotion={props.reducedMotion} resetKey={props.resetKey} zoomStep={props.zoomStep} onUnavailable={props.onUnavailable} />
     <Stars />
     {claims.map((claim, index) => {
       const start = positions.get(claim.subject_id);

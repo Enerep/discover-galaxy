@@ -2152,6 +2152,76 @@ def assert_scavenger_evidence(browser, base_url: str, screenshots: Path) -> None
     print('PASS: MARCO, SCARA5 and APOB are searchable in the graph/list, retain separate protein identities and scoped citations, and connect through the scavenger pathway to APOE on desktop/mobile/fallback.')
 
 
+def assert_focused_graph(browser, base_url: str, screenshots: Path) -> None:
+    for mobile in [False, True]:
+        context = browser.new_context(viewport={"width": 360 if mobile else 1440, "height": 900 if mobile else 1000},
+                                      color_scheme="dark" if mobile else "light", reduced_motion="reduce" if mobile else "no-preference",
+                                      is_mobile=mobile, has_touch=mobile)
+        context.add_init_script(RENDER_COUNTERS)
+        page = context.new_page()
+        errors = []
+        page.on("pageerror", lambda error: errors.append(str(error)))
+        page.goto(base_url, wait_until="networkidle")
+        expect(page.locator("canvas")).to_be_visible()
+        navigation = page.get_by_role("navigation", name="Graph navigation")
+        expect(navigation).to_contain_text("APOE connections")
+        expect(navigation.get_by_role("status")).to_have_text("3 entities in this graph view")
+        back = navigation.get_by_role("button", name="Previous graph view")
+        expect(back).to_be_disabled()
+        page.wait_for_timeout(700)
+        canvas = page.locator("canvas").bounding_box()
+        assert canvas is not None
+        page.mouse.click(canvas["x"] + canvas["width"] / 2, canvas["y"] + canvas["height"] * .175)
+        expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
+        back.click()
+        expect(page.locator(".selected-title")).to_have_text("APOE")
+        expect(back).to_be_disabled()
+        expand = navigation.get_by_role("button", name="Expand connections", exact=True)
+        assert_touch_target(expand)
+        expand.click()
+        expect(navigation.get_by_role("button", name="Collapse", exact=True)).to_have_attribute("aria-expanded", "true")
+        assert navigation.get_by_role("status").inner_text() != "3 entities in this graph view"
+        assert_idle(page, "Expanded focused graph")
+        page.screenshot(path=str(screenshots / ("focus-expanded-mobile.png" if mobile else "focus-expanded.png")), full_page=True)
+        back.click()
+        expect(navigation.get_by_role("status")).to_have_text("3 entities in this graph view")
+        expect(expand).to_have_attribute("aria-expanded", "false")
+        navigation.get_by_role("button", name="Overview", exact=True).click()
+        expect(navigation.get_by_role("status")).to_have_text(f"{ENTITY_COUNT} entities in this graph view")
+        navigation.get_by_role("button", name="Focus selection", exact=True).click()
+        expect(navigation.get_by_role("status")).to_have_text("3 entities in this graph view")
+        search = page.get_by_role("combobox", name="Search entities")
+        search.fill("protein-trem2")
+        search.press("Enter")
+        expect(page.locator(".selected-title")).to_have_text("TREM2 protein")
+        expect(navigation).to_contain_text("TREM2 protein connections")
+        binding_claims = page.locator(".claim-button").count()
+        assert binding_claims >= 5
+        back.click()
+        expect(page.locator(".selected-title")).to_have_text("APOE")
+        # Back restores the search that led to the selected protein.
+        expect(search).to_have_value("protein-trem2")
+        search.press("Escape")
+        search.fill("paper-corder-1994")
+        search.press("Enter")
+        expect(page.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/7920638/")
+        expect(page.locator(".edge-legend")).to_contain_text("Citation")
+        page.get_by_role("button", name="List view", exact=True).click()
+        expect(page.locator(".entity-row")).to_have_count(ENTITY_COUNT)
+        row = page.locator('.entity-row[data-entity-id="gene-col1a1"]')
+        row.focus()
+        page.keyboard.press("Enter")
+        expect(page.locator(".selected-title")).to_have_text("COL1A1")
+        page.get_by_role("button", name="Graph view", exact=True).click()
+        expect(navigation).to_contain_text("COL1A1 connections")
+        assert_idle(page, "Focused gene graph")
+        assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+        page.screenshot(path=str(screenshots / ("focus-mobile.png" if mobile else "focus-desktop.png")), full_page=True)
+        assert not errors, errors
+        context.close()
+    print("PASS: focused graph, bounded expansion, Back/search restoration, overview, paper citations and complete keyboard list in desktop/mobile themes.")
+
+
 def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path | None = None) -> None:
     screenshots.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
@@ -2192,10 +2262,13 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_idle(page, "Initial graph")
         page.screenshot(path=str(screenshots / "desktop.png"), full_page=True)
 
-        # The deterministic initial camera centers the disease at the origin.
+        # Focus starts with APOE at the origin; canvas picking preserves it.
         canvas = page.locator("canvas").bounding_box()
         assert canvas is not None
         page.mouse.click(canvas["x"] + canvas["width"] / 2, canvas["y"] + canvas["height"] / 2)
+        expect(page.locator(".selected-title")).to_have_text("APOE")
+        search.fill("Alzheimer's disease")
+        search.press("Enter")
         expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
         expect(page.locator(".claim-button")).to_have_count(4)
 
@@ -2449,6 +2522,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(native_dialog.get_by_role("alert")).to_have_count(0)
         expect(native_dialog).to_be_visible()
         print("PASS: supported native sharing receives a real PNG; cancelling the native sheet is not an error.")
+        assert_focused_graph(browser, base_url, screenshots)
         assert_share_links(browser, base_url, screenshots)
         assert_export_retry(browser, base_url, screenshots)
         assert_themes(browser, base_url, screenshots)
