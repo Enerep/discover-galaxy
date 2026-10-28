@@ -76,13 +76,17 @@ Use the [design guide](design.md) as a standing implementation and review standa
 
 Motion should clarify a state change, remain interruptible, and settle when interaction ends. Respect reduced-motion preferences and keep keyboard and touch flows complete. A cleaner interface must preserve source-specific context and visible development status. Browser checks must verify the implemented behavior before it is reported as complete.
 
-## ADR-008 — Use master as the default working branch
+## ADR-008 — Use feature branches and requests targeting master
 
 **Date:** 2026-10-20
 
+**Updated:** 2026-10-28
+
 **Status:** Accepted
 
-The repository's default branch is `master`, as explicitly specified by the user. Base work on the fetched `origin/master` and push `master` when authorized. Do not create or switch to `main`; use a feature branch only when explicitly requested. Preserve merged remote work and inspect branch state before editing or pushing.
+The repository's default and merge-target branch is `master`, as explicitly specified by the user. Start a feature branch from the fetched `origin/master`, commit and push that branch, then open a pull request (PR, also called a merge request/MR) targeting `master`. Never commit or push directly to `master`, and do not create `main`. Merge a request only when the user explicitly authorizes the merge. Preserve merged remote work and inspect branch state before editing or pushing.
+
+This supersedes the earlier direct-to-master workflow at the owner's request on 2026-10-28. GitHub calls the review artifact a pull request; the owner's term MR refers to the same workflow here.
 
 ## ADR-009 — License original software and documentation under MIT
 

@@ -37,7 +37,7 @@ The source-checked development journey is usable now; structural checks never ma
 
 ### Explorer UX refinement
 
-- [x] Record [standing design requirements](docs/design.md) and make `master` the explicit default working branch in the agent guide.
+- [x] Record [standing design requirements](docs/design.md) and make `master` the explicit default and merge-target branch in the agent guide.
 - [x] Simplify the workspace to one search field, one type filter, one Graph/List switch, and a readable evidence panel.
 - [x] Put original-paper links before detailed study metadata; preserve claim context and limitations in disclosures.
 - [x] Add keyboard search-result navigation, visible zoom/reset controls, and explicit mobile evidence/back navigation without automatic page scrolling.
@@ -55,6 +55,13 @@ The source-checked development journey is usable now; structural checks never ma
 
 - [x] Add an accessible `?` beside Explore and Analyze results, with purpose, concrete examples and analysis terms available on demand.
 - [x] Preserve active selection and pending/applied work while help is open; keep references lazy and use native dialog keyboard behavior.
+
+### Contributions and the next research checkpoint
+
+- [x] Document feature branches and PRs/MRs targeting `master`, replacing the former direct-push workflow.
+- [x] Refresh the contribution guide and add bug, evidence-proposal and pull-request templates with concrete starter tasks and checks by scope.
+- [x] Link the XERJ selection/licence acknowledgement to its pinned repository snapshot, without claiming a prebuilt hub pack or endorsement of scientific findings.
+- [ ] Pilot [comparison of possible explanations](docs/checkpoints.md#proposed-pilot-compare-possible-explanations) for one analyzed pathway, with inspected original-paper premises, actual measurements, explicit unknowns and a distinguishing test.
 
 ### Sharing and review preparation
 
@@ -138,10 +145,10 @@ Snapshot 0.5.0 adds Lessard 2018's scoped APOE3 BLI finding and one source-check
 
 ## M2 — Deliver the curated Alzheimer's explorer
 
-Future content work can continue from the 33-finding source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
+Future content work can continue from the 41-claim source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
 
-- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 32 total, with scope and original references retained.
-- [x] Add two human Reactome pathways and seven distinct proteins with source-linked participation and state context; variant nodes remain deferred.
+- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 40 total, with scope and original references retained.
+- [x] Represent three human Reactome pathways and fourteen distinct proteins, retaining source-linked participation and state context where applicable; variant nodes remain deferred.
 - [x] Record access dates, observed entry versions where obtained, attribution, source context and actual check status. Exact Reactome release provenance remains unresolved.
 - [x] Expose all current entity types in one filter, with active state visible.
 - [ ] Add relationship/evidence filters when a concrete research task requires them.
@@ -196,7 +203,7 @@ Start only when multi-user curation, larger queries, frequent updates, or anothe
 - [x] Choose the [MIT License](LICENSE) for original software and project-authored documentation.
 - [ ] Verify scientific source terms and attribution separately from the software license.
 - [ ] Verify keyboard/list access, reduced motion, WebGL fallback, search, and reference links.
-- [ ] Run the implemented data checks, typecheck, lint, relevant tests, and production build; record results.
+- [ ] Run the implemented data checks, typecheck, relevant tests and production build; record results. No lint command is implemented.
 - [ ] Document the actual local setup and known limitations. Keep private keys and unreviewed data out of distributed assets.
 
 Hosting and scientific release are separate actions. The owner reports a working Vercel development preview; no backend is implemented. A hosted preview does not complete the scientific release criteria above.

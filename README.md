@@ -73,13 +73,14 @@ Inputs are limited to 5 MiB and 50,000 rows. Symbols match exactly. Ensembl IDs 
 
 ## Run locally
 
-**`master` is the default branch.** Start from `origin/master` and push work to `master`; this repository does not use `main`.
+**`master` is the default branch and merge target.** Start a feature branch from the fetched `origin/master` and open a pull request (merge request/MR) targeting `master`. Commit and push the feature branch; do not work directly on `master`. This repository does not use `main`.
 
 Use **Node.js 24** and **npm 11.9.x**. From the repository root:
 
 ```sh
 npm run check:dependencies
 npm ci --ignore-scripts
+npm audit
 npm run dev
 ```
 
@@ -154,7 +155,7 @@ Broad disease coverage, automatic literature ingestion, automatic contradiction 
 | --- | --- | --- |
 | Interface | React, TypeScript, Vite | A small interactive app with a clear data contract |
 | 3D visualization | Three.js through React Three Fiber; native OrbitControls | Integrates the scene with React without an extra helper dependency |
-| Knowledge data | Versioned, reviewed JSON snapshot | Makes a 20–50 entity graph reproducible and inspectable |
+| Knowledge data | Versioned, source-checked JSON snapshot | Makes a 20–50 entity graph reproducible and inspectable |
 | Data tooling | Native Node.js/TypeScript tools now; Python and NetworkX when needed | Reuse the data contract for validation, review packets, and candidate staging |
 | API, when needed | Python and FastAPI | Support controlled retrieval and server-side AI calls |
 | Storage, when needed | PostgreSQL | Persist provenance and support updates beyond snapshots |
@@ -169,7 +170,13 @@ This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direct
 | [Reactome](https://reactome.org/) | Find pathway definitions, stable identifiers, and supporting references |
 | [OpenAlex](https://openalex.org/) | Resolve literature metadata and discover candidate papers |
 
-These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; Open Targets and Reactome adapters remain planned. Verify current access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
+These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; bounded UniProt, Reactome and Open Targets annotation adapters support archived-response replay. Successful live API access remains unverified here. Verify access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
+
+## Contributing and community
+
+Contributions are welcome for input compatibility, accessible exploration and source-backed evidence. The [contribution guide](CONTRIBUTING.md) has concrete starter tasks, local setup and checks by change type. Use the [bug report](https://github.com/Enerep/discover-galaxy/issues/new?template=bug_report.md) or [evidence proposal](https://github.com/Enerep/discover-galaxy/issues/new?template=evidence_proposal.md) templates to share a reproducible problem or a precise source.
+
+Selected for the [XERJ Corpus Hub](https://hub.xerj.org/corpus/enerep--discover-galaxy), with licence clearance under MIT with credit. The listing pins repository snapshot [67b58cfc5e](https://github.com/Enerep/discover-galaxy/commit/67b58cfc5ec704d8291a23c22f22c1d586e044d2) (2026-10-24) and highlights the public AD/airway validation tooling.
 
 ## Repository guide
 
@@ -189,7 +196,7 @@ These resources help find and contextualize evidence. Database associations, met
 | [Dataset change log](data/alzheimers/CHANGELOG.md) | Versioned content additions and inspection locations |
 | [AD review packet](data/alzheimers/review-packet.md) | Current findings, source-specific context, and outstanding review tasks |
 | [Candidate-source coverage](data/alzheimers/candidate-coverage.md) | Six staged publications, reading questions, provenance, and checks before a dataset diff |
-| [Curation tools](tools/curation/README.md) | Bounded OpenAlex metadata intake and its staging boundary |
+| [Curation tools](tools/curation/README.md) | Scientific metadata/annotation intake, staging boundaries and reproducible packets |
 | [Verification record](docs/verification.md) | Observed checks, browser coverage, and limitations |
 | [Decision log](docs/decisions.md) | Why the main technical choices were made |
 | [LICENSE](LICENSE) | MIT license for original software and project documentation |

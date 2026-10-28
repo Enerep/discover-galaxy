@@ -40,6 +40,21 @@ A `?` beside each workspace explains its purpose on demand. Explore’s example 
 
 Use the public preview with actual processed research tables and refine input compatibility and interpretation from observed use. Expand curated gene evidence where those inputs reveal useful coverage gaps, with source-specific review. Rank-based analysis, gene-length/expression selection-bias correction and broader curated disease evidence require separate methods/data work; none is implied by completing the preview. More sharing features and extra nodes are not the current priority.
 
+### Proposed pilot: compare possible explanations
+
+Build on the existing follow-up questions for one analyzed pathway. In an explicitly recorded bulk-tissue context, a useful example is a change in cell-type composition versus RNA changes within the same cell type. A processed differential-expression table alone cannot distinguish those possibilities. This pilot is planned, not implemented.
+
+1. Show the actual applied gene measurements, pathway overlap and cutoffs that prompted the question.
+2. Present two possible explanations with cited premises, assumptions and missing information. Source-check the original papers needed for the pilot; the existing selective library may not supply them. Keep gene-expression observations separate from protein assays and database annotations.
+3. Suggest a measurement or control that could distinguish the explanations, such as measuring cell proportions alongside cell-specific expression. Do not infer composition, pathway activity, causality, novelty or a winning explanation from the uploaded table.
+4. Preserve exact source navigation, applied results and tab-only privacy. Start with explicit, source-linked rules; no AI service or live provider request is required. Expand evidence where this concrete task needs it rather than adding unrelated nodes.
+
+The first contribution paths support this work: input-compatibility reproductions, accessible analysis/evidence navigation and one original-paper extraction from the staged reading list. See [Contributing](../CONTRIBUTING.md) for scope-specific checks and the feature-branch → PR/MR → `master` workflow.
+
+## Completed checkpoint: contribution entry points
+
+The contribution guide now reflects the 40-entity/41-claim preview, current staging tools and the distinction between source-checked development and future scientific release. Bug/evidence-proposal templates and a pull-request template provide concrete entry points. All work uses feature branches with requests targeting `master`; the default branch remains `master`. The README acknowledges selection and licence clearance for XERJ's pinned 2026-10-24 repository snapshot and its highlighted AD/airway validation work.
+
 ## Completed expansion: genes from a public AD pathway result
 
 Snapshot 0.6.0 adds MARCO and SCARA5, which pass the applied cutoffs in the public MAYO input's leading scavenger-receptor pathway. APOB provides ligand context for two original Cheng 2021 ELISA findings; three genes, separate proteins, the pathway and a paper add eight nodes. Four attributed participation records join the branch to existing APOE evidence. The 3D/list explorer and analysis evidence links use these records without changing the broad reference or numerical results. [The change record](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-060--2026-10-24) retains identity provenance, mouse inference, modified/domain constructs, repeat units and reuse limits. No new AD-risk, activity, cure or novelty claim is inferred from gene selection.
