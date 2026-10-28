@@ -8,7 +8,7 @@ This file is the canonical agent guide. [agent.md](agent.md) exists as a human-f
 
 ## Branch policy
 
-**`master` is the default branch.** Fetch and start from `origin/master`, keep this work on `master`, and push `master` when the user authorizes a push. Do not create or switch to `main`. Use a separate feature branch only when the user explicitly requests one. Preserve remote changes and inspect the current branch before editing or pushing.
+**`master` is the default and merge-target branch.** Fetch `origin/master`, then create a feature branch before editing. Commit and push the feature branch and open a pull request (PR, also called a merge request/MR) targeting `master`. Never commit or push directly to `master`, and do not create `main`. Merge a request only when the user explicitly authorizes the merge. Preserve remote changes and inspect branch state before editing or pushing. This workflow supersedes the earlier direct-to-master preference.
 
 ## Design standard
 

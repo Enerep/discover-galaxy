@@ -1,5 +1,13 @@
 # Development preview verification
 
+## Contribution workflow and XERJ acknowledgement — 2026-10-28
+
+The contribution guide now matches the 40-entity/41-claim research preview and current staging tools. Two issue templates cover reproducible bugs and precise evidence proposals; a pull-request template requests the resulting change, actual validation and relevant source/data scope. AGENTS, README and ADR-008 consistently require feature branches and PRs/MRs targeting `master`; opening a request does not authorize merging it. Setup retains script-disabled installs and the existing audit-before-tooling requirement. The proposed one-pathway comparison of possible explanations is recorded as future work, not an implemented feature.
+
+The owner supplied the XERJ page text stating selection and licence clearance under MIT with credit, with agreement dated 2026-10-25 and repository snapshot `67b58cfc5ec704d8291a23c22f22c1d586e044d2` dated 2026-10-24. The snapshot commit and its highlighted AD/airway validation tooling were checked in Git history. The exact page remained unavailable through this environment's web reader; the acknowledgement relies on the supplied text and does not claim a downloadable prebuilt pack. No XERJ installer or indexing service was run.
+
+Local Markdown file paths/heading anchors resolve, both issue-template frontmatters parse, the PR template exists, documented npm scripts match package.json, current snapshot counts agree and `git diff --check` passes. Repository metadata confirms `master` is the default and Issues are enabled. Review corrected an ambiguous direct-master exception and retained `npm audit` in setup. Application code, scientific records, numerical references and dependencies are unchanged, so application/browser tests were not rerun for this documentation/template-only change. The GitHub issue chooser will pick up the templates after the MR is merged.
+
 ## On-demand workspace help — 2026-10-25
 
 A small `?` beside each workspace opens its own native dialog. Explore describes source-linked navigation and follows the existing APOE gene → protein → pathway/binding workflow. Analyze results describes processed full-table input, supplied gene FDR, signed log₂ fold change and calculated pathway FDR. Its concrete example matches the authored demonstration: APOE +2.1 / 0.008, 120 tested genes, 12 selected and 10 selected members of a pathway containing 13 tested genes. Human pathway analysis and the AD-focused curated evidence library remain distinct. These explanations appear only on request.

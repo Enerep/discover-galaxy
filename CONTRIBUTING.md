@@ -1,55 +1,69 @@
 # Contributing
 
-Read [README.md](README.md) and [steps.md](steps.md) to understand the current milestone. Coding agents should also read [AGENTS.md](AGENTS.md).
+Discovery Galaxy helps researchers interpret processed human RNA-seq results and explore an Alzheimer's-focused evidence library. The public research preview currently contains 40 entities, 41 cited claims and a separate broad Reactome analysis reference. Start with [README.md](README.md), [checkpoints](docs/checkpoints.md) and the relevant [architecture](docs/architecture.md) or [evidence policy](docs/evidence-policy.md). Coding agents must also read [AGENTS.md](AGENTS.md).
 
-## Making changes
+## Choose a useful first contribution
 
-1. Identify the milestone and the smallest useful change. Check the product and architecture documents before expanding scope.
-2. Implement the change and update any affected contracts, setup instructions, and milestone checkboxes.
-3. Validate the result with checks that actually exist in the repository.
-4. Describe the resulting behavior, validation, and any remaining limitations for review.
+| Contribution | A concrete starting point | Include in the request |
+| --- | --- | --- |
+| Input compatibility | Reproduce a CSV/TSV parsing problem using a small synthetic table, then fix it without changing the eligible background or supplied statistics. | Column names, minimal input, expected/observed behavior and the relevant parser checks. |
+| Accessible exploration | Try **Analyze results → Try example**, follow a gene into Explore, and return to the applied result using keyboard, touch or List mode. | Browser, viewport, exact interaction and the observed problem; screenshots when useful. |
+| Scientific evidence | Extract one finding from the [six staged publications](data/alzheimers/candidate-coverage.md), preserving its gene/protein identity and assay scope. | Original source and inspected locator, model/species, readout, replicate units, unknowns, access/reuse terms and the proposed draft record. |
 
-The local React application and its engineering checks now exist. The eight-entity development snapshot remains scientifically unapproved; no deployment or public scientific release is implied by a successful build.
+A useful bug report or precise source proposal is also a contribution. Use the [bug report](https://github.com/Enerep/discover-galaxy/issues/new?template=bug_report.md) or [evidence proposal](https://github.com/Enerep/discover-galaxy/issues/new?template=evidence_proposal.md) template. Keep private research tables, personal information and credentials out of public reports; use a minimal synthetic reproduction where possible.
 
-## Local setup and checks
+## Branches and pull requests
 
-Use Node 24 (`.nvmrc`) and npm 11.9.0. Run commands from the repository root; npm workspaces route the frontend tasks to `apps/web/`. Read the [dependency security policy](docs/npm-security.md) before installation or dependency changes.
+`master` remains the default branch and merge target. Work on a feature branch and open a pull request (PR, also called a merge request/MR) against `master`; do not commit or push directly to `master`. The repository does not use `main`.
+
+```sh
+git fetch origin
+git switch -c your-change origin/master
+```
+
+Choose the smallest useful change, preserve existing behavior and update affected documentation. Commit and push your feature branch, then describe the problem, resulting behavior and actual validation in the request. Keep unrelated dependency, scientific-data and interface changes separate. Maintainers merge through the request after review; opening one does not authorize merging it.
+
+## Local setup
+
+Use Node 24 (`.nvmrc`), npm 11.9.x and Python 3 (standard library) for native tests and offline reference/curation checks. Run commands from the repository root; npm workspaces route frontend tasks to `apps/web/`. Read the [dependency security policy](docs/npm-security.md) before installation or dependency changes.
 
 ```sh
 npm ci --ignore-scripts
 npm run check:dependencies
 npm audit
-npm run validate:data
-npm test
-npm run build
 npm run dev
 ```
 
-`npm run build` includes TypeScript checking. `npm run typecheck` runs that check alone, and `npm run preview` serves the built frontend. The development command starts Vite on port 5173 by default; use the URL it reports. Installation lifecycle scripts stay disabled; explicit reviewed project commands still execute their named scripts.
+Vite normally starts on port 5173; use the URL it reports. No scientific API, backend or AI credential is required. Installation lifecycle scripts stay disabled; explicit reviewed project commands still execute their named scripts.
 
-`npm run validate:data` permits structurally valid draft records and reports review warnings. `npm run validate:release` must fail for the current starter: approved human scientific review, reuse and publication-status checks, and the 20–50 entity release target remain incomplete. Do not change review fields merely to make this command pass.
+## Checks by change type
 
-For dependency updates, inspect the lockfile diff and use `npm run check:dependencies -- --metadata` with registry network access to check publication dates against the reviewed cutoff. The optional known-IOC comparison and its tests use Python's standard library:
+| Changed area | Validation |
+| --- | --- |
+| Documentation/templates | Review local links, identifiers, current status and consistency; run `git diff --check`. Application tests are unnecessary when no application behavior changes. |
+| Application behavior | Run `npm test` and `npm run build`; exercise affected browser flows. `build` includes TypeScript checking; `npm run typecheck` is available separately. |
+| Analysis or identifier/reference behavior | Also run `npm run reference:check` and verify that eligible background, supplied gene statistics, full pathway-BH family and input privacy remain correct. |
+| Scientific snapshot | Run `npm run validate:data` and `npm run curation:check`; regenerate the review packet when its source changes. Check/regenerate candidate coverage or the annotation seed when those inputs change. See [curation commands](tools/curation/README.md). |
+| Dependencies | Inspect package/lockfile changes, run `npm run check:dependencies -- --metadata` with registry access and `npm audit`, and follow the exact-pin, release-age and script-disabled [security workflow](docs/npm-security.md). |
 
-```sh
-python tools/security/check-iocs.py
-python -m unittest discover -s tools/security -p 'test_*.py'
-```
+`npm run preview` serves a production build. There is no lint command. Report which checks actually ran and any access or environment limits; do not describe a successful build as browser or scientific verification.
 
-The IOC comparison fetches pinned historical feeds unless an offline feed directory is supplied. Its limits and exit codes are documented in the [security policy](docs/npm-security.md). These checks do not substitute for source review or current advisory checks.
+`npm run validate:data` permits valid draft records and reports review warnings. `npm run validate:release` deliberately rejects the current development snapshot because scientific approval and source/release checks remain outstanding. The 20–50 entity size target is already met; never edit review fields merely to make the release gate pass.
 
 ## Scientific content
 
-Follow the [evidence policy](docs/evidence-policy.md) and [data model](docs/data-model.md). A content change should include stable entity identifiers, exact claims, original references, study context, provenance, and review status. Verify that sources support the wording being presented. Keep uncertainty and conflicting findings visible.
+Follow the [evidence policy](docs/evidence-policy.md) and [data model](docs/data-model.md). A content change needs stable entity identifiers, precise claims, original references, inspected locations, study context, provenance and actual review status. Keep gene, protein, variant and molecular-state identities distinct. Preserve uncertainty, database inference, publication identity and source-specific replicate units.
 
-Code review and AI-assisted source lookup do not establish scientific validity. Record an independent human scientific content review before including a claim in a public snapshot. Retain the development starter's draft status and lookup limitations until that review is completed. Do not use realistic invented citations as demo content. Synthetic fixtures belong in isolated test data and must be labeled.
+Source-checked draft additions can enter the labeled development preview after a reviewable source/data diff. Independent scientific review is a separate future release milestone; it does not block source-checked development or hosting. Retain draft status, actual lookup limits and unresolved fields, and never invent a reviewer or set `human_reviewed: true` without that review. Metadata intake alone does not establish a paper's findings or promote a candidate into the graph.
 
-## Reviewing interface changes
+Do not infer pathway activity from enrichment, protein effects from RNA, or a research gap from missing graph coverage. Questions and possible explanations remain proposals with explicit premises, assumptions and tests. Synthetic fixtures must be labeled and isolated from the scientific snapshot; do not invent realistic citations.
 
-Check the main flow from search to entity selection to original evidence. Include the list alternative, keyboard navigation, reduced motion, empty search results, and unavailable WebGL. Scientific information must be accessible without using the 3D canvas. Record browser, viewport, and observed results; a passing typecheck, build, or data test does not establish that browser interactions work.
+## Interface changes
 
-An optional reproducible smoke test is available as `python3 tools/browser-smoke.py` against a running local server. It requires Python Playwright and a system Chromium, which are available in the current cloud environment; they are not frontend npm dependencies. Pass `--url`, `--chromium`, or `--screenshots` to change the defaults. Generated browser artifacts are ignored. See the [verification record](docs/verification.md) for observed coverage and limits.
+Apply the [design guide](docs/design.md). Check the relevant search → selection → original-source flow and analysis → evidence → return journey. Preserve the List alternative, keyboard access, Light/Dark/System, reduced motion, no-result recovery and unavailable WebGL. Record browser, viewport and observed results; keep the input in tab memory and outside shared links, saved briefs and exports.
+
+An optional smoke test is `python3 tools/browser-smoke.py` against a running server. It requires Python Playwright and a system Chromium, available in the current cloud environment but not frontend npm dependencies. Use `--url`, `--chromium` and `--screenshots` as needed. Generated artifacts are ignored. See [verification](docs/verification.md) for observed coverage and limits.
 
 ## Repository hygiene
 
-Commit source and reproducibility files, including the existing `package-lock.json`. Keep secrets, downloaded raw datasets, local environments, and generated output out of version control. Original software and project-authored documentation use the [MIT License](LICENSE); retain applicable copyright and license notices. Track third-party attribution and licensing alongside dependencies and curated data; the software license does not replace their terms or approve scientific reuse.
+Commit source and reproducibility files, including the existing `package-lock.json`. Keep secrets, raw downloads, local environments and generated output out of version control. Original software and project-authored documentation use the [MIT License](LICENSE); preserve its notices. Dependencies, datasets and publications retain their own terms, recorded beside their sources. Software licensing does not approve scientific reuse.
