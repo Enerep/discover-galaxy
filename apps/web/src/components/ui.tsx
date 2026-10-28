@@ -6,6 +6,16 @@ export const TYPE_LABELS: Record<EntityType, string> = {
   drug: 'Drug', pathway: 'Pathway', paper: 'Paper',
 };
 
+/** Matches the graph's silhouettes; text alongside it names the entity type. */
+export function EntityShapeMark({ type }: { type: EntityType }) {
+  return <svg className={`entity-shape-mark ${type}`} width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+    {type === 'gene' ? <path d="M8 1 15 8 8 15 1 8Z" />
+      : type === 'pathway' ? <circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeWidth="2" />
+        : type === 'paper' ? <rect x="3" y="1" width="10" height="14" rx="1" />
+          : <circle cx="8" cy="8" r="6" />}
+  </svg>;
+}
+
 export function Icon({ name, size = 18 }: { name: string; size?: number }) {
   const paths: Record<string, ReactNode> = {
     search: <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></>,

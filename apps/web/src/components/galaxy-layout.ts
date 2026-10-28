@@ -1,4 +1,4 @@
-import type { Entity, EntityType } from '../lib/types.ts';
+import type { Claim, Entity, EntityType } from '../lib/types.ts';
 
 export type Position = [number, number, number];
 
@@ -51,8 +51,11 @@ export function createGalaxyLayout(entities: Entity[]): Map<string, Position> {
   return positions;
 }
 
-/** A readable neighbourhood; rings are navigation levels, never biological distance. */
-export function createFocusedLayout(entities: Entity[], selectedId: string, directIds: Set<string>): Map<string, Position> {
+/** A readable neighbourhood; positions are navigation aids, never biological distance. */
+export function createFocusedLayout(entities: Entity[], selectedId: string, directIds: Set<string>, claims: Claim[] = []): Map<string, Position> {
+  if (entities.some(({ id, type }) => id === selectedId && type === 'pathway')) {
+    return createPathwayLayout(entities, selectedId, directIds, claims);
+  }
   const positions = new Map<string, Position>([[selectedId, [0, 0, 0]]]);
   const ordered = [...entities].filter(({ id }) => id !== selectedId)
     .sort((a, b) => a.type.localeCompare(b.type) || a.id.localeCompare(b.id));
@@ -64,6 +67,47 @@ export function createFocusedLayout(entities: Entity[], selectedId: string, dire
       positions.set(id, [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.82, Math.sin(angle * 2) * 0.3]);
     });
   }
+  return positions;
+}
+
+function createPathwayLayout(entities: Entity[], selectedId: string, directIds: Set<string>, claims: Claim[]): Map<string, Position> {
+  const positions = new Map<string, Position>([[selectedId, [0, 0, 0]]]);
+  const byId = new Map(entities.map((entity) => [entity.id, entity]));
+  const ordered = [...entities].filter(({ id }) => id !== selectedId).sort((a, b) => a.id.localeCompare(b.id));
+  const direct = ordered.filter(({ id }) => directIds.has(id));
+
+  // Only an explicit encodes record can align a gene and protein. Use the full
+  // claim set, including counterparts not yet visible, to reserve their slots.
+  // Deterministic one-to-one matching also keeps multiple mappings from stacking.
+  const pairs = new Map<string, { geneId: string; proteinId: string }>();
+  const mappings = claims.filter(({ predicate, subject_id, object_id }) => predicate === 'encodes'
+    && (directIds.has(subject_id) || directIds.has(object_id))
+    && (!byId.has(subject_id) || byId.get(subject_id)!.type === 'gene')
+    && (!byId.has(object_id) || byId.get(object_id)!.type === 'protein'))
+    .sort((a, b) => a.subject_id.localeCompare(b.subject_id) || a.object_id.localeCompare(b.object_id) || a.id.localeCompare(b.id));
+  for (const { subject_id: geneId, object_id: proteinId } of mappings) {
+    if (pairs.has(geneId) || pairs.has(proteinId)) continue;
+    const pair = { geneId, proteinId };
+    pairs.set(geneId, pair);
+    pairs.set(proteinId, pair);
+  }
+
+  const rowKey = (id: string) => pairs.get(id)?.geneId ?? id;
+  const rows = [...new Set(direct.map(({ id }) => rowKey(id)))].sort((a, b) => a.localeCompare(b));
+  const rowByKey = new Map(rows.map((key, index) => [key, ((rows.length - 1) / 2 - index) * 2.05]));
+  const column = (type: EntityType) => type === 'gene' ? -12.5 : -7.5;
+  for (const entity of ordered) {
+    const y = rowByKey.get(rowKey(entity.id));
+    if (y !== undefined && (directIds.has(entity.id) || pairs.has(entity.id))) {
+      positions.set(entity.id, [column(entity.type), y, 0]);
+    }
+  }
+
+  // Other next-level neighbours sit below the destination pathway. Sharing an
+  // identity row above never adds a pathway membership or changes any claim.
+  const remaining = ordered.filter(({ id }) => !positions.has(id));
+  const bottom = -Math.max(4.5, (rows.length - 1) / 2 * 2.05 + 1.8);
+  remaining.forEach(({ id }, index) => positions.set(id, [0, bottom - index * 3.2, 0]));
   return positions;
 }
 
