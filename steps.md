@@ -51,6 +51,13 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Keep all entities accessible in Overview/List and original papers available from the evidence panel and explicit paper selection.
 - [x] Draw one visual line per endpoint pair while retaining every original finding, active-claim navigation and source meaning.
 
+### Graph readability and visual polish
+
+- [x] Give genes, proteins, pathways and papers distinct silhouettes with matching legend shapes, static lighting and legible node sizes.
+- [x] Arrange focused pathways into stable gene/protein rows using explicit identity mappings; preserve direct positions and scientific membership during expansion.
+- [x] Show selected relationship captions, preserving variant, gene-level annotation and source-specific finding distinctions; wrap full pathway names and retain mobile evidence access.
+- [x] Verify real canvas picking, all three pathways, selected citations, themes, touch/reduced motion, PNG export, WebGL fallback and idle rendering.
+
 ### Workspace help
 
 - [x] Add an accessible `?` beside Explore and Analyze results, with purpose, concrete examples and analysis terms available on demand.

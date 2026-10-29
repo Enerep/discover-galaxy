@@ -13,6 +13,7 @@ import {
   Mesh,
   Group,
   MeshBasicMaterial,
+  MeshStandardMaterial,
   PerspectiveCamera,
   QuadraticBezierCurve3,
   Sprite,
@@ -22,6 +23,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import type { Claim, Entity } from '../lib/types.ts';
+import { relationshipLabel } from '../lib/relationship-label.ts';
 import { createGalaxyLayout, createFocusedLayout, decorativeStars, ENTITY_COLORS } from './galaxy-layout.ts';
 import type { Position } from './galaxy-layout.ts';
 
@@ -44,6 +46,7 @@ export interface GalaxyProps {
   zoomStep?: number;
   citationLinks?: CitationLink[];
   layoutEntities?: Entity[];
+  layoutClaims?: Claim[];
   focusId?: string | null;
   directIds?: Set<string>;
   onUnavailable?: () => void;
@@ -99,7 +102,7 @@ function makeGlow(): CanvasTexture {
 function makeLabel(entity: Entity): { texture: CanvasTexture; aspect: number; lines: number } {
   const canvas = document.createElement('canvas');
   const font = `${entity.type === 'paper' ? 500 : 600} ${entity.type === 'paper' ? 44 : 50}px system-ui, sans-serif`;
-  const label = entity.label.length > 35 ? `${entity.label.slice(0, 33)}…` : entity.label;
+  const label = entity.type !== 'pathway' && entity.label.length > 35 ? `${entity.label.slice(0, 33)}…` : entity.label;
   const lines = entity.type === 'pathway' ? label.split(' ').reduce<string[]>((result, word) => {
     const last = result.at(-1);
     if (last && `${last} ${word}`.length <= 18) result[result.length - 1] = `${last} ${word}`;
@@ -125,6 +128,30 @@ function makeLabel(entity: Entity): { texture: CanvasTexture; aspect: number; li
   return { texture, aspect: canvas.width / canvas.height, lines: lines.length };
 }
 
+function makeRelationshipLabel(text: string) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (context) context.font = '500 32px system-ui, sans-serif';
+  canvas.width = Math.ceil(context?.measureText(text).width ?? 400) + 40;
+  canvas.height = 64;
+  if (context) {
+    context.fillStyle = '#122128';
+    context.beginPath();
+    context.roundRect(1, 1, canvas.width - 2, 62, 12);
+    context.fill();
+    context.strokeStyle = '#46675f';
+    context.stroke();
+    context.font = '500 32px system-ui, sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillStyle = '#d8f0e7';
+    context.fillText(text, canvas.width / 2, 33);
+  }
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  return { texture, aspect: canvas.width / canvas.height };
+}
+
 function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion, compactLabels, denseLabels }: {
   entity: Entity;
   position: Position;
@@ -138,10 +165,11 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   const { gl, camera, size, invalidate } = useThree();
   const hovered = useRef(false);
   const group = useRef<Group>(null);
-  const sphere = useRef<Mesh>(null);
+  const body = useRef<Mesh>(null);
+  const glowSprite = useRef<Sprite>(null);
   const hitArea = useRef<Mesh>(null);
   const ring = useRef<Mesh>(null);
-  const sphereMaterial = useRef<MeshBasicMaterial>(null);
+  const bodyMaterial = useRef<MeshStandardMaterial>(null);
   const glowMaterial = useRef<SpriteMaterial>(null);
   const ringMaterial = useRef<MeshBasicMaterial>(null);
   const labelSprite = useRef<Sprite>(null);
@@ -151,7 +179,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   const showCompactLabel = compactLabels || (entity.type === 'gene' && ['gene-apoe', 'gene-abca1', 'gene-trem2'].includes(entity.id));
   const quietLabel = denseLabels && entity.type === 'protein';
   const colors = useMemo(() => ({ normal: new Color(ENTITY_COLORS[entity.type]), selected: new Color('#f0fff8') }), [entity.type]);
-  const radius = entity.type === 'disease' ? 0.34 : entity.type === 'paper' ? 0.14 : 0.23;
+  const radius = entity.type === 'disease' ? 0.34 : entity.type === 'pathway' ? 0.3 : entity.type === 'paper' ? 0.18 : 0.23;
   const initial = useRef({ scale: selected ? 1.1 : 1, glow: selected ? 0.85 : 0.37, ring: selected ? 0.75 : 0, color: selected ? '#f0fff8' : ENTITY_COLORS[entity.type], labelOpacity: selected ? 1 : quietLabel || (size.width < 520 && !showCompactLabel) ? 0 : 0.85 });
 
   useEffect(() => () => { label.texture.dispose(); gl.domElement.style.cursor = 'grab'; }, [label, gl]);
@@ -162,32 +190,36 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
     worldPosition.set(...position);
     const alpha = reducedMotion ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 16);
     const emphasis = selected || hovered.current;
-    const scale = selected ? 1.1 : hovered.current ? 1.15 : 1;
+    const worldPerPixel = camera instanceof PerspectiveCamera
+      ? 2 * Math.tan(camera.fov * Math.PI / 360) * camera.position.distanceTo(worldPosition) / Math.max(size.height, 1)
+      : 0.025;
+    const screenScale = Math.max(1, worldPerPixel * 7 / radius);
+    const scale = screenScale * (selected ? 1.1 : hovered.current ? 1.15 : 1);
     const glowOpacity = selected ? 0.85 : hovered.current ? 0.68 : 0.37;
     const ringOpacity = selected ? 0.75 : hovered.current ? 0.42 : 0;
     let moving = false;
 
-    if (sphere.current) {
-      const next = approach(sphere.current.scale.x, scale, alpha);
-      sphere.current.scale.setScalar(next);
+    if (body.current) {
+      body.current.quaternion.copy(camera.quaternion);
+      const next = approach(body.current.scale.x, scale, alpha);
+      body.current.scale.setScalar(next);
       moving ||= next !== scale;
     }
-    if (sphereMaterial.current) moving = colorIsMoving(sphereMaterial.current.color, selected ? colors.selected : colors.normal, alpha) || moving;
+    if (bodyMaterial.current) moving = colorIsMoving(bodyMaterial.current.color, selected ? colors.selected : colors.normal, alpha) || moving;
+    glowSprite.current?.scale.setScalar(radius * 8 * screenScale);
     if (glowMaterial.current) {
       glowMaterial.current.opacity = approach(glowMaterial.current.opacity, glowOpacity, alpha);
       moving ||= glowMaterial.current.opacity !== glowOpacity;
     }
     if (ring.current && ringMaterial.current) {
       ring.current.quaternion.copy(camera.quaternion);
+      ring.current.scale.setScalar(screenScale);
       ringMaterial.current.opacity = approach(ringMaterial.current.opacity, ringOpacity, alpha);
       ring.current.visible = ringMaterial.current.opacity > 0;
       moving ||= ringMaterial.current.opacity !== ringOpacity;
     }
 
     // Names and hit targets retain a usable screen size at any camera distance.
-    const worldPerPixel = camera instanceof PerspectiveCamera
-      ? 2 * Math.tan(camera.fov * Math.PI / 360) * camera.position.distanceTo(worldPosition) / Math.max(size.height, 1)
-      : 0.025;
     hitArea.current?.scale.setScalar(Math.max(radius * 1.5, worldPerPixel * 20));
     if (labelSprite.current) {
       const compact = size.width < 520;
@@ -195,7 +227,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
       labelSprite.current.scale.set(height * label.aspect, height, 1);
       // Clamp visible labels inside the canvas while retaining their depth.
       const above = entity.type === 'pathway' || (entity.type === 'paper' && position[1] >= 0) || (compact && entity.type === 'disease');
-      const labelY = (above ? 1 : -1) * (radius + height * 0.7);
+      const labelY = (above ? 1 : -1) * (radius * screenScale + height * 0.7);
       labelPosition.copy(worldPosition);
       labelPosition.y += labelY;
       labelPosition.project(camera);
@@ -228,12 +260,16 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   }
 
   return <group ref={group} position={position}>
-    <sprite scale={[radius * 8, radius * 8, 1]} raycast={() => {}}>
+    <sprite ref={glowSprite} scale={[radius * 8, radius * 8, 1]} raycast={() => {}}>
       <spriteMaterial ref={glowMaterial} map={glow} color={ENTITY_COLORS[entity.type]} opacity={initial.current.glow} blending={AdditiveBlending} depthWrite={false} />
     </sprite>
-    <mesh ref={sphere} raycast={() => {}} scale={initial.current.scale}>
-      <sphereGeometry args={[radius, 24, 16]} />
-      <meshBasicMaterial ref={sphereMaterial} color={initial.current.color} />
+    <mesh ref={body} raycast={ignoreRaycast} scale={initial.current.scale}>
+      {entity.type === 'gene' ? <octahedronGeometry args={[radius * 1.15, 0]} />
+        : entity.type === 'protein' ? <icosahedronGeometry args={[radius, 1]} />
+          : entity.type === 'pathway' ? <torusGeometry args={[radius * 0.85, radius * 0.2, 12, 48]} />
+            : entity.type === 'paper' ? <boxGeometry args={[radius * 1.4, radius * 1.8, radius * 0.3]} />
+              : <sphereGeometry args={[radius, 24, 16]} />}
+      <meshStandardMaterial ref={bodyMaterial} color={initial.current.color} emissive={ENTITY_COLORS[entity.type]} emissiveIntensity={0.18} roughness={0.5} metalness={0.08} />
     </mesh>
     <mesh ref={ring} raycast={() => {}} visible={initial.current.ring > 0}>
       <torusGeometry args={[radius + 0.15, 0.012, 8, 64]} />
@@ -249,17 +285,22 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
   </group>;
 }
 
-function Connection({ start, end, selected, citation, index, onClick, reducedMotion }: {
+function Connection({ start, end, selected, label, citation, index, onClick, reducedMotion }: {
   start: Position;
   end: Position;
   selected: boolean;
+  label?: string;
   citation?: boolean;
   index: number;
   onClick: () => void;
   reducedMotion: boolean;
 }) {
-  const { gl, invalidate } = useThree();
+  const { gl, camera, size, invalidate } = useThree();
   const hovered = useRef(false);
+  const labelSprite = useRef<Sprite>(null);
+  const labelPosition = useMemo(() => new Vector3(), []);
+  const tag = useMemo(() => selected && label ? makeRelationshipLabel(label) : null, [selected, label]);
+  useEffect(() => () => { tag?.texture.dispose(); }, [tag]);
   const geometry = useMemo(() => {
     const from = new Vector3(...start);
     const to = new Vector3(...end);
@@ -297,6 +338,15 @@ function Connection({ start, end, selected, citation, index, onClick, reducedMot
       geometry.computeBoundingSphere();
       lastEndpoints.current = [...start, ...end];
     }
+    if (tag && labelSprite.current) {
+      labelPosition.fromBufferAttribute(geometry.getAttribute('position'), 30);
+      const perPixel = camera instanceof PerspectiveCamera
+        ? 2 * Math.tan(camera.fov * Math.PI / 360) * camera.position.distanceTo(labelPosition) / Math.max(size.height, 1)
+        : 0.025;
+      labelSprite.current.scale.set(perPixel * 25 * tag.aspect, perPixel * 25, 1);
+      labelPosition.z += 0.15;
+      labelSprite.current.position.copy(labelPosition);
+    }
     const active = selected || hovered.current;
     const alpha = reducedMotion ? 1 : 1 - Math.exp(-Math.min(delta, 0.05) * 14);
     const opacity = active ? (citation ? 0.68 : 0.9) : (citation ? 0.25 : 0.4);
@@ -305,11 +355,15 @@ function Connection({ start, end, selected, citation, index, onClick, reducedMot
     if (material.opacity !== opacity || colorMoving) invalidate();
   });
 
-  return <primitive object={line}
+  return <><primitive object={line}
     onClick={(event: ThreeEvent<MouseEvent>) => { event.stopPropagation(); if (event.delta <= 4) onClick(); }}
     onPointerOver={(event: ThreeEvent<PointerEvent>) => { event.stopPropagation(); hovered.current = true; gl.domElement.style.cursor = 'pointer'; invalidate(); }}
     onPointerOut={() => { hovered.current = false; gl.domElement.style.cursor = 'grab'; invalidate(); }}
-  />;
+  />
+    {tag && <sprite ref={labelSprite} raycast={ignoreRaycast}>
+      <spriteMaterial map={tag.texture} depthWrite={false} depthTest={false} transparent />
+    </sprite>}
+  </>;
 }
 
 function Stars() {
@@ -461,12 +515,13 @@ function Navigation({ selectedId, positions, reducedMotion, resetKey, zoomStep =
 function Scene(props: GalaxyProps) {
   const { entities, claims, selectedId, selectedClaimId, onSelect, onSelectClaim, citationLinks = [] } = props;
   const layoutEntities = props.layoutEntities ?? entities;
+  const layoutClaims = props.layoutClaims ?? claims;
   const entityKey = entities.map(({ id }) => id).join('|');
   const directKey = props.focusId ? [...(props.directIds ?? [])].sort().join('|') : '';
   const visibleIds = useMemo(() => new Set(entityKey.split('|')), [entityKey]);
   const targets = useMemo(() => props.focusId
-    ? createFocusedLayout(layoutEntities.filter(({ id }) => visibleIds.has(id)), props.focusId, new Set(directKey.split('|')))
-    : createGalaxyLayout(layoutEntities), [layoutEntities, visibleIds, props.focusId, directKey]);
+    ? createFocusedLayout(layoutEntities.filter(({ id }) => visibleIds.has(id)), props.focusId, new Set(directKey.split('|')), layoutClaims)
+    : createGalaxyLayout(layoutEntities), [layoutEntities, visibleIds, props.focusId, directKey, layoutClaims]);
   const live = useRef(new Map<string, Position>());
   const positions = live.current;
   for (const [id, position] of targets) {
@@ -493,16 +548,18 @@ function Scene(props: GalaxyProps) {
   return <>
     <Capture onReady={props.onCaptureReady} />
     <Navigation selectedId={selectedId} positions={targets} reducedMotion={props.reducedMotion} resetKey={props.resetKey} zoomStep={props.zoomStep} onUnavailable={props.onUnavailable} />
+    <ambientLight intensity={1.2} />
+    <directionalLight position={[5, 7, 10]} intensity={2.2} />
     <Stars />
     {claims.map((claim, index) => {
       const start = positions.get(claim.subject_id);
       const end = positions.get(claim.object_id);
-      return start && end ? <Connection key={claim.id} start={start} end={end} selected={selectedClaimId === claim.id} index={index} onClick={() => onSelectClaim(claim.id)} reducedMotion={props.reducedMotion} /> : null;
+      return start && end ? <Connection key={claim.id} start={start} end={end} selected={selectedClaimId === claim.id} label={relationshipLabel(claim)} index={index} onClick={() => onSelectClaim(claim.id)} reducedMotion={props.reducedMotion} /> : null;
     })}
     {citationLinks.map((citation, index) => {
       const start = positions.get(citation.paperId);
       const end = positions.get(citation.entityId);
-      return start && end ? <Connection key={`${citation.paperId}-${citation.entityId}-${citation.claimId}`} start={start} end={end} selected={selectedClaimId === citation.claimId} citation index={index} onClick={() => onSelectClaim(citation.claimId)} reducedMotion={props.reducedMotion} /> : null;
+      return start && end ? <Connection key={`${citation.paperId}-${citation.entityId}-${citation.claimId}`} start={start} end={end} selected={selectedClaimId === citation.claimId} label="Cites finding" citation index={index} onClick={() => onSelectClaim(citation.claimId)} reducedMotion={props.reducedMotion} /> : null;
     })}
     {entities.map((entity) => {
       const position = positions.get(entity.id);

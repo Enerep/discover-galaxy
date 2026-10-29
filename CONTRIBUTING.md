@@ -62,7 +62,7 @@ Do not infer pathway activity from enrichment, protein effects from RNA, or a re
 
 Apply the [design guide](docs/design.md). Check the relevant search → selection → original-source flow and analysis → evidence → return journey. Preserve the List alternative, keyboard access, Light/Dark/System, reduced motion, no-result recovery and unavailable WebGL. Record browser, viewport and observed results; keep the input in tab memory and outside shared links, saved briefs and exports.
 
-An optional smoke test is `python3 tools/browser-smoke.py` against a running server. It requires Python Playwright and a system Chromium, available in the current cloud environment but not frontend npm dependencies. Use `--url`, `--chromium` and `--screenshots` as needed. Generated artifacts are ignored. See [verification](docs/verification.md) for observed coverage and limits.
+An optional smoke test is `python3 tools/browser-smoke.py` against a running server. It requires Python Playwright and a system Chromium, available in the current cloud environment but not frontend npm dependencies. Use `--url`, `--chromium` and `--screenshots` as needed. For focused 3D checks, use `python3 tools/graph-visual-smoke.py --url http://localhost:4173/` against the production preview; its canvas screenshots support manual review of shapes and label spacing. Generated artifacts are ignored. See [verification](docs/verification.md) for observed coverage and limits.
 
 ## Repository hygiene
 

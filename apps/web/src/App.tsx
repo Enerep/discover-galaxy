@@ -8,7 +8,7 @@ import { ThemeControl } from './components/ThemeControl.tsx';
 import { WorkspaceHelp } from './components/WorkspaceHelp.tsx';
 import { EvidenceComparison } from './components/EvidenceComparison.tsx';
 import { ResearchBrief } from './components/ResearchBrief.tsx';
-import { Icon, TYPE_LABELS } from './components/ui.tsx';
+import { EntityShapeMark, Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
 import type { EntityType, Snapshot } from './lib/types.ts';
 import { buildExplorerGraph } from './lib/explorer-graph.ts';
@@ -335,7 +335,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
                 <>
                   <SceneBoundary onFail={unavailable}>
                     <Suspense fallback={<div className="scene-loading" role="status"><span className="loading-ring" />Loading graph…</div>}>
-                      <Galaxy entities={graph.entities} layoutEntities={snapshot.entities} claims={graph.claims} focusId={graph.focused ? selectedId : null} directIds={graph.directIds}
+                      <Galaxy entities={graph.entities} layoutEntities={snapshot.entities} layoutClaims={snapshot.claims} claims={graph.claims} focusId={graph.focused ? selectedId : null} directIds={graph.directIds}
                         selectedId={selectedId} selectedClaimId={activeClaim?.id ?? null} onSelect={focusEntity}
                         onSelectClaim={selectClaim} reducedMotion={reducedMotion} resetKey={resetKey} zoomStep={zoomStep}
                         onUnavailable={unavailable} citationLinks={graph.citationLinks} onCaptureReady={receiveCapture} />
@@ -362,7 +362,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
             {view === 'graph' && matches.length > 0 && <footer className="graph-legend" aria-label="Graph legend">
               <div className="entity-legend">
-                {(['gene', 'protein', 'pathway', 'disease', 'paper'] as const).map((type) => <span key={type}><i className={`type-dot ${type}`} />{TYPE_LABELS[type]}</span>)}
+                {(['gene', 'protein', 'pathway', 'disease', 'paper'] as const).map((type) => <span key={type}><EntityShapeMark type={type} />{TYPE_LABELS[type]}</span>)}
               </div>
               <div className="edge-legend"><span><i />Relationship</span>{graph.citationLinks.length > 0 && <span><i className="citation-line" />Citation</span>}</div>
               <div className="camera-controls" aria-label="Graph controls">
