@@ -9,7 +9,10 @@ export function relationshipLabel(claim: Claim, reverse = false): string {
         ? reverse ? 'Annotated gene' : 'Annotated to'
         : reverse ? 'Participant' : 'Part of';
     case 'interacts_with': return 'Interacts with';
-    case 'associated_with': return claim.context.variant ? 'Variant association' : 'Associated with';
+    case 'associated_with': return claim.context.variant ? 'Variant association'
+      : claim.context.association_scope === 'provider_aggregate' ? 'Database association' : 'Associated with';
     case 'targets': return reverse ? 'Targeted by' : 'Targets';
+    case 'ortholog_of': return 'Ortholog of';
+    case 'perturbation_affects': return reverse ? 'Perturbation result' : 'Perturbation effect';
   }
 }

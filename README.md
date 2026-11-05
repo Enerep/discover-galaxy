@@ -20,7 +20,7 @@ Each analyzed pathway now has an **Evidence** view: coverage of its selected gen
 
 [Database intake tooling](tools/curation/README.md#gene-and-protein-api-intake) supports bounded UniProt, Reactome and Open Targets responses with archived replay and source provenance. These tools run outside the browser and stage facts for a separate snapshot diff. Live provider access is blocked in this workspace; the [first reproducible seed](data/annotations/README.md) uses existing pinned HGNC/Reactome references instead, without changing pathway statistics or transmitting uploaded genes.
 
-**The source-checked explorer contains 40 entities and 41 cited claims.** It covers one disease, fourteen genes, fourteen distinct proteins, three pathways, and eight papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The source-checked explorer contains 45 entities and 49 cited claims, with 49 evidence records.** It covers one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and ten papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
 
 The latest batch adds **COL1A1, COL1A2, COL3A1 and SAA1** with separate proteins, approved identity cross-references and gene-level scavenger-pathway annotations. These use the [reproducible pinned-reference seed](data/annotations/README.md); they are database records, not new paper findings or a successful live API import. They appear in the 3D/list explorer and analysis coverage audit.
 
@@ -38,7 +38,7 @@ Pasting the website link into a compatible social app uses a separate **1200 × 
 
 **Research brief** turns selected evidence into a working document. Pin findings or add a comparison, write your question, explanation, assumptions and proposed experiment, then download a cited Markdown brief. One draft with up to 12 findings and one comparison is saved on this browser/device; no account or AI key is needed. Notes stay separate from the scientific records and retain their user-authored status in the export. Download the file to share it or keep a copy: explorer links and PNG sharing do not include your notes, and device storage is not cloud sync or a backup.
 
-The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the database assertions include fourteen gene–protein mappings, eleven protein-level pathway-participation annotations, four gene-level pathway annotations, and one TREM2–DAP12 binding annotation. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
+The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the database assertions include fifteen gene–protein mappings, eleven protein-level pathway-participation annotations, four gene-level pathway annotations, one TREM2–DAP12 binding annotation, two mouse/human orthology annotations and two separately labeled Open Targets aggregate associations. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
 
 Four findings connect APOE and TREM2 proteins through the binding assays reported by Atagi and Bailey (2015), with baseline and R47H results kept separate. Source-specific protein preparations, surface presentation and replicate units remain attached to the original paper. Bailey's plasma-derived APOE isoform is unknown, and its triplicate wells are not three independent studies. The source records its in-article correction and the actual inspection limits.
 
@@ -51,6 +51,8 @@ Independent scientific review is deferred to a future milestone, as requested by
 See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.
 
 The owner reports a working Vercel development deployment. **The curated evidence library remains Alzheimer's-focused.** The [checkpoint plan](docs/checkpoints.md) now prioritizes interpreting experimental data and developing grounded follow-up questions; broader curated disease coverage remains separate work.
+
+The [APOE/ABCA1 evidence checkpoint](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) adds three original-paper mouse findings: altered ApoE particle lipidation in cultured astrocytes and lower soluble ApoE in two mouse brain models. Follow human **ABCA1 → Abca1 (mouse) → ApoE protein (mouse)** to inspect them. Explicit mouse identities and orthology links keep these experiments separate from human findings. Open Targets connections say **Database association**; metadata is not another experiment. Human RNA evidence coverage does not borrow mouse papers through orthology.
 
 ## Analyze an experiment
 
@@ -96,7 +98,7 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. Tests and offline curation/reference checks also require Python 3 (standard library only). There is no lint command yet.
 
-The [AD source-review packet](data/alzheimers/review-packet.md) collects the 41 current findings, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 49 current claims, 49 evidence records, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check
@@ -113,7 +115,7 @@ npm run --silent curation:intake -- --limit 20
 
 Its output is unreviewed staging material, not graph evidence. It excludes abstracts and full text, retains retrieval/query provenance, and does not create claims or review approvals. Live network availability and observed checks belong in the [verification record](docs/verification.md); offline normalization does not verify a live API request.
 
-A separate [candidate-source coverage packet](data/alzheimers/candidate-coverage.md) keeps **six publications** in staging around ABCA1–ApoE lipid handling, TREM2–APOE interactions, and TREM2 model comparisons. The two earlier pathway candidates now have separately checked draft annotations in the explorer. The remaining papers need assay-level source extraction before adding empirical findings. The packet records lookup limits and reading checks; it is separate from the OpenAlex adapter and never imports or approves content. Edit its [source JSON](data/alzheimers/candidate-coverage.json), then regenerate and check:
+A separate [candidate-source coverage packet](data/alzheimers/candidate-coverage.md) keeps **five publications** in staging around ABCA1–ApoE lipid handling, TREM2–APOE interactions, and TREM2 model comparisons. The two earlier pathway candidates now have separately checked draft annotations in the explorer. The remaining papers need assay-level source extraction before adding empirical findings. The packet records lookup limits and reading checks; it is separate from the OpenAlex adapter and never imports or approves content. Edit its [source JSON](data/alzheimers/candidate-coverage.json), then regenerate and check:
 
 ```sh
 npm run --silent curation:coverage > data/alzheimers/candidate-coverage.md
@@ -170,7 +172,7 @@ This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direct
 | [Reactome](https://reactome.org/) | Find pathway definitions, stable identifiers, and supporting references |
 | [OpenAlex](https://openalex.org/) | Resolve literature metadata and discover candidate papers |
 
-These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; bounded UniProt, Reactome and Open Targets annotation adapters support archived-response replay. The [APOE/ABCA1 batch](data/annotations/apoe-abca1-intake.md) records successful live access to all four providers, eight selected staging records, original-source inspection limits and later OpenAlex 503/504 failures. Its earlier OpenAlex packet has no raw-response digest; successful live capture with the new digest-enabled schema remains pending. Verify access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
+These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; bounded UniProt, Reactome and Open Targets annotation adapters support archived-response replay. The [APOE/ABCA1 batch](data/annotations/apoe-abca1-intake.md) records successful live access to all four providers, eight selected staging records, original-source inspection limits and later OpenAlex 503/504 failures. Its earlier OpenAlex packet retains an unknown raw digest; the later [0.8.0 evidence checkpoint](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) adds a successful digest-enabled capture and separately inspected graph records. Verify access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
 
 ## Contributing and community
 

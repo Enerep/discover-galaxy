@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Discovery Galaxy curated knowledge snapshot",
-  "description": "Version 0.1.0. Structural contract for both development and reviewed release snapshots.",
-  "$comment": "Cross-record IDs, reciprocal evidence references, predicate endpoint types, source eligibility, and human/publication/reuse release gates are enforced by apps/web/src/lib/validate.ts. This schema does not establish scientific truth or permission to redistribute content.",
+  "description": "Version 0.2.0. Structural contract for both development and reviewed release snapshots.",
+  "$comment": "Cross-record IDs, reciprocal evidence references, predicate endpoint types, species/context taxonomy agreement, source eligibility, and human/publication/reuse release gates are enforced by apps/web/src/lib/validate.ts. This schema does not establish scientific truth or permission to redistribute content.",
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "0.1.0"
+      "const": "0.2.0"
     },
     "dataset_version": {
       "$ref": "#/$defs/text"
@@ -339,6 +339,9 @@
           },
           "minItems": 1,
           "uniqueItems": true
+        },
+        "taxonomy_id": {
+          "$ref": "#/$defs/taxonomyId"
         }
       },
       "required": [
@@ -392,7 +395,9 @@
             "encodes",
             "participates_in",
             "interacts_with",
-            "targets"
+            "targets",
+            "ortholog_of",
+            "perturbation_affects"
           ]
         },
         "statement": {
@@ -435,6 +440,75 @@
         "summary",
         "limitations",
         "review"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "predicate": {
+                "const": "ortholog_of"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "context": {
+                "type": "object",
+                "properties": {
+                  "subject_taxonomy_id": {
+                    "$ref": "#/$defs/taxonomyId"
+                  },
+                  "object_taxonomy_id": {
+                    "$ref": "#/$defs/taxonomyId"
+                  }
+                },
+                "required": [
+                  "subject_taxonomy_id",
+                  "object_taxonomy_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "predicate": {
+                "const": "perturbation_affects"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "context": {
+                "type": "object",
+                "properties": {
+                  "taxonomy_id": {
+                    "$ref": "#/$defs/taxonomyId"
+                  },
+                  "intervention": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "experimental_system": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "outcome": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "finding_label": {
+                    "$ref": "#/$defs/text"
+                  }
+                },
+                "required": [
+                  "taxonomy_id",
+                  "intervention",
+                  "experimental_system",
+                  "outcome"
+                ]
+              }
+            }
+          }
+        }
       ]
     },
     "sourceMetric": {
@@ -877,6 +951,11 @@
         "dataset_version",
         "review"
       ]
+    },
+    "taxonomyId": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
     }
   }
 }

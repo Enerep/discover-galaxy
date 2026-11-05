@@ -1,6 +1,6 @@
 # Scientific evidence policy
 
-Status: policy for the Alzheimer's explorer. The [40-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
+Status: policy for the Alzheimer's explorer. The [45-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
 
 Discovery Galaxy helps researchers inspect published evidence and formulate testable questions. It does not establish causality, discover treatments, or provide clinical recommendations. A visually prominent object, short graph path, or AI explanation is not evidence of biological importance.
 
@@ -31,6 +31,12 @@ The full MVP release will contain 20–50 displayed entities, including any pape
 Data changes require a reviewable diff. Preserve upstream identifiers and release information so another person can reconstruct where a relationship came from. Track retractions and corrections when encountered; remove withdrawn support from active claims while preserving the audit history and explaining the change.
 
 A recorded correction or retraction requires both its actual notice URL and the date checked, including during development. An in-article correction can use the article containing the note; preserve its location and scope in source-check context. Recording one notice does not establish that a comprehensive notice search is complete.
+
+## Species and database aggregation
+
+Mouse experiments use separate species-qualified entities and explicit taxon IDs; human genes/proteins must not stand in for endogenous mouse readouts. Source-checked gene orthology can connect the branches for navigation, but does not establish a human effect or permit transferring uploaded RNA observations or paper coverage. A knockout/perturbation effect is not a binding assay. `perturbation_affects` requires matching endpoint/evidence species, explicit intervention/system/outcome and original primary-research publication evidence; database metadata remains upstream provenance.
+
+Open Targets direct association summaries are labeled database aggregates with exact provider score meaning, version and first-page scope. They remain separate from original variant-specific publications and do not count as new experiments or independent replication. Automatic comparison defaults do not pair database records with publication findings. Original methods/figure inspection and provider metadata access are separate checks; source-specific replicates, readouts and unknowns remain visible.
 
 ## Conflicting findings
 
@@ -92,4 +98,4 @@ Open metadata does not imply permission to redistribute paper full text. Retain 
 
 A scientific dataset release must pass the validation rules in [the data model](data-model.md), have no displayed claim without approved human-reviewed evidence, and state its curation date, coverage, and known gaps. It must meet the 20–50 entity MVP boundary, complete source reuse review, and record publication-status checks. The interface must expose citations and limitations without requiring an AI service.
 
-Release validation is enforced both by an explicit `{ release: true }` option and automatically for an envelope marked `released`. The current 40-entity snapshot meets the size boundary while retaining draft records and outstanding source checks; it does not claim the deferred scientific-release approvals. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a review.
+Release validation is enforced both by an explicit `{ release: true }` option and automatically for an envelope marked `released`. The current 45-entity snapshot meets the size boundary while retaining draft records and outstanding source checks; it does not claim the deferred scientific-release approvals. Structural checks cannot establish the accuracy of an interpretation or the reality and quality of a review.

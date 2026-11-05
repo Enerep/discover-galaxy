@@ -1,5 +1,7 @@
 # APOE / ABCA1 intake — 2026-11-05
 
+This records the earlier staging checkpoint at base 9d83eeb. The separate [0.8.0 dataset diff](../alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) later added inspected graph records and a fresh OpenAlex 0.2.0 capture; the original packet's unknown raw digest and the observations below are preserved.
+
 The [inspection manifest](apoe-abca1-intake.json) prepares **eight selected staging records** from seven successful provider requests: two protein identities, two mappings to one shared pathway, two database association summaries, and two literature candidates. All remain `unreviewed` / `not_in_graph`. Source checking here means the limited inspections below, not independent scientific approval. No graph import was performed; snapshot 0.7.0 remains **40 entities, 41 claims and three pathways**.
 
 Inspection dates use Asia/Ulaanbaatar; exact retrieval timestamps in the manifest use UTC. The base is fetched `origin/master` at `9d83eeb`. The manifest retains exact requests, declared identities, retrieval times, provider versions, source terms, counts and digests. Full packets and six bounded raw-response archives remain in ignored `data/staging/`; only the selected metadata/annotations and provenance summary are committed. A fresh fetch may return different bytes; these APIs are not immutable snapshots.

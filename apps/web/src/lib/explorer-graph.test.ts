@@ -12,11 +12,11 @@ const scope: GraphScope = { selectedId: 'gene-apoe', selectedClaimId: null, mode
 test('focus exposes exactly one biological neighbourhood and keeps source findings intact', () => {
   const before = JSON.stringify(snapshot);
   const graph = buildExplorerGraph(snapshot, scope);
-  assert.deepEqual([...graph.ids].sort(), ['disease-alzheimers', 'gene-apoe', 'protein-apoe'].sort());
-  assert.equal(graph.claims.length, 2);
+  assert.deepEqual([...graph.ids].sort(), ['disease-alzheimers', 'gene-apoe', 'protein-apoe', 'gene-mouse-apoe'].sort());
+  assert.equal(graph.claims.length, 3);
   assert.equal(graph.citationLinks.length, 0);
   assert.equal(graph.canExpand, true);
-  assert.equal(getEntityClaims(snapshot, 'gene-apoe').length, 3);
+  assert.equal(getEntityClaims(snapshot, 'gene-apoe').length, 5);
   assert.equal(JSON.stringify(snapshot), before);
 });
 

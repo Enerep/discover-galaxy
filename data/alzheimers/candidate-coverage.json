@@ -1,54 +1,18 @@
 {
   "schema_version": "candidate-coverage-1",
-  "dataset_version": "alzheimers-source-checked-0.7.0",
-  "prepared_at": "2026-10-24",
+  "dataset_version": "alzheimers-source-checked-0.8.0",
+  "prepared_at": "2026-11-05",
   "selection_method": "Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.",
   "limitations": [
-    "The six publication candidates remain unreviewed and outside the graph. The two earlier pathway candidates were added separately as source-checked draft annotations in snapshot 0.2.0, not approved scientific records.",
+    "The five publication candidates remain unreviewed and outside the graph. The two earlier pathway candidates were added separately as source-checked draft annotations in snapshot 0.2.0, not approved scientific records.",
     "Inspection was limited to the locations recorded per source. Search-indexed excerpts may be stale; several direct PubMed/PMC opens returned challenges. No full paper, supplement, figure, or table was reviewed.",
     "Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.",
     "Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.",
     "Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.",
-    "These staging questions are not novel hypotheses or classified contradictions. The 40-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone."
+    "These staging questions are not novel hypotheses or classified contradictions. The 40-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone.",
+    "Wahrle2004 entered snapshot0.8.0 through a separate original-methods/figure inspection, with three model/readout-scoped findings across that paper and Hirsch-Reinshagen2005. This remaining plan does not automatically promote metadata or establish study independence."
   ],
   "candidates": [
-    {
-      "id": "candidate-wahrle-2004",
-      "kind": "primary_publication",
-      "citation": "Wahrle et al. (2004)",
-      "title": "ABCA1 is required for normal central nervous system ApoE levels and for lipidation of astrocyte-secreted apoE",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/15269217/",
-      "identifiers": {
-        "pmid": "15269217",
-        "doi": "10.1074/jbc.M407963200"
-      },
-      "year": 2004,
-      "provider": "PubMed",
-      "release": null,
-      "inspection": {
-        "url": "https://pubmed.ncbi.nlm.nih.gov/15269217/",
-        "method": "indexed_excerpt",
-        "locator": "Indexed metadata and abstract excerpts; direct PubMed open returned a challenge.",
-        "accessed_at": "2026-10-22"
-      },
-      "context": {
-        "organisms": [
-          "Mus musculus"
-        ],
-        "model": "Abca1 genotype comparisons; primary astrocyte cultures",
-        "readout": "CNS ApoE levels and secreted-particle lipidation",
-        "sample_size": null
-      },
-      "reuse": {
-        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
-        "terms_checked_at": null,
-        "observed_terms": null,
-        "permission_status": "pending_review"
-      },
-      "publication_status": "not_checked",
-      "review_status": "unreviewed",
-      "graph_status": "not_in_graph"
-    },
     {
       "id": "candidate-hirsch-reinshagen-2004",
       "kind": "primary_publication",
@@ -243,15 +207,17 @@
         "claim-apoe-e4-risk",
         "claim-apoe-e2-risk",
         "claim-apoe-cholesterol-pathway",
-        "claim-abca1-cholesterol-pathway"
+        "claim-abca1-cholesterol-pathway",
+        "claim-mouse-abca1-apoe-lipidation-wahrle",
+        "claim-mouse-abca1-apoe-soluble-tgswdi",
+        "claim-mouse-abca1-apoe-soluble-app-ps1"
       ],
       "candidate_ids": [
-        "candidate-wahrle-2004",
         "candidate-hirsch-reinshagen-2004"
       ],
       "checks": [
         "Extract species, genotype, cell preparation, assay and experiment-specific counts; separate ApoE protein lipidation from APOE genotype associations.",
-        "Assess model/material overlap between the two 2004 publications; distinct DOIs do not establish independent replication.",
+        "Compare the remaining2004 efflux candidate with the curated particle-lipidation and mouse-brain soluble-ApoE findings; distinct DOIs do not establish independent replication or equivalent readouts.",
         "Resolve relevant Reactome member events, protein/gene identities, primary references and exact release. Do not treat a peripheral pathway as a demonstrated brain or AD mechanism."
       ]
     },

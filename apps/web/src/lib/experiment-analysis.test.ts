@@ -18,6 +18,21 @@ const reference = validatePathwayReference(JSON.parse(referenceBytes.toString('u
 const table = () => parseExperiment('gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,-1.5,.02\nABCA1,.1,.7\nSYNTHETICUNMAPPED,.1,.8\nSYNTHETICINCOMPLETE,NA,NA\n', 'synthetic-workflow.csv');
 const options = () => ({ comparison: 'Synthetic numerator / denominator', allTestedGenes: true, thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 } });
 
+test('human RNA evidence never crosses orthology to borrow mouse perturbation papers or measurements', () => {
+  const input = parseExperiment('gene,log2FoldChange,padj\nAPOE,2,.01\nABCA1,-2,.01\n', 'synthetic-human-species-boundary.csv');
+  const analysis = runExperimentAnalysis(input, options(), reference);
+  const before = JSON.stringify(analysis);
+  const mousePaperIds = ['source-wahrle-2004', 'source-hirsch-reinshagen-2005'];
+  assert.equal(snapshot.claims.filter(({ predicate }) => predicate === 'ortholog_of').length, 2);
+  for (const pathway of analysis.pathways) {
+    const report = buildPathwayEvidence(snapshot, analysis, pathway.id);
+    assert.ok(report.genes.every(({ entityId }) => entityId === 'gene-apoe' || entityId === 'gene-abca1'));
+    assert.ok(report.papers.every(({ source }) => !mousePaperIds.includes(source.id)));
+    assert.ok(report.genes.every(({ paperIds }) => paperIds.every((id) => !mousePaperIds.includes(id))));
+  }
+  assert.equal(JSON.stringify(analysis), before);
+});
+
 test('pathway evidence uses selected members, counts one paper for shared findings, and preserves source-specific assays', () => {
   const input = parseExperiment('gene,log2FoldChange,padj\nMARCO,2,.01\nSCARA5,-3,.02\nAPOB,1.2,.03\nHBA1,2,.01\nAPOE,.1,.8\nTYROBP,2,.01\n', 'synthetic-evidence.csv');
   const result = runExperimentAnalysis(input, options(), reference);
@@ -209,7 +224,7 @@ test('the analysis reference has pinned provenance and keeps original descriptiv
   assert.equal(reference.upstream_release, null);
   assert.equal(reference.source.license, 'CC0-1.0');
   assert.ok(reference.pathways.some(({ genes }) => genes.includes('CSF2 gene')));
-  assert.equal(snapshot.entities.length, 40);
+  assert.equal(snapshot.entities.length, 45);
   assert.throws(() => validatePathwayReference({ ...reference, source: { ...reference.source, sha256: 'unverified' } }));
   assert.throws(() => validatePathwayReference({ ...reference, pathways: [reference.pathways[0], reference.pathways[0]] }));
 });

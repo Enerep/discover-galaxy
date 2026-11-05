@@ -1,5 +1,41 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.8.0 — 2026-11-05
+
+**45 entities, 49 claims, 49 evidence records, 49 sources and one unchanged draft study-context comparison.** Five new nodes comprise two mouse genes, one mouse protein and two papers. Eight new claims comprise three experimental findings, two gene orthology annotations, one mouse gene/product mapping and two separately labeled human Open Targets aggregates. Existing human identity findings gain live UniProt provenance without duplicate finding or citation cards. All scientific records remain draft with `human_reviewed: false`.
+
+This visible checkpoint is separate from the earlier [staging batch](../annotations/apoe-abca1-intake.md). Follow **ABCA1 → Abca1 (mouse) → ApoE protein (mouse)** to inspect the experiments. Human identities and the four original variant-scoped findings retain their meanings; no hypothesis, new disagreement classification, human experimental effect or clinical inference is added.
+
+### Original experiments
+
+| Source and inspected locator | Finding and measured context | Preserved limits |
+| --- | --- | --- |
+| [Wahrle 2004](https://doi.org/10.1074/jbc.M407963200), Methods p40988, selected Results pp40990–40991, original Fig 3E and Fig 4A–C/caption p40992 | Primary mouse astrocytes: Abca1-null cultures yielded smaller, cholesterol-poor ApoE particles. Authors report cholesterol/ApoE 0.69 versus 2.3 μg/μg. Collection lasted three days; medium was concentrated 40-fold and fractionated by tandem Superose-6. | Fig 3E reports no significant difference in total unfractionated medium ApoE: do not claim reduced total secretion. Fig 4A/B n=4 has no defined counted unit. Culture/flask/repeated-harvest independence and AFM run/particle totals remain unknown; AFM compares selected WT fraction 37 / KO fraction 51. |
+| [Hirsch-Reinshagen 2005](https://doi.org/10.1074/jbc.M508781200), Methods pp43245–43246, Results p43249, actual Fig 6A/caption p43250 | Ten-month Tg-SwDI/B hippocampus: about 75% lower PBS-soluble mouse ApoE in transgene-positive Abca1 knockout versus transgene-positive wild type; eight mice/group, four female/four male. Results report p<0.001 for this contrast. | Human APP transgenes do not change the measured ApoE species. This is an extraction-specific protein pool, not total brain ApoE or a secretion/lipidation assay. |
+| Same Hirsch-Reinshagen paper, Fig 6B/caption and corresponding Methods/Results | Twelve-month APP/PS1 hippocampus: about 80% lower soluble mouse ApoE; five mice/group, two female/three male in each compared knockout/wild-type group. | Caption significance stars use a nontransgenic baseline and must not be transferred to this contrast. Representative blots and figure repeats are not additional independent mice or papers. |
+
+Brain methods specify equal-protein Western blot/densitometry, a murine-specific ApoE antibody and GAPDH control. Both Fig 6 findings share one paper identity; distinct papers/models are not assumed independent. Fig 3's caption reverses D/E ordering; axes and Results identify D as cholesterol and E as ApoE. That observation is an inspection note, not an invented correction notice. Raw measurements, supplements and uninspected experiments were not reviewed.
+
+### Source access and terms
+
+JBC/ScienceDirect requests returned 403. The original Wahrle PDF was inspected through a [2018-07-23 JBC archive](https://web.archive.org/web/20180723054021id_/http://www.jbc.org/content/279/39/40987.full.pdf), 450,869 bytes, SHA-256 `1d89c67e1cf0cb9b07431b2c91052c10d266a239809b2bb9e87b5a9d1ef9b040`. Hirsch-Reinshagen's original PDF was inspected through the [public hospital repository](https://repositorio.ulssa.pt/server/api/core/bitstreams/aceca826-866b-4181-a631-7e9b64627031/content), 907,906 bytes, SHA-256 `849b57839e1c296c22640eb9ea57d84f93b1a761e828df08aae2aadc6cdcb22c`. Actual figure images/captions and selected methods/Results were read. An unrelated ResearchGate attachment was rejected as a source.
+
+Publisher-deposited Crossref records for [Wahrle](https://api.crossref.org/works/10.1074/jbc.M407963200) and [Hirsch-Reinshagen](https://api.crossref.org/works/10.1074/jbc.M508781200) report version-of-record [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), effective 2020-09-21 and 2020-10-02 respectively; TDM entries are not substituted for these licenses. Historical PDFs retain their ASBMB notices. Attribution, metadata and project-authored factual paraphrases are retained; no article prose, figures, tables or PDFs are redistributed. Comprehensive independent notice searches remain `not_checked`.
+
+Hirsch's original PDF dates online publication 2005-10-05; legacy OpenAlex reports 2005-10-06, also the Crossref DOI-creation date. Those source-specific dates/meanings remain separate. [Checkpoint provenance](../annotations/apoe-abca1-checkpoint-provenance.json) retains archive/repository URLs, PDF hashes and exact deposited-license response locators/digests.
+
+### Species and provider records
+
+Schema **0.2.0** adds optional entity `taxonomy_id` and guarded `ortholog_of` / `perturbation_affects` predicates. Mouse Abca1 (NCBI11303; ENSMUSG00000015243), mouse Apoe (NCBI11816; ENSMUSG00000002985) and mouse ApoE (UniProtP08226) remain distinct from human APOE/ABCA1. NCBI ESummary and UniProt fields were checked; P08226 reports release 2026_04, entry 224. Ensembl Compara explicitly maps both mouse genes to their human one-to-one orthologs. Orthology permits navigation, not transfer of effects, RNA observations or human paper coverage.
+
+Two new Open Targets direct aggregates use MONDO_0004975; Mondo/OLS explicitly equates it to existing MeSHD000544, and its ontology config reports Mondo 2026-11-03. Release `26.09` preserves strings year="26", month="09", iteration=null. Overall scores 0.695512952413486 (APOE) / 0.4940984029965598 (ABCA1), component scores and definitions remain in details/exports, with first 20 direct rows out of 2,836 / 1,797 respectively. They are ranking heuristics, not causal probabilities or additional experiments.
+
+Existing human identity claims gain live UniProt provenance (release 2026_04, entries 281/244), explicit Ensembl IDs and response hashes. Reactome lookups add upstream provenance for existing annotations, retaining R-HSA-9029569.2 and unknown global release; they do not independently resolve event-specific molecular states or duplicate membership. Reactome/Open Targets data are CC0 and UniProt metadata CC BY 4.0. Ensembl and Mondo exact reuse assessment remains pending; Ensembl terms returned 403. No source prose, sequence or alignment is retained.
+
+OpenAlex remains metadata. A new 0.2.0 `ABCA1 AND APOE`, page 1/limit 5 capture completed 2026-11-05T11:18:18.716Z, SHA-256 `1e3907e7f99d10cf4b97e77fda52532336bb61ac683549b2129e91a30da93033`, identifying Wahrle. Legacy Hirsch discovery keeps its unknown raw digest and saved-packet hash; it was not relabeled as a current capture. Other new results stay staged. Wahrle leaves the reading plan; five publication candidates remain.
+
+The new branch is available in Graph/List, search, distinct source-specific finding choices, comparisons and cited briefs. Automatic comparison defaults separate database/publication records and prefer recorded outcome groups. The 2,751-pathway reference, 44,997-record HGNC mapping, supplied RNA statistics, dependency versions and browser-local privacy remain unchanged. The broader possible-explanations pilot and independent scientific-release gate remain separate milestones.
+
 ## alzheimers-source-checked-0.7.0 — 2026-10-24
 
 **40 entities, 41 claims/evidence records, 34 sources and one unchanged draft study-context comparison.** Adds COL1A1, COL1A2, COL3A1 and SAA1 genes with separate canonical protein identities, four HGNC gene/product cross-references and four gene-level scavenger-pathway annotations. All earlier scientific records remain unchanged; no new paper, empirical finding, AD-risk association, conflict or hypothesis is added.

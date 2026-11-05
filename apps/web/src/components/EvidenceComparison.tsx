@@ -41,7 +41,7 @@ function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: 
 
 function FindingCard({ column }: { column: ComparisonColumn }) {
   const { claim, subject, evidence, limitations } = column;
-  const heading = typeof claim.context.binding_condition === 'string' && column.sources.length === 1
+  const heading = (typeof claim.context.binding_condition === 'string' || typeof claim.context.finding_label === 'string') && column.sources.length === 1
     ? sourceCitation(column.sources[0]) : subject.label;
   const draft = claim.review.status !== 'approved' || claim.review.human_reviewed !== true
     || evidence.some(({ evidence: item }) => item.review.status !== 'approved' || item.review.human_reviewed !== true);
@@ -50,7 +50,10 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
       <h3>{heading}{draft && <span className="draft-label">Draft</span>}</h3>
       <p>{claim.statement}</p>
       <ul className="comparison-sources">
-        {column.sources.map((source) => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a></li>)}
+        {column.sources.map((source) => <li key={source.id}>
+          <small>{source.kind === 'publication' ? 'Original paper' : 'Database annotation'}</small>
+          <a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a>
+        </li>)}
       </ul>
       <details className="comparison-provenance">
         <summary>Scope, limitations, and review</summary>

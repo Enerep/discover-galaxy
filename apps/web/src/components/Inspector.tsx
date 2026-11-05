@@ -3,7 +3,7 @@ import type { ReactNode, RefObject } from 'react';
 import { relationshipLabel } from '../lib/relationship-label.ts';
 import { getClaimEvidence, getEntityClaims } from '../lib/dataset.ts';
 import { getStudyContextNotes } from '../lib/compare-evidence.ts';
-import { sourceAuthor, sourceCitation } from '../lib/source-format.ts';
+import { findingLabel, sourceAuthor, sourceCitation } from '../lib/source-format.ts';
 import type { Claim, Context, Entity, Snapshot } from '../lib/types.ts';
 import { Icon, TYPE_LABELS } from './ui.tsx';
 import { PublicationStatus } from './PublicationStatus.tsx';
@@ -42,6 +42,7 @@ function StudyContext({ context, className = '' }: { context: Context; className
 }
 
 function connectionLabel(snapshot: Snapshot, claim: Claim, selected: Entity): string {
+  if (typeof claim.context.finding_label === 'string') return findingLabel(snapshot, claim);
   if (typeof claim.context.binding_condition === 'string') {
     const sourceIds = new Set(getClaimEvidence(snapshot, claim.id).map(({ source_id }) => source_id));
     const sources = snapshot.sources.filter(({ id, kind }) => sourceIds.has(id) && kind === 'publication');

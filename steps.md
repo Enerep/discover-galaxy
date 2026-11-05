@@ -1,6 +1,6 @@
 # Implementation steps
 
-**Current stage: human RNA-seq interpretation is implemented beside the 40-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
+**Current stage: human RNA-seq interpretation is implemented beside the 45-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
@@ -29,7 +29,7 @@ The smallest useful flow is: search → select an entity → inspect a relations
 - [x] Handle loading, invalid data, no results, and missing optional metadata without inventing content.
 - [x] Run the implemented checks and exercise the search-to-evidence flow in desktop/mobile browser tests, including WebGL failure. See [verification](docs/verification.md).
 
-The current snapshot has 40 source-linked entities and 41 draft claims, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
+The current snapshot has 45 source-linked entities, 49 draft claims and 49 evidence records, including the original four variant-scoped association findings. The interface uses **Source-checked draft**. The owner has deferred independent scientific review and authorized continued development; the separate future scientific-release gate remains intact. Actual source checks, reuse status, unknown releases and publication-status limits stay recorded. Synthetic fixtures remain isolated in tests.
 
 **Done when:** a clean local setup runs with no service credentials, and a user can search for Alzheimer's, select APOE, inspect a source-checked draft relationship, and open its cited evidence through graph or list. Independent scientific approval belongs to the future release milestone.
 
@@ -89,7 +89,7 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Verify comparison through keyboard, both themes, narrow screens, and unavailable WebGL; record observed checks separately from scientific review.
 - [x] Verify bounded OpenAlex metadata intake and archived-response normalization, keeping candidates unreviewed and outside the graph; record live API availability separately from offline contract checks. Offline/simulated-network checks pass; the initial checkpoint's live request failed, with later access recorded below.
 - [x] Complete a successful bounded live OpenAlex request and inspect its five-result candidate packet; retain the legacy packet's missing raw digest and actual abstract-level source-check limits in the [APOE/ABCA1 batch](data/annotations/apoe-abca1-intake.md).
-- [ ] Capture a successful live OpenAlex 0.2.0 packet with an original-response digest; later attempts returned 503/504 without a packet.
+- [x] Capture a successful live OpenAlex 0.2.0 packet with its original-response digest: query `ABCA1 AND APOE`, page 1/limit 5, completed 2026-11-05T11:18:18.716Z. Preserve the earlier legacy unknown digest and failed 503/504 attempts separately.
 
 This work provides a reading and curation workflow. It does not add reviewed claims, establish study independence, classify scientific contradictions, or complete M3's disagreement/hypothesis criteria.
 
@@ -141,7 +141,7 @@ This workflow interprets processed results; it does not run raw-count differenti
 - [x] Expand through a separately source-checked dataset diff: 21 entities, distinct gene/protein identities, two pathways, and recorded database assertions.
 - [ ] Later scientific-release milestone: record an actual independent scientific review and resolve remaining source/release checks. This is deferred, not a blocker for source-checked development.
 
-The two pathway candidates now have source-checked draft annotations in 0.2.0; six publications remain in the original reading plan. That snapshot expansion used targeted source checks, not live adapter imports, and its exact Reactome release remains unknown. The later APOE/ABCA1 staging batch records live access separately, without changing the graph or that reading plan. The entity-count target is met; other MVP criteria remain separate.
+The two pathway candidates now have source-checked draft annotations in 0.2.0; six publications remained in that original reading plan before the separate 0.8.0 source pass consumed Wahrle 2004. That snapshot expansion used targeted source checks, not live adapter imports, and its exact Reactome release remains unknown. The later APOE/ABCA1 staging batch records live access separately, without itself changing the graph or that reading plan; the later 0.8.0 checkpoint is a separate source-checked diff. The entity-count target is met; other MVP criteria remain separate.
 
 Snapshot 0.3.0 adds two APOE–TREM2 protein-binding findings and one paper projection from a separate original-source check of Atagi 2015. Caption-level scope, assay controls, replicate units and shared-paper identity are retained; raw figures and full methods were not reviewed. No staged metadata was promoted automatically.
 
@@ -151,12 +151,21 @@ Snapshot 0.5.0 adds Lessard 2018's scoped APOE3 BLI finding and one source-check
 
 - [x] Expand coverage from a real public AD pathway result: MARCO/SCARA5, APOB ligand context, separate proteins, the scavenger-receptor pathway and two original modified-apoB binding findings; retain database inference and assay-specific limits in the 32-entity snapshot.
 
+### Visible APOE/ABCA1 evidence checkpoint
+
+- [x] Inspect original methods, Results and figure/captions for Wahrle 2004 particle-lipidation and Hirsch-Reinshagen 2005 soluble-ApoE experiments; preserve model/readout-specific scope and unknowns.
+- [x] Add three mouse perturbation findings, two mouse/human orthology annotations, one mouse gene/product mapping and two separately labeled Open Targets aggregates through a source-checked draft diff.
+- [x] Reuse the inspected UniProt/Reactome identities/mappings without duplicate membership claims and keep OpenAlex as literature metadata. Preserve raw hashes, versions/terms and the legacy unknown digest in [checkpoint provenance](data/annotations/apoe-abca1-checkpoint-provenance.json).
+- [x] Enforce species/source-kind boundaries and human-RNA coverage limits; retain citations, distinct finding navigation, comparisons and exports in both browser layouts.
+
+Snapshot 0.8.0 has 45 entities, 49 claims, 49 evidence records and 49 sources plus one unchanged context comparison. This is a visible evidence checkpoint, not completion of the broader possible-explanations pilot, hypotheses or independent scientific-release gate. [The change record](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) retains actual source limits; browser verification is recorded separately. Wahrle 2004 has left the reading plan; five publication candidates remain.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
-Future content work can continue from the 41-claim source packet and six staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
+Future content work can continue from the 49-claim/49-evidence source packet and five staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
 
-- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 40 total, with scope and original references retained.
-- [x] Represent three human Reactome pathways and fourteen distinct proteins, retaining source-linked participation and state context where applicable; variant nodes remain deferred.
+- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 45 total, with scope and original references retained.
+- [x] Represent three human Reactome pathways and fifteen distinct proteins (fourteen human and one mouse), retaining source-linked participation and state context where applicable; variant nodes remain deferred.
 - [x] Record access dates, observed entry versions where obtained, attribution, source context and actual check status. Exact Reactome release provenance remains unresolved.
 - [x] Expose all current entity types in one filter, with active state visible.
 - [ ] Add relationship/evidence filters when a concrete research task requires them.

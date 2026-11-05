@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { loadDataset } from './dataset.ts';
-import { buildComparisonBrief, buildEvidenceComparison, findComparisonPartner, getStudyContextNotes } from './compare-evidence.ts';
+import { buildComparisonBrief, buildEvidenceComparison, buildFindingBrief, findComparisonPartner, getStudyContextNotes } from './compare-evidence.ts';
+import { findingLabel } from './source-format.ts';
+import type { Snapshot } from './types.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const FIRST = 'claim-apoe-e4-risk';
@@ -33,6 +35,89 @@ test('comparison opens a curated pair before matching conditions without inferri
   // Deliberately aliased metadata is confined to this helper test, not the graph.
   repeatedMetadata.sources.find(({ id }) => id === 'source-bailey-2015')!.identifiers = repeatedMetadata.sources.find(({ id }) => id === 'source-atagi-2015')!.identifiers;
   assert.equal(findComparisonPartner(repeatedMetadata, binding)?.id, variant);
+});
+
+test('automatic partners keep database primary sources apart from publications while retaining discovery provenance', () => {
+  // Synthetic database candidates exercise navigation only, never graph evidence.
+  const fixture = structuredClone(snapshot);
+  const first = fixture.claims.find(({ id }) => id === FIRST)!;
+  const second = fixture.claims.find(({ id }) => id === SECOND)!;
+  const firstEvidence = fixture.evidence.find(({ claim_id }) => claim_id === FIRST)!;
+  const secondEvidence = fixture.evidence.find(({ claim_id }) => claim_id === SECOND)!;
+  const database = { ...fixture.sources.find(({ kind }) => kind === 'database_record')!, id: 'synthetic-database-comparison', title: 'Synthetic database aggregate', provider: 'Synthetic', release: 'Synthetic fixture' };
+  const aggregate = { ...first, id: 'synthetic-aggregate-a', context: { association_scope: 'provider_aggregate' }, evidence_ids: ['synthetic-aggregate-evidence-a'] };
+  const otherAggregate = { ...aggregate, id: 'synthetic-aggregate-b', evidence_ids: ['synthetic-aggregate-evidence-b'] };
+  fixture.sources.push(database);
+  firstEvidence.upstream_source_ids = [database.id];
+  fixture.claims = [aggregate, first, otherAggregate, second];
+  fixture.evidence = [firstEvidence, secondEvidence,
+    { ...firstEvidence, id: 'synthetic-aggregate-evidence-a', claim_id: aggregate.id, source_id: database.id },
+    { ...firstEvidence, id: 'synthetic-aggregate-evidence-b', claim_id: otherAggregate.id, source_id: database.id }];
+  assert.equal(findComparisonPartner(fixture, FIRST)?.id, SECOND);
+  assert.equal(findComparisonPartner(fixture, aggregate.id)?.id, otherAggregate.id);
+  assert.equal(findComparisonPartner({ ...fixture, claims: [aggregate, first, second] }, aggregate.id), undefined);
+  assert.equal(findComparisonPartner({ ...fixture, claims: [first, aggregate, otherAggregate] }, FIRST), undefined);
+  const mixed = structuredClone(fixture);
+  mixed.evidence.push({ ...mixed.evidence[2], id: 'synthetic-mixed-evidence', claim_id: FIRST });
+  mixed.claims.find(({ id }) => id === FIRST)!.evidence_ids.push('synthetic-mixed-evidence');
+  assert.equal(findComparisonPartner(mixed, FIRST), undefined);
+  const exported = buildFindingBrief(fixture, aggregate.id);
+  assert.ok(exported.includes('Source type: Database annotation.'));
+  assert.ok(!exported.includes('Source type: Original paper.'));
+});
+
+// Three authored experiment records, isolated from the scientific snapshot.
+function syntheticModelComparison(): Snapshot {
+  const fixture = structuredClone(snapshot);
+  const baseClaim = fixture.claims.find(({ id }) => id === FIRST)!;
+  const baseEvidence = fixture.evidence.find(({ claim_id }) => claim_id === FIRST)!;
+  const baseSource = fixture.sources.find(({ id }) => id === baseEvidence.source_id)!;
+  const sources = [
+    { ...baseSource, id: 'synthetic-particle-source', authors: ['Synthetic Particle Study'], title: 'Synthetic particle experiment', year: 2004, identifiers: [] },
+    { ...baseSource, id: 'synthetic-model-source', authors: ['Synthetic Model Study'], title: 'Synthetic model experiment', year: 2005, identifiers: [] },
+  ];
+  const scopes = [
+    { id: 'synthetic-particle-effect', group: 'synthetic particle lipidation', label: 'Particle lipidation', source: sources[0] },
+    { id: 'synthetic-model-a', group: 'synthetic soluble protein', label: 'Model A soluble protein', source: sources[1] },
+    { id: 'synthetic-model-b', group: 'synthetic soluble protein', label: 'Model B soluble protein', source: sources[1] },
+  ];
+  fixture.sources.push(...sources);
+  fixture.claims = scopes.map(({ id, group, label }) => ({ ...baseClaim, id, predicate: 'perturbation_affects', subject_id: 'gene-apoe', object_id: 'protein-apoe',
+    statement: `Synthetic ${label} finding.`, evidence_ids: [`evidence-${id}`],
+    context: { taxonomy_id: 9606, intervention: 'Synthetic perturbation', experimental_system: `Synthetic ${label} system`, outcome: 'Synthetic measurement', finding_label: label, comparison_group: group } }));
+  fixture.evidence = scopes.map(({ id, label, source }) => ({ ...baseEvidence, id: `evidence-${id}`, claim_id: id, source_id: source.id,
+    finding: `Synthetic ${label} finding.`, study_context: { taxonomy_id: 9606, experimental_system: `Synthetic ${label} system` } }));
+  return fixture;
+}
+
+test('recorded outcome groups prefer the two same-paper models without overriding a curated pair', () => {
+  const fixture = syntheticModelComparison();
+  assert.equal(findComparisonPartner(fixture, 'synthetic-model-a')?.id, 'synthetic-model-b');
+  assert.equal(findComparisonPartner(fixture, 'synthetic-model-b')?.id, 'synthetic-model-a');
+  const compared = buildEvidenceComparison(fixture, 'synthetic-model-a', 'synthetic-model-b');
+  assert.equal(compared.sharedSources.length, 1);
+  assert.ok(compared.sharedSources[0].matchedBy.includes('source ID'));
+  delete fixture.claims[1].context.comparison_group;
+  assert.equal(findComparisonPartner(fixture, 'synthetic-model-a')?.id, 'synthetic-particle-effect');
+  const curated = structuredClone(snapshot);
+  const active = curated.claims.find(({ id }) => id === 'claim-trem2-r47h-apoe-binding')!;
+  active.context.comparison_group = 'Synthetic shared group';
+  curated.claims.find(({ id }) => id === 'claim-bailey-trem2-r47h-apoe-binding')!.context.comparison_group = active.context.comparison_group;
+  assert.equal(findComparisonPartner(curated, active.id)?.id, 'claim-lessard-trem2-r47h-apoe3-binding');
+});
+
+test('source-specific perturbation labels and portable context distinguish model findings while preserving binding labels', () => {
+  const fixture = syntheticModelComparison();
+  const labels = fixture.claims.map((claim) => findingLabel(fixture, claim));
+  assert.equal(new Set(labels).size, 3);
+  assert.equal(labels[1], 'Synthetic Model Study · 2005 · Model A soluble protein');
+  assert.equal(labels[2], 'Synthetic Model Study · 2005 · Model B soluble protein');
+  const binding = snapshot.claims.find(({ id }) => id === 'claim-trem2-r47h-apoe-binding')!;
+  assert.equal(findingLabel(snapshot, { ...binding, context: { ...binding.context, finding_label: 'Synthetic alternate label' } }), findingLabel(snapshot, binding));
+  const exported = buildFindingBrief(fixture, 'synthetic-model-a');
+  for (const value of ['Synthetic model experiment', 'Source type: Original paper.', 'finding label: Model A soluble protein',
+    'comparison group: synthetic soluble protein', 'experimental system: Synthetic Model A soluble protein system', 'taxonomy id: 9606']) assert.ok(exported.includes(value), value);
+  assert.ok(!exported.includes('Synthetic Model B soluble protein system'));
 });
 
 test('a source-checked context note appears only for its cited pair and exports the actual limits and review record', () => {

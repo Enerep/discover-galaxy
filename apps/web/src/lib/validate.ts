@@ -1,9 +1,8 @@
-import { ENTITY_TYPES } from './types.ts';
+import { ENTITY_TYPES, PREDICATES } from './types.ts';
 import type { EntityType, Review, Snapshot } from './types.ts';
 
 export interface ValidationResult { valid: boolean; errors: string[]; warnings: string[] }
 type ObjectValue = Record<string, unknown>;
-const predicates = ['associated_with', 'encodes', 'participates_in', 'interacts_with', 'targets'];
 const relations = ['supports', 'refutes', 'mixed', 'unclear'];
 
 /** Structural checks cannot certify scientific accuracy, human review, or redistribution rights. */
@@ -67,7 +66,7 @@ export function validateDataset(input: unknown, { release = false }: { release?:
   const data = object(input, 'dataset');
   const result = () => ({ valid: errors.length === 0, errors, warnings });
   if (!data) return result();
-  enumeration(data.schema_version, ['0.1.0'], 'schema_version');
+  enumeration(data.schema_version, ['0.2.0'], 'schema_version');
   enumeration(data.release_status, ['development', 'released'], 'release_status');
   text(data.dataset_version, 'dataset_version'); date(data.created_at, 'created_at');
   const scope = object(data.scope, 'scope');
@@ -85,6 +84,7 @@ export function validateDataset(input: unknown, { release = false }: { release?:
     text(record.id, `${p}.id`); enumeration(record.type, ENTITY_TYPES, `${p}.type`);
     text(record.label, `${p}.label`); strings(record.aliases, `${p}.aliases`);
     identifiers(record.external_ids, `${p}.external_ids`, record.type === 'paper' ? 0 : 1);
+    if (record.taxonomy_id !== undefined && (typeof record.taxonomy_id !== 'number' || !Number.isSafeInteger(record.taxonomy_id) || record.taxonomy_id < 1)) fail(`${p}.taxonomy_id`, 'expected a positive safe integer');
     if (record.description !== undefined) text(record.description, `${p}.description`);
     strings(record.description_claim_ids, `${p}.description_claim_ids`);
     strings(record.provenance_source_ids, `${p}.provenance_source_ids`, 1);
@@ -93,7 +93,7 @@ export function validateDataset(input: unknown, { release = false }: { release?:
   array(data.claims, 'claims', (item, p) => {
     const record = object(item, p); if (!record) return;
     ['id', 'subject_id', 'object_id', 'statement', 'summary'].forEach((key) => text(record[key], `${p}.${key}`));
-    enumeration(record.predicate, predicates, `${p}.predicate`); context(record.context, `${p}.context`);
+    enumeration(record.predicate, PREDICATES, `${p}.predicate`); context(record.context, `${p}.context`);
     strings(record.evidence_ids, `${p}.evidence_ids`, 1); strings(record.limitations, `${p}.limitations`, 1); review(record.review, `${p}.review`);
   }, 1);
   array(data.evidence, 'evidence', (item, p) => {
@@ -192,9 +192,30 @@ export function validateDataset(input: unknown, { release = false }: { release?:
     references([claim.subject_id, claim.object_id], entityMap, `${claim.id}.endpoints`);
     references(claim.evidence_ids, evidenceMap, `${claim.id}.evidence_ids`);
     checkReview(claim.review, claim.id);
-    const left = entityMap.get(claim.subject_id)?.type;
-    const right = entityMap.get(claim.object_id)?.type;
-    if (left && right && !validEndpoints(claim.predicate, left, right)) fail(claim.id, `invalid endpoint types for ${claim.predicate}: ${left} / ${right}`);
+    const subject = entityMap.get(claim.subject_id);
+    const object = entityMap.get(claim.object_id);
+    if (subject && object) {
+      if (!validEndpoints(claim.predicate, subject.type, object.type)) fail(claim.id, `invalid endpoint types for ${claim.predicate}: ${subject.type} / ${object.type}`);
+      if (claim.predicate === 'encodes' && subject.taxonomy_id !== undefined && object.taxonomy_id !== undefined && subject.taxonomy_id !== object.taxonomy_id) fail(claim.id, 'encodes cannot connect different explicit species');
+      if (claim.predicate === 'ortholog_of') {
+        if (subject.taxonomy_id === undefined || object.taxonomy_id === undefined || subject.taxonomy_id === object.taxonomy_id) fail(claim.id, 'ortholog_of requires different explicit endpoint taxonomy IDs');
+        if (subject.taxonomy_id === undefined || claim.context.subject_taxonomy_id !== subject.taxonomy_id
+          || object.taxonomy_id === undefined || claim.context.object_taxonomy_id !== object.taxonomy_id) fail(`${claim.id}.context`, 'ortholog_of taxonomy IDs must match the corresponding endpoints');
+      }
+      if (claim.predicate === 'perturbation_affects') {
+        if (subject.taxonomy_id === undefined || object.taxonomy_id === undefined || subject.taxonomy_id !== object.taxonomy_id
+          || claim.context.taxonomy_id !== subject.taxonomy_id) fail(claim.id, 'perturbation_affects requires matching explicit endpoint and context taxonomy IDs');
+        for (const field of ['intervention', 'experimental_system', 'outcome']) text(claim.context[field], `${claim.id}.context.${field}`);
+        if (claim.context.finding_label !== undefined) text(claim.context.finding_label, `${claim.id}.context.finding_label`);
+        for (const evidenceId of claim.evidence_ids) {
+          const evidence = evidenceMap.get(evidenceId);
+          if (!evidence) continue; // Unresolved references are reported separately.
+          const source = sourceMap.get(evidence.source_id);
+          if (source && (source.kind !== 'publication' || source.publication_type !== 'primary_research')) fail(evidence.id, 'perturbation_affects requires an original primary_research publication source');
+          if (evidence.study_context.taxonomy_id !== subject.taxonomy_id) fail(`${evidence.id}.study_context.taxonomy_id`, 'perturbation evidence taxonomy must match its effect endpoints');
+        }
+      }
+    }
     claim.evidence_ids.forEach((id) => {
       if (evidenceMap.has(id) && evidenceMap.get(id)!.claim_id !== claim.id) fail(claim.id, `evidence backlink mismatch ${id}`);
     });
@@ -248,5 +269,7 @@ function validEndpoints(predicate: string, left: EntityType, right: EntityType):
   if (predicate === 'participates_in') return molecular(left) && right === 'pathway';
   if (predicate === 'interacts_with') return molecular(left) && molecular(right);
   if (predicate === 'targets') return left === 'drug' && molecular(right);
+  if (predicate === 'ortholog_of') return left === 'gene' && right === 'gene';
+  if (predicate === 'perturbation_affects') return left === 'gene' && right === 'protein';
   return false;
 }

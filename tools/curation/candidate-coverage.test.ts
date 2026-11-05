@@ -14,7 +14,7 @@ test('candidate coverage is deterministic, preserves the pending baseline and ca
   assert.equal(JSON.stringify({ snapshot, packet }), before);
   for (const claim of snapshot.claims) {
     assert.ok(output.includes(claim.id));
-    assert.match(output.split('\n').find((line) => line.startsWith(`| ${claim.id} |`))!, /\| draft \| draft \| No \|$/);
+    assert.match(output.split('\n').find((line) => line.startsWith(`| ${claim.id} |`))!, /\| draft \| draft(?:; draft)* \| No \|$/);
   }
   assert.match(output, /not a systematic search or an OpenAlex API import/);
   assert.match(output, /Source counts are not independent-study counts/);
@@ -51,7 +51,10 @@ test('baseline, candidate and biological-anchor references must resolve and unus
     assert.throws(() => loadCandidateCoverage(changed, snapshot), message);
   }
   const unused = structuredClone(packet);
-  unused.questions.forEach((question) => { question.candidate_ids = question.candidate_ids.filter((id) => id !== unused.candidates[0].id); });
+  unused.questions.forEach((question) => {
+    question.candidate_ids = question.candidate_ids.filter((id) => id !== unused.candidates[0].id);
+    if (!question.candidate_ids.length) question.candidate_ids = [unused.candidates[1].id];
+  });
   assert.throws(() => loadCandidateCoverage(unused, snapshot), /Every candidate needs a reading question/);
 });
 

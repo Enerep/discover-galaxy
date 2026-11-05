@@ -1,21 +1,24 @@
 {
-  "schema_version": "0.1.0",
-  "dataset_version": "alzheimers-source-checked-0.7.0",
-  "created_at": "2026-10-24",
+  "schema_version": "0.2.0",
+  "dataset_version": "alzheimers-source-checked-0.8.0",
+  "created_at": "2026-11-05",
   "release_status": "development",
   "scope": {
     "disease": "Alzheimer's disease",
-    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021.",
+    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations.",
     "limitations": [
       "Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.",
       "The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
       "The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.",
-      "Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.",
+      "Human and explicitly species-qualified mouse genes/proteins remain separate. Orthology permits navigation, not transfer of experimental effects or human RNA measurements. Molecular preparations/fractions remain in context rather than distinct isoform/state nodes.",
       "Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.",
       "Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.",
       "One draft study-context comparison records different R47H assay reports. It does not establish a settled contradiction, the cause of the difference, or clinical effects. No research hypotheses are included.",
       "Different publication identifiers do not establish independent replication. Assay preparations, surface presentation and replicate units remain source-specific; a recorded correction does not mean a comprehensive notice search is complete.",
-      "MARCO/SCARA5 inclusion was prioritized using a public AD differential-expression table. Those input statistics are not graph claims; the Cheng protein assays were not an AD patient or brain experiment, and mouse-inferred Reactome annotations retain their inference scope."
+      "MARCO/SCARA5 inclusion was prioritized using a public AD differential-expression table. Those input statistics are not graph claims; the Cheng protein assays were not an AD patient or brain experiment, and mouse-inferred Reactome annotations retain their inference scope.",
+      "Open Targets association summaries are database aggregates, not additional original experiments or independent support for the existing variant-specific findings.",
+      "Mouse perturbation effects remain model/readout-specific; neither orthology nor a human disease annotation establishes the mouse effect in humans.",
+      "The broader human enrichment and HGNC references are unchanged; human RNA evidence coverage never traverses orthology links to borrow mouse papers."
     ]
   },
   "upstream_releases": [
@@ -74,6 +77,62 @@
       "source_url": "https://raw.githubusercontent.com/epigen/MrBiomics/fbe2f70935496c73ed21337af70e97e633c2f4d3/resources/ReactomePathways.gmt",
       "reuse_terms_url": "https://reactome.org/license",
       "attribution": "Reactome annotation data, mirrored by Computational Epigenetics / MrBiomics; exact upstream release unknown."
+    },
+    {
+      "provider": "UniProtKB APOE/ABCA1 live identity metadata",
+      "release": "2026_04; entries281/244; processed by biomedical-annotations-2",
+      "accessed_at": "2026-11-05",
+      "source_url": "https://rest.uniprot.org/uniprotkb/P02649.json",
+      "reuse_terms_url": "https://rest.uniprot.org/help/license",
+      "attribution": "The UniProt Consortium; CC BY4.0; exact response hashes in checkpoint provenance."
+    },
+    {
+      "provider": "Reactome live UniProt mapping",
+      "release": "R-HSA-9029569.2; global release unknown",
+      "accessed_at": "2026-11-05",
+      "source_url": "https://reactome.org/ContentService/data/mapping/UniProt/P02649/pathways?species=9606",
+      "reuse_terms_url": "https://reactome.org/license",
+      "attribution": "Reactome; CC0 database mapping; molecular states are not resolved by this lookup."
+    },
+    {
+      "provider": "Open Targets Platform direct associations",
+      "release": "26.09; original components year=\"26\", month=\"09\", iteration=null",
+      "accessed_at": "2026-11-05",
+      "source_url": "https://api.platform.opentargets.org/api/v4/graphql",
+      "reuse_terms_url": "https://platform-docs.opentargets.org/licence",
+      "attribution": "Open Targets Platform; CC0; first20directrows pertarget; source-defined ranking scores."
+    },
+    {
+      "provider": "OpenAlex literature metadata",
+      "release": null,
+      "accessed_at": "2026-11-05",
+      "source_url": "https://api.openalex.org/works?search.title_and_abstract=ABCA1+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+      "reuse_terms_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms."
+    },
+    {
+      "provider": "Ensembl Compara mouse/human orthology",
+      "release": null,
+      "accessed_at": "2026-11-05",
+      "source_url": "https://rest.ensembl.org/homology/symbol/mus_musculus/Abca1?target_species=homo_sapiens&type=orthologues&content-type=application/json",
+      "reuse_terms_url": "https://www.ensembl.org/info/about/legal/disclaimer.html",
+      "attribution": "Ensembl Compara; one-to-one gene orthology. Exact terms page unavailable; reuse review pending."
+    },
+    {
+      "provider": "NCBI Gene mouse identities",
+      "release": null,
+      "accessed_at": "2026-11-05",
+      "source_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=11303,11816&retmode=json",
+      "reuse_terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "attribution": "NCBI Gene/National Library of Medicine; identity facts only."
+    },
+    {
+      "provider": "UniProtKB mouse Apoe identity",
+      "release": "2026_04; entry224",
+      "accessed_at": "2026-11-05",
+      "source_url": "https://rest.uniprot.org/uniprotkb/P08226.json",
+      "reuse_terms_url": "https://rest.uniprot.org/help/license",
+      "attribution": "The UniProt Consortium; CC BY4.0; canonical mouse gene/product identity."
     }
   ],
   "entities": [
@@ -92,12 +151,17 @@
         {
           "namespace": "MeSH",
           "value": "D000544"
+        },
+        {
+          "namespace": "MONDO",
+          "value": "MONDO_0004975"
         }
       ],
       "description": "Alzheimer Disease · MeSH D000544",
       "description_claim_ids": [],
       "provenance_source_ids": [
-        "source-mesh-alzheimers"
+        "source-mesh-alzheimers",
+        "source-mondo-alzheimers-mesh"
       ]
     },
     {
@@ -111,13 +175,19 @@
         {
           "namespace": "NCBIGene",
           "value": "348"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000130203"
         }
       ],
       "description": "apolipoprotein E · human gene",
       "description_claim_ids": [],
       "provenance_source_ids": [
-        "source-ncbi-apoe"
-      ]
+        "source-ncbi-apoe",
+        "source-uniprot-apoe-live-2026-11-05"
+      ],
+      "taxonomy_id": 9606
     },
     {
       "id": "gene-abca1",
@@ -130,13 +200,19 @@
         {
           "namespace": "NCBIGene",
           "value": "19"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000165029"
         }
       ],
       "description": "ATP binding cassette subfamily A member 1 · human gene",
       "description_claim_ids": [],
       "provenance_source_ids": [
-        "source-ncbi-abca1"
-      ]
+        "source-ncbi-abca1",
+        "source-uniprot-abca1-live-2026-11-05"
+      ],
+      "taxonomy_id": 9606
     },
     {
       "id": "gene-trem2",
@@ -237,8 +313,10 @@
         "claim-apoe-encodes"
       ],
       "provenance_source_ids": [
-        "source-uniprot-apoe"
-      ]
+        "source-uniprot-apoe",
+        "source-uniprot-apoe-live-2026-11-05"
+      ],
+      "taxonomy_id": 9606
     },
     {
       "id": "protein-abca1",
@@ -260,8 +338,10 @@
         "claim-abca1-encodes"
       ],
       "provenance_source_ids": [
-        "source-reactome-abca1-protein"
-      ]
+        "source-reactome-abca1-protein",
+        "source-uniprot-abca1-live-2026-11-05"
+      ],
+      "taxonomy_id": 9606
     },
     {
       "id": "protein-trem2",
@@ -486,7 +566,9 @@
       "description": "Curated human pathway",
       "description_claim_ids": [],
       "provenance_source_ids": [
-        "source-reactome-cholesterol-efflux"
+        "source-reactome-cholesterol-efflux",
+        "source-reactome-apoe-live-mapping",
+        "source-reactome-abca1-live-mapping"
       ]
     },
     {
@@ -920,6 +1002,117 @@
       "description_claim_ids": [],
       "provenance_source_ids": [
         "source-hgnc-coverage-identities"
+      ]
+    },
+    {
+      "id": "gene-mouse-abca1",
+      "type": "gene",
+      "label": "Abca1 (mouse)",
+      "aliases": [
+        "mouse Abca1",
+        "Abca1 Mus musculus"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBIGene",
+          "value": "11303"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSMUSG00000015243"
+        }
+      ],
+      "taxonomy_id": 10090,
+      "description": "Mouse gene · NCBI Gene 11303",
+      "description_claim_ids": [
+        "claim-mouse-abca1-human-ortholog"
+      ],
+      "provenance_source_ids": [
+        "source-ncbi-mouse-abca1-apoe",
+        "source-ensembl-abca1-orthology"
+      ]
+    },
+    {
+      "id": "gene-mouse-apoe",
+      "type": "gene",
+      "label": "Apoe (mouse)",
+      "aliases": [
+        "mouse Apoe",
+        "Apoe Mus musculus"
+      ],
+      "external_ids": [
+        {
+          "namespace": "NCBIGene",
+          "value": "11816"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSMUSG00000002985"
+        }
+      ],
+      "taxonomy_id": 10090,
+      "description": "Mouse gene · NCBI Gene 11816",
+      "description_claim_ids": [
+        "claim-mouse-apoe-human-ortholog"
+      ],
+      "provenance_source_ids": [
+        "source-ncbi-mouse-abca1-apoe",
+        "source-ensembl-apoe-orthology"
+      ]
+    },
+    {
+      "id": "protein-mouse-apoe",
+      "type": "protein",
+      "label": "ApoE protein (mouse)",
+      "aliases": [
+        "mouse ApoE protein",
+        "P08226"
+      ],
+      "external_ids": [
+        {
+          "namespace": "UniProt",
+          "value": "P08226"
+        }
+      ],
+      "taxonomy_id": 10090,
+      "description": "Mouse ApoE protein · UniProt P08226",
+      "description_claim_ids": [
+        "claim-mouse-apoe-encodes"
+      ],
+      "provenance_source_ids": [
+        "source-uniprot-mouse-apoe"
+      ]
+    },
+    {
+      "id": "paper-wahrle-2004",
+      "type": "paper",
+      "label": "Wahrle et al. · 2004",
+      "aliases": [
+        "15269217",
+        "10.1074/jbc.M407963200",
+        "ABCA1 ApoE mouse experiments"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-wahrle-2004",
+      "provenance_source_ids": [
+        "source-wahrle-2004"
+      ]
+    },
+    {
+      "id": "paper-hirsch-reinshagen-2005",
+      "type": "paper",
+      "label": "Hirsch-Reinshagen et al. · 2005",
+      "aliases": [
+        "16207707",
+        "10.1074/jbc.M508781200",
+        "ABCA1 ApoE mouse experiments"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-hirsch-reinshagen-2005",
+      "provenance_source_ids": [
+        "source-hirsch-reinshagen-2005"
       ]
     }
   ],
@@ -2166,6 +2359,336 @@
         "human_reviewed": false,
         "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
       }
+    },
+    {
+      "id": "claim-apoe-opentargets-association",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "Open Targets reports a direct APOE–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.",
+      "context": {
+        "organism": "Homo sapiens",
+        "taxonomy_id": 9606,
+        "assertion_type": "provider aggregate association",
+        "association_scope": "provider_aggregate",
+        "target_id": "ENSG00000130203",
+        "disease_id": "MONDO_0004975",
+        "provider_release": "26.09",
+        "enable_indirect": "false",
+        "page_index": 0,
+        "page_size": 20,
+        "total_reported": 2836,
+        "overall_association_score": "0.695512952413486",
+        "datasource_scores": [
+          "gwas_credible_sets: 0.9725857409132884",
+          "eva: 0.516741177969878",
+          "crispr_screen: 0.2670020417823128",
+          "europepmc: 0.9992042452669387",
+          "expression_atlas: 0.017251532679053088"
+        ],
+        "score_definition": "Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count."
+      },
+      "evidence_ids": [
+        "evidence-apoe-opentargets-association"
+      ],
+      "summary": "Open Targets reports a direct APOE–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.",
+      "limitations": [
+        "Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.",
+        "Only the first 20 direct disease rows were retrieved, from 2836 reported for this target; underlying study evidence was not extracted.",
+        "Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-abca1-opentargets-association",
+      "subject_id": "gene-abca1",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "Open Targets reports a direct ABCA1–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.",
+      "context": {
+        "organism": "Homo sapiens",
+        "taxonomy_id": 9606,
+        "assertion_type": "provider aggregate association",
+        "association_scope": "provider_aggregate",
+        "target_id": "ENSG00000165029",
+        "disease_id": "MONDO_0004975",
+        "provider_release": "26.09",
+        "enable_indirect": "false",
+        "page_index": 0,
+        "page_size": 20,
+        "total_reported": 1797,
+        "overall_association_score": "0.4940984029965598",
+        "datasource_scores": [
+          "gwas_credible_sets: 0.7554219891183979",
+          "europepmc: 0.9440037085287274",
+          "clinical_precedence: 0.09118961964174316"
+        ],
+        "score_definition": "Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count."
+      },
+      "evidence_ids": [
+        "evidence-abca1-opentargets-association"
+      ],
+      "summary": "Open Targets reports a direct ABCA1–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.",
+      "limitations": [
+        "Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.",
+        "Only the first 20 direct disease rows were retrieved, from 1797 reported for this target; underlying study evidence was not extracted.",
+        "Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-mouse-abca1-human-ortholog",
+      "subject_id": "gene-mouse-abca1",
+      "object_id": "gene-abca1",
+      "predicate": "ortholog_of",
+      "statement": "Ensembl Compara annotates mouse Abca1 as a one-to-one ortholog of human ABCA1.",
+      "context": {
+        "assertion_type": "curated orthology annotation",
+        "subject_taxonomy_id": 10090,
+        "object_taxonomy_id": 9606,
+        "subject_gene_id": "ENSMUSG00000015243",
+        "object_gene_id": "ENSG00000165029",
+        "orthology_type": "ortholog_one2one"
+      },
+      "evidence_ids": [
+        "evidence-mouse-abca1-human-ortholog"
+      ],
+      "summary": "Ensembl Compara annotates mouse Abca1 as a one-to-one ortholog of human ABCA1.",
+      "limitations": [
+        "Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.",
+        "Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-mouse-apoe-human-ortholog",
+      "subject_id": "gene-mouse-apoe",
+      "object_id": "gene-apoe",
+      "predicate": "ortholog_of",
+      "statement": "Ensembl Compara annotates mouse Apoe as a one-to-one ortholog of human APOE.",
+      "context": {
+        "assertion_type": "curated orthology annotation",
+        "subject_taxonomy_id": 10090,
+        "object_taxonomy_id": 9606,
+        "subject_gene_id": "ENSMUSG00000002985",
+        "object_gene_id": "ENSG00000130203",
+        "orthology_type": "ortholog_one2one"
+      },
+      "evidence_ids": [
+        "evidence-mouse-apoe-human-ortholog"
+      ],
+      "summary": "Ensembl Compara annotates mouse Apoe as a one-to-one ortholog of human APOE.",
+      "limitations": [
+        "Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.",
+        "Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-mouse-apoe-encodes",
+      "subject_id": "gene-mouse-apoe",
+      "object_id": "protein-mouse-apoe",
+      "predicate": "encodes",
+      "statement": "The mouse Apoe gene (NCBI Gene11816) encodes the ApoE protein represented by UniProt P08226.",
+      "context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "assertion_type": "curated database identity",
+        "gene_id": "11816",
+        "protein_accession": "P08226"
+      },
+      "evidence_ids": [
+        "evidence-mouse-apoe-encodes"
+      ],
+      "summary": "The mouse Apoe gene (NCBI Gene11816) encodes the ApoE protein represented by UniProt P08226.",
+      "limitations": [
+        "Canonical gene/product identity; the experimental particle fractions are context, not separately identified isoform or modification nodes."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-mouse-abca1-apoe-lipidation-wahrle",
+      "subject_id": "gene-mouse-abca1",
+      "object_id": "protein-mouse-apoe",
+      "predicate": "perturbation_affects",
+      "statement": "In primary mouse astrocyte cultures, Abca1 deficiency yielded smaller ApoE-containing lipoprotein particles with lower cholesterol content than wild-type cultures.",
+      "context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "experimental_system": "Primary forebrain astrocytes from individual neonatal mice",
+        "study_design": "Genotype-defined ex vivo culture comparison",
+        "model": "DBA/1-Abca1tm1Jdm",
+        "tissue": "Forebrain; neonatal mice 1–3 days old",
+        "intervention": "Abca1-null versus wild-type; heterozygous cultures also included",
+        "outcome": "Size and cholesterol content of ApoE-containing lipoprotein fractions",
+        "assay": "Size-exclusion fractionation; ApoE ELISA; enzymatic total-cholesterol assay; selected-fraction atomic force microscopy",
+        "finding_label": "Astrocyte particle lipidation",
+        "comparison_group": "astrocyte particle lipidation",
+        "conditioning": "Three days in serum-free medium",
+        "preparation": "Conditioned medium concentrated 40-fold; tandem Superose-6 fractionation",
+        "normalization": "ApoE and total cholesterol normalized to astrocyte-cell-lysate total protein",
+        "cholesterol_per_apoe_knockout": "0.69 μg/μg (authors reported)",
+        "cholesterol_per_apoe_wild_type": "2.3 μg/μg (authors reported)",
+        "reported_n_per_genotype": 4,
+        "sample_size": null,
+        "replicate_unit": "Fig4A/B reports n=4 per genotype without defining the counted unit; culture/flask/repeated-harvest independence unresolved",
+        "afm_preparation": "Selected wild-type fraction 37 versus knockout fraction 51",
+        "afm_run_count": null,
+        "afm_particle_count": null
+      },
+      "evidence_ids": [
+        "evidence-mouse-abca1-apoe-lipidation-wahrle"
+      ],
+      "summary": "In primary mouse astrocyte cultures, Abca1 deficiency yielded smaller ApoE-containing lipoprotein particles with lower cholesterol content than wild-type cultures.",
+      "limitations": [
+        "This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.",
+        "ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.",
+        "Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.",
+        "Fig3E reports no significant difference in total unfractionated conditioned-medium ApoE; do not interpret fractionated particle changes as reduced total ApoE secretion.",
+        "Fig 4A/B reports n=4 per genotype without a defined biological-replicate unit; AFM run/particle totals and independent repeated-harvest counts remain unknown.",
+        "Fig3 caption reverses the D/E assay order; the plotted axes and Results identify D as cholesterol and E as ApoE. No formal correction notice was inferred."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-mouse-abca1-apoe-soluble-tgswdi",
+      "subject_id": "gene-mouse-abca1",
+      "object_id": "protein-mouse-apoe",
+      "predicate": "perturbation_affects",
+      "statement": "In 10-month Tg-SwDI/B mice, the authors reported about 75% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.",
+      "context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "experimental_system": "10-month Tg-SwDI/B transgene-positive mouse hippocampus",
+        "study_design": "Genotype-defined in vivo mouse comparison",
+        "model": "Tg-SwDI/B",
+        "age_months": 10,
+        "tissue": "Hippocampus",
+        "intervention": "Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive",
+        "outcome": "PBS-soluble ApoE protein in hippocampus",
+        "assay": "Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control",
+        "finding_label": "Tg-SwDI/B · 10 months",
+        "comparison_group": "hippocampal soluble ApoE",
+        "authors_reported_reduction_percent": 75,
+        "knockout_mice": 8,
+        "wild_type_mice": 8,
+        "sex_per_compared_group": "4 female / 4 male",
+        "sample_size": null,
+        "replicate_unit": "Individual mice; two representative blot lanes per group are not the biological sample total",
+        "experiments_reported": "At least two experiments in figure caption; reblot/sample overlap not defined",
+        "reported_statistical_comparison": "Results reports p<0.001 for the transgene-positive knockout/wild-type comparison",
+        "original_online_publication_date": "2005-10-05",
+        "openalex_publication_date": "2005-10-06",
+        "crossref_doi_creation_date": "2005-10-06"
+      },
+      "evidence_ids": [
+        "evidence-mouse-abca1-apoe-soluble-tgswdi"
+      ],
+      "summary": "In 10-month Tg-SwDI/B mice, the authors reported about 75% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.",
+      "limitations": [
+        "This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.",
+        "ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.",
+        "Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.",
+        "The antibody measured endogenous mouse ApoE despite the human APP transgenes; the human APOE protein is not this experimental endpoint.",
+        "PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.",
+        "This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.",
+        "Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-mouse-abca1-apoe-soluble-app-ps1",
+      "subject_id": "gene-mouse-abca1",
+      "object_id": "protein-mouse-apoe",
+      "predicate": "perturbation_affects",
+      "statement": "In 12-month APP/PS1 mice, the authors reported about 80% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.",
+      "context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "experimental_system": "12-month APP/PS1 transgene-positive mouse hippocampus",
+        "study_design": "Genotype-defined in vivo mouse comparison",
+        "model": "APP/PS1",
+        "age_months": 12,
+        "tissue": "Hippocampus",
+        "intervention": "Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive",
+        "outcome": "PBS-soluble ApoE protein in hippocampus",
+        "assay": "Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control",
+        "finding_label": "APP/PS1 · 12 months",
+        "comparison_group": "hippocampal soluble ApoE",
+        "authors_reported_reduction_percent": 80,
+        "knockout_mice": 5,
+        "wild_type_mice": 5,
+        "sex_per_compared_group": "2 female / 3 male",
+        "sample_size": null,
+        "replicate_unit": "Individual mice; two representative blot lanes per group are not the biological sample total",
+        "experiments_reported": "At least two experiments in figure caption; reblot/sample overlap not defined",
+        "reported_statistical_comparison": "No exact p-value assigned to this transgene-positive knockout/wild-type contrast; caption stars use a nontransgenic baseline",
+        "original_online_publication_date": "2005-10-05",
+        "openalex_publication_date": "2005-10-06",
+        "crossref_doi_creation_date": "2005-10-06"
+      },
+      "evidence_ids": [
+        "evidence-mouse-abca1-apoe-soluble-app-ps1"
+      ],
+      "summary": "In 12-month APP/PS1 mice, the authors reported about 80% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.",
+      "limitations": [
+        "This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.",
+        "ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.",
+        "Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.",
+        "The antibody measured endogenous mouse ApoE despite the human APP/PS1 transgenes; the human APOE protein is not this experimental endpoint.",
+        "PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.",
+        "This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.",
+        "Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
     }
   ],
   "evidence": [
@@ -2291,7 +2814,9 @@
       "id": "evidence-apoe-encodes",
       "claim_id": "claim-apoe-encodes",
       "source_id": "source-uniprot-apoe",
-      "upstream_source_ids": [],
+      "upstream_source_ids": [
+        "source-uniprot-apoe-live-2026-11-05"
+      ],
       "relation": "supports",
       "finding": "The human APOE gene encodes Apolipoprotein E (P02649).",
       "locator": "UniProtKB ID/AC, gene name (GN), organism (OS), GeneID cross-reference (DR), and entry-version (DT) fields.",
@@ -2301,7 +2826,14 @@
         "assertion_type": "curated database annotation",
         "gene_id": "348",
         "protein_accession": "P02649",
-        "sample_size": null
+        "sample_size": null,
+        "live_identity_check": "Completed UniProt JSON: accession, gene, human taxon, explicit Ensembl GeneId cross-reference and entryAudit; no function prose or sequence retained.",
+        "live_ensembl_gene_id": "ENSG00000130203",
+        "live_taxonomy_id": 9606,
+        "live_entry_version": 281,
+        "live_provider_release": "2026_04",
+        "live_retrieved_at": "2026-11-05T00:00:45.152Z",
+        "live_response_sha256": "092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203"
       },
       "limitations": [
         "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
@@ -2310,16 +2842,18 @@
       "review": {
         "status": "draft",
         "reviewer": "Discovery Galaxy source check (AI)",
-        "date": "2026-10-22",
+        "date": "2026-11-05",
         "human_reviewed": false,
-        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+        "rationale": "Preserves the original2026-10-22 identity assertion and source; appends inspected completed2026-11-05 UniProt identity/cross-reference provenance, not another experiment or independent scientific review."
       }
     },
     {
       "id": "evidence-abca1-encodes",
       "claim_id": "claim-abca1-encodes",
       "source_id": "source-reactome-abca1-protein",
-      "upstream_source_ids": [],
+      "upstream_source_ids": [
+        "source-uniprot-abca1-live-2026-11-05"
+      ],
       "relation": "supports",
       "finding": "The human ABCA1 gene encodes Phospholipid-transporting ATPase ABCA1 (O95477).",
       "locator": "Reactome External Reference Information: UniProt accession, Gene Names and Reference Genes; species in record identity.",
@@ -2329,7 +2863,14 @@
         "assertion_type": "curated database annotation",
         "gene_id": "19",
         "protein_accession": "O95477",
-        "sample_size": null
+        "sample_size": null,
+        "live_identity_check": "Completed UniProt JSON: accession, gene, human taxon, explicit Ensembl GeneId cross-reference and entryAudit; no function prose or sequence retained.",
+        "live_ensembl_gene_id": "ENSG00000165029",
+        "live_taxonomy_id": 9606,
+        "live_entry_version": 244,
+        "live_provider_release": "2026_04",
+        "live_retrieved_at": "2026-11-05T00:00:45.202Z",
+        "live_response_sha256": "cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb"
       },
       "limitations": [
         "Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.",
@@ -2338,9 +2879,9 @@
       "review": {
         "status": "draft",
         "reviewer": "Discovery Galaxy source check (AI)",
-        "date": "2026-10-22",
+        "date": "2026-11-05",
         "human_reviewed": false,
-        "rationale": "Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone."
+        "rationale": "Preserves the original2026-10-22 identity assertion and source; appends inspected completed2026-11-05 UniProt identity/cross-reference provenance, not another experiment or independent scientific review."
       }
     },
     {
@@ -2487,7 +3028,9 @@
       "id": "evidence-apoe-cholesterol-pathway",
       "claim_id": "claim-apoe-cholesterol-pathway",
       "source_id": "source-reactome-apoe-expression",
-      "upstream_source_ids": [],
+      "upstream_source_ids": [
+        "source-reactome-apoe-live-mapping"
+      ],
       "relation": "supports",
       "finding": "Reactome includes APOE protein in its human cholesterol transport and efflux gene-regulation pathway.",
       "locator": "Reactome Participants: APOE protein output; Participates: cholesterol transport/efflux pathway.",
@@ -2497,7 +3040,8 @@
         "assertion_type": "curated database annotation",
         "protein_state": "Secreted APOE output of a curated expression event",
         "pathway_id": "R-HSA-9029569",
-        "sample_size": null
+        "sample_size": null,
+        "live_mapping_provenance": "R-HSA-9029569.2, completed 2026-11-05T00:00:45.508Z; accession lookup only, not an independent molecular-state check."
       },
       "limitations": [
         "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
@@ -2516,7 +3060,9 @@
       "id": "evidence-abca1-cholesterol-pathway",
       "claim_id": "claim-abca1-cholesterol-pathway",
       "source_id": "source-reactome-abca1-protein",
-      "upstream_source_ids": [],
+      "upstream_source_ids": [
+        "source-reactome-abca1-live-mapping"
+      ],
       "relation": "supports",
       "finding": "Reactome includes ABCA1 protein in its human cholesterol transport and efflux gene-regulation pathway.",
       "locator": "Reactome Locations in the PathwayBrowser: cholesterol transport/efflux → ABCA1 translation and NR1H2 binding.",
@@ -2526,7 +3072,8 @@
         "assertion_type": "curated database annotation",
         "protein_state": "ABCA1 at the plasma membrane",
         "pathway_id": "R-HSA-9029569",
-        "sample_size": null
+        "sample_size": null,
+        "live_mapping_provenance": "R-HSA-9029569.2, completed 2026-11-05T00:00:46.412Z; accession lookup only, not an independent molecular-state check."
       },
       "limitations": [
         "Curated pathway participation does not establish an AD-specific mechanism or activity in every tissue.",
@@ -3449,6 +3996,332 @@
         "date": "2026-10-24",
         "human_reviewed": false,
         "rationale": "Inspected the checksum-verified HGNC approved identity rows and exact gene-level memberships in the pinned Reactome reference. This source check does not inspect original experiments, establish protein states or disease effects, or constitute independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-apoe-opentargets-association",
+      "claim_id": "claim-apoe-opentargets-association",
+      "source_id": "source-opentargets-apoe-direct-association",
+      "upstream_source_ids": [
+        "source-mondo-alzheimers-mesh"
+      ],
+      "relation": "supports",
+      "finding": "Open Targets reports a direct APOE–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.",
+      "locator": "Completed GraphQL response: target.id/approvedSymbol; associatedDiseases(enableIndirect=false,page index0,size20), MONDO_0004975 row; score/datasourceScores; meta.dataVersion.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "taxonomy_id": 9606,
+        "assertion_type": "provider aggregate association",
+        "association_scope": "provider_aggregate",
+        "target_id": "ENSG00000130203",
+        "disease_id": "MONDO_0004975",
+        "provider_release": "26.09",
+        "enable_indirect": "false",
+        "page_index": 0,
+        "page_size": 20,
+        "total_reported": 2836,
+        "overall_association_score": "0.695512952413486",
+        "datasource_scores": [
+          "gwas_credible_sets: 0.9725857409132884",
+          "eva: 0.516741177969878",
+          "crispr_screen: 0.2670020417823128",
+          "europepmc: 0.9992042452669387",
+          "expression_atlas: 0.017251532679053088"
+        ],
+        "score_definition": "Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count."
+      },
+      "limitations": [
+        "Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.",
+        "Only the first 20 direct disease rows were retrieved, from 2836 reported for this target; underlying study evidence was not extracted.",
+        "Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-abca1-opentargets-association",
+      "claim_id": "claim-abca1-opentargets-association",
+      "source_id": "source-opentargets-abca1-direct-association",
+      "upstream_source_ids": [
+        "source-mondo-alzheimers-mesh"
+      ],
+      "relation": "supports",
+      "finding": "Open Targets reports a direct ABCA1–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.",
+      "locator": "Completed GraphQL response: target.id/approvedSymbol; associatedDiseases(enableIndirect=false,page index0,size20), MONDO_0004975 row; score/datasourceScores; meta.dataVersion.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "taxonomy_id": 9606,
+        "assertion_type": "provider aggregate association",
+        "association_scope": "provider_aggregate",
+        "target_id": "ENSG00000165029",
+        "disease_id": "MONDO_0004975",
+        "provider_release": "26.09",
+        "enable_indirect": "false",
+        "page_index": 0,
+        "page_size": 20,
+        "total_reported": 1797,
+        "overall_association_score": "0.4940984029965598",
+        "datasource_scores": [
+          "gwas_credible_sets: 0.7554219891183979",
+          "europepmc: 0.9440037085287274",
+          "clinical_precedence: 0.09118961964174316"
+        ],
+        "score_definition": "Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count."
+      },
+      "limitations": [
+        "Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.",
+        "Only the first 20 direct disease rows were retrieved, from 1797 reported for this target; underlying study evidence was not extracted.",
+        "Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-mouse-abca1-human-ortholog",
+      "claim_id": "claim-mouse-abca1-human-ortholog",
+      "source_id": "source-ensembl-abca1-orthology",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Ensembl Compara annotates mouse Abca1 as a one-to-one ortholog of human ABCA1.",
+      "locator": "Completed homology/symbol response: single ortholog_one2one source/target gene IDs and taxon_ids; target_species=homo_sapiens, type=orthologues.",
+      "study_context": {
+        "assertion_type": "curated orthology annotation",
+        "subject_taxonomy_id": 10090,
+        "object_taxonomy_id": 9606,
+        "subject_gene_id": "ENSMUSG00000015243",
+        "object_gene_id": "ENSG00000165029",
+        "orthology_type": "ortholog_one2one"
+      },
+      "limitations": [
+        "Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.",
+        "Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-mouse-apoe-human-ortholog",
+      "claim_id": "claim-mouse-apoe-human-ortholog",
+      "source_id": "source-ensembl-apoe-orthology",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Ensembl Compara annotates mouse Apoe as a one-to-one ortholog of human APOE.",
+      "locator": "Completed homology/symbol response: single ortholog_one2one source/target gene IDs and taxon_ids; target_species=homo_sapiens, type=orthologues.",
+      "study_context": {
+        "assertion_type": "curated orthology annotation",
+        "subject_taxonomy_id": 10090,
+        "object_taxonomy_id": 9606,
+        "subject_gene_id": "ENSMUSG00000002985",
+        "object_gene_id": "ENSG00000130203",
+        "orthology_type": "ortholog_one2one"
+      },
+      "limitations": [
+        "Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.",
+        "Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-mouse-apoe-encodes",
+      "claim_id": "claim-mouse-apoe-encodes",
+      "source_id": "source-uniprot-mouse-apoe",
+      "upstream_source_ids": [
+        "source-ncbi-mouse-abca1-apoe"
+      ],
+      "relation": "supports",
+      "finding": "The mouse Apoe gene (NCBI Gene11816) encodes the ApoE protein represented by UniProt P08226.",
+      "locator": "Entry JSON primaryAccession, genes, organism, entryAudit and explicit GeneID/Ensembl GeneId cross-references.",
+      "study_context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "assertion_type": "curated database identity",
+        "gene_id": "11816",
+        "protein_accession": "P08226"
+      },
+      "limitations": [
+        "Canonical gene/product identity; the experimental particle fractions are context, not separately identified isoform or modification nodes."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-mouse-abca1-apoe-lipidation-wahrle",
+      "claim_id": "claim-mouse-abca1-apoe-lipidation-wahrle",
+      "source_id": "source-wahrle-2004",
+      "upstream_source_ids": [
+        "source-openalex-apoe-abca1-live"
+      ],
+      "relation": "supports",
+      "finding": "In primary mouse astrocyte cultures, Abca1 deficiency yielded smaller ApoE-containing lipoprotein particles with lower cholesterol content than wild-type cultures.",
+      "locator": "Original JBC PDF via 2018-07-23 archive: Experimental Procedures p40988 (Primary Astrocyte Cultures, Fractionation of ACM, Atomic Force Microscopy); Results pp40990–40991; Fig4A–C/caption p40992; Fig3E axes and corresponding Results. Figure visuals and selected methods/results inspected.",
+      "study_context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "experimental_system": "Primary forebrain astrocytes from individual neonatal mice",
+        "study_design": "Genotype-defined ex vivo culture comparison",
+        "model": "DBA/1-Abca1tm1Jdm",
+        "tissue": "Forebrain; neonatal mice 1–3 days old",
+        "intervention": "Abca1-null versus wild-type; heterozygous cultures also included",
+        "outcome": "Size and cholesterol content of ApoE-containing lipoprotein fractions",
+        "assay": "Size-exclusion fractionation; ApoE ELISA; enzymatic total-cholesterol assay; selected-fraction atomic force microscopy",
+        "finding_label": "Astrocyte particle lipidation",
+        "comparison_group": "astrocyte particle lipidation",
+        "conditioning": "Three days in serum-free medium",
+        "preparation": "Conditioned medium concentrated 40-fold; tandem Superose-6 fractionation",
+        "normalization": "ApoE and total cholesterol normalized to astrocyte-cell-lysate total protein",
+        "cholesterol_per_apoe_knockout": "0.69 μg/μg (authors reported)",
+        "cholesterol_per_apoe_wild_type": "2.3 μg/μg (authors reported)",
+        "reported_n_per_genotype": 4,
+        "sample_size": null,
+        "replicate_unit": "Fig4A/B reports n=4 per genotype without defining the counted unit; culture/flask/repeated-harvest independence unresolved",
+        "afm_preparation": "Selected wild-type fraction 37 versus knockout fraction 51",
+        "afm_run_count": null,
+        "afm_particle_count": null
+      },
+      "limitations": [
+        "This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.",
+        "ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.",
+        "Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.",
+        "Fig3E reports no significant difference in total unfractionated conditioned-medium ApoE; do not interpret fractionated particle changes as reduced total ApoE secretion.",
+        "Fig 4A/B reports n=4 per genotype without a defined biological-replicate unit; AFM run/particle totals and independent repeated-harvest counts remain unknown.",
+        "Fig3 caption reverses the D/E assay order; the plotted axes and Results identify D as cholesterol and E as ApoE. No formal correction notice was inferred."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-mouse-abca1-apoe-soluble-tgswdi",
+      "claim_id": "claim-mouse-abca1-apoe-soluble-tgswdi",
+      "source_id": "source-hirsch-reinshagen-2005",
+      "upstream_source_ids": [
+        "source-openalex-apoe-abca1-legacy"
+      ],
+      "relation": "supports",
+      "finding": "In 10-month Tg-SwDI/B mice, the authors reported about 75% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.",
+      "locator": "Original JBC PDF via public hospital repository: Methods pp43245–43246 (sequential extraction and Western Blotting); Results p43249; Fig6A and complete caption p43250. Methods, text and actual Fig6 visual inspected.",
+      "study_context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "experimental_system": "10-month Tg-SwDI/B transgene-positive mouse hippocampus",
+        "study_design": "Genotype-defined in vivo mouse comparison",
+        "model": "Tg-SwDI/B",
+        "age_months": 10,
+        "tissue": "Hippocampus",
+        "intervention": "Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive",
+        "outcome": "PBS-soluble ApoE protein in hippocampus",
+        "assay": "Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control",
+        "finding_label": "Tg-SwDI/B · 10 months",
+        "comparison_group": "hippocampal soluble ApoE",
+        "authors_reported_reduction_percent": 75,
+        "knockout_mice": 8,
+        "wild_type_mice": 8,
+        "sex_per_compared_group": "4 female / 4 male",
+        "sample_size": null,
+        "replicate_unit": "Individual mice; two representative blot lanes per group are not the biological sample total",
+        "experiments_reported": "At least two experiments in figure caption; reblot/sample overlap not defined",
+        "reported_statistical_comparison": "Results reports p<0.001 for the transgene-positive knockout/wild-type comparison",
+        "original_online_publication_date": "2005-10-05",
+        "openalex_publication_date": "2005-10-06",
+        "crossref_doi_creation_date": "2005-10-06"
+      },
+      "limitations": [
+        "This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.",
+        "ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.",
+        "Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.",
+        "The antibody measured endogenous mouse ApoE despite the human APP transgenes; the human APOE protein is not this experimental endpoint.",
+        "PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.",
+        "This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.",
+        "Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-mouse-abca1-apoe-soluble-app-ps1",
+      "claim_id": "claim-mouse-abca1-apoe-soluble-app-ps1",
+      "source_id": "source-hirsch-reinshagen-2005",
+      "upstream_source_ids": [
+        "source-openalex-apoe-abca1-legacy"
+      ],
+      "relation": "supports",
+      "finding": "In 12-month APP/PS1 mice, the authors reported about 80% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.",
+      "locator": "Original JBC PDF via public hospital repository: Methods pp43245–43246 (sequential extraction and Western Blotting); Results p43249; Fig6B and complete caption p43250. Methods, text and actual Fig6 visual inspected.",
+      "study_context": {
+        "organism": "Mus musculus",
+        "taxonomy_id": 10090,
+        "experimental_system": "12-month APP/PS1 transgene-positive mouse hippocampus",
+        "study_design": "Genotype-defined in vivo mouse comparison",
+        "model": "APP/PS1",
+        "age_months": 12,
+        "tissue": "Hippocampus",
+        "intervention": "Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive",
+        "outcome": "PBS-soluble ApoE protein in hippocampus",
+        "assay": "Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control",
+        "finding_label": "APP/PS1 · 12 months",
+        "comparison_group": "hippocampal soluble ApoE",
+        "authors_reported_reduction_percent": 80,
+        "knockout_mice": 5,
+        "wild_type_mice": 5,
+        "sex_per_compared_group": "2 female / 3 male",
+        "sample_size": null,
+        "replicate_unit": "Individual mice; two representative blot lanes per group are not the biological sample total",
+        "experiments_reported": "At least two experiments in figure caption; reblot/sample overlap not defined",
+        "reported_statistical_comparison": "No exact p-value assigned to this transgene-positive knockout/wild-type contrast; caption stars use a nontransgenic baseline",
+        "original_online_publication_date": "2005-10-05",
+        "openalex_publication_date": "2005-10-06",
+        "crossref_doi_creation_date": "2005-10-06"
+      },
+      "limitations": [
+        "This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.",
+        "ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.",
+        "Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.",
+        "The antibody measured endogenous mouse ApoE despite the human APP/PS1 transgenes; the human APOE protein is not this experimental endpoint.",
+        "PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.",
+        "This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.",
+        "Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-05",
+        "human_reviewed": false,
+        "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
       }
     }
   ],
@@ -4579,6 +5452,526 @@
         "checked_at": null,
         "notice_url": null
       }
+    },
+    {
+      "id": "source-uniprot-apoe-live-2026-11-05",
+      "kind": "database_record",
+      "title": "UniProtKB P02649: human APOE identity",
+      "url": "https://rest.uniprot.org/uniprotkb/P02649.json",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "P02649"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000130203"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProtKB",
+      "release": "2026_04; entry 281; annotation update 2026-11-04; response SHA-256 092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203",
+      "retrieved_at": "2026-11-05T00:00:45.152Z",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB. Identity metadata only; CC BY 4.0.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-apoe-live-mapping",
+      "kind": "database_record",
+      "title": "Reactome UniProt P02649 to human pathway mappings",
+      "url": "https://reactome.org/ContentService/data/mapping/UniProt/P02649/pathways?species=9606",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-9029569"
+        },
+        {
+          "namespace": "UniProt",
+          "value": "P02649"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Selected record R-HSA-9029569.2; global release unknown; response SHA-256 58e052001dd4c2b9f78902ef7b3e6dd895101a341dde0007239486ae7284b314",
+      "retrieved_at": "2026-11-05T00:00:45.508Z",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database. Database identifier mappings, not original experimental findings.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-uniprot-abca1-live-2026-11-05",
+      "kind": "database_record",
+      "title": "UniProtKB O95477: human ABCA1 identity",
+      "url": "https://rest.uniprot.org/uniprotkb/O95477.json",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "O95477"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000165029"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProtKB",
+      "release": "2026_04; entry 244; annotation update 2026-11-04; response SHA-256 cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb",
+      "retrieved_at": "2026-11-05T00:00:45.202Z",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB. Identity metadata only; CC BY 4.0.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-reactome-abca1-live-mapping",
+      "kind": "database_record",
+      "title": "Reactome UniProt O95477 to human pathway mappings",
+      "url": "https://reactome.org/ContentService/data/mapping/UniProt/O95477/pathways?species=9606",
+      "identifiers": [
+        {
+          "namespace": "Reactome",
+          "value": "R-HSA-9029569"
+        },
+        {
+          "namespace": "UniProt",
+          "value": "O95477"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Reactome",
+      "release": "Selected record R-HSA-9029569.2; global release unknown; response SHA-256 06aa17f8a26e14bf818df483ac21533d3c8fe62f85645e2019bf67a68c3b84d7",
+      "retrieved_at": "2026-11-05T00:00:46.412Z",
+      "reuse": {
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database. Database identifier mappings, not original experimental findings.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-mondo-alzheimers-mesh",
+      "kind": "database_record",
+      "title": "Mondo Alzheimer disease: exact MeSH cross-reference",
+      "url": "https://www.ebi.ac.uk/ols4/api/ontologies/mondo/terms?obo_id=MONDO:0004975",
+      "identifiers": [
+        {
+          "namespace": "MONDO",
+          "value": "MONDO_0004975"
+        },
+        {
+          "namespace": "MeSH",
+          "value": "D000544"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Mondo via EMBL-EBI OLS",
+      "release": "OLS ontology config reports Mondo2026-11-03; term response SHA-256 fe11f19846657fb2a3093ee124e1b1087cb757898ae45cf4606f9a60b9625588",
+      "retrieved_at": "2026-11-05T11:22:04.457097Z",
+      "reuse": {
+        "terms_url": "https://mondo.monarchinitiative.org/",
+        "attribution": "Mondo Disease Ontology via EMBL-EBI OLS. Identifier equivalence only; no disease definition text retained.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": null,
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-opentargets-apoe-direct-association",
+      "kind": "database_record",
+      "title": "Open Targets: APOE–Alzheimer disease direct association summary",
+      "url": "https://platform.opentargets.org/target/ENSG00000130203/associations",
+      "identifiers": [
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000130203"
+        },
+        {
+          "namespace": "MONDO",
+          "value": "MONDO_0004975"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Open Targets Platform",
+      "release": "dataVersion 26.09 (year=\"26\", month=\"09\", iteration=null); first 20 direct rows of 2836; response SHA-256 8dbb515c4d2f74956893b88d4c01770d041820ec5ddf3bb72d774b8e1a856ab2",
+      "retrieved_at": "2026-11-05T00:00:44.940Z",
+      "reuse": {
+        "terms_url": "https://platform-docs.opentargets.org/licence",
+        "attribution": "Open Targets Platform. Direct target–disease association summaries with provider-defined scores.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-opentargets-abca1-direct-association",
+      "kind": "database_record",
+      "title": "Open Targets: ABCA1–Alzheimer disease direct association summary",
+      "url": "https://platform.opentargets.org/target/ENSG00000165029/associations",
+      "identifiers": [
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000165029"
+        },
+        {
+          "namespace": "MONDO",
+          "value": "MONDO_0004975"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Open Targets Platform",
+      "release": "dataVersion 26.09 (year=\"26\", month=\"09\", iteration=null); first 20 direct rows of 1797; response SHA-256 39428ebc6794cd529fd7446fbb896d05827b39eb06d4eaf90a46e8c81912100c",
+      "retrieved_at": "2026-11-05T00:00:45.794Z",
+      "reuse": {
+        "terms_url": "https://platform-docs.opentargets.org/licence",
+        "attribution": "Open Targets Platform. Direct target–disease association summaries with provider-defined scores.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-ncbi-mouse-abca1-apoe",
+      "kind": "database_record",
+      "title": "NCBI Gene: mouse Abca1 and Apoe identities",
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=11303,11816&retmode=json",
+      "identifiers": [
+        {
+          "namespace": "NCBIGene",
+          "value": "11303"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "11816"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "NCBI Gene",
+      "release": "Live ESummary; database release unknown; response SHA-256 f13d4d087745a35638abdbfdedf7b7fcc47d1ac158690149ee5af045c10f9e80",
+      "retrieved_at": "2026-11-05T11:16:48.866950Z",
+      "reuse": {
+        "terms_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "attribution": "NCBI Gene/National Library of Medicine. Gene identifiers, official symbols and organism facts only; no RefSeq prose retained.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-uniprot-mouse-apoe",
+      "kind": "database_record",
+      "title": "UniProtKB P08226: mouse Apoe gene/product identity",
+      "url": "https://rest.uniprot.org/uniprotkb/P08226.json",
+      "identifiers": [
+        {
+          "namespace": "UniProt",
+          "value": "P08226"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "11816"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "UniProtKB",
+      "release": "2026_04; entry 224; annotation update 2026-11-04; response SHA-256 b0d26792635e76bae51fb0c96125efd17a8b9895014a7fbcade78f4617a1c2a3",
+      "retrieved_at": "2026-11-05T11:16:48.188761Z",
+      "reuse": {
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium. Mouse gene/product identity metadata, CC BY4.0.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-ensembl-abca1-orthology",
+      "kind": "database_record",
+      "title": "Ensembl Compara: mouse/human ABCA1 orthology",
+      "url": "https://rest.ensembl.org/homology/symbol/mus_musculus/Abca1?target_species=homo_sapiens&type=orthologues&content-type=application/json",
+      "identifiers": [
+        {
+          "namespace": "Ensembl",
+          "value": "ENSMUSG00000015243"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000165029"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Ensembl Compara",
+      "release": "Live orthology response; release not captured; response SHA-256 6381d49c359b56e46463d14a760425f2c412b3ead78f913ed74394a3371fb72c",
+      "retrieved_at": "2026-11-05T11:16:56.610773Z",
+      "reuse": {
+        "terms_url": "https://www.ensembl.org/info/about/legal/disclaimer.html",
+        "attribution": "Ensembl Compara. One-to-one gene orthology annotation and identifier/taxon facts only; no alignment or sequence retained. Terms page returned403; exact reuse review remains pending.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": null,
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-ensembl-apoe-orthology",
+      "kind": "database_record",
+      "title": "Ensembl Compara: mouse/human APOE orthology",
+      "url": "https://rest.ensembl.org/homology/symbol/mus_musculus/Apoe?target_species=homo_sapiens&type=orthologues&content-type=application/json",
+      "identifiers": [
+        {
+          "namespace": "Ensembl",
+          "value": "ENSMUSG00000002985"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000130203"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Ensembl Compara",
+      "release": "Live orthology response; release not captured; response SHA-256 28c20dce5e98a352b0aa5b41194e1aedb3fd1b0a68238c6b7620ddc2aca69ea6",
+      "retrieved_at": "2026-11-05T11:16:53.940108Z",
+      "reuse": {
+        "terms_url": "https://www.ensembl.org/info/about/legal/disclaimer.html",
+        "attribution": "Ensembl Compara. One-to-one gene orthology annotation and identifier/taxon facts only; no alignment or sequence retained. Terms page returned403; exact reuse review remains pending.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": null,
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-openalex-apoe-abca1-live",
+      "kind": "database_record",
+      "title": "OpenAlex: ABCA1/APOE first-page literature metadata",
+      "url": "https://api.openalex.org/works?search.title_and_abstract=ABCA1+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+      "identifiers": [
+        {
+          "namespace": "OpenAlex",
+          "value": "W2013111251"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "OpenAlex",
+      "release": "Live API; schema0.2.0; page1 limit5; no immutable release; response SHA-256 1e3907e7f99d10cf4b97e77fda52532336bb61ac683549b2129e91a30da93033",
+      "retrieved_at": "2026-11-05T11:18:18.716Z",
+      "reuse": {
+        "terms_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-openalex-apoe-abca1-legacy",
+      "kind": "database_record",
+      "title": "OpenAlex: legacy Alzheimer/APOE/ABCA1 candidate metadata",
+      "url": "https://api.openalex.org/works?search.title_and_abstract=Alzheimer+AND+%28APOE+OR+ABCA1%29&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+      "identifiers": [
+        {
+          "namespace": "OpenAlex",
+          "value": "W2151049459"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "OpenAlex",
+      "release": "Live API; schema0.1.0; raw response digest unavailable; saved packet SHA-256 867aab43d6cf3eeeb35654641dba9e4065bb094b3cc7b7bf8f8f4f5aa2ed626f; no immutable release",
+      "retrieved_at": "2026-11-04T23:56:45.327Z",
+      "reuse": {
+        "terms_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-wahrle-2004",
+      "kind": "publication",
+      "title": "ABCA1 Is Required for Normal Central Nervous System ApoE Levels and for Lipidation of Astrocyte-secreted apoE",
+      "url": "https://doi.org/10.1074/jbc.M407963200",
+      "identifiers": [
+        {
+          "namespace": "DOI",
+          "value": "10.1074/jbc.M407963200"
+        },
+        {
+          "namespace": "PMID",
+          "value": "15269217"
+        },
+        {
+          "namespace": "OpenAlex",
+          "value": "W2013111251"
+        }
+      ],
+      "authors": [
+        "Suzanne E. Wahrle",
+        "Hong Jiang",
+        "Maia Parsadanian",
+        "Justin Legleiter",
+        "Xianlin Han",
+        "John D. Fryer",
+        "Tomasz Kowalewski",
+        "David M. Holtzman"
+      ],
+      "year": 2004,
+      "provider": "Journal of Biological Chemistry",
+      "release": null,
+      "retrieved_at": "2026-11-05",
+      "reuse": {
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Suzanne E. Wahrle and colleagues, Journal of Biological Chemistry (2004), DOI 10.1074/jbc.M407963200. Publisher-deposited Crossref VOR metadata reports CC BY4.0 effective 2020-09-21; original archived PDF retains historical ASBMB copyright. Project-authored factual paraphrases of inspected results/methods only; no article text/figures redistributed.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      },
+      "publication_type": "primary_research"
+    },
+    {
+      "id": "source-hirsch-reinshagen-2005",
+      "kind": "publication",
+      "title": "The Absence of ABCA1 Decreases Soluble ApoE Levels but Does Not Diminish Amyloid Deposition in Two Murine Models of Alzheimer Disease",
+      "url": "https://doi.org/10.1074/jbc.M508781200",
+      "identifiers": [
+        {
+          "namespace": "DOI",
+          "value": "10.1074/jbc.M508781200"
+        },
+        {
+          "namespace": "PMID",
+          "value": "16207707"
+        },
+        {
+          "namespace": "OpenAlex",
+          "value": "W2151049459"
+        }
+      ],
+      "authors": [
+        "Veronica Hirsch-Reinshagen",
+        "Luis F. Maia",
+        "Braydon L. Burgess",
+        "Jean-Francois Blain",
+        "Kathryn E. Naus",
+        "Sean A. McIsaac",
+        "Pamela F. Parkinson",
+        "Jennifer Y. Chan",
+        "Gavin H. Tansley",
+        "Michael R. Hayden",
+        "Judes Poirier",
+        "William Van Nostrand",
+        "Cheryl L. Wellington"
+      ],
+      "year": 2005,
+      "provider": "Journal of Biological Chemistry",
+      "release": null,
+      "retrieved_at": "2026-11-05",
+      "reuse": {
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Veronica Hirsch-Reinshagen and colleagues, Journal of Biological Chemistry (2005), DOI 10.1074/jbc.M508781200. Publisher-deposited Crossref VOR metadata reports CC BY4.0 effective 2020-10-02; original archived PDF retains historical ASBMB copyright. Project-authored factual paraphrases of inspected results/methods only; no article text/figures redistributed.",
+        "retained_content": "Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.",
+        "date_checked": "2026-11-05",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      },
+      "publication_type": "primary_research"
     }
   ],
   "conflicts": [
