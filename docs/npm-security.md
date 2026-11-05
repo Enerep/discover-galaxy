@@ -46,6 +46,14 @@ The [initial check report](../tools/security/initial-ioc-report.json) records 68
 
 ## Updating dependencies
 
+### Reviewed Vite security patch — 2026-11-05
+
+Pin **Vite 8.3.3**, the first patched 8.3 release for the six reported advisories, replacing 8.3.2. [Upstream release notes](https://github.com/vitejs/vite/releases/tag/v8.3.3) include the bundled launch-editor 2.14.2 update and filesystem/HTML fixes; the [high-severity advisory](https://github.com/advisories/GHSA-587h-7wmj-h5pm) identifies 8.3.3 as patched. Registry publication time is **2026-10-06T04:10:19.326Z**, more than 14 days before this review. The reviewed resolution cutoff advances to **2026-10-22T00:00:00.000Z**; no release-age exception is required.
+
+The package still resolves from the official registry and declares the Vite project repository and expected maintainers. Its 37-file tarball matches SHA-512 `cTAldKPImjg6c+gk48U19POPn3GCBzZwpdsN8ZMEEcbpes+6/wvfqUd0C2y3qYY4wsj8PwgFwrZ/1jBPVttMSg==`; no install/prepare hook is declared. Only the Vite package changed in the lockfile: transitive versions and dependency ranges remain unchanged. Installation used `npm ci --ignore-scripts`; `.npmrc` remains unchanged.
+
+`npm audit` now reports **0 vulnerabilities**; registry signatures verified for 45 installed packages and provenance attestations for 17. Source/integrity/exact-pin and publication-date checks pass for all 68 lock entries. The three pinned malware-indicator feeds report no exact matches; their historical scope remains explicit. These checks reduce risk without guaranteeing benign code. See [verification](verification.md#vite-security-patch--2026-11-05) for functional checks.
+
 1. Check upstream ownership, release notes, advisories, publication age, and the reason for the update.
 2. Resolve the candidate lockfile with scripts disabled; inspect new dependencies, source URLs, integrity data, and install-hook declarations.
 3. Run the audit and relevant checks. Do not run `npm audit fix --force` or automatically accept a broad lockfile rewrite.

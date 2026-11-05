@@ -6,7 +6,7 @@ The primary product workflow now interprets processed human RNA-seq results. Its
 
 ## Current static explorer
 
-The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.2, Three.js 0.186.1, and React Three Fiber 9.8.1. Native Three.js `OrbitControls` provides camera navigation; Drei is not installed. The root npm workspace manages `apps/web/` with an exact-version lockfile, Node 24, and npm 11.9.0. See the [dependency security policy](npm-security.md) before installing or updating packages.
+The application uses React 19.3.0, TypeScript 5.9.3, Vite 8.3.3, Three.js 0.186.1, and React Three Fiber 9.8.1. Native Three.js `OrbitControls` provides camera navigation; Drei is not installed. The root npm workspace manages `apps/web/` with an exact-version lockfile, Node 24, and npm 11.9.0. See the [dependency security policy](npm-security.md) before installing or updating packages.
 
 The client imports snapshot `alzheimers-source-checked-0.8.0`: one disease, sixteen genes, fifteen proteins, three pathways and ten papers. Its 49claims / 49 evidence records retain the four original variant associations and prior identity/pathway/binding records, adding three mouse Abca1/ApoE perturbation findings, two gene orthology links, one mouse gene/product mapping and two separately labeled Open Targets aggregates. Explicit taxonomy and guarded predicates keep human/mouse endpoints separate; human RNA mapping and paper coverage do not traverse orthology. Source locators and context distinguish original experiments from database assertions. All records remain draft; [dataset changes](../data/alzheimers/CHANGELOG.md) record inspected material and unknowns.
 

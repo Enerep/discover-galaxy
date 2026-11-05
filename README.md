@@ -162,7 +162,7 @@ Broad disease coverage, automatic literature ingestion, automatic contradiction 
 | API, when needed | Python and FastAPI | Support controlled retrieval and server-side AI calls |
 | Storage, when needed | PostgreSQL | Persist provenance and support updates beyond snapshots |
 
-This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direction, while introducing each component when it has a job to do. The current client pins React 19.3.0, React Three Fiber 9.8.1, Three.js 0.186.1, Vite 8.3.2, and TypeScript 5.9.3. Python security checks are development tooling; NetworkX analysis and reviewed scientific import/promotion remain planned.
+This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direction, while introducing each component when it has a job to do. The current client pins React 19.3.0, React Three Fiber 9.8.1, Three.js 0.186.1, Vite 8.3.3, and TypeScript 5.9.3. Python security checks are development tooling; NetworkX analysis and reviewed scientific import/promotion remain planned.
 
 ## Scientific resources
 
