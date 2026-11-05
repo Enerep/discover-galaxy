@@ -5,9 +5,11 @@ import { pathToFileURL } from 'node:url';
 
 export type Provider = 'uniprot' | 'reactome' | 'opentargets';
 export interface GeneIdentity { symbol: string; ensembl: string; uniprot: string }
+interface ProviderVersion { year: string | number; month: string | number; iteration: string | number | null }
 export const MAX_BYTES = 5 * 1024 * 1024;
 const MAX_PATHWAYS = 1000;
 const ASSOCIATION_PAGE_SIZE = 20;
+const OFFLINE_PROVENANCE_LIMITATION = 'The requested identity is declared; offline processing does not prove a request occurred or verify the archive origin.';
 const ACCESSION = /^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9](?:[A-Z][A-Z0-9]{2}[0-9]){1,2})$/u;
 const TARGET_QUERY = `query GeneAnnotations($id: String!) {
   meta { dataVersion { year month iteration } }
@@ -31,7 +33,7 @@ type Annotation =
   | { kind: 'disease_association'; target_id: string; disease_id: string; name: string; overall_association_score: number; datasource_scores: { id: string; score: number }[]; enable_indirect: false; url: string };
 
 export interface AnnotationPacket {
-  schema_version: 'biomedical-annotations-1';
+  schema_version: 'biomedical-annotations-2';
   provider: Provider;
   identity: GeneIdentity;
   data_origin: 'offline_input' | 'live_api_response';
@@ -41,6 +43,7 @@ export interface AnnotationPacket {
   retrieved_at: string | null;
   response_sha256: string;
   provider_release: string | null;
+  provider_version: ProviderVersion | null;
   immutable_release: null;
   reuse: typeof TERMS[Provider];
   status: 'unreviewed';
@@ -63,6 +66,15 @@ function text(value: unknown, max = 512): string {
 function integer(value: unknown, min = 0, max = Number.MAX_SAFE_INTEGER): number {
   if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < min || value > max) fail('Provider response contains an invalid count or version.');
   return value;
+}
+// Open Targets reports release components as GraphQL strings. Preserve the
+// original values, including two-digit years, without inventing a century.
+function versionComponent(value: unknown, min: number, max: number): string | number {
+  if (typeof value === 'string' && /^\d{1,4}$/u.test(value)) {
+    integer(Number(value), min, max);
+    return value;
+  }
+  return integer(value, min, max);
 }
 function score(value: unknown): number {
   if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1) fail('Provider association score is invalid.');
@@ -107,6 +119,7 @@ export function normalizeAnnotationResponse(bytes: Uint8Array, options: {
   date(options.processedAt.slice(0, 10));
   let records: Annotation[] = [];
   let release: string | null = null;
+  let providerVersion: ProviderVersion | null = null;
   let total: number | null = null;
   let scope = 'Single declared human protein entry';
   if (options.provider === 'uniprot') {
@@ -149,7 +162,9 @@ export function normalizeAnnotationResponse(bytes: Uint8Array, options: {
     if ('errors' in root && list(root.errors, 100).length) fail('Open Targets returned GraphQL errors; partial data was not accepted.');
     const data = object(root.data);
     const version = object(object(data.meta).dataVersion);
-    release = `${integer(version.year, 0, 9999)}.${String(integer(version.month, 1, 12)).padStart(2, '0')}${version.iteration == null ? '' : `.${integer(version.iteration, 0, 999)}`}`;
+    providerVersion = { year: versionComponent(version.year, 0, 9999), month: versionComponent(version.month, 1, 12),
+      iteration: version.iteration == null ? null : versionComponent(version.iteration, 0, 999) };
+    release = `${providerVersion.year}.${String(providerVersion.month).padStart(2, '0')}${providerVersion.iteration === null ? '' : `.${providerVersion.iteration}`}`;
     const target = object(data.target);
     if (target.id !== identity.ensembl || target.approvedSymbol !== identity.symbol) fail('Open Targets gene identity does not match the requested Ensembl ID and symbol.');
     const associations = object(target.associatedDiseases);
@@ -172,14 +187,14 @@ export function normalizeAnnotationResponse(bytes: Uint8Array, options: {
     });
     if (total < records.length || (total > 0 && !records.length)) fail('Open Targets result count disagrees with the first-page rows.');
   }
-  return { schema_version: 'biomedical-annotations-1', provider: options.provider, identity,
+  return { schema_version: 'biomedical-annotations-2', provider: options.provider, identity,
     data_origin: 'offline_input', request_provenance: 'declared_for_offline_input', request,
     processed_at: options.processedAt, retrieved_at: null, response_sha256: createHash('sha256').update(bytes).digest('hex'),
-    provider_release: release, immutable_release: null, reuse: { ...TERMS[options.provider] }, status: 'unreviewed', promotion: 'not_in_graph',
+    provider_release: release, provider_version: providerVersion, immutable_release: null, reuse: { ...TERMS[options.provider] }, status: 'unreviewed', promotion: 'not_in_graph',
     coverage: { total_reported: total, retained: records.length, truncated: total === null ? null : total > records.length, scope }, records,
     limitations: [
       'Provider annotations are staging material, not source-checked original-paper findings or scientific approval.',
-      'The requested identity is declared; offline processing does not prove a request occurred or verify the archive origin.',
+      OFFLINE_PROVENANCE_LIMITATION,
       'Database mappings and association scores do not establish causation, pathway activity, therapeutic benefit or independent replication.',
       'A provider release label is reported provenance, not a captured immutable upstream snapshot. Reactome global release is not requested.',
       'Only allowlisted identity, mapping and association fields are retained. No sequences, abstracts, article text or protein-function prose are imported.',
@@ -209,6 +224,8 @@ export async function fetchAnnotations(provider: Provider, identity: GeneIdentit
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
     const packet = normalizeAnnotationResponse(bytes, { provider, identity, processedAt: new Date().toISOString() });
     packet.data_origin = 'live_api_response'; packet.request_provenance = 'issued_by_adapter'; packet.retrieved_at = packet.processed_at;
+    packet.limitations = packet.limitations.map((limitation) => limitation === OFFLINE_PROVENANCE_LIMITATION
+      ? 'The adapter completed the recorded request; retrieval and normalization do not establish scientific review.' : limitation);
     if (provider === 'uniprot') {
       const release = response.headers.get('x-uniprot-release');
       if (release !== null && !/^\d{4}_\d{2}$/u.test(release)) fail('UniProt release header is malformed.');

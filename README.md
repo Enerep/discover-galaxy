@@ -170,7 +170,7 @@ This keeps the proposed React / Three.js / Python / NetworkX / PostgreSQL direct
 | [Reactome](https://reactome.org/) | Find pathway definitions, stable identifiers, and supporting references |
 | [OpenAlex](https://openalex.org/) | Resolve literature metadata and discover candidate papers |
 
-These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; bounded UniProt, Reactome and Open Targets annotation adapters support archived-response replay. Successful live API access remains unverified here. Verify access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
+These resources help find and contextualize evidence. Database associations, metadata, and aggregate scores do not replace reviewing the original studies. OpenAlex has a metadata-only staging adapter; bounded UniProt, Reactome and Open Targets annotation adapters support archived-response replay. The [APOE/ABCA1 batch](data/annotations/apoe-abca1-intake.md) records successful live access to all four providers, eight selected staging records, original-source inspection limits and later OpenAlex 503/504 failures. Its earlier OpenAlex packet has no raw-response digest; successful live capture with the new digest-enabled schema remains pending. Verify access, release provenance, attribution, and reuse terms before adopting new source data. No candidate intake automatically changes the explorer.
 
 ## Contributing and community
 

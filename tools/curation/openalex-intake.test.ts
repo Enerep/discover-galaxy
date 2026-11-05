@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { buildOpenAlexRequest, DEFAULT_QUERY, fetchOpenAlexCandidates, normalizeOpenAlexResponse } from './openalex-intake.ts';
+import { buildOpenAlexRequest, DEFAULT_QUERY, fetchOpenAlexCandidates, normalizeOpenAlexBytes, normalizeOpenAlexResponse } from './openalex-intake.ts';
 
-const fixture = JSON.parse(await readFile(new URL('./fixtures/openalex-response.json', import.meta.url), 'utf8'));
+const fixtureUrl = new URL('./fixtures/openalex-response.json', import.meta.url);
+const fixtureBytes = await readFile(fixtureUrl);
+const fixture = JSON.parse(fixtureBytes.toString('utf8'));
 const context = { query: DEFAULT_QUERY, processedAt: '2026-10-22T00:00:00Z', requestUrl: buildOpenAlexRequest() };
 
 test('candidate metadata preserves nullable fields and stays separate from graph evidence', () => {
@@ -12,6 +15,8 @@ test('candidate metadata preserves nullable fields and stays separate from graph
   assert.equal(packet.request_provenance, 'declared_for_offline_input');
   assert.equal(packet.processed_at, context.processedAt);
   assert.equal(packet.retrieved_at, null);
+  assert.equal(packet.schema_version, 'openalex-candidates-0.2.0');
+  assert.equal(packet.response_sha256, null, 'A parsed object cannot establish the original response bytes.');
   assert.equal(packet.immutable_release, null);
   assert.equal(packet.status, 'unreviewed');
   assert.equal(packet.promotion, 'not_in_graph');
@@ -24,6 +29,23 @@ test('candidate metadata preserves nullable fields and stays separate from graph
   assert.equal(missing.independent_publication_check, 'not_checked');
   assert.ok(!('claims' in packet));
   assert.ok(!('reviewer' in missing));
+});
+
+test('byte intake hashes exact response bytes without inventing archived retrieval provenance', () => {
+  const compact = Buffer.from(JSON.stringify(fixture));
+  const formatted = Buffer.from(`${JSON.stringify(fixture, null, 2)}\n`);
+  const compactPacket = normalizeOpenAlexBytes(compact, context);
+  const formattedPacket = normalizeOpenAlexBytes(formatted, context);
+  assert.deepEqual(compactPacket.candidates, formattedPacket.candidates);
+  assert.equal(compactPacket.response_sha256, createHash('sha256').update(compact).digest('hex'));
+  assert.equal(formattedPacket.response_sha256, createHash('sha256').update(formatted).digest('hex'));
+  assert.notEqual(compactPacket.response_sha256, formattedPacket.response_sha256);
+  assert.equal(formattedPacket.data_origin, 'offline_input');
+  assert.equal(formattedPacket.request_provenance, 'declared_for_offline_input');
+  assert.equal(formattedPacket.retrieved_at, null);
+  assert.equal(normalizeOpenAlexResponse(fixture, { ...context, dataOrigin: 'live_api_response' }).response_sha256, null);
+  assert.throws(() => normalizeOpenAlexBytes(new Uint8Array(5 * 1024 * 1024 + 1), context), /5 MiB/);
+  assert.throws(() => normalizeOpenAlexBytes(new Uint8Array([255]), context), /valid UTF-8 JSON/);
 });
 
 test('duplicate identifiers do not become independent candidates and retain retraction disagreements', () => {
@@ -84,18 +106,20 @@ test('invalid envelopes, bounds, identifiers, dates and provider shapes fail clo
 
 test('fetch uses one bounded request and bearer auth without persisting credentials', async () => {
   let calls = 0;
+  const responseBytes = Buffer.from(`${JSON.stringify(fixture, null, 2)}\n`);
   const packet = await fetchOpenAlexCandidates({ apiKey: 'synthetic-test-bearer' }, async (input, init) => {
     calls += 1;
     assert.equal(new URL(String(input)).searchParams.get('page'), '1');
     assert.equal(new URL(String(input)).searchParams.has('api_key'), false);
     assert.equal(new Headers(init?.headers).get('Authorization'), 'Bearer synthetic-test-bearer');
     assert.equal(init?.redirect, 'error');
-    return new Response(JSON.stringify(fixture));
+    return new Response(responseBytes);
   });
   assert.equal(calls, 1);
   assert.equal(packet.data_origin, 'live_api_response');
   assert.equal(packet.request_provenance, 'issued_by_adapter');
   assert.equal(packet.retrieved_at, packet.processed_at);
+  assert.equal(packet.response_sha256, createHash('sha256').update(responseBytes).digest('hex'));
   assert.ok(packet.retrieved_at !== null && Number.isFinite(Date.parse(packet.retrieved_at)));
   assert.ok(!JSON.stringify(packet).includes('synthetic-test-bearer'));
 });
