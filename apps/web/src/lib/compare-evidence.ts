@@ -49,11 +49,17 @@ export function getStudyContextNotes(snapshot: Snapshot, claimId: string): Confl
   return snapshot.conflicts.filter(({ claim_ids }) => claim_ids.includes(claimId));
 }
 
-/** Prefer a curated pair, then a matching condition. Neither establishes comparable experiments. */
+/** Prefer curated scope within the same source kind; neither establishes comparable experiments. */
 export function findComparisonPartner(snapshot: Snapshot, claimId: string): Claim | undefined {
   const active = snapshot.claims.find(({ id }) => id === claimId);
   if (!active) return undefined;
-  const others = snapshot.claims.filter(({ id }) => id !== claimId);
+  const sourceKind = (claim: Claim): Source['kind'] | undefined => {
+    const kinds = new Set(getClaimEvidence(snapshot, claim.id).map(({ source_id }) => snapshot.sources.find(({ id }) => id === source_id)?.kind));
+    return kinds.size === 1 ? [...kinds][0] : undefined;
+  };
+  const activeKind = sourceKind(active);
+  if (!activeKind) return undefined;
+  const others = snapshot.claims.filter((claim) => claim.id !== claimId && sourceKind(claim) === activeKind);
   const related = others.filter((claim) => claim.predicate === active.predicate && (
     (claim.subject_id === active.subject_id && claim.object_id === active.object_id)
     || (active.predicate === 'interacts_with' && claim.subject_id === active.object_id && claim.object_id === active.subject_id)
@@ -68,13 +74,16 @@ export function findComparisonPartner(snapshot: Snapshot, claimId: string): Clai
     return source?.kind === 'publication' ? [`source:${source.id}`, ...identities(source)] : [];
   });
   const activeKeys = new Set(publicationKeys(active));
+  const group = active.context.comparison_group;
+  const sameGroup = typeof group === 'string' && group.trim()
+    ? related.find((claim) => claim.context.comparison_group === group) : undefined;
   const condition = active.context.binding_condition;
   const sameConditionOtherPaper = typeof condition === 'string' && condition.trim() && activeKeys.size
     ? related.find((claim) => {
       const keys = publicationKeys(claim);
       return claim.context.binding_condition === condition && keys.length > 0 && keys.every((key) => !activeKeys.has(key));
     }) : undefined;
-  return curatedPartner ?? sameConditionOtherPaper ?? related[0] ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
+  return curatedPartner ?? sameGroup ?? sameConditionOtherPaper ?? related[0] ?? others.find(({ subject_id }) => subject_id === active.subject_id) ?? others[0];
 }
 
 function recorded(value: ContextValue): boolean {
@@ -225,6 +234,7 @@ function findingLines(item: ComparisonColumn): string[] {
   for (const { evidence, source } of item.evidence) {
     lines.push(`### ${markdown(source.title)}`, '', source.url, '',
       `Source: ${markdown(source.id)}; year: ${markdown(source.year)}; identifiers: ${markdown(source.identifiers.map(({ namespace, value }) => `${namespace}: ${value}`))}.`, '',
+      `Source type: ${source.kind === 'publication' ? 'Original paper' : 'Database annotation'}.`, '',
       `Evidence: ${markdown(evidence.id)}; relation to its own claim: ${markdown(evidence.relation)}.`, '',
       markdown(evidence.finding), '', `Inspected location: ${markdown(evidence.locator)}`, '',
       'Study-specific context:', '', ...Object.entries(evidence.study_context).map(([key, value]) => `- ${markdown(key.replaceAll('_', ' '))}: ${markdown(value)}`), '',

@@ -2,19 +2,20 @@
 
 Generated from candidate-coverage.json and the current snapshot. Edit the JSON, then regenerate. This is a reading plan: candidates are unreviewed, outside the graph, and do not establish support for any existing or proposed claim.
 
-- **Prepared:** 2026-10-24
-- **Baseline snapshot:** alzheimers-source-checked-0.7.0
-- **Staged sources:** 6 (6 publications, 0 pathway records)
+- **Prepared:** 2026-11-05
+- **Baseline snapshot:** alzheimers-source-checked-0.8.0
+- **Staged sources:** 5 (5 publications, 0 pathway records)
 - **Selection:** Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.
 
 ## Limits
 
-- The six publication candidates remain unreviewed and outside the graph. The two earlier pathway candidates were added separately as source-checked draft annotations in snapshot 0.2.0, not approved scientific records.
+- The five publication candidates remain unreviewed and outside the graph. The two earlier pathway candidates were added separately as source-checked draft annotations in snapshot 0.2.0, not approved scientific records.
 - Inspection was limited to the locations recorded per source. Search-indexed excerpts may be stale; several direct PubMed/PMC opens returned challenges. No full paper, supplement, figure, or table was reviewed.
 - Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.
 - Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.
 - Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.
 - These staging questions are not novel hypotheses or classified contradictions. The 40-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone.
+- Wahrle2004 entered snapshot0.8.0 through a separate original-methods/figure inspection, with three model/readout-scoped findings across that paper and Hirsch-Reinshagen2005. This remaining plan does not automatically promote metadata or establish study independence.
 
 ## Existing findings and recorded review status
 
@@ -25,12 +26,14 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-abca1-cholesterol-pathway | [source-reactome-abca1-protein](https://reactome.org/content/detail/R-HSA-194209) | draft | draft | No |
 | claim-abca1-encodes | [source-reactome-abca1-protein](https://reactome.org/content/detail/R-HSA-194209) | draft | draft | No |
 | claim-abca1-n1800h-risk | [26079414](https://pubmed.ncbi.nlm.nih.gov/26079414/) | draft | draft | No |
+| claim-abca1-opentargets-association | [source-opentargets-abca1-direct-association](https://platform.opentargets.org/target/ENSG00000165029/associations) | draft | draft | No |
 | claim-apob-encodes | [source-hgnc-scavenger-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
 | claim-apob-scavenger-pathway | [source-reactome-apob-scavenger](https://reactome.org/content/detail/R-HSA-2512789) | draft | draft | No |
 | claim-apoe-cholesterol-pathway | [source-reactome-apoe-expression](https://reactome.org/content/detail/R-HSA-9031512) | draft | draft | No |
 | claim-apoe-e2-risk | [7920638](https://pubmed.ncbi.nlm.nih.gov/7920638/) | draft | draft | No |
 | claim-apoe-e4-risk | [8346443](https://pubmed.ncbi.nlm.nih.gov/8346443/) | draft | draft | No |
 | claim-apoe-encodes | [source-uniprot-apoe](https://rest.uniprot.org/uniprotkb/P02649.txt) | draft | draft | No |
+| claim-apoe-opentargets-association | [source-opentargets-apoe-direct-association](https://platform.opentargets.org/target/ENSG00000130203/associations) | draft | draft | No |
 | claim-apoe-scavenger-pathway | [source-reactome-apoe-scavenger](https://reactome.org/content/detail/R-HSA-3221641) | draft | draft | No |
 | claim-bailey-trem2-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |
 | claim-bailey-trem2-r47h-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |
@@ -45,6 +48,12 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-lessard-trem2-r47h-apoe3-binding | [30341064](https://link.springer.com/article/10.15252/emmm.201809027) | draft | draft | No |
 | claim-marco-encodes | [source-hgnc-scavenger-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
 | claim-marco-scavenger-pathway | [source-reactome-marco-binding](https://reactome.org/content/detail/R-HSA-2173781) | draft | draft | No |
+| claim-mouse-abca1-apoe-lipidation-wahrle | [15269217](https://doi.org/10.1074/jbc.M407963200) | draft | draft | No |
+| claim-mouse-abca1-apoe-soluble-app-ps1 | [16207707](https://doi.org/10.1074/jbc.M508781200) | draft | draft | No |
+| claim-mouse-abca1-apoe-soluble-tgswdi | [16207707](https://doi.org/10.1074/jbc.M508781200) | draft | draft | No |
+| claim-mouse-abca1-human-ortholog | [source-ensembl-abca1-orthology](https://rest.ensembl.org/homology/symbol/mus_musculus/Abca1?target_species=homo_sapiens&type=orthologues&content-type=application/json) | draft | draft | No |
+| claim-mouse-apoe-encodes | [source-uniprot-mouse-apoe](https://rest.uniprot.org/uniprotkb/P08226.json) | draft | draft | No |
+| claim-mouse-apoe-human-ortholog | [source-ensembl-apoe-orthology](https://rest.ensembl.org/homology/symbol/mus_musculus/Apoe?target_species=homo_sapiens&type=orthologues&content-type=application/json) | draft | draft | No |
 | claim-nr1h2-cholesterol-pathway | [source-reactome-nr1h2-protein](https://reactome.org/content/detail/R-HSA-375500) | draft | draft | No |
 | claim-nr1h2-encodes | [source-reactome-nr1h2-protein](https://reactome.org/content/detail/R-HSA-375500) | draft | draft | No |
 | claim-nr1h3-cholesterol-pathway | [source-reactome-nr1h3-protein](https://reactome.org/content/detail/R-HSA-8854957) | draft | draft | No |
@@ -74,17 +83,16 @@ What do the ABCA1 experiments measure about ApoE lipid handling, and how would t
 
 **Current graph anchors:** gene-abca1; gene-apoe. These remain their recorded entity types.
 
-**Existing finding context:** claim-abca1-n1800h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk; claim-apoe-cholesterol-pathway; claim-abca1-cholesterol-pathway
+**Existing finding context:** claim-abca1-n1800h-risk; claim-apoe-e4-risk; claim-apoe-e2-risk; claim-apoe-cholesterol-pathway; claim-abca1-cholesterol-pathway; claim-mouse-abca1-apoe-lipidation-wahrle; claim-mouse-abca1-apoe-soluble-tgswdi; claim-mouse-abca1-apoe-soluble-app-ps1
 
 | Candidate source | Kind | Recorded model | Recorded readout |
 | --- | --- | --- | --- |
-| [Wahrle et al. (2004)](https://pubmed.ncbi.nlm.nih.gov/15269217/) | primary\_publication | Abca1 genotype comparisons; primary astrocyte cultures | CNS ApoE levels and secreted-particle lipidation |
 | [Hirsch-Reinshagen et al. (2004)](https://pubmed.ncbi.nlm.nih.gov/15269218/) | primary\_publication | ABCA1-deficient astrocytes and microglia; species needs source extraction | Lipid efflux to ApoE and brain ApoE metabolism |
 
 **Before proposing a graph claim:**
 
 - [ ] Extract species, genotype, cell preparation, assay and experiment-specific counts; separate ApoE protein lipidation from APOE genotype associations.
-- [ ] Assess model/material overlap between the two 2004 publications; distinct DOIs do not establish independent replication.
+- [ ] Compare the remaining2004 efflux candidate with the curated particle-lipidation and mouse-brain soluble-ApoE findings; distinct DOIs do not establish independent replication or equivalent readouts.
 - [ ] Resolve relevant Reactome member events, protein/gene identities, primary references and exact release. Do not treat a peripheral pathway as a demonstrated brain or AD mechanism.
 
 ### reading-trem2-apoe-interaction
@@ -170,22 +178,6 @@ Do the two 2015 TREM2 model studies address comparable perturbations, cell popul
 - **Inspected:** 2026-10-22 · indexed_excerpt · [location](https://pubmed.ncbi.nlm.nih.gov/28930663/)
 - **Locator / access limits:** Indexed PubMed/PMC metadata and abstract excerpts; direct PubMed and PMC opens returned challenges.
 - **Recorded organisms:** Not extracted; not an exhaustive assay-level species extraction
-- **Sample size:** Not extracted; do not pool experiment-level counts
-- **Review / graph:** unreviewed / not_in_graph
-- **Publication status:** not_checked; absence of a notice has not been established
-- **Reuse:** pending_review · [terms](https://www.ncbi.nlm.nih.gov/home/about/policies/) · checked Not extracted
-- **Terms observation:** Not extracted
-
-### candidate-wahrle-2004
-
-[ABCA1 is required for normal central nervous system ApoE levels and for lipidation of astrocyte-secreted apoE](https://pubmed.ncbi.nlm.nih.gov/15269217/)
-
-- **Citation:** Wahrle et al. (2004)
-- **Identifiers:** pmid: 15269217; doi: 10.1074/jbc.M407963200
-- **Provider / release:** PubMed / Not captured; access date is not a release
-- **Inspected:** 2026-10-22 · indexed_excerpt · [location](https://pubmed.ncbi.nlm.nih.gov/15269217/)
-- **Locator / access limits:** Indexed metadata and abstract excerpts; direct PubMed open returned a challenge.
-- **Recorded organisms:** Mus musculus; not an exhaustive assay-level species extraction
 - **Sample size:** Not extracted; do not pool experiment-level counts
 - **Review / graph:** unreviewed / not_in_graph
 - **Publication status:** not_checked; absence of a notice has not been established

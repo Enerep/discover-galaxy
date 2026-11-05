@@ -8,7 +8,7 @@ These command-line tools prepare material for review. They do not promote record
 
 ## Candidate-source coverage
 
-The checked-in [reading plan](../../data/alzheimers/candidate-coverage.json) stages six manually selected publications around the existing gene anchors. The two earlier pathway candidates entered snapshot 0.2.0 through a separate source-checked draft diff; see the [change log](../../data/alzheimers/CHANGELOG.md). The plan contains bibliographic metadata and project-authored screening notes, not abstracts, paper text, graph claims, or scientific approvals. Actual page access is distinguished from indexed excerpts. Unknown experiment-level context, publication checks, permissions, and database releases stay explicit.
+The checked-in [reading plan](../../data/alzheimers/candidate-coverage.json) stages five manually selected publications around the existing gene anchors. Two earlier pathway candidates entered snapshot 0.2.0, and Wahrle 2004 entered 0.8.0 through separate source-checked draft diffs; see the [change log](../../data/alzheimers/CHANGELOG.md). The plan contains bibliographic metadata and project-authored screening notes, not abstracts, paper text, graph claims, or scientific approvals. Actual page access is distinguished from indexed excerpts. Unknown experiment-level context, publication checks, permissions, and database releases stay explicit.
 
 ```sh
 npm run --silent curation:coverage > data/alzheimers/candidate-coverage.md
@@ -71,7 +71,7 @@ The CLI accepts `--query` (1–512 characters), `--limit` (1–50), and `--input
 
 For proxied environments, the shown Node 24 `--use-env-proxy` option preserves `HTTP_PROXY`/`HTTPS_PROXY`/`NO_PROXY`. Keep configured CA trust and TLS verification. If destination policy blocks `api.openalex.org`, use the supported environment configuration workflow or a legitimate archived response; do not bypass the proxy. Unit tests do not establish live availability.
 
-The [2026-11-05 batch](../../data/annotations/apoe-abca1-intake.md) includes a completed keyless five-result request using the earlier 0.1.0 schema. It preserves that real packet and its actual retrieval time, with an explicitly unavailable raw-response digest. Subsequent digest-enabled 0.2.0 attempts returned 503/504 and produced no packet; successful live 0.2.0 capture remains pending. The synthetic fixture is test material and must stay outside the graph.
+The earlier [2026-11-05 batch](../../data/annotations/apoe-abca1-intake.md) preserves a real legacy 0.1.0 packet with an unavailable raw digest and later 503/504 failures. A fresh 0.2.0 `ABCA1 AND APOE`, page 1 / limit 5 capture completed 2026-11-05T11:18:18.716Z with an original-response digest. [Checkpoint provenance](../../data/annotations/apoe-abca1-checkpoint-provenance.json) distinguishes it from the unchanged legacy packet. The [0.8.0 graph diff](../../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) came from separate original-source inspection; this intake tool still creates no graph claims. The synthetic fixture must stay outside the graph.
 
 ## Source contract review
 

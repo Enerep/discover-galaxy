@@ -1,6 +1,6 @@
 # Knowledge graph data model
 
-Status: contract version **0.1.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.7.0** contains 40 entities, 41 draft claims/evidence records, 34 sources, and one draft context comparison; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
+Status: contract version **0.2.0** is implemented in the [TypeScript types](../apps/web/src/lib/types.ts), [JSON Schema](../data/schema/knowledge-graph.schema.json), and [runtime validator](../apps/web/src/lib/validate.ts). Content snapshot **0.8.0** contains 45 entities, 49 draft claims, 49 evidence records, 49 sources, and one draft context comparison; its [change log](../data/alzheimers/CHANGELOG.md) records source checks. It passes development validation; independent review is a future milestone and the scientific-release gate remains separate. No application API/backend or database is implemented. Treat contract changes separately from dataset versions.
 
 ## Model boundaries
 
@@ -43,6 +43,7 @@ The owner's current track is the hosted **Source-checked draft** explorer. It ca
 | `type` | One of `disease`, `gene`, `protein`, `drug`, `pathway`, `paper` |
 | `label`, `aliases` | Display name and explicitly curated search aliases |
 | `external_ids` | Array of `{ namespace, value }`; use verified IDs for biological entities |
+| `taxonomy_id` | Optional positive safe integer; explicit source-checked species identity, required on both endpoints for orthology/perturbation predicates |
 | `description` | Optional short description; scientific statements reference approved claim IDs |
 | `description_claim_ids` | Claims supporting scientific statements in the description; empty for a label-only description |
 | `source_id` | Required for a paper node; resolves to a publication source |
@@ -66,6 +67,10 @@ Identity labels and aliases have their own `provenance_source_ids`; they do not 
 | `review` | Status (`draft` or `approved`), `reviewer`, `date`, `rationale`, and optional `human_reviewed` attestation |
 
 Start with narrowly defined predicates such as `associated_with`, `encodes`, `participates_in`, `interacts_with`, and `targets`. Document direction and semantics before using each one: storage subject/object order does not make `associated_with` causal or directional. `targets` describes a molecular relationship, not clinical efficacy. Add treatment-outcome predicates only with a separate definition and appropriately scoped evidence.
+
+Contract 0.2.0 adds `ortholog_of` for gene→gene annotations with different explicit endpoint taxa and matching `context.subject_taxonomy_id` / `object_taxonomy_id`. It is evolutionary annotation and navigation, not evidence of conserved function. `perturbation_affects` is restricted to gene→protein endpoints with the same explicit taxon, matching `context.taxonomy_id`, and nonempty `intervention`, `experimental_system` and `outcome`. Every supporting evidence record must cite a `publication` of type `primary_research` and carry that same `study_context.taxonomy_id`; metadata databases can be upstream provenance only. Cross-species `encodes` is rejected when both taxa are known. The JSON Schema and runtime validator require0.2.0; saved research-brief schema 1 remains separate.
+
+The 0.8.0 graph uses separate mouse Abca1/Apoe/ApoE identities with species-qualified labels, keeping human RNA mapping and paper coverage outside that branch. Three perturbation findings from two original papers preserve readouts, model-specific groups and replicate unknowns. Open Targets aggregate `associated_with` records use `context.association_scope: provider_aggregate`, exact provider score strings/definitions and direct-only/page/release fields; they do not replace four original variant-specific publication findings. Relationship captions distinguish **Database association**, **Ortholog of** and **Perturbation effect**. Source-specific `finding_label` distinguishes parallel findings; automatic comparisons keep database and publication source kinds separate and prefer a recorded outcome group. Exported briefs preserve source kind and all recorded contexts.
 
 Do not turn graph paths into new claims automatically. Parallel claims with different contexts are valid; deduplicate only when meaning and scope match. A rendered biological edge resolves to its claim ID. A paper-to-claim citation link is visibly a citation relationship, not an additional biological assertion.
 
@@ -128,7 +133,7 @@ A hypothesis record contains `id`, `question`, `basis_claim_ids`, `basis_evidenc
 
 ## User-authored research brief
 
-The [research-brief model](../apps/web/src/lib/research-brief.ts) is a separate client-side contract, not part of schema `0.1.0` or the snapshot's `hypotheses` collection. Its fields are `schema_version: 1`, `dataset_version`, `updated_at`, `question`, `explanation`, `assumptions`, `experiment`, `pinned_claim_ids` and nullable `comparison_claim_ids`. The timestamp is a client edit time, not a source-inspection or review date. It stores no source copies, review fields or scientific approvals.
+The [research-brief model](../apps/web/src/lib/research-brief.ts) is a separate client-side contract, not part of schema `0.2.0` or the snapshot's `hypotheses` collection. Its fields are `schema_version: 1`, `dataset_version`, `updated_at`, `question`, `explanation`, `assumptions`, `experiment`, `pinned_claim_ids` and nullable `comparison_claim_ids`. The timestamp is a client edit time, not a source-inspection or review date. It stores no source copies, review fields or scientific approvals.
 
 One draft is stored under `discovery-galaxy:research-brief:v1`. There are at most 12 unique claim references and one pair of distinct pinned findings; text limits are defined in the model. The parser rejects extra fields, invalid shapes and oversized data. Structurally valid references missing from the current snapshot are retained visibly so the user can remove them without losing their notes. A dataset-version mismatch requires explicit refresh, with every remaining reference resolvable, before evidence additions or export.
 
@@ -136,7 +141,7 @@ The Markdown export requires a question and at least one current, resolvable pin
 
 ## Experimental analysis contracts
 
-These are separate client-side contracts, outside knowledge-graph schema `0.1.0` and its scientific-review records:
+These are separate client-side contracts, outside knowledge-graph schema `0.2.0` and its scientific-review records:
 
 - `ExperimentTable` stores filename, recognized columns and all parsed `{gene, log2FoldChange, padj}` rows, with null statistics retained and an incomplete-row count. Inputs are bounded to 5 MiB/50,000 unique human-style symbols or human Ensembl IDs. `identifierType` records the parsed namespace; explicit identifier-column selection resolves multiple candidates. Species and experiment annotation release are not verified.
 - `PathwayReference` stores a versioned provenance envelope and `{id, name, url, genes}` sets. The bundled reference has a pinned mirror/raw digest, CC0 attribution and unknown exact upstream release. Original member strings stay unchanged; descriptive labels are not aliases. Its whole-file digest is checked separately from shape validation.

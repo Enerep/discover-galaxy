@@ -9,7 +9,7 @@ import { validateDataset } from './validate.ts';
 function syntheticFixture(): Snapshot {
   const review = { status: 'draft' as const, reviewer: null, date: null, rationale: 'Synthetic fixture; no scientific meaning.' };
   return {
-    schema_version: '0.1.0', dataset_version: 'synthetic-test-only', release_status: 'development', created_at: '2026-10-20',
+    schema_version: '0.2.0', dataset_version: 'synthetic-test-only', release_status: 'development', created_at: '2026-10-20',
     scope: { disease: 'Synthetic condition', inclusion_criteria: 'Structural tests only', limitations: ['Not scientific data.'] },
     upstream_releases: [{ provider: 'Synthetic provider', release: null, accessed_at: '2026-10-20', source_url: 'https://example.org/source', reuse_terms_url: 'https://example.org/terms', attribution: 'Synthetic fixture' }],
     entities: [
@@ -123,9 +123,71 @@ test('the source-checked snapshot preserves typed pathway journeys and remains a
       assert.notEqual(claim.review.human_reviewed, true);
     }
   }
-  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
   assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
+});
+
+test('the APOE/ABCA1 checkpoint keeps mouse perturbations, original papers and human aggregate associations distinct', async () => {
+  const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
+  const intake = JSON.parse(await readFile(new URL('../../../../data/annotations/apoe-abca1-intake.json', import.meta.url), 'utf8'));
+  const effects = data.claims.filter(({ predicate }) => predicate === 'perturbation_affects');
+  assert.equal(effects.length, 3);
+  for (const symbol of ['apoe', 'abca1']) {
+    const identity = getClaimEvidence(data, `claim-${symbol}-encodes`);
+    assert.equal(identity.length, 1, 'A live identity recheck must not duplicate the existing finding/citation card.');
+    assert.ok(identity[0].upstream_source_ids.includes(`source-uniprot-${symbol}-live-2026-11-05`));
+    assert.equal(identity[0].study_context.live_provider_release, '2026_04');
+    assert.equal(identity[0].study_context.live_taxonomy_id, 9606);
+    assert.match(String(identity[0].study_context.live_response_sha256), /^[a-f0-9]{64}$/);
+    const mapping = getClaimEvidence(data, `claim-${symbol}-cholesterol-pathway`)[0];
+    assert.ok(mapping.upstream_source_ids.includes(`source-reactome-${symbol}-live-mapping`));
+    assert.match(String(mapping.study_context.live_mapping_provenance), /R-HSA-9029569\.2/);
+  }
+  for (const claim of effects) {
+    assert.equal(claim.subject_id, 'gene-mouse-abca1');
+    assert.equal(claim.object_id, 'protein-mouse-apoe');
+    for (const id of [claim.subject_id, claim.object_id]) {
+      const entity = data.entities.find((item) => item.id === id)!;
+      assert.equal(entity.taxonomy_id, 10090);
+      assert.match(entity.label, /\(mouse\)/);
+    }
+    assert.equal(claim.context.taxonomy_id, 10090);
+    for (const item of getClaimEvidence(data, claim.id)) {
+      const source = data.sources.find(({ id }) => id === item.source_id)!;
+      assert.equal(source.kind, 'publication');
+      assert.equal(source.publication_type, 'primary_research');
+      assert.equal(item.study_context.taxonomy_id, 10090);
+      assert.equal(item.review.human_reviewed, false);
+      assert.ok(item.upstream_source_ids.every((id) => data.sources.find((s) => s.id === id)?.provider === 'OpenAlex'));
+    }
+  }
+  const lipidation = effects.find(({ id }) => id.endsWith('wahrle'))!;
+  assert.equal(lipidation.context.reported_n_per_genotype, 4);
+  assert.equal(lipidation.context.sample_size, null, 'Reported n must not become an invented independent-mouse count.');
+  assert.equal(lipidation.context.afm_particle_count, null);
+  assert.match(lipidation.limitations.join(' '), /no significant difference in total unfractionated/);
+  const brain = effects.filter(({ id }) => id.includes('soluble-'));
+  assert.deepEqual(brain.map(({ context }) => [context.model, context.age_months, context.knockout_mice, context.wild_type_mice]), [['Tg-SwDI/B', 10, 8, 8], ['APP/PS1', 12, 5, 5]]);
+  assert.ok(brain.every((claim) => getClaimEvidence(data, claim.id)[0].source_id === 'source-hirsch-reinshagen-2005'));
+  assert.equal(new Set(brain.map((claim) => getClaimEvidence(data, claim.id)[0].source_id)).size, 1, 'Two mouse models are not two papers.');
+  const aggregate = data.claims.filter(({ context }) => context.association_scope === 'provider_aggregate');
+  assert.equal(aggregate.length, 2);
+  for (const claim of aggregate) {
+    const symbol = claim.subject_id.replace('gene-', '');
+    const original = intake.selected_records.find((r: { packet_id: string }) => r.packet_id === `${symbol}-opentargets`).record;
+    const item = getClaimEvidence(data, claim.id)[0];
+    assert.equal(data.sources.find(({ id }) => id === item.source_id)?.kind, 'database_record');
+    assert.equal(claim.context.overall_association_score, String(original.overall_association_score));
+    assert.deepEqual(claim.context.datasource_scores, original.datasource_scores.map((s: { id: string; score: number }) => `${s.id}: ${s.score}`));
+    assert.equal(claim.context.enable_indirect, 'false');
+    assert.equal(claim.context.provider_release, '26.09');
+    assert.match(String(claim.context.score_definition), /not a causal probability/);
+  }
+  assert.deepEqual(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').map(({ id }) => id).sort(),
+    ['claim-abca1-n1800h-risk', 'claim-apoe-e2-risk', 'claim-apoe-e4-risk', 'claim-trem2-r47h-risk']);
+  assert.equal(data.hypotheses.length, 0);
+  assert.equal(validateDataset(data, { release: true }).valid, false);
 });
 
 test('reference-derived coverage keeps gene-set membership separate from protein states and paper findings', async () => {
@@ -150,8 +212,8 @@ test('reference-derived coverage keeps gene-set membership separate from protein
     assert.equal(membership.review.status, 'draft');
     assert.equal(membership.review.human_reviewed, false);
   }
-  assert.equal(snapshot.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
-  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 8);
+  assert.equal(snapshot.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
+  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 10);
 });
 
 test('scavenger evidence connects typed genes and proteins to APOE without promoting RNA results into AD-risk claims', async () => {
@@ -172,7 +234,7 @@ test('scavenger evidence connects typed genes and proteins to APOE without promo
     assert.equal(annotation.context.inferred_from, 'Mus musculus reaction');
     assert.ok(annotation.limitations.some((text) => text.includes('not direct experimental evidence in human brain')));
   }
-  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
   assert.equal(data.hypotheses.length, 0);
 });
 
@@ -241,7 +303,7 @@ test('binding assays keep protein endpoints, one paper identity and replicate un
   assert.equal(source.publication_status.status, 'not_checked');
   assert.equal(source.reuse.permission_status, 'pending_review');
   assert.deepEqual(getEntityClaims(data, 'paper-atagi-2015').map(({ id }) => id), ids);
-  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
 });
 
 test('two publication records with one study identifier cannot appear as independent sources', () => {
@@ -287,7 +349,7 @@ test('the second binding publication preserves plasma preparation, technical wel
   }
   const variant = evidence.find(({ claim_id }) => claim_id === 'claim-bailey-trem2-r47h-apoe-binding')!;
   assert.equal(variant.study_context.experiments_reported, 2);
-  assert.equal(data.claims.filter(({ predicate }) => predicate === 'associated_with').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
   assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
 });

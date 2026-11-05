@@ -1,0 +1,158 @@
+{
+  "schema_version": "curation-checkpoint-provenance-1",
+  "dataset_version": "alzheimers-source-checked-0.8.0",
+  "base_commit": "9e368d72c9e5bbbf508426465847b39a24d1748b",
+  "inspection_date": "2026-11-05",
+  "inspection_method": "AI-assisted original PDF methods/figure inspection and provider-record identity checks; no independent scientific review.",
+  "original_intake_manifest_sha256": "ca97ef61d6bc3e449b9a7c68b0f60a05b9a88876e7da1af7a524a83a912b228b",
+  "live_openalex": {
+    "schema_version": "openalex-candidates-0.2.0",
+    "request_url": "https://api.openalex.org/works?search.title_and_abstract=ABCA1+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+    "request": {
+      "method": "GET",
+      "url": "https://api.openalex.org/works?search.title_and_abstract=ABCA1+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+      "body": null
+    },
+    "retrieved_at": "2026-11-05T11:18:18.716Z",
+    "response_sha256": "1e3907e7f99d10cf4b97e77fda52532336bb61ac683549b2129e91a30da93033",
+    "packet_sha256": "4ca941751f1568b4eadd56253af16a085a5e549255cb2b1c42f6a00620e966de",
+    "selected_work_ids": [
+      "W2013111251"
+    ],
+    "unused_results_remain_staging": true,
+    "coverage": {
+      "total_reported": 1193,
+      "retained": 5,
+      "duplicate_records": 0,
+      "truncated": true
+    }
+  },
+  "artifacts": [
+    {
+      "file": "data/staging/apoe-abca1-evidence-2026-11-05/mondo-config-provenance.json",
+      "url": "https://www.ebi.ac.uk/ols4/api/ontologies/mondo",
+      "method": "GET",
+      "retrieved_at": "2026-11-05T12:20:41.120991Z",
+      "response_sha256": "9857e469383fd2b7a0dedad604abc20c2bb045c2b8085e8af99184a590bfdf8e",
+      "provider_release": "2026-11-03",
+      "version_iri": "http://purl.obolibrary.org/obo/mondo/releases/2026-11-03/mondo-international.owl"
+    },
+    {
+      "file": "data/staging/apoe-abca1-evidence-2026-11-05/mondo-provenance.json",
+      "url": "https://www.ebi.ac.uk/ols4/api/ontologies/mondo/terms?obo_id=MONDO:0004975",
+      "retrieved_at": "2026-11-05T11:22:04.457097Z",
+      "response_sha256": "fe11f19846657fb2a3093ee124e1b1087cb757898ae45cf4606f9a60b9625588"
+    },
+    {
+      "file": "data/staging/apoe-abca1-evidence-2026-11-05/mouse-abca1-homology-provenance.json",
+      "url": "https://rest.ensembl.org/homology/symbol/mus_musculus/Abca1?target_species=homo_sapiens&type=orthologues&content-type=application/json",
+      "method": "GET",
+      "retrieved_at": "2026-11-05T11:16:56.610773Z",
+      "response_sha256": "6381d49c359b56e46463d14a760425f2c412b3ead78f913ed74394a3371fb72c",
+      "provider_release": null
+    },
+    {
+      "file": "data/staging/apoe-abca1-evidence-2026-11-05/mouse-apoe-homology-provenance.json",
+      "url": "https://rest.ensembl.org/homology/symbol/mus_musculus/Apoe?target_species=homo_sapiens&type=orthologues&content-type=application/json",
+      "method": "GET",
+      "retrieved_at": "2026-11-05T11:16:53.940108Z",
+      "response_sha256": "28c20dce5e98a352b0aa5b41194e1aedb3fd1b0a68238c6b7620ddc2aca69ea6",
+      "provider_release": null
+    },
+    {
+      "file": "data/staging/apoe-abca1-evidence-2026-11-05/mouse-apoe-uniprot-provenance.json",
+      "url": "https://rest.uniprot.org/uniprotkb/P08226.json",
+      "method": "GET",
+      "retrieved_at": "2026-11-05T11:16:48.188761Z",
+      "response_sha256": "b0d26792635e76bae51fb0c96125efd17a8b9895014a7fbcade78f4617a1c2a3",
+      "provider_release": "2026_04"
+    },
+    {
+      "file": "data/staging/apoe-abca1-evidence-2026-11-05/mouse-gene-identities-provenance.json",
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=11303,11816&retmode=json",
+      "method": "GET",
+      "retrieved_at": "2026-11-05T11:16:48.866950Z",
+      "response_sha256": "f13d4d087745a35638abdbfdedf7b7fcc47d1ac158690149ee5af045c10f9e80",
+      "provider_release": null
+    },
+    {
+      "local_file": "/tmp/wahrle-2004-original-archived.pdf",
+      "url": "https://web.archive.org/web/20180723054021id_/http://www.jbc.org/content/279/39/40987.full.pdf",
+      "bytes": 450869,
+      "sha256": "1d89c67e1cf0cb9b07431b2c91052c10d266a239809b2bb9e87b5a9d1ef9b040",
+      "retained_in_repository": false
+    },
+    {
+      "local_file": "/tmp/hirsch-reinshagen-2005.pdf",
+      "url": "https://repositorio.ulssa.pt/server/api/core/bitstreams/aceca826-866b-4181-a631-7e9b64627031/content",
+      "bytes": 907906,
+      "sha256": "849b57839e1c296c22640eb9ea57d84f93b1a761e828df08aae2aadc6cdcb22c",
+      "retained_in_repository": false
+    },
+    {
+      "local_file": "/tmp/wahrle-2004-crossref.json",
+      "url": "https://api.crossref.org/works/10.1074/jbc.M407963200",
+      "bytes": 13693,
+      "sha256": "21cb7133280be38fbc927a76ed4e4db5c7784b60948b3a0f11a43ee744723fd4",
+      "inspected_fields": [
+        "DOI",
+        "license[content-version=vor]"
+      ],
+      "vor_license": [
+        {
+          "start": {
+            "date-parts": [
+              [
+                2020,
+                9,
+                21
+              ]
+            ],
+            "date-time": "2020-09-21T00:00:00Z",
+            "timestamp": 1600646400000
+          },
+          "content-version": "vor",
+          "delay-in-days": 5864,
+          "URL": "http://creativecommons.org/licenses/by/4.0/"
+        }
+      ],
+      "retained_in_repository": false
+    },
+    {
+      "local_file": "/tmp/hirsch-reinshagen-2005-crossref.json",
+      "url": "https://api.crossref.org/works/10.1074/jbc.M508781200",
+      "bytes": 23309,
+      "sha256": "9e9673e92e1b8dad3cc2c50ce28a01e3d0afeda5e96fce1522cf7820856b9ea0",
+      "inspected_fields": [
+        "DOI",
+        "license[content-version=vor]"
+      ],
+      "vor_license": [
+        {
+          "start": {
+            "date-parts": [
+              [
+                2020,
+                10,
+                2
+              ]
+            ],
+            "date-time": "2020-10-02T00:00:00Z",
+            "timestamp": 1601596800000
+          },
+          "content-version": "vor",
+          "delay-in-days": 5419,
+          "URL": "http://creativecommons.org/licenses/by/4.0/"
+        }
+      ],
+      "retained_in_repository": false
+    }
+  ],
+  "deferred": [
+    "Independent publication-notice and scientific reviews remain outstanding.",
+    "Ensembl terms page returned403; exact reuse review remains pending.",
+    "Legacy OpenAlex discovery for Hirsch2005 retains its explicit unknown raw digest; it was not relabeled as a current capture.",
+    "No raw PDF, sequences, alignments or full provider payloads are committed.",
+    "Exact Reactome/Ensembl database releases were not captured; Mondo config reports2026-11-03."
+  ]
+}

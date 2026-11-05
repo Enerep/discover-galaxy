@@ -1,5 +1,7 @@
 # Database annotation intake
 
+The [0.8.0 evidence checkpoint](../alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) separately source-checks and exposes selected APOE/ABCA1 records in the graph, with explicit species and database/publication boundaries. Its [provenance record](apoe-abca1-checkpoint-provenance.json) includes a new successful OpenAlex 0.2.0 raw-response digest. The original seed and staging manifests below retain their historical origins/status; no intake tool promotes records automatically.
+
 The [seed plan](seed-plan.json) selects four genes missing from snapshot 0.6.0: **COL1A1, COL1A2, COL3A1 and SAA1**. They pass the documented public MAYO AD cutoffs and occur in its leading scavenger-receptor pathway. This selects a useful library expansion; it does not establish an AD mechanism. The public input and actual interpretation limits are in [experimental validation](../../docs/experimental-validation.md).
 
 [coverage-seed.json](coverage-seed.json) is a reproducible extract of approved HGNC gene/product cross-references and exact gene-level Reactome memberships. The generator creates no claims, scientific approvals or graph changes. Source-checked facts can enter a separate versioned dataset diff after their identities, scope and reuse terms are inspected.

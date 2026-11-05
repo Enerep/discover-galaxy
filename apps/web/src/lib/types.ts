@@ -1,5 +1,6 @@
 export const ENTITY_TYPES = ['disease', 'gene', 'protein', 'drug', 'pathway', 'paper'] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
+export const PREDICATES = ['associated_with', 'encodes', 'participates_in', 'interacts_with', 'targets', 'ortholog_of', 'perturbation_affects'] as const;
 export type Context = Record<string, string | number | null | string[]>;
 export type Identifier = { namespace: string; value: string };
 
@@ -17,13 +18,14 @@ export interface Entity {
   label: string;
   aliases: string[];
   external_ids: Identifier[];
+  taxonomy_id?: number;
   description?: string;
   description_claim_ids: string[];
   source_id?: string;
   provenance_source_ids: string[];
 }
 
-export type Predicate = 'associated_with' | 'encodes' | 'participates_in' | 'interacts_with' | 'targets';
+export type Predicate = (typeof PREDICATES)[number];
 
 export interface Claim {
   id: string;
@@ -102,7 +104,7 @@ export interface Hypothesis {
 }
 
 export interface Snapshot {
-  schema_version: '0.1.0';
+  schema_version: '0.2.0';
   dataset_version: string;
   release_status: 'development' | 'released';
   created_at: string;

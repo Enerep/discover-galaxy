@@ -3,25 +3,28 @@
 Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.
 Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.
 
-- **Dataset:** alzheimers-source-checked-0.7.0
-- **Schema:** 0.1.0
-- **Snapshot date:** 2026-10-24
+- **Dataset:** alzheimers-source-checked-0.8.0
+- **Schema:** 0.2.0
+- **Snapshot date:** 2026-11-05
 - **Release status:** development
-- **Coverage:** 40 entities, 41 claims, 41 evidence records, 34 sources
+- **Coverage:** 45 entities, 49 claims, 49 evidence records, 49 sources
 - **Disease:** Alzheimer's disease
-- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021.
+- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations.
 
 ## Scope limitations
 
 - Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.
 - The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.
 - The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.
-- Protein nodes represent canonical human gene products. Compartments and modified states remain in evidence context; the graph does not depict every isoform, complex or molecular state.
+- Human and explicitly species-qualified mouse genes/proteins remain separate. Orthology permits navigation, not transfer of experimental effects or human RNA measurements. Molecular preparations/fractions remain in context rather than distinct isoform/state nodes.
 - Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.
 - Independent scientific review is a future milestone. Remaining reuse and correction/retraction checks are recorded per source; no human-review attestation is inferred.
 - One draft study-context comparison records different R47H assay reports. It does not establish a settled contradiction, the cause of the difference, or clinical effects. No research hypotheses are included.
 - Different publication identifiers do not establish independent replication. Assay preparations, surface presentation and replicate units remain source-specific; a recorded correction does not mean a comprehensive notice search is complete.
 - MARCO/SCARA5 inclusion was prioritized using a public AD differential-expression table. Those input statistics are not graph claims; the Cheng protein assays were not an AD patient or brain experiment, and mouse-inferred Reactome annotations retain their inference scope.
+- Open Targets association summaries are database aggregates, not additional original experiments or independent support for the existing variant-specific findings.
+- Mouse perturbation effects remain model/readout-specific; neither orthology nor a human disease annotation establishes the mouse effect in humans.
+- The broader human enrichment and HGNC references are unchanged; human RNA evidence coverage never traverses orthology links to borrow mouse papers.
 
 ## Source coverage
 
@@ -34,18 +37,29 @@ Each row is one source record, not an independent experiment or cohort. Database
 | source-cheng-2021 | publication | claim-cheng-marco-modified-apob-binding; claim-cheng-scara5-modified-apob-binding | paper-cheng-2021 | pending\_review | not\_checked |
 | source-corder-1993 | publication | claim-apoe-e4-risk | paper-corder-1993 | pending\_review | not\_checked |
 | source-corder-1994 | publication | claim-apoe-e2-risk | paper-corder-1994 | pending\_review | not\_checked |
+| source-ensembl-abca1-orthology | database\_record | claim-mouse-abca1-human-ortholog | gene-mouse-abca1 | pending\_review | not\_checked |
+| source-ensembl-apoe-orthology | database\_record | claim-mouse-apoe-human-ortholog | gene-mouse-apoe | pending\_review | not\_checked |
 | source-hgnc-coverage-identities | database\_record | claim-col1a1-encodes; claim-col1a2-encodes; claim-col3a1-encodes; claim-saa1-encodes | gene-col1a1; gene-col1a2; gene-col3a1; gene-saa1; protein-col1a1; protein-col1a2; protein-col3a1; protein-saa1 | permitted | not\_checked |
 | source-hgnc-scavenger-identities | database\_record | claim-apob-encodes; claim-marco-encodes; claim-scara5-encodes | gene-apob; gene-marco; gene-scara5; protein-apob; protein-marco; protein-scara5 | permitted | not\_checked |
+| source-hirsch-reinshagen-2005 | publication | claim-mouse-abca1-apoe-soluble-app-ps1; claim-mouse-abca1-apoe-soluble-tgswdi | paper-hirsch-reinshagen-2005 | permitted | not\_checked |
 | source-jonsson-2013 | publication | claim-trem2-r47h-risk | paper-jonsson-2013 | pending\_review | not\_checked |
 | source-lessard-2018 | publication | claim-lessard-trem2-r47h-apoe3-binding | paper-lessard-2018 | permitted | not\_checked |
 | source-mesh-alzheimers | database\_record | None | disease-alzheimers | pending\_review | not\_checked |
+| source-mondo-alzheimers-mesh | database\_record | None | disease-alzheimers | pending\_review | not\_checked |
 | source-ncbi-abca1 | database\_record | None | gene-abca1 | pending\_review | not\_checked |
 | source-ncbi-apoe | database\_record | None | gene-apoe | pending\_review | not\_checked |
+| source-ncbi-mouse-abca1-apoe | database\_record | None | gene-mouse-abca1; gene-mouse-apoe | permitted | not\_checked |
 | source-ncbi-trem2 | database\_record | None | gene-trem2 | pending\_review | not\_checked |
 | source-nordestgaard-2015 | publication | claim-abca1-n1800h-risk | paper-nordestgaard-2015 | pending\_review | not\_checked |
+| source-openalex-apoe-abca1-legacy | database\_record | None | Not recorded | permitted | not\_checked |
+| source-openalex-apoe-abca1-live | database\_record | None | Not recorded | permitted | not\_checked |
+| source-opentargets-abca1-direct-association | database\_record | claim-abca1-opentargets-association | Not recorded | permitted | not\_checked |
+| source-opentargets-apoe-direct-association | database\_record | claim-apoe-opentargets-association | Not recorded | permitted | not\_checked |
+| source-reactome-abca1-live-mapping | database\_record | None | pathway-cholesterol-efflux | permitted | not\_checked |
 | source-reactome-abca1-protein | database\_record | claim-abca1-cholesterol-pathway; claim-abca1-encodes | protein-abca1 | permitted | not\_checked |
 | source-reactome-apob-scavenger | database\_record | claim-apob-scavenger-pathway | Not recorded | permitted | not\_checked |
 | source-reactome-apoe-expression | database\_record | claim-apoe-cholesterol-pathway | Not recorded | permitted | not\_checked |
+| source-reactome-apoe-live-mapping | database\_record | None | pathway-cholesterol-efflux | permitted | not\_checked |
 | source-reactome-apoe-scavenger | database\_record | claim-apoe-scavenger-pathway | Not recorded | permitted | not\_checked |
 | source-reactome-cholesterol-efflux | database\_record | None | pathway-cholesterol-efflux | permitted | not\_checked |
 | source-reactome-dap12 | database\_record | None | pathway-dap12 | permitted | not\_checked |
@@ -59,10 +73,14 @@ Each row is one source record, not an independent experiment or cohort. Database
 | source-reactome-trem2-dap12 | database\_record | claim-trem2-dap12-binding | Not recorded | permitted | not\_checked |
 | source-reactome-trem2-protein | database\_record | claim-trem2-dap12-pathway | Not recorded | permitted | not\_checked |
 | source-reactome-tyrobp-state | database\_record | claim-tyrobp-dap12-pathway | Not recorded | permitted | not\_checked |
+| source-uniprot-abca1-live-2026-11-05 | database\_record | None | gene-abca1; protein-abca1 | permitted | not\_checked |
 | source-uniprot-apoe | database\_record | claim-apoe-encodes | protein-apoe | permitted | not\_checked |
+| source-uniprot-apoe-live-2026-11-05 | database\_record | None | gene-apoe; protein-apoe | permitted | not\_checked |
+| source-uniprot-mouse-apoe | database\_record | claim-mouse-apoe-encodes | protein-mouse-apoe | permitted | not\_checked |
 | source-uniprot-rxra | database\_record | claim-rxra-encodes | gene-rxra; protein-rxra | permitted | not\_checked |
 | source-uniprot-trem2 | database\_record | claim-trem2-encodes | protein-trem2 | permitted | not\_checked |
 | source-uniprot-tyrobp | database\_record | claim-tyrobp-encodes | gene-tyrobp; protein-tyrobp | permitted | not\_checked |
+| source-wahrle-2004 | publication | claim-mouse-abca1-apoe-lipidation-wahrle | paper-wahrle-2004 | permitted | not\_checked |
 
 ## Findings for review
 
@@ -99,7 +117,7 @@ Reactome includes ABCA1 protein in its human cholesterol transport and efflux ge
 
 - **Original source:** [ABCA1 \[plasma membrane\]](https://reactome.org/content/detail/R-HSA-194209)
 - **Source record:** source-reactome-abca1-protein
-- **Upstream source records:** Not recorded
+- **Upstream source records:** source-reactome-abca1-live-mapping
 - **Evidence relation:** supports
 - **Inspected location:** Reactome Locations in the PathwayBrowser: cholesterol transport/efflux → ABCA1 translation and NR1H2 binding.
 
@@ -109,6 +127,7 @@ Source-specific study context:
 
 - **assertion type:** curated database annotation
 - **design:** database annotation
+- **live mapping provenance:** R-HSA-9029569.2, completed 2026-11-05T00:00:46.412Z; accession lookup only, not an independent molecular-state check.
 - **organism:** Homo sapiens
 - **pathway id:** R-HSA-9029569
 - **protein state:** ABCA1 at the plasma membrane
@@ -167,7 +186,7 @@ The human ABCA1 gene encodes Phospholipid-transporting ATPase ABCA1 (O95477).
 
 - **Original source:** [ABCA1 \[plasma membrane\]](https://reactome.org/content/detail/R-HSA-194209)
 - **Source record:** source-reactome-abca1-protein
-- **Upstream source records:** Not recorded
+- **Upstream source records:** source-uniprot-abca1-live-2026-11-05
 - **Evidence relation:** supports
 - **Inspected location:** Reactome External Reference Information: UniProt accession, Gene Names and Reference Genes; species in record identity.
 
@@ -178,6 +197,13 @@ Source-specific study context:
 - **assertion type:** curated database annotation
 - **design:** database annotation
 - **gene id:** 19
+- **live ensembl gene id:** ENSG00000165029
+- **live entry version:** 244
+- **live identity check:** Completed UniProt JSON: accession, gene, human taxon, explicit Ensembl GeneId cross-reference and entryAudit; no function prose or sequence retained.
+- **live provider release:** 2026\_04
+- **live response sha256:** cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb
+- **live retrieved at:** 2026-11-05T00:00:45.202Z
+- **live taxonomy id:** 9606
 - **organism:** Homo sapiens
 - **protein accession:** O95477
 - **sample size:** Not recorded
@@ -186,9 +212,9 @@ Evidence review record:
 
 - **Review status:** draft
 - **Reviewer:** Discovery Galaxy source check (AI)
-- **Review date:** 2026-10-22
+- **Review date:** 2026-11-05
 - **Human reviewed:** false
-- **Review rationale:** Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone.
+- **Review rationale:** Preserves the original2026-10-22 identity assertion and source; appends inspected completed2026-11-05 UniProt identity/cross-reference provenance, not another experiment or independent scientific review.
 
 Evidence limitations:
 
@@ -263,6 +289,93 @@ Evidence review record:
 Evidence limitations:
 
 - The abstract-level review cannot assess all confounding or ascertainment choices. A rare-variant association is not a treatment experiment.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-abca1-opentargets-association
+
+**ABCA1 → Alzheimer's disease · associated\_with**
+
+Open Targets reports a direct ABCA1–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.
+
+**Summary:** Open Targets reports a direct ABCA1–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.
+
+#### Claim context
+
+- **assertion type:** provider aggregate association
+- **association scope:** provider\_aggregate
+- **datasource scores:** gwas\_credible\_sets: 0.7554219891183979; europepmc: 0.9440037085287274; clinical\_precedence: 0.09118961964174316
+- **disease id:** MONDO\_0004975
+- **enable indirect:** false
+- **organism:** Homo sapiens
+- **overall association score:** 0.4940984029965598
+- **page index:** 0
+- **page size:** 20
+- **provider release:** 26.09
+- **score definition:** Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count.
+- **target id:** ENSG00000165029
+- **taxonomy id:** 9606
+- **total reported:** 1797
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.
+- Only the first 20 direct disease rows were retrieved, from 1797 reported for this target; underlying study evidence was not extracted.
+- Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings.
+
+#### Evidence: evidence-abca1-opentargets-association
+
+- **Original source:** [Open Targets: ABCA1–Alzheimer disease direct association summary](https://platform.opentargets.org/target/ENSG00000165029/associations)
+- **Source record:** source-opentargets-abca1-direct-association
+- **Upstream source records:** source-mondo-alzheimers-mesh
+- **Evidence relation:** supports
+- **Inspected location:** Completed GraphQL response: target.id/approvedSymbol; associatedDiseases(enableIndirect=false,page index0,size20), MONDO\_0004975 row; score/datasourceScores; meta.dataVersion.
+
+Open Targets reports a direct ABCA1–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.
+
+Source-specific study context:
+
+- **assertion type:** provider aggregate association
+- **association scope:** provider\_aggregate
+- **datasource scores:** gwas\_credible\_sets: 0.7554219891183979; europepmc: 0.9440037085287274; clinical\_precedence: 0.09118961964174316
+- **disease id:** MONDO\_0004975
+- **enable indirect:** false
+- **organism:** Homo sapiens
+- **overall association score:** 0.4940984029965598
+- **page index:** 0
+- **page size:** 20
+- **provider release:** 26.09
+- **score definition:** Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count.
+- **target id:** ENSG00000165029
+- **taxonomy id:** 9606
+- **total reported:** 1797
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.
+- Only the first 20 direct disease rows were retrieved, from 1797 reported for this target; underlying study evidence was not extracted.
+- Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings.
 
 #### Pending review tasks
 
@@ -437,7 +550,7 @@ Reactome includes APOE protein in its human cholesterol transport and efflux gen
 
 - **Original source:** [Expression of APOE regulated by NR1H2 or NR1H3](https://reactome.org/content/detail/R-HSA-9031512)
 - **Source record:** source-reactome-apoe-expression
-- **Upstream source records:** Not recorded
+- **Upstream source records:** source-reactome-apoe-live-mapping
 - **Evidence relation:** supports
 - **Inspected location:** Reactome Participants: APOE protein output; Participates: cholesterol transport/efflux pathway.
 
@@ -447,6 +560,7 @@ Source-specific study context:
 
 - **assertion type:** curated database annotation
 - **design:** database annotation
+- **live mapping provenance:** R-HSA-9029569.2, completed 2026-11-05T00:00:45.508Z; accession lookup only, not an independent molecular-state check.
 - **organism:** Homo sapiens
 - **pathway id:** R-HSA-9029569
 - **protein state:** Secreted APOE output of a curated expression event
@@ -644,7 +758,7 @@ The human APOE gene encodes Apolipoprotein E (P02649).
 
 - **Original source:** [UniProtKB P02649 — Apolipoprotein E](https://rest.uniprot.org/uniprotkb/P02649.txt)
 - **Source record:** source-uniprot-apoe
-- **Upstream source records:** Not recorded
+- **Upstream source records:** source-uniprot-apoe-live-2026-11-05
 - **Evidence relation:** supports
 - **Inspected location:** UniProtKB ID/AC, gene name (GN), organism (OS), GeneID cross-reference (DR), and entry-version (DT) fields.
 
@@ -655,6 +769,13 @@ Source-specific study context:
 - **assertion type:** curated database annotation
 - **design:** database annotation
 - **gene id:** 348
+- **live ensembl gene id:** ENSG00000130203
+- **live entry version:** 281
+- **live identity check:** Completed UniProt JSON: accession, gene, human taxon, explicit Ensembl GeneId cross-reference and entryAudit; no function prose or sequence retained.
+- **live provider release:** 2026\_04
+- **live response sha256:** 092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203
+- **live retrieved at:** 2026-11-05T00:00:45.152Z
+- **live taxonomy id:** 9606
 - **organism:** Homo sapiens
 - **protein accession:** P02649
 - **sample size:** Not recorded
@@ -663,14 +784,101 @@ Evidence review record:
 
 - **Review status:** draft
 - **Reviewer:** Discovery Galaxy source check (AI)
-- **Review date:** 2026-10-22
+- **Review date:** 2026-11-05
 - **Human reviewed:** false
-- **Review rationale:** Source record and stated locator checked. This draft preserves the scope of the database annotation; independent scientific review is a future milestone.
+- **Review rationale:** Preserves the original2026-10-22 identity assertion and source; appends inspected completed2026-11-05 UniProt identity/cross-reference provenance, not another experiment or independent scientific review.
 
 Evidence limitations:
 
 - Canonical gene-product mapping; isoforms and post-translational states are not separate nodes.
 - Database annotations are not independent experimental replication or evidence of treatment benefit.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-apoe-opentargets-association
+
+**APOE → Alzheimer's disease · associated\_with**
+
+Open Targets reports a direct APOE–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.
+
+**Summary:** Open Targets reports a direct APOE–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.
+
+#### Claim context
+
+- **assertion type:** provider aggregate association
+- **association scope:** provider\_aggregate
+- **datasource scores:** gwas\_credible\_sets: 0.9725857409132884; eva: 0.516741177969878; crispr\_screen: 0.2670020417823128; europepmc: 0.9992042452669387; expression\_atlas: 0.017251532679053088
+- **disease id:** MONDO\_0004975
+- **enable indirect:** false
+- **organism:** Homo sapiens
+- **overall association score:** 0.695512952413486
+- **page index:** 0
+- **page size:** 20
+- **provider release:** 26.09
+- **score definition:** Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count.
+- **target id:** ENSG00000130203
+- **taxonomy id:** 9606
+- **total reported:** 2836
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.
+- Only the first 20 direct disease rows were retrieved, from 2836 reported for this target; underlying study evidence was not extracted.
+- Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings.
+
+#### Evidence: evidence-apoe-opentargets-association
+
+- **Original source:** [Open Targets: APOE–Alzheimer disease direct association summary](https://platform.opentargets.org/target/ENSG00000130203/associations)
+- **Source record:** source-opentargets-apoe-direct-association
+- **Upstream source records:** source-mondo-alzheimers-mesh
+- **Evidence relation:** supports
+- **Inspected location:** Completed GraphQL response: target.id/approvedSymbol; associatedDiseases(enableIndirect=false,page index0,size20), MONDO\_0004975 row; score/datasourceScores; meta.dataVersion.
+
+Open Targets reports a direct APOE–Alzheimer disease association summary (data version 26.09); this is an aggregate database annotation.
+
+Source-specific study context:
+
+- **assertion type:** provider aggregate association
+- **association scope:** provider\_aggregate
+- **datasource scores:** gwas\_credible\_sets: 0.9725857409132884; eva: 0.516741177969878; crispr\_screen: 0.2670020417823128; europepmc: 0.9992042452669387; expression\_atlas: 0.017251532679053088
+- **disease id:** MONDO\_0004975
+- **enable indirect:** false
+- **organism:** Homo sapiens
+- **overall association score:** 0.695512952413486
+- **page index:** 0
+- **page size:** 20
+- **provider release:** 26.09
+- **score definition:** Open Targets weighted harmonic aggregation heuristic for ranking; not a causal probability, scientific confidence score or independent-study count.
+- **target id:** ENSG00000130203
+- **taxonomy id:** 9606
+- **total reported:** 2836
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.
+- Only the first 20 direct disease rows were retrieved, from 2836 reported for this target; underlying study evidence was not extracted.
+- Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings.
 
 #### Pending review tasks
 
@@ -1760,6 +1968,544 @@ Evidence limitations:
 - Database participation describes a broad human pathway, not an AD-specific effect or proof of receptor activity in an RNA-seq sample.
 - The exact Reactome database release and record revision were not captured.
 - The cited human reaction is explicitly inferred from a mouse reaction; its annotation is not direct experimental evidence in human brain.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-mouse-abca1-apoe-lipidation-wahrle
+
+**Abca1 (mouse) → ApoE protein (mouse) · perturbation\_affects**
+
+In primary mouse astrocyte cultures, Abca1 deficiency yielded smaller ApoE-containing lipoprotein particles with lower cholesterol content than wild-type cultures.
+
+**Summary:** In primary mouse astrocyte cultures, Abca1 deficiency yielded smaller ApoE-containing lipoprotein particles with lower cholesterol content than wild-type cultures.
+
+#### Claim context
+
+- **afm particle count:** Not recorded
+- **afm preparation:** Selected wild-type fraction 37 versus knockout fraction 51
+- **afm run count:** Not recorded
+- **assay:** Size-exclusion fractionation; ApoE ELISA; enzymatic total-cholesterol assay; selected-fraction atomic force microscopy
+- **cholesterol per apoe knockout:** 0.69 μg/μg (authors reported)
+- **cholesterol per apoe wild type:** 2.3 μg/μg (authors reported)
+- **comparison group:** astrocyte particle lipidation
+- **conditioning:** Three days in serum-free medium
+- **experimental system:** Primary forebrain astrocytes from individual neonatal mice
+- **finding label:** Astrocyte particle lipidation
+- **intervention:** Abca1-null versus wild-type; heterozygous cultures also included
+- **model:** DBA/1-Abca1tm1Jdm
+- **normalization:** ApoE and total cholesterol normalized to astrocyte-cell-lysate total protein
+- **organism:** Mus musculus
+- **outcome:** Size and cholesterol content of ApoE-containing lipoprotein fractions
+- **preparation:** Conditioned medium concentrated 40-fold; tandem Superose-6 fractionation
+- **replicate unit:** Fig4A/B reports n=4 per genotype without defining the counted unit; culture/flask/repeated-harvest independence unresolved
+- **reported n per genotype:** 4
+- **sample size:** Not recorded
+- **study design:** Genotype-defined ex vivo culture comparison
+- **taxonomy id:** 10090
+- **tissue:** Forebrain; neonatal mice 1–3 days old
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.
+- ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.
+- Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.
+- Fig3E reports no significant difference in total unfractionated conditioned-medium ApoE; do not interpret fractionated particle changes as reduced total ApoE secretion.
+- Fig 4A/B reports n=4 per genotype without a defined biological-replicate unit; AFM run/particle totals and independent repeated-harvest counts remain unknown.
+- Fig3 caption reverses the D/E assay order; the plotted axes and Results identify D as cholesterol and E as ApoE. No formal correction notice was inferred.
+
+#### Evidence: evidence-mouse-abca1-apoe-lipidation-wahrle
+
+- **Original source:** [ABCA1 Is Required for Normal Central Nervous System ApoE Levels and for Lipidation of Astrocyte-secreted apoE](https://doi.org/10.1074/jbc.M407963200)
+- **Source record:** source-wahrle-2004
+- **Upstream source records:** source-openalex-apoe-abca1-live
+- **Evidence relation:** supports
+- **Inspected location:** Original JBC PDF via 2018-07-23 archive: Experimental Procedures p40988 (Primary Astrocyte Cultures, Fractionation of ACM, Atomic Force Microscopy); Results pp40990–40991; Fig4A–C/caption p40992; Fig3E axes and corresponding Results. Figure visuals and selected methods/results inspected.
+
+In primary mouse astrocyte cultures, Abca1 deficiency yielded smaller ApoE-containing lipoprotein particles with lower cholesterol content than wild-type cultures.
+
+Source-specific study context:
+
+- **afm particle count:** Not recorded
+- **afm preparation:** Selected wild-type fraction 37 versus knockout fraction 51
+- **afm run count:** Not recorded
+- **assay:** Size-exclusion fractionation; ApoE ELISA; enzymatic total-cholesterol assay; selected-fraction atomic force microscopy
+- **cholesterol per apoe knockout:** 0.69 μg/μg (authors reported)
+- **cholesterol per apoe wild type:** 2.3 μg/μg (authors reported)
+- **comparison group:** astrocyte particle lipidation
+- **conditioning:** Three days in serum-free medium
+- **experimental system:** Primary forebrain astrocytes from individual neonatal mice
+- **finding label:** Astrocyte particle lipidation
+- **intervention:** Abca1-null versus wild-type; heterozygous cultures also included
+- **model:** DBA/1-Abca1tm1Jdm
+- **normalization:** ApoE and total cholesterol normalized to astrocyte-cell-lysate total protein
+- **organism:** Mus musculus
+- **outcome:** Size and cholesterol content of ApoE-containing lipoprotein fractions
+- **preparation:** Conditioned medium concentrated 40-fold; tandem Superose-6 fractionation
+- **replicate unit:** Fig4A/B reports n=4 per genotype without defining the counted unit; culture/flask/repeated-harvest independence unresolved
+- **reported n per genotype:** 4
+- **sample size:** Not recorded
+- **study design:** Genotype-defined ex vivo culture comparison
+- **taxonomy id:** 10090
+- **tissue:** Forebrain; neonatal mice 1–3 days old
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.
+- ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.
+- Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.
+- Fig3E reports no significant difference in total unfractionated conditioned-medium ApoE; do not interpret fractionated particle changes as reduced total ApoE secretion.
+- Fig 4A/B reports n=4 per genotype without a defined biological-replicate unit; AFM run/particle totals and independent repeated-harvest counts remain unknown.
+- Fig3 caption reverses the D/E assay order; the plotted axes and Results identify D as cholesterol and E as ApoE. No formal correction notice was inferred.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-mouse-abca1-apoe-soluble-app-ps1
+
+**Abca1 (mouse) → ApoE protein (mouse) · perturbation\_affects**
+
+In 12-month APP/PS1 mice, the authors reported about 80% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.
+
+**Summary:** In 12-month APP/PS1 mice, the authors reported about 80% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.
+
+#### Claim context
+
+- **age months:** 12
+- **assay:** Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control
+- **authors reported reduction percent:** 80
+- **comparison group:** hippocampal soluble ApoE
+- **crossref doi creation date:** 2005-10-06
+- **experimental system:** 12-month APP/PS1 transgene-positive mouse hippocampus
+- **experiments reported:** At least two experiments in figure caption; reblot/sample overlap not defined
+- **finding label:** APP/PS1 · 12 months
+- **intervention:** Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive
+- **knockout mice:** 5
+- **model:** APP/PS1
+- **openalex publication date:** 2005-10-06
+- **organism:** Mus musculus
+- **original online publication date:** 2005-10-05
+- **outcome:** PBS-soluble ApoE protein in hippocampus
+- **replicate unit:** Individual mice; two representative blot lanes per group are not the biological sample total
+- **reported statistical comparison:** No exact p-value assigned to this transgene-positive knockout/wild-type contrast; caption stars use a nontransgenic baseline
+- **sample size:** Not recorded
+- **sex per compared group:** 2 female / 3 male
+- **study design:** Genotype-defined in vivo mouse comparison
+- **taxonomy id:** 10090
+- **tissue:** Hippocampus
+- **wild type mice:** 5
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.
+- ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.
+- Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.
+- The antibody measured endogenous mouse ApoE despite the human APP/PS1 transgenes; the human APOE protein is not this experimental endpoint.
+- PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.
+- This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.
+- Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast.
+
+#### Evidence: evidence-mouse-abca1-apoe-soluble-app-ps1
+
+- **Original source:** [The Absence of ABCA1 Decreases Soluble ApoE Levels but Does Not Diminish Amyloid Deposition in Two Murine Models of Alzheimer Disease](https://doi.org/10.1074/jbc.M508781200)
+- **Source record:** source-hirsch-reinshagen-2005
+- **Upstream source records:** source-openalex-apoe-abca1-legacy
+- **Evidence relation:** supports
+- **Inspected location:** Original JBC PDF via public hospital repository: Methods pp43245–43246 (sequential extraction and Western Blotting); Results p43249; Fig6B and complete caption p43250. Methods, text and actual Fig6 visual inspected.
+
+In 12-month APP/PS1 mice, the authors reported about 80% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.
+
+Source-specific study context:
+
+- **age months:** 12
+- **assay:** Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control
+- **authors reported reduction percent:** 80
+- **comparison group:** hippocampal soluble ApoE
+- **crossref doi creation date:** 2005-10-06
+- **experimental system:** 12-month APP/PS1 transgene-positive mouse hippocampus
+- **experiments reported:** At least two experiments in figure caption; reblot/sample overlap not defined
+- **finding label:** APP/PS1 · 12 months
+- **intervention:** Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive
+- **knockout mice:** 5
+- **model:** APP/PS1
+- **openalex publication date:** 2005-10-06
+- **organism:** Mus musculus
+- **original online publication date:** 2005-10-05
+- **outcome:** PBS-soluble ApoE protein in hippocampus
+- **replicate unit:** Individual mice; two representative blot lanes per group are not the biological sample total
+- **reported statistical comparison:** No exact p-value assigned to this transgene-positive knockout/wild-type contrast; caption stars use a nontransgenic baseline
+- **sample size:** Not recorded
+- **sex per compared group:** 2 female / 3 male
+- **study design:** Genotype-defined in vivo mouse comparison
+- **taxonomy id:** 10090
+- **tissue:** Hippocampus
+- **wild type mice:** 5
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.
+- ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.
+- Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.
+- The antibody measured endogenous mouse ApoE despite the human APP/PS1 transgenes; the human APOE protein is not this experimental endpoint.
+- PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.
+- This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.
+- Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-mouse-abca1-apoe-soluble-tgswdi
+
+**Abca1 (mouse) → ApoE protein (mouse) · perturbation\_affects**
+
+In 10-month Tg-SwDI/B mice, the authors reported about 75% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.
+
+**Summary:** In 10-month Tg-SwDI/B mice, the authors reported about 75% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.
+
+#### Claim context
+
+- **age months:** 10
+- **assay:** Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control
+- **authors reported reduction percent:** 75
+- **comparison group:** hippocampal soluble ApoE
+- **crossref doi creation date:** 2005-10-06
+- **experimental system:** 10-month Tg-SwDI/B transgene-positive mouse hippocampus
+- **experiments reported:** At least two experiments in figure caption; reblot/sample overlap not defined
+- **finding label:** Tg-SwDI/B · 10 months
+- **intervention:** Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive
+- **knockout mice:** 8
+- **model:** Tg-SwDI/B
+- **openalex publication date:** 2005-10-06
+- **organism:** Mus musculus
+- **original online publication date:** 2005-10-05
+- **outcome:** PBS-soluble ApoE protein in hippocampus
+- **replicate unit:** Individual mice; two representative blot lanes per group are not the biological sample total
+- **reported statistical comparison:** Results reports p\<0.001 for the transgene-positive knockout/wild-type comparison
+- **sample size:** Not recorded
+- **sex per compared group:** 4 female / 4 male
+- **study design:** Genotype-defined in vivo mouse comparison
+- **taxonomy id:** 10090
+- **tissue:** Hippocampus
+- **wild type mice:** 8
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.
+- ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.
+- Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.
+- The antibody measured endogenous mouse ApoE despite the human APP transgenes; the human APOE protein is not this experimental endpoint.
+- PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.
+- This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.
+- Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast.
+
+#### Evidence: evidence-mouse-abca1-apoe-soluble-tgswdi
+
+- **Original source:** [The Absence of ABCA1 Decreases Soluble ApoE Levels but Does Not Diminish Amyloid Deposition in Two Murine Models of Alzheimer Disease](https://doi.org/10.1074/jbc.M508781200)
+- **Source record:** source-hirsch-reinshagen-2005
+- **Upstream source records:** source-openalex-apoe-abca1-legacy
+- **Evidence relation:** supports
+- **Inspected location:** Original JBC PDF via public hospital repository: Methods pp43245–43246 (sequential extraction and Western Blotting); Results p43249; Fig6A and complete caption p43250. Methods, text and actual Fig6 visual inspected.
+
+In 10-month Tg-SwDI/B mice, the authors reported about 75% lower PBS-soluble hippocampal ApoE in Abca1-knockout animals than in transgene-positive wild-type controls.
+
+Source-specific study context:
+
+- **age months:** 10
+- **assay:** Sequential extraction; equal-protein Western blot and densitometry; murine-specific ApoE antibody; GAPDH loading control
+- **authors reported reduction percent:** 75
+- **comparison group:** hippocampal soluble ApoE
+- **crossref doi creation date:** 2005-10-06
+- **experimental system:** 10-month Tg-SwDI/B transgene-positive mouse hippocampus
+- **experiments reported:** At least two experiments in figure caption; reblot/sample overlap not defined
+- **finding label:** Tg-SwDI/B · 10 months
+- **intervention:** Homozygous Abca1 knockout versus Abca1 wild-type, both transgene-positive
+- **knockout mice:** 8
+- **model:** Tg-SwDI/B
+- **openalex publication date:** 2005-10-06
+- **organism:** Mus musculus
+- **original online publication date:** 2005-10-05
+- **outcome:** PBS-soluble ApoE protein in hippocampus
+- **replicate unit:** Individual mice; two representative blot lanes per group are not the biological sample total
+- **reported statistical comparison:** Results reports p\<0.001 for the transgene-positive knockout/wild-type comparison
+- **sample size:** Not recorded
+- **sex per compared group:** 4 female / 4 male
+- **study design:** Genotype-defined in vivo mouse comparison
+- **taxonomy id:** 10090
+- **tissue:** Hippocampus
+- **wild type mice:** 8
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- This is a mouse-model perturbation finding, not evidence that the effect occurs in humans or that ABCA1 directly binds ApoE.
+- ApoE readouts do not establish Alzheimer disease causation, pathway activity or treatment benefit.
+- Different publications and mouse models do not establish independent replication; shared material/cohort overlap was not assessed.
+- The antibody measured endogenous mouse ApoE despite the human APP transgenes; the human APOE protein is not this experimental endpoint.
+- PBS-soluble ApoE is an extraction-specific protein pool, not total brain ApoE, secretion rate or particle lipidation.
+- This comparison uses the stated individual-mouse groups; figure repeats and representative blots are not additional independent mice or studies.
+- Figure-star significance is relative to the caption-defined nontransgenic baseline and must not be transferred to a different contrast.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-mouse-abca1-human-ortholog
+
+**Abca1 (mouse) → ABCA1 · ortholog\_of**
+
+Ensembl Compara annotates mouse Abca1 as a one-to-one ortholog of human ABCA1.
+
+**Summary:** Ensembl Compara annotates mouse Abca1 as a one-to-one ortholog of human ABCA1.
+
+#### Claim context
+
+- **assertion type:** curated orthology annotation
+- **object gene id:** ENSG00000165029
+- **object taxonomy id:** 9606
+- **orthology type:** ortholog\_one2one
+- **subject gene id:** ENSMUSG00000015243
+- **subject taxonomy id:** 10090
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.
+- Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed.
+
+#### Evidence: evidence-mouse-abca1-human-ortholog
+
+- **Original source:** [Ensembl Compara: mouse/human ABCA1 orthology](https://rest.ensembl.org/homology/symbol/mus_musculus/Abca1?target_species=homo_sapiens&type=orthologues&content-type=application/json)
+- **Source record:** source-ensembl-abca1-orthology
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Completed homology/symbol response: single ortholog\_one2one source/target gene IDs and taxon\_ids; target\_species=homo\_sapiens, type=orthologues.
+
+Ensembl Compara annotates mouse Abca1 as a one-to-one ortholog of human ABCA1.
+
+Source-specific study context:
+
+- **assertion type:** curated orthology annotation
+- **object gene id:** ENSG00000165029
+- **object taxonomy id:** 9606
+- **orthology type:** ortholog\_one2one
+- **subject gene id:** ENSMUSG00000015243
+- **subject taxonomy id:** 10090
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.
+- Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-mouse-apoe-encodes
+
+**Apoe (mouse) → ApoE protein (mouse) · encodes**
+
+The mouse Apoe gene (NCBI Gene11816) encodes the ApoE protein represented by UniProt P08226.
+
+**Summary:** The mouse Apoe gene (NCBI Gene11816) encodes the ApoE protein represented by UniProt P08226.
+
+#### Claim context
+
+- **assertion type:** curated database identity
+- **gene id:** 11816
+- **organism:** Mus musculus
+- **protein accession:** P08226
+- **taxonomy id:** 10090
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- Canonical gene/product identity; the experimental particle fractions are context, not separately identified isoform or modification nodes.
+
+#### Evidence: evidence-mouse-apoe-encodes
+
+- **Original source:** [UniProtKB P08226: mouse Apoe gene/product identity](https://rest.uniprot.org/uniprotkb/P08226.json)
+- **Source record:** source-uniprot-mouse-apoe
+- **Upstream source records:** source-ncbi-mouse-abca1-apoe
+- **Evidence relation:** supports
+- **Inspected location:** Entry JSON primaryAccession, genes, organism, entryAudit and explicit GeneID/Ensembl GeneId cross-references.
+
+The mouse Apoe gene (NCBI Gene11816) encodes the ApoE protein represented by UniProt P08226.
+
+Source-specific study context:
+
+- **assertion type:** curated database identity
+- **gene id:** 11816
+- **organism:** Mus musculus
+- **protein accession:** P08226
+- **taxonomy id:** 10090
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- Canonical gene/product identity; the experimental particle fractions are context, not separately identified isoform or modification nodes.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-mouse-apoe-human-ortholog
+
+**Apoe (mouse) → APOE · ortholog\_of**
+
+Ensembl Compara annotates mouse Apoe as a one-to-one ortholog of human APOE.
+
+**Summary:** Ensembl Compara annotates mouse Apoe as a one-to-one ortholog of human APOE.
+
+#### Claim context
+
+- **assertion type:** curated orthology annotation
+- **object gene id:** ENSG00000130203
+- **object taxonomy id:** 9606
+- **orthology type:** ortholog\_one2one
+- **subject gene id:** ENSMUSG00000002985
+- **subject taxonomy id:** 10090
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+#### Claim limitations
+
+- Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.
+- Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed.
+
+#### Evidence: evidence-mouse-apoe-human-ortholog
+
+- **Original source:** [Ensembl Compara: mouse/human APOE orthology](https://rest.ensembl.org/homology/symbol/mus_musculus/Apoe?target_species=homo_sapiens&type=orthologues&content-type=application/json)
+- **Source record:** source-ensembl-apoe-orthology
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Completed homology/symbol response: single ortholog\_one2one source/target gene IDs and taxon\_ids; target\_species=homo\_sapiens, type=orthologues.
+
+Ensembl Compara annotates mouse Apoe as a one-to-one ortholog of human APOE.
+
+Source-specific study context:
+
+- **assertion type:** curated orthology annotation
+- **object gene id:** ENSG00000130203
+- **object taxonomy id:** 9606
+- **orthology type:** ortholog\_one2one
+- **subject gene id:** ENSMUSG00000002985
+- **subject taxonomy id:** 10090
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-05
+- **Human reviewed:** false
+- **Review rationale:** The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review.
+
+Evidence limitations:
+
+- Orthology is an evolutionary database annotation, not proof that a mouse experimental effect occurs in humans.
+- Ensembl release was not captured and exact source-terms review remains pending; no sequence/alignments are distributed.
 
 #### Pending review tasks
 
@@ -3164,6 +3910,44 @@ Comparison review record:
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
 
+### source-ensembl-abca1-orthology
+
+[Ensembl Compara: mouse/human ABCA1 orthology](https://rest.ensembl.org/homology/symbol/mus_musculus/Abca1?target_species=homo_sapiens&type=orthologues&content-type=application/json)
+
+- **Kind:** database\_record
+- **Identifiers:** Ensembl: ENSMUSG00000015243; Ensembl: ENSG00000165029
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Ensembl Compara / Live orthology response; release not captured; response SHA-256 6381d49c359b56e46463d14a760425f2c412b3ead78f913ed74394a3371fb72c
+- **Retrieved:** 2026-11-05T11:16:56.610773Z
+- **Reuse permission status:** pending\_review
+- **Reuse terms:** https://www.ensembl.org/info/about/legal/disclaimer.html
+- **Reuse checked:** Not recorded
+- **Attribution:** Ensembl Compara. One-to-one gene orthology annotation and identifier/taxon facts only; no alignment or sequence retained. Terms page returned403; exact reuse review remains pending.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-ensembl-apoe-orthology
+
+[Ensembl Compara: mouse/human APOE orthology](https://rest.ensembl.org/homology/symbol/mus_musculus/Apoe?target_species=homo_sapiens&type=orthologues&content-type=application/json)
+
+- **Kind:** database\_record
+- **Identifiers:** Ensembl: ENSMUSG00000002985; Ensembl: ENSG00000130203
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Ensembl Compara / Live orthology response; release not captured; response SHA-256 28c20dce5e98a352b0aa5b41194e1aedb3fd1b0a68238c6b7620ddc2aca69ea6
+- **Retrieved:** 2026-11-05T11:16:53.940108Z
+- **Reuse permission status:** pending\_review
+- **Reuse terms:** https://www.ensembl.org/info/about/legal/disclaimer.html
+- **Reuse checked:** Not recorded
+- **Attribution:** Ensembl Compara. One-to-one gene orthology annotation and identifier/taxon facts only; no alignment or sequence retained. Terms page returned403; exact reuse review remains pending.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
 ### source-hgnc-coverage-identities
 
 [HGNC approved COL1A1, COL1A2, COL3A1 and SAA1 gene/product cross-references (pinned mirror)](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz)
@@ -3198,6 +3982,25 @@ Comparison review record:
 - **Reuse checked:** 2026-10-24
 - **Attribution:** HUGO Gene Nomenclature Committee at the University of Cambridge, HGNC (RRID:SCR\_002827), https://www.genenames.org/. Approved symbols and cross-references from the same verified pinned archive used by the identifier reference; no gene-tidy software copied.
 - **Retained content:** Bibliographic facts, identifiers, links and short project-authored factual summaries only; no article text, figures, tables, sequences or full-text payloads.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-hirsch-reinshagen-2005
+
+[The Absence of ABCA1 Decreases Soluble ApoE Levels but Does Not Diminish Amyloid Deposition in Two Murine Models of Alzheimer Disease](https://doi.org/10.1074/jbc.M508781200)
+
+- **Kind:** publication
+- **Identifiers:** DOI: 10.1074/jbc.M508781200; PMID: 16207707; OpenAlex: W2151049459
+- **Authors:** Veronica Hirsch-Reinshagen; Luis F. Maia; Braydon L. Burgess; Jean-Francois Blain; Kathryn E. Naus; Sean A. McIsaac; Pamela F. Parkinson; Jennifer Y. Chan; Gavin H. Tansley; Michael R. Hayden; Judes Poirier; William Van Nostrand; Cheryl L. Wellington
+- **Year / publication type:** 2005 / primary\_research
+- **Provider / release:** Journal of Biological Chemistry / Not recorded
+- **Retrieved:** 2026-11-05
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://creativecommons.org/licenses/by/4.0/
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Veronica Hirsch-Reinshagen and colleagues, Journal of Biological Chemistry (2005), DOI 10.1074/jbc.M508781200. Publisher-deposited Crossref VOR metadata reports CC BY4.0 effective 2020-10-02; original archived PDF retains historical ASBMB copyright. Project-authored factual paraphrases of inspected results/methods only; no article text/figures redistributed.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
@@ -3259,6 +4062,25 @@ Comparison review record:
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
 
+### source-mondo-alzheimers-mesh
+
+[Mondo Alzheimer disease: exact MeSH cross-reference](https://www.ebi.ac.uk/ols4/api/ontologies/mondo/terms?obo_id=MONDO:0004975)
+
+- **Kind:** database\_record
+- **Identifiers:** MONDO: MONDO\_0004975; MeSH: D000544
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Mondo via EMBL-EBI OLS / OLS ontology config reports Mondo2026-11-03; term response SHA-256 fe11f19846657fb2a3093ee124e1b1087cb757898ae45cf4606f9a60b9625588
+- **Retrieved:** 2026-11-05T11:22:04.457097Z
+- **Reuse permission status:** pending\_review
+- **Reuse terms:** https://mondo.monarchinitiative.org/
+- **Reuse checked:** Not recorded
+- **Attribution:** Mondo Disease Ontology via EMBL-EBI OLS. Identifier equivalence only; no disease definition text retained.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
 ### source-ncbi-abca1
 
 [ABCA1 ATP binding cassette subfamily A member 1 \[Homo sapiens (human)\]](https://www.ncbi.nlm.nih.gov/gene/19)
@@ -3297,6 +4119,25 @@ Comparison review record:
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
 
+### source-ncbi-mouse-abca1-apoe
+
+[NCBI Gene: mouse Abca1 and Apoe identities](https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=11303,11816&retmode=json)
+
+- **Kind:** database\_record
+- **Identifiers:** NCBIGene: 11303; NCBIGene: 11816
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** NCBI Gene / Live ESummary; database release unknown; response SHA-256 f13d4d087745a35638abdbfdedf7b7fcc47d1ac158690149ee5af045c10f9e80
+- **Retrieved:** 2026-11-05T11:16:48.866950Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://www.ncbi.nlm.nih.gov/home/about/policies/
+- **Reuse checked:** 2026-11-05
+- **Attribution:** NCBI Gene/National Library of Medicine. Gene identifiers, official symbols and organism facts only; no RefSeq prose retained.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
 ### source-ncbi-trem2
 
 [TREM2 triggering receptor expressed on myeloid cells 2 \[Homo sapiens (human)\]](https://www.ncbi.nlm.nih.gov/gene/54209)
@@ -3331,6 +4172,101 @@ Comparison review record:
 - **Reuse checked:** 2026-10-20
 - **Attribution:** Nordestgaard and colleagues, Alzheimer's & Dementia, 2015.
 - **Retained content:** Bibliographic facts, source links, and project-authored paraphrases only; no abstract or full-text excerpts.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-openalex-apoe-abca1-legacy
+
+[OpenAlex: legacy Alzheimer/APOE/ABCA1 candidate metadata](https://api.openalex.org/works?search.title_and_abstract=Alzheimer+AND+%28APOE+OR+ABCA1%29&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date)
+
+- **Kind:** database\_record
+- **Identifiers:** OpenAlex: W2151049459
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** OpenAlex / Live API; schema0.1.0; raw response digest unavailable; saved packet SHA-256 867aab43d6cf3eeeb35654641dba9e4065bb094b3cc7b7bf8f8f4f5aa2ed626f; no immutable release
+- **Retrieved:** 2026-11-04T23:56:45.327Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://creativecommons.org/publicdomain/zero/1.0/
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-openalex-apoe-abca1-live
+
+[OpenAlex: ABCA1/APOE first-page literature metadata](https://api.openalex.org/works?search.title_and_abstract=ABCA1+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date)
+
+- **Kind:** database\_record
+- **Identifiers:** OpenAlex: W2013111251
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** OpenAlex / Live API; schema0.2.0; page1 limit5; no immutable release; response SHA-256 1e3907e7f99d10cf4b97e77fda52532336bb61ac683549b2129e91a30da93033
+- **Retrieved:** 2026-11-05T11:18:18.716Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://creativecommons.org/publicdomain/zero/1.0/
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-opentargets-abca1-direct-association
+
+[Open Targets: ABCA1–Alzheimer disease direct association summary](https://platform.opentargets.org/target/ENSG00000165029/associations)
+
+- **Kind:** database\_record
+- **Identifiers:** Ensembl: ENSG00000165029; MONDO: MONDO\_0004975
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Open Targets Platform / dataVersion 26.09 (year="26", month="09", iteration=null); first 20 direct rows of 1797; response SHA-256 39428ebc6794cd529fd7446fbb896d05827b39eb06d4eaf90a46e8c81912100c
+- **Retrieved:** 2026-11-05T00:00:45.794Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://platform-docs.opentargets.org/licence
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Open Targets Platform. Direct target–disease association summaries with provider-defined scores.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-opentargets-apoe-direct-association
+
+[Open Targets: APOE–Alzheimer disease direct association summary](https://platform.opentargets.org/target/ENSG00000130203/associations)
+
+- **Kind:** database\_record
+- **Identifiers:** Ensembl: ENSG00000130203; MONDO: MONDO\_0004975
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Open Targets Platform / dataVersion 26.09 (year="26", month="09", iteration=null); first 20 direct rows of 2836; response SHA-256 8dbb515c4d2f74956893b88d4c01770d041820ec5ddf3bb72d774b8e1a856ab2
+- **Retrieved:** 2026-11-05T00:00:44.940Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://platform-docs.opentargets.org/licence
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Open Targets Platform. Direct target–disease association summaries with provider-defined scores.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-reactome-abca1-live-mapping
+
+[Reactome UniProt O95477 to human pathway mappings](https://reactome.org/ContentService/data/mapping/UniProt/O95477/pathways?species=9606)
+
+- **Kind:** database\_record
+- **Identifiers:** Reactome: R-HSA-9029569; UniProt: O95477
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Reactome / Selected record R-HSA-9029569.2; global release unknown; response SHA-256 06aa17f8a26e14bf818df483ac21533d3c8fe62f85645e2019bf67a68c3b84d7
+- **Retrieved:** 2026-11-05T00:00:46.412Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://reactome.org/license
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Reactome Pathway Database. Database identifier mappings, not original experimental findings.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
@@ -3388,6 +4324,25 @@ Comparison review record:
 - **Reuse checked:** 2026-10-22
 - **Attribution:** Reactome Pathway Database; database data are CC0. Project-authored summaries; no Reactome artwork is retained.
 - **Retained content:** Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-reactome-apoe-live-mapping
+
+[Reactome UniProt P02649 to human pathway mappings](https://reactome.org/ContentService/data/mapping/UniProt/P02649/pathways?species=9606)
+
+- **Kind:** database\_record
+- **Identifiers:** Reactome: R-HSA-9029569; UniProt: P02649
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** Reactome / Selected record R-HSA-9029569.2; global release unknown; response SHA-256 58e052001dd4c2b9f78902ef7b3e6dd895101a341dde0007239486ae7284b314
+- **Retrieved:** 2026-11-05T00:00:45.508Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://reactome.org/license
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Reactome Pathway Database. Database identifier mappings, not original experimental findings.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
@@ -3639,6 +4594,25 @@ Comparison review record:
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
 
+### source-uniprot-abca1-live-2026-11-05
+
+[UniProtKB O95477: human ABCA1 identity](https://rest.uniprot.org/uniprotkb/O95477.json)
+
+- **Kind:** database\_record
+- **Identifiers:** UniProt: O95477; Ensembl: ENSG00000165029
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** UniProtKB / 2026\_04; entry 244; annotation update 2026-11-04; response SHA-256 cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb
+- **Retrieved:** 2026-11-05T00:00:45.202Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://rest.uniprot.org/help/license
+- **Reuse checked:** 2026-11-05
+- **Attribution:** The UniProt Consortium, UniProtKB. Identity metadata only; CC BY 4.0.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
 ### source-uniprot-apoe
 
 [UniProtKB P02649 — Apolipoprotein E](https://rest.uniprot.org/uniprotkb/P02649.txt)
@@ -3654,6 +4628,44 @@ Comparison review record:
 - **Reuse checked:** 2026-10-22
 - **Attribution:** The UniProt Consortium, UniProtKB (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Identifiers and project-authored summaries; no sequence or source prose retained.
 - **Retained content:** Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-uniprot-apoe-live-2026-11-05
+
+[UniProtKB P02649: human APOE identity](https://rest.uniprot.org/uniprotkb/P02649.json)
+
+- **Kind:** database\_record
+- **Identifiers:** UniProt: P02649; Ensembl: ENSG00000130203
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** UniProtKB / 2026\_04; entry 281; annotation update 2026-11-04; response SHA-256 092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203
+- **Retrieved:** 2026-11-05T00:00:45.152Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://rest.uniprot.org/help/license
+- **Reuse checked:** 2026-11-05
+- **Attribution:** The UniProt Consortium, UniProtKB. Identity metadata only; CC BY 4.0.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-uniprot-mouse-apoe
+
+[UniProtKB P08226: mouse Apoe gene/product identity](https://rest.uniprot.org/uniprotkb/P08226.json)
+
+- **Kind:** database\_record
+- **Identifiers:** UniProt: P08226; NCBIGene: 11816
+- **Authors:** Not recorded
+- **Year / publication type:** Not recorded / Not recorded
+- **Provider / release:** UniProtKB / 2026\_04; entry 224; annotation update 2026-11-04; response SHA-256 b0d26792635e76bae51fb0c96125efd17a8b9895014a7fbcade78f4617a1c2a3
+- **Retrieved:** 2026-11-05T11:16:48.188761Z
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://rest.uniprot.org/help/license
+- **Reuse checked:** 2026-11-05
+- **Attribution:** The UniProt Consortium. Mouse gene/product identity metadata, CC BY4.0.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded
@@ -3711,6 +4723,25 @@ Comparison review record:
 - **Reuse checked:** 2026-10-22
 - **Attribution:** The UniProt Consortium, UniProtKB (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Identifiers and project-authored summaries; no sequence or source prose retained.
 - **Retained content:** Record identifiers, names, links and project-authored annotation summaries only; no source prose, sequences, figures or artwork.
+- **Publication status:** not\_checked
+- **Publication status checked:** Not recorded
+- **Notice URL:** Not recorded
+
+### source-wahrle-2004
+
+[ABCA1 Is Required for Normal Central Nervous System ApoE Levels and for Lipidation of Astrocyte-secreted apoE](https://doi.org/10.1074/jbc.M407963200)
+
+- **Kind:** publication
+- **Identifiers:** DOI: 10.1074/jbc.M407963200; PMID: 15269217; OpenAlex: W2013111251
+- **Authors:** Suzanne E. Wahrle; Hong Jiang; Maia Parsadanian; Justin Legleiter; Xianlin Han; John D. Fryer; Tomasz Kowalewski; David M. Holtzman
+- **Year / publication type:** 2004 / primary\_research
+- **Provider / release:** Journal of Biological Chemistry / Not recorded
+- **Retrieved:** 2026-11-05
+- **Reuse permission status:** permitted
+- **Reuse terms:** https://creativecommons.org/licenses/by/4.0/
+- **Reuse checked:** 2026-11-05
+- **Attribution:** Suzanne E. Wahrle and colleagues, Journal of Biological Chemistry (2004), DOI 10.1074/jbc.M407963200. Publisher-deposited Crossref VOR metadata reports CC BY4.0 effective 2020-09-21; original archived PDF retains historical ASBMB copyright. Project-authored factual paraphrases of inspected results/methods only; no article text/figures redistributed.
+- **Retained content:** Identifiers, bibliographic facts and project-authored factual summaries only; no source prose, sequences, alignments, article text, figures or raw provider payloads are distributed.
 - **Publication status:** not\_checked
 - **Publication status checked:** Not recorded
 - **Notice URL:** Not recorded

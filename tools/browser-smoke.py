@@ -6,6 +6,7 @@ counters are injected into the test browser only; production has no QA hooks.
 """
 
 import argparse
+import base64
 import json
 from pathlib import Path
 import re
@@ -20,6 +21,12 @@ ENTITY_COUNT = len(SNAPSHOT["entities"])
 PAPER_COUNT = sum(entity["type"] == "paper" for entity in SNAPSHOT["entities"])
 GENE_COUNT = sum(entity["type"] == "gene" for entity in SNAPSHOT["entities"])
 DATASET_VERSION = SNAPSHOT["dataset_version"]
+DISEASE_CLAIM_COUNT = sum("disease-alzheimers" in (claim["subject_id"], claim["object_id"]) for claim in SNAPSHOT["claims"])
+APOE_DIRECT_IDS = {"gene-apoe"}
+for claim in SNAPSHOT["claims"]:
+    if "gene-apoe" in (claim["subject_id"], claim["object_id"]):
+        APOE_DIRECT_IDS.update((claim["subject_id"], claim["object_id"]))
+APOE_FOCUS_STATUS = f"{len(APOE_DIRECT_IDS)} entities in this graph view"
 
 
 RENDER_COUNTERS = """
@@ -193,7 +200,9 @@ def assert_share_links(browser, base_url: str, screenshots: Path) -> None:
         expect(restored.get_by_role("combobox", name="Search entities")).to_have_value("APOE")
         expect(restored.get_by_role("combobox", name="Filter by entity type")).to_have_value("gene")
         expect(restored.get_by_role("button", name="List view", exact=True)).to_have_attribute("aria-pressed", "true")
-        expect(restored.locator(".entity-row")).to_have_count(1)
+        expect(restored.locator(".entity-row")).to_have_count(2)
+        expect(restored.locator('.entity-row[data-entity-id="gene-apoe"]')).to_be_visible()
+        expect(restored.locator('.entity-row[data-entity-id="gene-mouse-apoe"]')).to_be_visible()
         expect(restored.locator(".source-link")).to_have_attribute("href", "https://pubmed.ncbi.nlm.nih.gov/7920638/")
 
     expect_apoe_link_state()
@@ -2116,7 +2125,7 @@ def assert_scavenger_evidence(browser, base_url: str, screenshots: Path) -> None
         page.goto(base_url, wait_until='networkidle')
         if not mobile:
             expect(page.locator('canvas')).to_be_visible()
-            assert page.evaluate('window.__browserQA.draws > 0')
+            page.wait_for_function('window.__browserQA.draws > 0', timeout=10000)
         for symbol in ['MARCO', 'SCARA5', 'APOB']:
             search = page.get_by_role('combobox', name='Search entities', exact=True)
             search.fill(symbol)
@@ -2213,6 +2222,32 @@ def assert_workspace_help(browser, base_url: str, screenshots: Path) -> None:
     print("PASS: on-demand workspace help explains source exploration and processed results with concrete examples, preserves pending work, traps/returns focus, and supports mobile themes/reduced motion/WebGL fallback without loading references.")
 
 
+def pick_focused_disease(page: Page) -> None:
+    """Pick the rendered gold disease body without assuming a fixed camera fit."""
+    canvas = page.locator("canvas")
+    screenshot = base64.b64encode(canvas.screenshot(scale="css")).decode("ascii")
+    bounds = canvas.bounding_box()
+    assert bounds is not None
+    body = page.evaluate("""async screenshot => {
+        const image = new Image(); image.src = `data:image/png;base64,${screenshot}`;
+        await image.decode();
+        const copy = document.createElement('canvas');
+        copy.width = image.width; copy.height = image.height;
+        const context = copy.getContext('2d'); context.drawImage(image, 0, 0);
+        const pixels = context.getImageData(0, 0, copy.width, copy.height).data;
+        let x = 0, y = 0, count = 0;
+        for (let index = 0; index < pixels.length; index += 4) {
+            const [r, g, b] = pixels.subarray(index, index + 3);
+            if (r > 140 && g > 90 && r > g + 15 && g > b + 15) {
+                x += (index / 4) % copy.width; y += Math.floor(index / 4 / copy.width); count++;
+            }
+        }
+        return { x: x / count, y: y / count, count };
+    }""", screenshot)
+    assert body["count"] >= 8, "No rendered disease body found in the focused canvas"
+    page.mouse.click(bounds["x"] + body["x"], bounds["y"] + body["y"])
+
+
 def assert_focused_graph(browser, base_url: str, screenshots: Path) -> None:
     for mobile in [False, True]:
         context = browser.new_context(viewport={"width": 360 if mobile else 1440, "height": 900 if mobile else 1000},
@@ -2226,13 +2261,11 @@ def assert_focused_graph(browser, base_url: str, screenshots: Path) -> None:
         expect(page.locator("canvas")).to_be_visible()
         navigation = page.get_by_role("navigation", name="Graph navigation")
         expect(navigation).to_contain_text("APOE connections")
-        expect(navigation.get_by_role("status")).to_have_text("3 entities in this graph view")
+        expect(navigation.get_by_role("status")).to_have_text(APOE_FOCUS_STATUS)
         back = navigation.get_by_role("button", name="Previous graph view")
         expect(back).to_be_disabled()
         page.wait_for_timeout(700)
-        canvas = page.locator("canvas").bounding_box()
-        assert canvas is not None
-        page.mouse.click(canvas["x"] + canvas["width"] / 2, canvas["y"] + canvas["height"] * .175)
+        pick_focused_disease(page)
         expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
         back.click()
         expect(page.locator(".selected-title")).to_have_text("APOE")
@@ -2241,16 +2274,16 @@ def assert_focused_graph(browser, base_url: str, screenshots: Path) -> None:
         assert_touch_target(expand)
         expand.click()
         expect(navigation.get_by_role("button", name="Collapse", exact=True)).to_have_attribute("aria-expanded", "true")
-        assert navigation.get_by_role("status").inner_text() != "3 entities in this graph view"
+        assert navigation.get_by_role("status").inner_text() != APOE_FOCUS_STATUS
         assert_idle(page, "Expanded focused graph")
         page.screenshot(path=str(screenshots / ("focus-expanded-mobile.png" if mobile else "focus-expanded.png")), full_page=True)
         back.click()
-        expect(navigation.get_by_role("status")).to_have_text("3 entities in this graph view")
+        expect(navigation.get_by_role("status")).to_have_text(APOE_FOCUS_STATUS)
         expect(expand).to_have_attribute("aria-expanded", "false")
         navigation.get_by_role("button", name="Overview", exact=True).click()
         expect(navigation.get_by_role("status")).to_have_text(f"{ENTITY_COUNT} entities in this graph view")
         navigation.get_by_role("button", name="Focus selection", exact=True).click()
-        expect(navigation.get_by_role("status")).to_have_text("3 entities in this graph view")
+        expect(navigation.get_by_role("status")).to_have_text(APOE_FOCUS_STATUS)
         search = page.get_by_role("combobox", name="Search entities")
         search.fill("protein-trem2")
         search.press("Enter")
@@ -2300,7 +2333,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(page.locator("canvas")).to_be_visible(timeout=10000)
         expect(page.locator(".selected-title")).to_have_text("APOE")
         assert page.evaluate("!!document.querySelector('canvas').getContext('webgl2')")
-        assert page.evaluate("window.__browserQA.draws > 0")
+        page.wait_for_function("window.__browserQA.draws > 0", timeout=10000)
         search = page.get_by_role("combobox", name="Search entities")
         filter_control = page.get_by_role("combobox", name="Filter by entity type")
         expect(search).to_have_count(1)
@@ -2331,7 +2364,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         search.fill("Alzheimer's disease")
         search.press("Enter")
         expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
-        expect(page.locator(".claim-button")).to_have_count(4)
+        expect(page.locator(".claim-button")).to_have_count(DISEASE_CLAIM_COUNT)
 
         page.get_by_role("button", name="TREM2", exact=True).click()
         expect(page.locator(".selected-title")).to_have_text("TREM2")
@@ -2404,12 +2437,12 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(page.locator(".result-status")).to_contain_text("related")
         search.press("Enter")
         expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
-        expect(page.locator(".claim-button")).to_have_count(4)
+        expect(page.locator(".claim-button")).to_have_count(DISEASE_CLAIM_COUNT)
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
         expect(page.locator(".result-status")).to_have_text(f"{ENTITY_COUNT} entities · {PAPER_COUNT} papers")
         search.fill("APOE")
-        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(7)
+        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(11)
         search.press("ArrowDown")
         expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Corder et al. · 1993")
         search.press("Enter")
@@ -2418,7 +2451,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(search).to_have_value("")
         search.fill("APOE")
         search.press("ArrowUp")
-        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Lessard et al. · 2018")
+        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Hirsch-Reinshagen et al. · 2005")
         search.press("Escape")
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")

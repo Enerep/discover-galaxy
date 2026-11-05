@@ -12,10 +12,11 @@ export function sourceCitation(source: Source): string {
 }
 
 export function findingLabel(snapshot: Snapshot, claim: Claim): string {
-  if (typeof claim.context.binding_condition === 'string') {
+  const condition = typeof claim.context.binding_condition === 'string' ? claim.context.binding_condition : claim.context.finding_label;
+  if (typeof condition === 'string') {
     const sourceIds = new Set(snapshot.evidence.filter(({ claim_id }) => claim_id === claim.id).map(({ source_id }) => source_id));
     const sources = snapshot.sources.filter(({ id, kind }) => sourceIds.has(id) && kind === 'publication');
-    if (sources.length === 1) return `${sourceCitation(sources[0])} · ${claim.context.binding_condition}`;
+    if (sources.length === 1) return `${sourceCitation(sources[0])} · ${condition}`;
   }
   const subject = snapshot.entities.find(({ id }) => id === claim.subject_id);
   const object = snapshot.entities.find(({ id }) => id === claim.object_id);
