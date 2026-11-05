@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -21,13 +22,14 @@ interface WorkMetadata {
 }
 
 export interface CandidateIntakePacket {
-  schema_version: 'openalex-candidates-0.1.0';
+  schema_version: 'openalex-candidates-0.2.0';
   data_origin: DataOrigin;
   request_provenance: 'declared_for_offline_input' | 'issued_by_adapter';
   provider: 'OpenAlex';
   immutable_release: null;
   processed_at: string;
   retrieved_at: string | null;
+  response_sha256: string | null;
   query: string;
   request_url: string;
   metadata_license: 'CC0-1.0';
@@ -202,10 +204,10 @@ export function normalizeOpenAlexResponse(response: unknown, options: {
   candidates.sort((a, b) => a.candidate_id.localeCompare(b.candidate_id, 'en'));
   const origin = options.dataOrigin ?? 'offline_input';
   return {
-    schema_version: 'openalex-candidates-0.1.0', data_origin: origin,
+    schema_version: 'openalex-candidates-0.2.0', data_origin: origin,
     request_provenance: origin === 'offline_input' ? 'declared_for_offline_input' : 'issued_by_adapter',
     provider: 'OpenAlex', immutable_release: null, processed_at: processedAt,
-    retrieved_at: origin === 'live_api_response' ? processedAt : null, query,
+    retrieved_at: origin === 'live_api_response' ? processedAt : null, response_sha256: null, query,
     request_url: buildOpenAlexRequest(query, limit).href,
     metadata_license: 'CC0-1.0', metadata_terms_url: 'https://creativecommons.org/publicdomain/zero/1.0/',
     attribution: 'Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms.',
@@ -224,6 +226,14 @@ export function normalizeOpenAlexResponse(response: unknown, options: {
 function parseJson(bytes: Uint8Array): unknown {
   try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
   catch { return fail('OpenAlex input is not valid UTF-8 JSON.'); }
+}
+
+/** Hash only the actual input bytes; an already parsed object has no known raw digest. */
+export function normalizeOpenAlexBytes(bytes: Uint8Array, options: Parameters<typeof normalizeOpenAlexResponse>[1]): CandidateIntakePacket {
+  if (bytes.byteLength > MAX_BYTES) fail('OpenAlex input exceeded the 5 MiB intake limit.');
+  const packet = normalizeOpenAlexResponse(parseJson(bytes), options);
+  packet.response_sha256 = createHash('sha256').update(bytes).digest('hex');
+  return packet;
 }
 
 export async function fetchOpenAlexCandidates(options: {
@@ -264,7 +274,7 @@ export async function fetchOpenAlexCandidates(options: {
     const bytes = new Uint8Array(size);
     let offset = 0;
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
-    return normalizeOpenAlexResponse(parseJson(bytes), { query, processedAt: new Date().toISOString(), requestUrl: url, dataOrigin: 'live_api_response' });
+    return normalizeOpenAlexBytes(bytes, { query, processedAt: new Date().toISOString(), requestUrl: url, dataOrigin: 'live_api_response' });
   } catch (error) {
     if (error instanceof IntakeError) throw error;
     return fail(controller.signal.aborted ? 'OpenAlex request timed out.' : 'OpenAlex request failed. Check the configured network access and retry.');
@@ -294,7 +304,7 @@ async function main() {
       if (error instanceof IntakeError) throw error;
       return fail('Unable to read the archived OpenAlex JSON file.');
     }
-    packet = normalizeOpenAlexResponse(parseJson(bytes), { query, processedAt: new Date().toISOString(), requestUrl, dataOrigin: 'offline_input' });
+    packet = normalizeOpenAlexBytes(bytes, { query, processedAt: new Date().toISOString(), requestUrl, dataOrigin: 'offline_input' });
   } else packet = await fetchOpenAlexCandidates({ query, limit, apiKey: process.env.OPENALEX_API_KEY });
   process.stdout.write(`${JSON.stringify(packet, null, 2)}\n`);
 }

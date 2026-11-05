@@ -56,12 +56,30 @@ test('saved provider responses stay unreviewed, hashed and outside graph promoti
   assert.equal(normalize('reactome').coverage.truncated, null);
   const associations = normalize('opentargets');
   assert.equal(associations.provider_release, '26.10');
+  assert.deepEqual(associations.provider_version, { year: 26, month: 10, iteration: null });
   assert.equal(associations.coverage.truncated, true);
   assert.equal(associations.coverage.retained, 1);
   if (associations.records[0].kind === 'disease_association') {
     assert.equal(associations.records[0].overall_association_score, .3);
     assert.deepEqual(associations.records[0].datasource_scores, [{ id: 'synthetic-source', score: .4 }]);
   }
+});
+
+test('Open Targets release strings preserve exact provider values without relaxing counts or scores', () => {
+  const response = structuredClone(fixtures.opentargets);
+  const version = { year: '26', month: '09', iteration: null };
+  const withVersion = (value: unknown) => ({ ...response, data: { ...response.data, meta: { dataVersion: value } } });
+  const packet = normalize('opentargets', withVersion(version));
+  assert.equal(packet.provider_release, '26.09');
+  assert.deepEqual(packet.provider_version, version);
+  const iteration = normalize('opentargets', withVersion({ ...version, iteration: '01' }));
+  assert.equal(iteration.provider_release, '26.09.01');
+  assert.deepEqual(iteration.provider_version, { ...version, iteration: '01' });
+  for (const patch of [{ year: '2026x' }, { year: ' 26' }, { year: '' }, { year: '10000' }, { month: '0' }, { month: '13' }, { month: '9.0' }, { month: true }, { iteration: '-1' }, { iteration: '1000' }]) {
+    assert.throws(() => normalize('opentargets', withVersion({ ...version, ...patch })));
+  }
+  assert.throws(() => normalize('opentargets', { ...response, data: { ...response.data, target: { ...response.data.target,
+    associatedDiseases: { ...response.data.target.associatedDiseases, count: '25' } } } }));
 });
 
 test('identity, species, schema and duplicate mapping disagreements fail rather than repairing or merging', () => {
@@ -110,6 +128,8 @@ test('live transport makes one bounded request, captures actual completion and p
     assert.equal(packet.request_provenance, 'issued_by_adapter');
     assert.equal(packet.retrieved_at, packet.processed_at);
     assert.equal(packet.status, 'unreviewed');
+    assert.ok(packet.limitations.some((value) => value.includes('adapter completed the recorded request')));
+    assert.ok(!packet.limitations.some((value) => value.includes('offline processing does not prove')));
     if (provider === 'uniprot') assert.equal(packet.provider_release, '2026_05');
   }
 });

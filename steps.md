@@ -87,8 +87,9 @@ The source-checked development journey is usable now; structural checks never ma
 
 - [x] Implement two-finding comparison with original citations, exact recorded context labels, preserved unknowns, source-specific participant counts, and a complete downloadable Markdown brief.
 - [x] Verify comparison through keyboard, both themes, narrow screens, and unavailable WebGL; record observed checks separately from scientific review.
-- [x] Verify bounded OpenAlex metadata intake and archived-response normalization, keeping candidates unreviewed and outside the graph; record live API availability separately from offline contract checks. Offline/simulated-network checks pass; the live request did not complete in this workspace.
-- [ ] Complete a successful bounded live OpenAlex request in an environment with working API access and inspect the real candidate packet before using it for source review.
+- [x] Verify bounded OpenAlex metadata intake and archived-response normalization, keeping candidates unreviewed and outside the graph; record live API availability separately from offline contract checks. Offline/simulated-network checks pass; the initial checkpoint's live request failed, with later access recorded below.
+- [x] Complete a successful bounded live OpenAlex request and inspect its five-result candidate packet; retain the legacy packet's missing raw digest and actual abstract-level source-check limits in the [APOE/ABCA1 batch](data/annotations/apoe-abca1-intake.md).
+- [ ] Capture a successful live OpenAlex 0.2.0 packet with an original-response digest; later attempts returned 503/504 without a packet.
 
 This work provides a reading and curation workflow. It does not add reviewed claims, establish study independence, classify scientific contradictions, or complete M3's disagreement/hypothesis criteria.
 
@@ -130,7 +131,7 @@ This workflow interprets processed results; it does not run raw-count differenti
 - [x] Test malformed/partial responses, species/identity mismatches, duplicate mappings, first-page scope, secret-safe errors, response/timeout limits and no automatic scientific promotion.
 - [x] Extract a reproducible four-gene identity/membership seed from the existing pinned HGNC and Reactome references, without changing the broad enrichment reference or claiming a live API result.
 - [x] Inspect and add that bounded seed through a separate source-checked snapshot diff: four genes, four separate proteins, four identity cross-references and four gene-level pathway annotations, with no new empirical/disease claim.
-- [ ] Complete a successful bounded live provider request after the environment permits its hosts; inspect the real packet before using it in a source-checked snapshot diff.
+- [x] Complete and inspect live UniProt/Reactome/Open Targets APOE/ABCA1 packets, preserving identities, raw-response hashes, reported versions/terms and page limits; prepare eight selected staging records separately from graph promotion.
 
 ### Prepare the next AD evidence pass
 
@@ -140,7 +141,7 @@ This workflow interprets processed results; it does not run raw-count differenti
 - [x] Expand through a separately source-checked dataset diff: 21 entities, distinct gene/protein identities, two pathways, and recorded database assertions.
 - [ ] Later scientific-release milestone: record an actual independent scientific review and resolve remaining source/release checks. This is deferred, not a blocker for source-checked development.
 
-The two pathway candidates now have source-checked draft annotations in 0.2.0; six publications remain staged. No live adapter request or exact Reactome release is claimed. The entity-count target is met; other MVP criteria remain separate.
+The two pathway candidates now have source-checked draft annotations in 0.2.0; six publications remain in the original reading plan. That snapshot expansion used targeted source checks, not live adapter imports, and its exact Reactome release remains unknown. The later APOE/ABCA1 staging batch records live access separately, without changing the graph or that reading plan. The entity-count target is met; other MVP criteria remain separate.
 
 Snapshot 0.3.0 adds two APOE–TREM2 protein-binding findings and one paper projection from a separate original-source check of Atagi 2015. Caption-level scope, assay controls, replicate units and shared-paper identity are retained; raw figures and full methods were not reviewed. No staged metadata was promoted automatically.
 
