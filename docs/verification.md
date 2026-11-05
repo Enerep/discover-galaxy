@@ -1,5 +1,15 @@
 # Development preview verification
 
+## Vite security patch — 2026-11-05
+
+Vite is pinned from 8.3.2 to **8.3.3**, the first patched 8.3 release for the six reported advisories. No other package/version changed. Registry publication 2026-10-06T04:10:19.326Z satisfies the 14-day age rule; resolution used the newly reviewed 2026-10-22 cutoff. Official repository/maintainers, release notes, tarball identity/SHA-512 and absence of install/prepare hooks were inspected. [Security review](npm-security.md#reviewed-vite-security-patch--2026-11-05) records sources and integrity.
+
+**`npm audit`: 0 vulnerabilities.** All 45 installed registry-package signatures and 17 provenance attestations verify. Source/integrity/exact-pin/publication-date checks pass for 68 lock entries; the three pinned IOC feeds report no matches and all 7 checker tests pass. These are bounded checks, not a malware-free guarantee. Installation used `npm ci --ignore-scripts`; `.npmrc` is unchanged.
+
+All **150 native tests**, production build/application typecheck and development-data validation pass. All 11 production-output files are byte-identical to the pre-update build, so the existing complete production-browser regression was not repeated. A fresh Vite 8.3.3 development-server browser check loads the graph and navigates to mouse Abca1 without page errors; an outside-root request using `?vite-wasm-instance` is denied 403 and reveals none of the harmless synthetic file marker. Temporary test files/servers were removed/stopped, including the older preview process.
+
+The scientific snapshot, both numerical references and all application source files remain unchanged. Current documentation is updated; older verification entries below retain their historical audit findings. Build chunk-size warnings remain. Developers must reinstall from the updated lockfile and restart existing Vite processes to apply the patch locally.
+
 ## Visible APOE/ABCA1 evidence checkpoint — 2026-11-05
 
 Snapshot **0.8.0**, contract **0.2.0**, contains **45 entities, 49 claims/evidence records and 49 sources**, with one unchanged draft context comparison. The [change record](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) and [provenance](../data/annotations/apoe-abca1-checkpoint-provenance.json) retain original-PDF locations, hashes, deposited licenses, actual API requests/versions and unresolved checks. Three mouse perturbation findings from Wahrle 2004 and Hirsch-Reinshagen 2005 are visible through separate mouse identities, two gene orthology links and one mouse gene/product mapping. Two human Open Targets aggregates are labeled database associations, separate from four original variant-specific findings. UniProt identity and Reactome mapping rechecks enrich existing provenance without duplicate identity finding/citation cards. A new OpenAlex 0.2.0 capture succeeded; the legacy missing raw digest remains explicit.
