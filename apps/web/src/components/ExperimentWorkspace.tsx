@@ -14,10 +14,11 @@ import { ThresholdSensitivity } from './ThresholdSensitivity.tsx';
 import { PathwayGroupMembers } from './PathwayGroupMembers.tsx';
 import { useExperimentRobustness } from '../lib/useExperimentRobustness.ts';
 import { createExampleExperiment, EXAMPLE_COMPARISON, EXAMPLE_CONTEXT } from '../lib/experiment-example.ts';
-import { MAX_CONTEXT_LENGTH, normalizeExperimentContext, STUDY_DESIGN_LABELS } from '../lib/experiment-context.ts';
+import { MAX_CONTEXT_LENGTH, normalizeExperimentContext, SAMPLE_TYPE_LABELS, STUDY_DESIGN_LABELS } from '../lib/experiment-context.ts';
 import type { ExperimentContext } from '../lib/experiment-context.ts';
 import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
 import { PathwayEvidence } from './PathwayEvidence.tsx';
+import { PossibleExplanations } from './PossibleExplanations.tsx';
 import './experiment-workspace.css';
 
 interface Props {
@@ -128,7 +129,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
   const questions = useMemo(() => analysis && selectedPathway ? buildExperimentQuestions(snapshot, analysis, selectedPathway.id) : [], [snapshot, analysis, selectedPathway]);
   const curatedGenes = useMemo(() => new Set(snapshot.entities.filter(({ type }) => type === 'gene').map(({ label }) => label)), [snapshot]);
   const changed = analysis && (pendingTable !== analysis.table || comparison.trim() !== analysis.comparison
-    || context.model.trim() !== analysis.context.model || context.condition.trim() !== analysis.context.condition || context.design !== analysis.context.design
+    || context.model.trim() !== analysis.context.model || context.condition.trim() !== analysis.context.condition || context.design !== analysis.context.design || context.sampleType !== analysis.context.sampleType
     || Number(geneFdr) !== analysis.thresholds.adjustedPMax || Number(minimumFoldChange) !== analysis.thresholds.minAbsLog2FoldChange || !allTestedGenes);
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -271,6 +272,9 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
           <label><span>Study design</span><select value={context.design} onChange={(event) => setContext({ ...context, design: event.target.value as ExperimentContext['design'] })} disabled={busy !== null}>
             {Object.entries(STUDY_DESIGN_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select></label>
+          <label><span>Sample type</span><select value={context.sampleType} onChange={(event) => setContext({ ...context, sampleType: event.target.value as ExperimentContext['sampleType'] })} disabled={busy !== null}>
+            {Object.entries(SAMPLE_TYPE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select></label>
         </div>
       </details>
       <label className="experiment-background"><input type="checkbox" required checked={allTestedGenes} onChange={(event) => setAllTestedGenes(event.target.checked)} />This table contains all tested genes</label>
@@ -345,6 +349,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
             </table>
           </div>
           {eligibleMembers.length > MEMBER_PAGE_SIZE && <div className="experiment-pagination"><span>{integer(memberPage * MEMBER_PAGE_SIZE + 1)}–{integer(Math.min((memberPage + 1) * MEMBER_PAGE_SIZE, eligibleMembers.length))} of {integer(eligibleMembers.length)}</span><nav aria-label="Eligible member pages"><button className="secondary-button" type="button" disabled={memberPage === 0} onClick={() => setMemberPage(memberPage - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(memberPage + 1) * MEMBER_PAGE_SIZE >= eligibleMembers.length} onClick={() => setMemberPage(memberPage + 1)}>Next</button></nav></div>}
+          <PossibleExplanations key={`explanations-${analysis.createdAt}-${selectedPathway.id}`} analysis={analysis} pathwayId={selectedPathway.id} />
           <PathwayEvidence key={`${analysis.createdAt}-${selectedPathway.id}`} snapshot={snapshot} analysis={analysis} pathwayId={selectedPathway.id} onInspectFinding={onInspectFinding} />
           {questions.length > 0 && <section className="experiment-questions" aria-label={analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}><h4>{analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}</h4>
             {questions.map((item) => <article key={item.id}><h5>{item.question}</h5><p>{item.premise}</p><details><summary>Assumptions and proposed test</summary><ul>{item.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul><p>{item.suggestedTest}</p></details><ul className="experiment-question-sources">{item.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a></li>)}</ul></article>)}

@@ -15,7 +15,7 @@
 .experiment-workspace input[type=checkbox] { flex-shrink: 0; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
 .experiment-run-actions { grid-column: 3 / -1; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; }
 .experiment-input-details { grid-column: 1 / -1; font-size: 13px; border-top: 1px solid var(--divider); }
-.experiment-context-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding-bottom: 14px; }
+.experiment-context-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding-bottom: 14px; }
 .experiment-context-fields > label { display: grid; align-content: start; gap: 8px; min-width: 0; }
 .experiment-context-fields > label > span { font-size: 12px; color: var(--secondary-ink); }
 .experiment-workspace summary { min-height: 44px; padding-block: 12px; cursor: pointer; color: var(--secondary-ink); font-size: 13px; }
@@ -88,6 +88,26 @@
 .experiment-paper article > p { margin: 0 0 10px; font-size: 13px; line-height: 1.75; }
 .experiment-paper article .experiment-finding-genes, .experiment-paper article .experiment-finding-relation { color: var(--secondary-ink); font-size: 12px; }
 .experiment-literature .study-context-note { margin-top: 18px; }
+.experiment-explanations { margin-top: 22px; border-block: 1px solid var(--border); overflow-wrap: anywhere; }
+.experiment-explanations > summary { color: var(--ink); font-size: 15px; font-weight: 550; }
+.experiment-explanations h4 { margin: 8px 0 12px; font-size: 16px; font-weight: 550; line-height: 1.6; }
+.experiment-explanations h5 { margin: 0 0 6px; font-size: 14px; font-weight: 550; line-height: 1.7; }
+.experiment-explanation-observation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin: 18px 0; }
+.experiment-explanation-observation > div { min-width: 0; }
+.experiment-explanation-observation dt { color: var(--secondary-ink); font-size: 12px; line-height: 1.6; }
+.experiment-explanation-observation dd { margin: 4px 0 0; font-size: 13px; font-variant-numeric: tabular-nums; line-height: 1.6; }
+.experiment-explanation-alternative { padding-block: 16px; border-top: 1px solid var(--divider); }
+.experiment-explanation-alternative > p { margin: 0; }
+.experiment-explanations a { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; max-width: 100%; color: var(--source-ink); font-size: 12px; line-height: 1.6; }
+.experiment-explanations a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.experiment-explanations a svg { flex-shrink: 0; }
+.experiment-explanation-test { padding-block: 16px; border-top: 1px solid var(--divider); }
+.experiment-explanation-test > ol { margin: 10px 0; padding-left: 20px; }
+.experiment-explanation-source { padding-block: 12px; }
+.experiment-explanation-source + .experiment-explanation-source { border-top: 1px solid var(--divider); }
+.experiment-explanation-source > p { margin: 6px 0; }
+.experiment-explanation-source .context-list { margin-top: 12px; }
+.experiment-explanation-limits { padding-bottom: 12px; }
 .experiment-questions { margin-top: 22px; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
 .experiment-questions h4 { font-size: 16px; font-weight: 550; margin: 22px 0 14px; }
 .experiment-questions article + article { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--divider); }

@@ -4,10 +4,17 @@ export const STUDY_DESIGN_LABELS = {
   observational: 'Observational comparison',
 } as const;
 
+export const SAMPLE_TYPE_LABELS = {
+  unspecified: 'Not specified',
+  bulk_brain_tissue: 'Bulk brain tissue',
+  other: 'Other tissue or cell preparation',
+} as const;
+
 export interface ExperimentContext {
   model: string;
   condition: string;
   design: keyof typeof STUDY_DESIGN_LABELS;
+  sampleType: keyof typeof SAMPLE_TYPE_LABELS;
 }
 
 export const MAX_CONTEXT_LENGTH = 160;
@@ -24,11 +31,14 @@ export function normalizeExperimentContext(input?: Partial<ExperimentContext>): 
   };
   const design = input?.design === undefined ? 'unspecified' : input.design;
   if (typeof design !== 'string' || !Object.hasOwn(STUDY_DESIGN_LABELS, design)) throw new Error('Choose a supported study design.');
-  return { model: text(input?.model, 'Tissue or cell model'), condition: text(input?.condition, 'Treatment or condition'), design };
+  const sampleType = input?.sampleType === undefined ? 'unspecified' : input.sampleType;
+  if (typeof sampleType !== 'string' || !Object.hasOwn(SAMPLE_TYPE_LABELS, sampleType)) throw new Error('Choose a supported sample type.');
+  return { model: text(input?.model, 'Tissue or cell model'), condition: text(input?.condition, 'Treatment or condition'), design, sampleType };
 }
 
 export function describeExperimentContext(context: ExperimentContext): string {
   const parts = [context.model && `tissue/cell model: ${context.model}`, context.condition && `treatment/condition: ${context.condition}`,
-    context.design !== 'unspecified' && `study design: ${STUDY_DESIGN_LABELS[context.design]}`].filter(Boolean);
+    context.design !== 'unspecified' && `study design: ${STUDY_DESIGN_LABELS[context.design]}`,
+    context.sampleType !== 'unspecified' && `sample type: ${SAMPLE_TYPE_LABELS[context.sampleType]}`].filter(Boolean);
   return parts.length ? `Researcher-supplied context — ${parts.join('; ')}.` : '';
 }

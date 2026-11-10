@@ -126,7 +126,7 @@ test('applied cutoffs and an empty selection clear pathway literature instead of
 });
 
 test('optional experiment context is bounded and copied without guessing design or accepting malformed values', () => {
-  assert.deepEqual(normalizeExperimentContext(), { model: '', condition: '', design: 'unspecified' });
+  assert.deepEqual(normalizeExperimentContext(), { model: '', condition: '', design: 'unspecified', sampleType: 'unspecified' });
   assert.equal(describeExperimentContext(normalizeExperimentContext()), '');
   const input = { model: '  iPSC microglia  ', condition: '  Example treatment  ', design: 'perturbation' as const };
   const normalized = normalizeExperimentContext(input);
@@ -134,7 +134,7 @@ test('optional experiment context is bounded and copied without guessing design 
   input.model = 'changed';
   assert.equal(normalized.model, 'iPSC microglia');
   assert.equal(normalizeExperimentContext({ model: 'x'.repeat(MAX_CONTEXT_LENGTH) }).model.length, MAX_CONTEXT_LENGTH);
-  for (const invalid of [null, [], { model: 1 }, { condition: '\u0000' }, { model: 'two\nlines' }, { model: 'x'.repeat(MAX_CONTEXT_LENGTH + 1) }, { design: 'clinical' }, { design: null }, { design: 'toString' }]) {
+  for (const invalid of [null, [], { model: 1 }, { condition: '\u0000' }, { model: 'two\nlines' }, { model: 'x'.repeat(MAX_CONTEXT_LENGTH + 1) }, { design: 'clinical' }, { design: null }, { design: 'toString' }, { sampleType: 'brain' }, { sampleType: null }, { sampleType: 'toString' }]) {
     assert.throws(() => normalizeExperimentContext(invalid as unknown as Partial<ExperimentContext>));
   }
 });
@@ -143,7 +143,7 @@ test('changing only experiment context preserves measurements, the full tested f
   const input = table();
   const before = JSON.stringify(snapshot);
   const plain = runExperimentAnalysis(input, options(), reference);
-  const context: ExperimentContext = { model: 'Postmortem cortex', condition: 'AD vs control', design: 'observational' };
+  const context: ExperimentContext = { model: 'Postmortem cortex', condition: 'AD vs control', design: 'observational', sampleType: 'bulk_brain_tissue' };
   const contextual = runExperimentAnalysis(input, { ...options(), context }, reference);
   assert.deepEqual(contextual.rows, plain.rows);
   assert.deepEqual(contextual.backgroundGenes, plain.backgroundGenes);
