@@ -42,6 +42,7 @@ export function WorkspaceHelp({ workspace }: { workspace: 'explore' | 'analysis'
           <h3>For example</h3>
           <p>In the synthetic example, <strong>APOE</strong> has log₂FC <strong>+2.1</strong> and gene FDR <strong>0.008</strong>, so it passes cutoffs of FDR ≤ 0.05 and |log₂FC| ≥ 1.</p>
           <p>Of 120 tested genes, 12 pass. Ten of the 12 selected genes belong to a Reactome lipoprotein pathway, compared with 13 of the 120 tested genes overall. The app tests that overlap, then links covered genes to the curated evidence library.</p>
+          <p>For an observational bulk-brain experiment, select <strong>Bulk brain tissue</strong> and <strong>Observational comparison</strong> under Experiment context, then apply. When APOE passes your cutoffs in the selected pathway, <strong>Possible explanations</strong> compares cell proportions with RNA changes within cell types, with cited premises and a proposed measurement. Synthetic data retain the label <strong>Example explanations</strong>.</p>
         </section>
         <p>Files stay in this tab. Enrichment describes gene membership; pathway activity needs separate evidence. Human pathway analysis extends beyond Alzheimer’s, while the curated evidence library remains focused on it.</p>
       </>}

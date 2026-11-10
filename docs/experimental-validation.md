@@ -60,6 +60,22 @@ At gene padj ≤0.05 and absolute log2FC ≥1:
 
 Every pathway's N/n/K/k, exact overlapping identities, p-value and BH value matched an independent SciPy 1.17 oracle. Maximum absolute p/q error was 1.02e-9; maximum relative error was 1.07e-9. This establishes computational agreement for this input/reference, not biological validation, pathway activity or a novel AD finding. Bulk cell composition, model covariates, gene-length/expression selection bias, pathway overlap, source completeness and reference age remain interpretation limits.
 
+## APOE explanation pilot
+
+The pilot uses the same applied analysis and exact APOE identity. Explicit **Bulk brain tissue** and **Observational comparison** context are required; the selected pathway must contain a complete, nonzero APOE observation that passes the applied gene cutoffs. Context-only edits do not change gene selection, the eligible background or any pathway statistic. Positive-path browser/model fixtures contain invented measurements and remain labeled synthetic where the authored example is used.
+
+The immutable MAYO table above is a real negative control: `ENSG00000130203|APOE` resolves to APOE with log₂FC **−0.0592458611038634** and supplied FDR **0.682961137290324**. It fails both default cutoffs (FDR ≤0.05, |log₂FC| ≥1); the pilot must stay hidden even after declaring observational bulk-brain context. Its analysis remains N=32,607, selected=397, Reactome-mapped=10,786 and family=2,720. No cutoff was changed to force this demonstration.
+
+A bounded lookup at that same immutable repository commit also found no default-cutoff APOE hit in `MSSB_BA10_FL.tsv` (−0.12726182624212 / 0.152670374151068), `MSSB_BA22_TL.tsv` (−0.0603453249091281 / 0.622323069283214) or `ROSMAP_FL.tsv` (+0.0986179920585875 / 0.345893537111358). These are supplied author-coded AD/control effect/FDR fields; no raw model was reconstructed. Full tables remain outside Git. A qualifying real positive case and researcher feedback remain unverified.
+
+The separate [human-brain source checks](apoe-explanations-sources.md) support interpretation context, not an explanation of those real tables. Mathys 2019 and Murphy 2023 share the same cohort; neither is counted as independent replication. Cell proportions, within-cell-type RNA, nucleus capture and nuclear-versus-bulk measurement limits remain explicit. The application neither estimates composition nor runs single-cell differential expression.
+
+After obtaining the externally held normalized MAYO file, run the focused browser check against a local build:
+
+```sh
+python3 tools/apoe-explanations-smoke.py --url http://127.0.0.1:4173/ --mayo-table /tmp/mayo-validation.csv
+```
+
 ## Original public airway table
 
 The [airway source and cohort provenance](../data/reference/README.md#external-validation-dataset) remain unchanged. The new Ensembl workflow accepts the original 15,513-row table directly by choosing its `gene` column instead of its optional `symbol` column. It does not require the earlier symbol-only conversion or its missing/duplicate-symbol exclusions. Results are N=15,513, selected=749, uniquely HGNC-mapped=14,504, unresolved=1,009 (one ambiguous), Reactome-mapped=7,686, tested family=2,581, and 23 pathways at BH ≤0.05. Every pathway also matched SciPy: maximum absolute error 1.26e-10 and relative error 1.57e-10. This is dexamethasone/untreated human airway data, not an AD experiment. Different backgrounds and identifier references explain why its counts differ from the earlier symbol-subset validation.

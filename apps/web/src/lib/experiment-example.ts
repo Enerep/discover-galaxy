@@ -3,7 +3,7 @@ import type { ExperimentContext } from './experiment-context.ts';
 
 export const EXAMPLE_COMPARISON = 'Synthetic example: treatment / control';
 export const EXAMPLE_CONTEXT: ExperimentContext = {
-  model: 'Cultured microglia (synthetic)', condition: 'Example treatment (synthetic)', design: 'perturbation',
+  model: 'Cultured microglia (synthetic)', condition: 'Example treatment (synthetic)', design: 'perturbation', sampleType: 'other',
 };
 
 /** Invented measurements for learning the workflow, never scientific evidence. */

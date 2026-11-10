@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "catalog_id": "apoe-bulk-rna-1",
+  "status": "source_checked_draft",
+  "scope": "human_brain_rna_context",
+  "sources": [
+    {
+      "id": "mathys-2019",
+      "short_label": "Mathys et al., 2019",
+      "title": "Single-cell transcriptomic analysis of Alzheimer’s disease",
+      "authors": ["Hansruedi Mathys", "Jose Davila-Velderrain", "Zhuyu Peng", "Fan Gao", "Shahin Mohammadi", "Jennie Z. Young", "Madhvi Menon", "Liang He", "Fatema Abdurrob", "Xueqiao Jiang", "Anthony J. Martorell", "Richard M. Ransohoff", "Brian P. Hafler", "David A. Bennett", "Manolis Kellis", "Li-Huei Tsai"],
+      "year": 2019,
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/",
+      "identifiers": {"doi": "10.1038/s41586-019-1195-2", "pmid": "31042697", "pmcid": "PMC6865822"},
+      "publication_type": "primary_research",
+      "publication_version": "Author manuscript in PMC; published Nature article has a separately recorded author correction",
+      "cohort_id": "rosmap-mathys-2019-48",
+      "premise_id": "reported-cell-type-rna-differences",
+      "premise": "The study reported different APOE RNA patterns in microglia and astrocytes in human prefrontal cortex. These are reported study results, not predictions for the uploaded samples.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "taxonomy_id": 9606,
+        "tissue": "Postmortem prefrontal cortex, Brodmann area 10",
+        "design": "Observational; 24 AD-pathology and 24 no/low-pathology donors from ROSMAP",
+        "participants": 48,
+        "nuclei": 80660,
+        "replicate_unit": "Human donor; nuclei from a donor are not independent participants"
+      },
+      "locators": [
+        {"label": "Results and Figure 1g: reported APOE cell-type differences", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/#F1"},
+        {"label": "Results and Figure 3a–d: pathology-associated captured subpopulations", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/#F3"}
+      ],
+      "limitations": [
+        "Murphy et al. (2023) reanalyzed this same cohort and questioned the robustness of differential-expression results after changing quality control and statistical methods; the papers are not independent replication.",
+        "Captured nucleus fractions do not establish absolute cell counts in intact tissue. Bulk RNA, nucleus capture and cell proportions have different measurement limits.",
+        "This observational postmortem study does not identify the explanation, APOE genotype, protein abundance or causal mechanism in another experiment."
+      ],
+      "source_check": {
+        "retrieved_at": "2026-11-10T03:25:04.021826Z",
+        "inspected_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/",
+        "sha256": "0e652e85f054b4ae9e8277d065215d1375ff02f306caa60c59b0d9ae9151d27f",
+        "inspection_scope": "Selected introduction, Results, Figure 1g and Figure 3a–d captions and original images, and differential-expression Methods; separate publisher correction and Crossref metadata inspected. No raw count reanalysis or full supplementary-table audit."
+      },
+      "reuse": {
+        "terms_url": "https://www.nature.com/reprints",
+        "retained_content": "Citation metadata, source locators and limited project-authored factual paraphrases only; no article text, images, sequences or participant data redistributed",
+        "permission_status": "pending_review",
+        "date_checked": "2026-11-10",
+        "attribution": "Mathys H, Davila-Velderrain J, Peng Z, et al. Nature 570, 332–337 (2019), doi:10.1038/s41586-019-1195-2. Article text and figures retain their original terms; PMC access is not a redistribution licence."
+      },
+      "publication_status": {
+        "status": "corrected",
+        "checked_at": "2026-11-10",
+        "notice_url": "https://www.nature.com/articles/s41586-019-1329-6",
+        "scope": "Publisher author correction dated 2019-06-17: funding acknowledgements and reversed early/late-pathology column labels in Supplementary Table 2, columns Y/Z. This is distinct from the later methods reanalysis. Publisher notice and Crossref updated-by relation inspected; no comprehensive notice search completed."
+      }
+    },
+    {
+      "id": "murphy-2023",
+      "short_label": "Murphy et al., 2023",
+      "title": "Avoiding false discoveries in single-cell RNA-seq by revisiting the first Alzheimer’s disease dataset",
+      "authors": ["Alan E. Murphy", "Nurun Fancy", "Nathan Skene"],
+      "year": 2023,
+      "url": "https://elifesciences.org/articles/90214",
+      "identifiers": {"doi": "10.7554/eLife.90214", "version_doi": "10.7554/eLife.90214.3", "pmid": "38047913", "pmcid": "PMC10695556"},
+      "publication_type": "reanalysis",
+      "publication_version": "Version of Record, 2023-12-04, version DOI 10.7554/eLife.90214.3; distinct from earlier reviewed-preprint versions",
+      "cohort_id": "rosmap-mathys-2019-48",
+      "premise_id": "same-cohort-method-sensitivity",
+      "premise": "A reanalysis of the same Mathys cohort found that nucleus quality control and donor-aware differential-expression methods materially changed the results. It is a methods check, not a second cohort confirming the APOE pattern.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "taxonomy_id": 9606,
+        "tissue": "The same postmortem prefrontal-cortex dataset used by Mathys et al. (2019)",
+        "design": "Computational reanalysis of the original 48-donor ROSMAP cohort; no new independent participant cohort",
+        "participants": 48,
+        "nuclei": null,
+        "replicate_unit": "Donor-level inference; post-QC nucleus totals differ by processing stage and are not pooled here"
+      },
+      "locators": [
+        {"label": "Results and discussion; Figures 1–3: quality control and differential-expression sensitivity", "url": "https://elifesciences.org/articles/90214#s2"},
+        {"label": "Materials and methods: processing, quality control and pseudobulk analysis", "url": "https://elifesciences.org/articles/90214#s3"}
+      ],
+      "limitations": [
+        "This reanalysis shares the Mathys participant cohort and cannot be counted as independent biological replication.",
+        "Sensitivity of reported results to processing does not establish that APOE has no cell-type-specific association. Absence from a thresholded gene list is not proof of no effect.",
+        "No raw count processing, donor-level model fitting, composition estimation or protein measurement is performed by this application."
+      ],
+      "source_check": {
+        "retrieved_at": "2026-11-10T03:28:09.884729Z",
+        "inspected_url": "https://elifesciences.org/articles/90214",
+        "sha256": "21ec2ec32d3bc2f22073cf37649cc30bc5c9c1b4f5e415b5e024cda1ba69a442",
+        "inspection_scope": "Version-of-Record header, selected Results and discussion with Figures 1–3 captions, and Materials and methods; PMC full-text copy and Crossref version/licence relations cross-checked. No independent raw-data or code reproduction."
+      },
+      "reuse": {
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "retained_content": "Citation metadata, source locators and project-authored factual paraphrases; no raw count data or article images redistributed",
+        "permission_status": "permitted",
+        "date_checked": "2026-11-10",
+        "attribution": "Murphy AE, Fancy N, Skene N. eLife 12:RP90214 (2023), doi:10.7554/eLife.90214.3. CC BY 4.0. Summaries are paraphrased by Discovery Galaxy; no endorsement implied."
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null,
+        "scope": "Publisher Version-of-Record header and Crossref metadata inspected on 2026-11-10; no comprehensive correction/retraction search completed. Earlier reviewed-preprint versions are version history, not correction notices."
+      }
+    }
+  ]
+}

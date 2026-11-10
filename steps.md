@@ -68,7 +68,7 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Document feature branches and PRs/MRs targeting `master`, replacing the former direct-push workflow.
 - [x] Refresh the contribution guide and add bug, evidence-proposal and pull-request templates with concrete starter tasks and checks by scope.
 - [x] Link the XERJ selection/licence acknowledgement to its pinned repository snapshot, without claiming a prebuilt hub pack or endorsement of scientific findings.
-- [ ] Pilot [comparison of possible explanations](docs/checkpoints.md#proposed-pilot-compare-possible-explanations) for one analyzed pathway, with inspected original-paper premises, actual measurements, explicit unknowns and a distinguishing test.
+- [x] Pilot [comparison of possible explanations](docs/checkpoints.md#apoe-pilot-compare-possible-explanations) for selected APOE in an explicitly declared observational bulk-brain pathway result, with inspected human-paper premises, actual applied measurements, nonexclusive alternatives and a proposed distinguishing measurement. Positive-path checks use labeled synthetic data; the real MAYO input is a negative control at default cutoffs.
 
 ### Sharing and review preparation
 
