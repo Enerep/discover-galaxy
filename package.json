@@ -22,6 +22,8 @@
     "curation:seed:check": "python3 tools/curation/prepare-annotation-seed.py --check",
     "validate:data": "node --experimental-strip-types tools/validate-data.ts",
     "validate:release": "node --experimental-strip-types tools/validate-data.ts --release",
-    "check:dependencies": "node tools/security/check-lockfile.mjs"
+    "check:dependencies": "node tools/security/check-lockfile.mjs",
+    "check:ci": "node tools/ci/check.mjs",
+    "check:ci:security": "node tools/ci/check.mjs --security"
   }
 }
