@@ -100,6 +100,17 @@ npm run preview
 
 `npm run validate:release` deliberately fails for this starter: it is not scientifically approved. `npm run typecheck` can run separately. Tests and offline curation/reference checks also require Python 3 (standard library only). There is no lint command yet.
 
+**GitHub Actions** runs tests, build/typechecking, data/reference/curation checks and dependency checks on every MR targeting `master` and every push to `master`. The same commands are available locally with the declared npm 11.9.0 package manager:
+
+```sh
+npm run check:ci:security
+npm run check:ci
+```
+
+The security command requires network access for npm advisories and the pinned IOC feeds; scientific APIs are never queried by CI. Browser checks remain explicit local checks. [CI setup and safeguards](docs/ci.md) describe the read-only workflow and required-check settings.
+
+**Review API updates** with `npm run --silent curation:review -- --packet data/staging/normalized-packet.json`; repeat `--packet` for a small batch and add matching `--previous` packets for a diff. The offline report separates record changes from retrieval/release/terms changes and shows conservative graph identifier matches. It writes to stdout, keeps unreviewed status and never updates the website or graph. See [commands and review limits](tools/curation/README.md#review-staged-api-updates).
+
 The [AD source-review packet](data/alzheimers/review-packet.md) collects the 49 current claims, 49 evidence records, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh

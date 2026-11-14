@@ -11,7 +11,11 @@ if (args.length > 1 || (args.length === 1 && args[0] !== '--security')) {
   process.exit(2);
 }
 
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+if (process.platform === 'win32') {
+  console.error('Run the shared CI checks in WSL; the runner supports Linux and macOS.');
+  process.exit(2);
+}
+const npm = 'npm';
 const manager = JSON.parse(readFileSync('package.json', 'utf8')).packageManager;
 const npmVersion = spawnSync(npm, ['--version'], { encoding: 'utf8', shell: false });
 if (Number(process.versions.node.split('.')[0]) !== 24 || npmVersion.status !== 0
@@ -22,12 +26,14 @@ if (Number(process.versions.node.split('.')[0]) !== 24 || npmVersion.status !== 
 
 const steps = args[0] === '--security'
   ? [
+    [npm, ['run', 'check:dependencies', '--', '--metadata']],
     [npm, ['audit', '--audit-level=low']],
     ['python3', ['tools/security/check-iocs.py']],
   ]
   : [
     [npm, ['run', 'check:dependencies']],
     [npm, ['test']],
+    [npm, ['run', 'typecheck:tools']],
     [npm, ['run', 'validate:data']],
     [npm, ['run', 'reference:check']],
     [npm, ['run', 'curation:check']],

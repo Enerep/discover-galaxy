@@ -138,6 +138,12 @@ A [generated AD source-review packet](../data/alzheimers/review-packet.md) colle
 
 `npm run curation:coverage:check` verifies the five remaining candidates and their baseline references. The prior content checkpoint extended the three-study binding evidence with one source-checked contextual comparison, preserving page-vs-indexed access. The 0.8.0 pass inspected selected ABCA1/APOE experiments; the remaining Hirsch-Reinshagen 2004 efflux candidate still needs a separate scoped extraction. Keep organism, model and preparation explicit. Such an experiment would not establish the cause of the R47H assay difference. Complete source access must be recorded before claiming a full experiment review. Independent scientific review remains a future milestone; generated packets do not create its attestations.
 
+## Completed: automatic checks and API-update review
+
+[CI](ci.md) runs the same native tests, data/reference/curation checks, production build and dependency safeguards on MRs targeting `master`. It uses read-only permissions, pinned official actions and script-disabled installs. Browser verification and independent scientific-release approval remain distinct; live scientific providers are not a CI requirement.
+
+The offline [intake review command](../tools/curation/README.md#review-staged-api-updates) compares full current normalized packets with matching earlier requests and the existing graph. It reports precise content/provenance changes and identifier references, not a promoted dataset or scientific approval. Missing first-page records are not deletions. Live provider access was reverified for all four sources on 2026-11-14; seven APOE/ABCA1 packets retain 58 unchanged database records and five OpenAlex records with updated provider timestamps only. The graph remains 45 entities / 49 claims.
+
 ## Then: automate collection, preserve review
 
 Introduce one source adapter at a time after verifying current access, attribution, and reuse terms:

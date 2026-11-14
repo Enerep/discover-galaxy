@@ -70,6 +70,13 @@ The source-checked development journey is usable now; structural checks never ma
 - [x] Link the XERJ selection/licence acknowledgement to its pinned repository snapshot, without claiming a prebuilt hub pack or endorsement of scientific findings.
 - [x] Pilot [comparison of possible explanations](docs/checkpoints.md#apoe-pilot-compare-possible-explanations) for selected APOE in an explicitly declared observational bulk-brain pathway result, with inspected human-paper premises, actual applied measurements, nonexclusive alternatives and a proposed distinguishing measurement. Positive-path checks use labeled synthetic data; the real MAYO input is a negative control at default cutoffs.
 
+### Automated checks and staged API review
+
+- [x] Run the same project checks locally and in GitHub Actions for MRs targeting `master`, pushes to `master` and manual runs; preserve read-only permissions, reviewed action pins and script-disabled installation.
+- [x] Separate current advisory/pinned-IOC checks from deterministic tests/data/reference/curation/build checks; keep browser and future scientific-release gates explicit.
+- [x] Produce offline Markdown/JSON review reports from full normalized packets, with exact-scope prior comparisons, conservative graph references, distinct record/provenance changes and no automatic promotion.
+- [x] Reverify UniProt, Reactome, Open Targets and OpenAlex on 2026-11-14; compare seven fresh packets against their earlier counterparts while keeping raw/payload hashes, versions, terms and actual limits. Database records remain unchanged; observed OpenAlex differences are provider timestamps, not new experimental findings.
+
 ### Sharing and review preparation
 
 - [x] Export the current graph and selected finding as a cited PNG; provide an evidence card in List mode or without WebGL.

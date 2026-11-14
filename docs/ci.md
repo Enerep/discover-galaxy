@@ -4,7 +4,7 @@
 
 ## Reproduce the checks
 
-Use Node.js 24, the declared npm 11.9.0 package manager, and Python 3. From the repository root:
+On Linux or macOS (or WSL on Windows), use Node.js 24, the declared npm 11.9.0 package manager, and Python 3. From the repository root:
 
 ```sh
 npm run check:dependencies
@@ -13,9 +13,9 @@ npm run check:ci:security
 npm run check:ci
 ```
 
-The security command requires network access to the official npm registry and the three checksum-pinned IOC feeds. It fails on reported vulnerabilities, exact malware-indicator matches, or incomplete feed checks. These are current advisory checks against the installed lockfile and historical pinned indicators, not a guarantee that dependencies are benign. See [dependency security](npm-security.md).
+The security command requires network access to the official npm registry and the three checksum-pinned IOC feeds. It checks all locked publication dates against the reviewed dependency cutoff, then fails on reported vulnerabilities, exact malware-indicator matches, or incomplete feed checks. These are bounded publication/advisory checks against the lockfile and historical pinned indicators, not a guarantee that dependencies are benign. See [dependency security](npm-security.md).
 
-The reproducible project command runs native tests, development-data validation, pinned pathway/identifier integrity, generated review/coverage/seed checks, the security checker's Python tests, and the production build with typechecking. It makes no live scientific-provider request. The intentionally rejecting `validate:release` is a separate scientific-release gate; source-checked development does not create independent approval.
+The reproducible project command runs native tests, strict TypeScript checking of curation/validation tools and their tests, development-data validation, pinned pathway/identifier integrity, generated review/coverage/seed checks, the security checker's Python tests, and the production build with application typechecking. It makes no live scientific-provider request. The intentionally rejecting `validate:release` is a separate scientific-release gate; source-checked development does not create independent approval.
 
 Browser checks remain explicit local checks using the existing Playwright/system-Chromium setup in [verification](verification.md). The first CI workflow does not install a browser stack or claim a browser result. Branch protection and required checks are repository settings; adding this workflow does not itself prevent merging a failed request. Configure the named check as required if merge enforcement is desired.
 

@@ -60,4 +60,4 @@ The package still resolves from the official registry and declares the Vite proj
 4. Install using `npm ci --ignore-scripts`, then run the reviewed project validation commands.
 5. Record deliberate release-age or lifecycle-script exceptions with the package/version, reason, and review date. No blanket exception is implied by this policy.
 
-If CI is introduced, keep default workflow permissions read-only, pin third-party actions to reviewed commit SHAs, and isolate untrusted pull-request code from credentials and privileged workflow contexts.
+[CI](ci.md) keeps workflow permissions read-only, pins official actions to reviewed commit SHAs, disables persisted checkout credentials and package-manager caching, and uses unprivileged pull-request events. A reviewed, lifecycle-disabled npm 11.9.0 bootstrap matches the declared package manager; locked application dependencies install with `npm ci --ignore-scripts`. Current advisory and pinned-IOC failures fail the job. These controls do not establish scientific approval or guarantee benign dependencies.

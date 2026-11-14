@@ -1,0 +1,410 @@
+{
+  "schema_version": "intake-review-checkpoint-1",
+  "status": "unreviewed",
+  "promotion": "not_in_graph",
+  "checked_on": "2026-11-14",
+  "method": "Live adapter captures followed by offline normalized-packet comparison and conservative identifier matching; no original experiment inspection or independent scientific review.",
+  "snapshot": {
+    "dataset_version": "alzheimers-source-checked-0.8.0",
+    "input_sha256": "71c0195bf1c29ad702d09bc88c5ef7680102541a1e9490081219f62df5b0104a"
+  },
+  "report": {
+    "schema_version": "intake-review-1",
+    "json_sha256": "7ce3b287391738cdd550338f0821a2cc90e7ddd429f358b5384ddaa8143fb947",
+    "packet_count": 7,
+    "current_record_count": 63,
+    "unchanged_record_count": 58,
+    "changed_record_count": 5,
+    "not_returned_count": 0
+  },
+  "packets": [
+    {
+      "input": "apoe-opentargets.json",
+      "provider": "opentargets",
+      "input_sha256": "f991eb681a841c58fe1e59d42ba4171e8888da52da2b7eb912f983e14247b018",
+      "previous_input_sha256": "34cdfe40afbc06defbd4af785399e3c9ca0ddb8ac4945f35f4e8ccc752d1a094",
+      "response_sha256": "430d828a3efd32977a5ee2943da631b65a73777f04873101299353d0ff8f52df",
+      "previous_response_sha256": "8dbb515c4d2f74956893b88d4c01770d041820ec5ddf3bb72d774b8e1a856ab2",
+      "processed_at": "2026-11-14T03:14:20.811Z",
+      "retrieved_at": "2026-11-14T03:14:20.811Z",
+      "request_scope_sha256": "c890f96683598cb1a6d587682829d8967cc3a57d24115d6decd0ab42893b9798",
+      "request": {
+        "url": "https://api.platform.opentargets.org/api/v4/graphql",
+        "method": "POST",
+        "body": "{\"query\":\"query GeneAnnotations($id: String!) {\\n  meta { dataVersion { year month iteration } }\\n  target(ensemblId: $id) {\\n    id approvedSymbol\\n    associatedDiseases(enableIndirect: false, page: { index: 0, size: 20 }) {\\n      count rows { disease { id name } score datasourceScores { id score } }\\n    }\\n  }\\n}\",\"variables\":{\"id\":\"ENSG00000130203\"}}"
+      },
+      "provider_release": "26.09",
+      "provider_version": {
+        "year": "26",
+        "month": "09",
+        "iteration": null
+      },
+      "immutable_release": null,
+      "coverage": {
+        "total_reported": 2836,
+        "retained": 20,
+        "truncated": true,
+        "scope": "First 20 direct target–disease associations (enableIndirect=false); not a comprehensive disease or literature search"
+      },
+      "reuse": {
+        "license": "CC0-1.0",
+        "terms_url": "https://platform-docs.opentargets.org/licence",
+        "attribution": "Open Targets Platform. Direct target–disease association summaries with provider-defined scores."
+      },
+      "record_count": 20,
+      "not_returned_count": 0,
+      "unchanged_record_count": 20,
+      "changed_records": [],
+      "exact_graph_matches": [
+        {
+          "key": "disease_association:ENSG00000130203:MONDO_0004975",
+          "status": "represented",
+          "entity_ids": [
+            "disease-alzheimers",
+            "gene-apoe",
+            "protein-apoe"
+          ],
+          "claim_ids": [
+            "claim-apoe-opentargets-association"
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "input": "apoe-reactome.json",
+      "provider": "reactome",
+      "input_sha256": "df4d52bb75ed64f540bd481769e6c1039b24763ed4b5c29172272b12678d00ed",
+      "previous_input_sha256": "be576b09f3a9f4500a8895d9cc65ed3f8e1dc84c817033d73688c0ccee1be52d",
+      "response_sha256": "58e052001dd4c2b9f78902ef7b3e6dd895101a341dde0007239486ae7284b314",
+      "previous_response_sha256": "58e052001dd4c2b9f78902ef7b3e6dd895101a341dde0007239486ae7284b314",
+      "processed_at": "2026-11-14T03:14:21.042Z",
+      "retrieved_at": "2026-11-14T03:14:21.042Z",
+      "request_scope_sha256": "829ae07e4a173068b4afd8ddd55cecf0e0d0f5f0439c1daab58117eaa3635e76",
+      "request": {
+        "url": "https://reactome.org/ContentService/data/mapping/UniProt/P02649/pathways?species=9606",
+        "method": "GET",
+        "body": null
+      },
+      "provider_release": null,
+      "provider_version": null,
+      "immutable_release": null,
+      "coverage": {
+        "total_reported": null,
+        "retained": 12,
+        "truncated": null,
+        "scope": "Human lower-level pathways mapped from the declared UniProt accession; no molecular-state inference"
+      },
+      "reuse": {
+        "license": "CC0-1.0",
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database. Database identifier mappings, not original experimental findings."
+      },
+      "record_count": 12,
+      "not_returned_count": 0,
+      "unchanged_record_count": 12,
+      "changed_records": [],
+      "exact_graph_matches": [
+        {
+          "key": "pathway_mapping:P02649:R-HSA-9029569",
+          "status": "represented",
+          "entity_ids": [
+            "gene-apoe",
+            "pathway-cholesterol-efflux",
+            "protein-apoe"
+          ],
+          "claim_ids": [
+            "claim-apoe-cholesterol-pathway"
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "input": "apoe-uniprot.json",
+      "provider": "uniprot",
+      "input_sha256": "25a82544ca179569f0cdcc57fa019a74e88d856a582d8720f77e4337f2bca6b2",
+      "previous_input_sha256": "840e78bb362e8c502edff606bae46385ccc429641fb2f90b3a8605a7ccee0582",
+      "response_sha256": "092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203",
+      "previous_response_sha256": "092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203",
+      "processed_at": "2026-11-14T03:14:20.887Z",
+      "retrieved_at": "2026-11-14T03:14:20.887Z",
+      "request_scope_sha256": "7f41bc053ed00ff1b7954071096b1e2de11b0e7a815f1ab5f4ca3c2390265c01",
+      "request": {
+        "url": "https://rest.uniprot.org/uniprotkb/P02649.json",
+        "method": "GET",
+        "body": null
+      },
+      "provider_release": "2026_04",
+      "provider_version": null,
+      "immutable_release": null,
+      "coverage": {
+        "total_reported": 1,
+        "retained": 1,
+        "truncated": false,
+        "scope": "Single declared human protein entry"
+      },
+      "reuse": {
+        "license": "CC-BY-4.0",
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB. Identity metadata only; CC BY 4.0."
+      },
+      "record_count": 1,
+      "not_returned_count": 0,
+      "unchanged_record_count": 1,
+      "changed_records": [],
+      "exact_graph_matches": [
+        {
+          "key": "protein_identity:P02649",
+          "status": "represented",
+          "entity_ids": [
+            "gene-apoe",
+            "protein-apoe"
+          ],
+          "claim_ids": [
+            "claim-apoe-encodes"
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "input": "abca1-opentargets.json",
+      "provider": "opentargets",
+      "input_sha256": "2d29acbb10a8f32c03d5e0ff4860f0ef7e3cae3293c56c3b9b63077ca961dbd1",
+      "previous_input_sha256": "af5662a57cc964dadec03b9601af901d253d9e13f32340eafaca91f7f17d6f9d",
+      "response_sha256": "39428ebc6794cd529fd7446fbb896d05827b39eb06d4eaf90a46e8c81912100c",
+      "previous_response_sha256": "39428ebc6794cd529fd7446fbb896d05827b39eb06d4eaf90a46e8c81912100c",
+      "processed_at": "2026-11-14T03:14:22.023Z",
+      "retrieved_at": "2026-11-14T03:14:22.023Z",
+      "request_scope_sha256": "691a0c348bc45aee5e50bc8491dac4aef24d2de0d6d844e84985d6775a144229",
+      "request": {
+        "url": "https://api.platform.opentargets.org/api/v4/graphql",
+        "method": "POST",
+        "body": "{\"query\":\"query GeneAnnotations($id: String!) {\\n  meta { dataVersion { year month iteration } }\\n  target(ensemblId: $id) {\\n    id approvedSymbol\\n    associatedDiseases(enableIndirect: false, page: { index: 0, size: 20 }) {\\n      count rows { disease { id name } score datasourceScores { id score } }\\n    }\\n  }\\n}\",\"variables\":{\"id\":\"ENSG00000165029\"}}"
+      },
+      "provider_release": "26.09",
+      "provider_version": {
+        "year": "26",
+        "month": "09",
+        "iteration": null
+      },
+      "immutable_release": null,
+      "coverage": {
+        "total_reported": 1797,
+        "retained": 20,
+        "truncated": true,
+        "scope": "First 20 direct target–disease associations (enableIndirect=false); not a comprehensive disease or literature search"
+      },
+      "reuse": {
+        "license": "CC0-1.0",
+        "terms_url": "https://platform-docs.opentargets.org/licence",
+        "attribution": "Open Targets Platform. Direct target–disease association summaries with provider-defined scores."
+      },
+      "record_count": 20,
+      "not_returned_count": 0,
+      "unchanged_record_count": 20,
+      "changed_records": [],
+      "exact_graph_matches": [
+        {
+          "key": "disease_association:ENSG00000165029:MONDO_0004975",
+          "status": "represented",
+          "entity_ids": [
+            "disease-alzheimers",
+            "gene-abca1",
+            "protein-abca1"
+          ],
+          "claim_ids": [
+            "claim-abca1-opentargets-association"
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "input": "abca1-reactome.json",
+      "provider": "reactome",
+      "input_sha256": "3a11a53524ec46dbd4b9e7b841acd62cb99cc3c29d23c02753d9acf9918a05b2",
+      "previous_input_sha256": "fa43f2b7d37da3f9dae276b042b4672f0e494773a399c7043c819b5fc98c8416",
+      "response_sha256": "06aa17f8a26e14bf818df483ac21533d3c8fe62f85645e2019bf67a68c3b84d7",
+      "previous_response_sha256": "06aa17f8a26e14bf818df483ac21533d3c8fe62f85645e2019bf67a68c3b84d7",
+      "processed_at": "2026-11-14T03:14:22.740Z",
+      "retrieved_at": "2026-11-14T03:14:22.740Z",
+      "request_scope_sha256": "cce5e742a284a77cee5355e0649c6312f7edc18599ee4f18abd319341da8544a",
+      "request": {
+        "url": "https://reactome.org/ContentService/data/mapping/UniProt/O95477/pathways?species=9606",
+        "method": "GET",
+        "body": null
+      },
+      "provider_release": null,
+      "provider_version": null,
+      "immutable_release": null,
+      "coverage": {
+        "total_reported": null,
+        "retained": 4,
+        "truncated": null,
+        "scope": "Human lower-level pathways mapped from the declared UniProt accession; no molecular-state inference"
+      },
+      "reuse": {
+        "license": "CC0-1.0",
+        "terms_url": "https://reactome.org/license",
+        "attribution": "Reactome Pathway Database. Database identifier mappings, not original experimental findings."
+      },
+      "record_count": 4,
+      "not_returned_count": 0,
+      "unchanged_record_count": 4,
+      "changed_records": [],
+      "exact_graph_matches": [
+        {
+          "key": "pathway_mapping:O95477:R-HSA-9029569",
+          "status": "represented",
+          "entity_ids": [
+            "gene-abca1",
+            "pathway-cholesterol-efflux",
+            "protein-abca1"
+          ],
+          "claim_ids": [
+            "claim-abca1-cholesterol-pathway"
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "input": "abca1-uniprot.json",
+      "provider": "uniprot",
+      "input_sha256": "9076a6af35d38fc6b711b7858a1eec03e182cadae318fa51995b2911529f23fc",
+      "previous_input_sha256": "10a81cfc39f2740d23334673ae20aa2e689eec1f586a93261a52d5c30683e276",
+      "response_sha256": "cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb",
+      "previous_response_sha256": "cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb",
+      "processed_at": "2026-11-14T03:14:20.894Z",
+      "retrieved_at": "2026-11-14T03:14:20.894Z",
+      "request_scope_sha256": "b53f0d0322e3fbd9e9e0ac588dacdf3af7f76261ba6fd7bbc8c47c8dc8ba2eb1",
+      "request": {
+        "url": "https://rest.uniprot.org/uniprotkb/O95477.json",
+        "method": "GET",
+        "body": null
+      },
+      "provider_release": "2026_04",
+      "provider_version": null,
+      "immutable_release": null,
+      "coverage": {
+        "total_reported": 1,
+        "retained": 1,
+        "truncated": false,
+        "scope": "Single declared human protein entry"
+      },
+      "reuse": {
+        "license": "CC-BY-4.0",
+        "terms_url": "https://rest.uniprot.org/help/license",
+        "attribution": "The UniProt Consortium, UniProtKB. Identity metadata only; CC BY 4.0."
+      },
+      "record_count": 1,
+      "not_returned_count": 0,
+      "unchanged_record_count": 1,
+      "changed_records": [],
+      "exact_graph_matches": [
+        {
+          "key": "protein_identity:O95477",
+          "status": "represented",
+          "entity_ids": [
+            "gene-abca1",
+            "protein-abca1"
+          ],
+          "claim_ids": [
+            "claim-abca1-encodes"
+          ],
+          "source_ids": []
+        }
+      ]
+    },
+    {
+      "input": "openalex.json",
+      "provider": "OpenAlex",
+      "input_sha256": "49450bc0d8a60e619ed6623a65c8a0efa6c37e6e317a0897bf27b837f304fc15",
+      "previous_input_sha256": "4ca941751f1568b4eadd56253af16a085a5e549255cb2b1c42f6a00620e966de",
+      "response_sha256": "72e3be28473be49e2634b202d5394a90e20c7f764865cc3b486c2f135c9233eb",
+      "previous_response_sha256": "1e3907e7f99d10cf4b97e77fda52532336bb61ac683549b2129e91a30da93033",
+      "processed_at": "2026-11-14T03:14:22.000Z",
+      "retrieved_at": "2026-11-14T03:14:22.000Z",
+      "request_scope_sha256": "4bcb798b2a396a6f585298a3149ef94d2e25d06120c9e1f3fccc25695b3781e2",
+      "request": {
+        "url": "https://api.openalex.org/works?search.title_and_abstract=ABCA1+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+        "query": "ABCA1 AND APOE"
+      },
+      "provider_release": null,
+      "provider_version": null,
+      "immutable_release": null,
+      "coverage": {
+        "provider_result_count": 1180,
+        "retained_candidates": 5,
+        "duplicate_record_count": 0
+      },
+      "reuse": {
+        "metadata_license": "CC0-1.0",
+        "metadata_terms_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "Bibliographic metadata from OpenAlex (OurResearch), CC0; article content has separate reuse terms."
+      },
+      "record_count": 5,
+      "not_returned_count": 0,
+      "unchanged_record_count": 0,
+      "changed_records": [
+        {
+          "key": "literature:openalex:W1989076425",
+          "change": "changed",
+          "changed_fields": [
+            "provider_updated_at"
+          ]
+        },
+        {
+          "key": "literature:openalex:W2013111251",
+          "change": "changed",
+          "changed_fields": [
+            "provider_updated_at"
+          ]
+        },
+        {
+          "key": "literature:openalex:W2049660003",
+          "change": "changed",
+          "changed_fields": [
+            "provider_updated_at"
+          ]
+        },
+        {
+          "key": "literature:openalex:W2140793104",
+          "change": "changed",
+          "changed_fields": [
+            "provider_updated_at"
+          ]
+        },
+        {
+          "key": "literature:openalex:W2157346855",
+          "change": "changed",
+          "changed_fields": [
+            "provider_updated_at"
+          ]
+        }
+      ],
+      "exact_graph_matches": [
+        {
+          "key": "literature:openalex:W2013111251",
+          "status": "represented",
+          "entity_ids": [],
+          "claim_ids": [],
+          "source_ids": [
+            "source-wahrle-2004"
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This is a provenance/checkpoint summary, not a full normalized intake packet or a scientific dataset update.",
+    "Full normalized captures and rendered reports remain in ignored data/staging/api-review-2026-11-14. Historical local archives are not guaranteed to exist in a fresh checkout.",
+    "Input-file and original-response digests are distinct. Current and previous response hashes are retained without reserializing or upgrading older provenance.",
+    "Provider terms are carried from the adapter contract; these requests do not establish a new independent terms/publication-status review.",
+    "All 58 biomedical records are unchanged; five OpenAlex records differ only in provider_updated_at. These are not new experimental findings.",
+    "Seven structural matches identify six existing database claims and one existing publication source; matches do not establish scope, support or approval.",
+    "The graph, broad numerical references and browser-local experimental-data boundary remain unchanged."
+  ]
+}
