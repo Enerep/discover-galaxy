@@ -1,6 +1,6 @@
 # Contributing
 
-Discovery Galaxy helps researchers interpret processed human RNA-seq results and explore an Alzheimer's-focused evidence library. The public research preview currently contains 40 entities, 41 cited claims and a separate broad Reactome analysis reference. Start with [README.md](README.md), [checkpoints](docs/checkpoints.md) and the relevant [architecture](docs/architecture.md) or [evidence policy](docs/evidence-policy.md). Coding agents must also read [AGENTS.md](AGENTS.md).
+Discovery Galaxy helps researchers interpret processed human RNA-seq results and explore an Alzheimer's-focused evidence library. The public research preview currently contains 45 entities, 49 cited claims and a separate broad Reactome analysis reference. Start with [README.md](README.md), [checkpoints](docs/checkpoints.md) and the relevant [architecture](docs/architecture.md) or [evidence policy](docs/evidence-policy.md). Coding agents must also read [AGENTS.md](AGENTS.md).
 
 ## Choose a useful first contribution
 
@@ -8,7 +8,7 @@ Discovery Galaxy helps researchers interpret processed human RNA-seq results and
 | --- | --- | --- |
 | Input compatibility | Reproduce a CSV/TSV parsing problem using a small synthetic table, then fix it without changing the eligible background or supplied statistics. | Column names, minimal input, expected/observed behavior and the relevant parser checks. |
 | Accessible exploration | Try **Analyze results → Try example**, follow a gene into Explore, and return to the applied result using keyboard, touch or List mode. | Browser, viewport, exact interaction and the observed problem; screenshots when useful. |
-| Scientific evidence | Extract one finding from the [six staged publications](data/alzheimers/candidate-coverage.md), preserving its gene/protein identity and assay scope. | Original source and inspected locator, model/species, readout, replicate units, unknowns, access/reuse terms and the proposed draft record. |
+| Scientific evidence | Extract one finding from the [five staged publications](data/alzheimers/candidate-coverage.md), preserving its gene/protein identity and assay scope. | Original source and inspected locator, model/species, readout, replicate units, unknowns, access/reuse terms and the proposed draft record. |
 
 A useful bug report or precise source proposal is also a contribution. Use the [bug report](https://github.com/Enerep/discover-galaxy/issues/new?template=bug_report.md) or [evidence proposal](https://github.com/Enerep/discover-galaxy/issues/new?template=evidence_proposal.md) template. Keep private research tables, personal information and credentials out of public reports; use a minimal synthetic reproduction where possible.
 
@@ -47,6 +47,8 @@ Vite normally starts on port 5173; use the URL it reports. No scientific API, ba
 | Dependencies | Inspect package/lockfile changes, run `npm run check:dependencies -- --metadata` with registry access and `npm audit`, and follow the exact-pin, release-age and script-disabled [security workflow](docs/npm-security.md). |
 
 `npm run preview` serves a production build. There is no lint command. Report which checks actually ran and any access or environment limits; do not describe a successful build as browser or scientific verification.
+
+[GitHub Actions](docs/ci.md) runs the shared project checks automatically on MRs targeting `master`. Locally, `npm run check:ci` runs them with Node 24, npm 11.9.0 and Python 3 on Linux/macOS/WSL; `npm run check:ci:security` separately runs current npm advisories and pinned IOC feeds with network access. Browser checks remain explicit. CI never calls live scientific providers, publishes snapshots or creates source approvals. For staged API changes, attach an offline [intake review](tools/curation/README.md#review-staged-api-updates) before preparing the separate source/data diff.
 
 `npm run validate:data` permits valid draft records and reports review warnings. `npm run validate:release` deliberately rejects the current development snapshot because scientific approval and source/release checks remain outstanding. The 20–50 entity size target is already met; never edit review fields merely to make the release gate pass.
 

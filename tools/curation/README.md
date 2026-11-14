@@ -19,6 +19,31 @@ The [generated coverage table](../../data/alzheimers/candidate-coverage.md) incl
 
 This targeted lookup is **separate from the OpenAlex adapter below**. Neither a retrieved web page nor this coverage validator establishes that the API adapter completed a live request. Draft pathway annotations may retain an explicitly unknown release with inspected record/participant locators and access dates; do not claim an immutable upstream snapshot. Resolve gene/protein/state meanings and inspect original sources before adding experimental claims. Independent scientific review is a deferred future milestone; no tooling may fabricate its attestations.
 
+## Review staged API updates
+
+`intake-review.ts` compares **full normalized packets** with the current graph and, optionally, earlier packets for the same exact request. It is offline and writes a Markdown report to stdout; `--format json` supplies the structured report. It never fetches providers, follows paths embedded in packets, changes the graph or creates source approvals.
+
+```sh
+mkdir -p data/staging
+
+# Capture an explicit identity using an existing adapter.
+npm run --silent curation:annotations -- --provider uniprot --symbol APOE --ensembl ENSG00000130203 --uniprot P02649 > data/staging/apoe-uniprot.json
+
+# Compare to the graph; write a report outside the hosted snapshot.
+npm run --silent curation:review -- --packet data/staging/apoe-uniprot.json > data/staging/apoe-review.md
+
+# Add a legitimately retained earlier packet for a content/provenance diff.
+npm run --silent curation:review -- --packet data/staging/apoe-uniprot.json --previous /path/to/previous-apoe-uniprot.json --format json > data/staging/apoe-review.json
+```
+
+Repeat `--packet` and `--previous` for a bounded batch of up to 16 files in total, each no larger than 5 MiB. `--snapshot` selects an explicit development-valid snapshot; the default is `data/alzheimers/dataset.json`. Previous packets must match a current packet's provider, complete declared identity and exact request scope. The tool accepts `biomedical-annotations-2` and `openalex-candidates-0.2.0` only. The older `apoe-abca1-intake.json` is a selected-record manifest whose packet entries omit full records; it is explicitly rejected rather than treating its ignored local paths as available inputs or upgrading historical provenance.
+
+The report separates record changes from retrieval/release/coverage/terms changes. Current rows are `not_compared`, `added`, `changed` or `unchanged`; earlier rows absent from the bounded response are `not_returned`, never presumed deleted or disproven. Literature rows retain stable OpenAlex identity when DOI/PMID metadata changes. Duplicate metadata has explicit previous/current values and diffs, without creating additional experiments; changed group representatives require manual reconciliation. Input-packet SHA-256 is distinct from the retained raw-response digest. Unknown releases and null OpenAlex raw digests stay unknown; string version components and provider-defined scores retain their meaning.
+
+Graph references are conservative **identifier matches**, not scientific reconciliation or approval. Human gene/product identities use exact external identifiers and retain explicit species boundaries; Reactome rows match only existing protein participation claims, without transferring gene annotations or inferring molecular states. Open Targets matches only provider aggregates with exact target/disease IDs, separately from variant findings. OpenAlex matches publication identifiers and keeps duplicates/ambiguous matches visible; metadata does not become an experiment or establish independent replication.
+
+Inspect the report, exact source records, original experiments where relevant, reuse terms and publication status before preparing a separate versioned dataset diff. Every report remains `unreviewed` / `not_in_graph`, including when an identifier already matches the graph. This command does not replace the owner’s deferred independent scientific-release review.
+
 ## Gene and protein API intake
 
 `biomedical-intake.ts` makes one fixed, bounded provider request for an explicitly identified human gene/product, or normalizes a saved JSON response. It writes a staging packet to stdout and never modifies the scientific snapshot, invokes a browser request or receives uploaded experiment data. No new npm dependency, API key, server or install hook is required.
