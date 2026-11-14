@@ -134,7 +134,7 @@ After producing `result` in the Node example above, export both reports:
 
 ```js
 const {analyzeThresholdSensitivity, groupOverlappingPathways} = await import('./apps/web/src/lib/experiment-robustness.ts');
-const input = {rows: result.rows, backgroundGenes: result.backgroundGenes, pathways: pathways.pathways, thresholds: result.thresholds, baseline: result.pathways};
+const input = {rows: result.rows, backgroundGenes: result.backgroundGenes, unannotatedGenes: result.unannotatedGenes, pathways: pathways.pathways, thresholds: result.thresholds, baseline: result.pathways};
 await writeFile('/tmp/mayo-robustness.json', JSON.stringify({sensitivity: analyzeThresholdSensitivity(input), grouping: groupOverlappingPathways(input), baseline: result.pathways}));
 ```
 
@@ -147,3 +147,63 @@ This optional oracle requires the existing SciPy environment, installs nothing a
 ## Rejected AD validation candidate
 
 The GSE53697 reanalysis at [CyrilleMesue, commit a66062f](https://github.com/CyrilleMesue/differentially-expressed-genes-in-Alzheimers/tree/a66062fb6401a1796daeea5bd60b2841d9d0f411) supplies `output_files/DGE/Deseq2-results-all.tsv`, 1,857,651 bytes, SHA-256 `37b73fbb9f44c6b525f34e45e9779ddada493191d3959a42ba64e4e5091f71e8`. It has 15,943 rows, including 99 names rejected by current symbol syntax, with date-like strings such as `7-Sep` and other historic/nonstandard labels. It was not used for enrichment validation; no guesses, automatic repairs or dropped-row substitute were made. [GEO GSE53697](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE53697) describes 17 samples; the reanalysis's retained metadata has 13 (5 control, 8 AD). These are distinct source scopes, not interchangeable sample counts.
+
+## Real APOE-positive workflow: GSE147352
+
+A full public human bulk-brain table now exercises **Possible explanations** with a real selected APOE result at the unchanged gene cutoffs (padj ≤0.05; |log₂FC| ≥1). This is a **GBM-versus-normal portfolio reanalysis**, not an Alzheimer's experiment or a reproduction of the original authors' differential-expression analysis. A bounded search of public AD tables did not find a qualifying default-cutoff APOE result; thresholds and rows were not changed to create one. MAYO remains the real negative control. A positive software branch does not mean a validated biological explanation.
+
+The [machine-readable validation manifest](../data/validation/gse147352-gbm.json) records immutable URLs, byte digests, inspected source locations, context, numerical expectations and limits. Source: [Katarzyna Zielińska's reanalysis](https://github.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2/tree/51bfb386dccb6c62e31af69c2da2fc46759d519e), commit `51bfb386dccb6c62e31af69c2da2fc46759d519e`. Its full `DESeq2_results_GBM_vs_Healthy.csv` is 4,438,050 bytes, SHA-256 `5aa64640aafcada36a12f1207860c451f912752de2fc23f1644a67c2b0dd4dc7`. The original CSV also imports directly through its unnamed NCBI row-name column; its parsed rows equal the conversion. The [lossless helper](../tools/analysis/prepare-gbm-validation.py) copies all original NCBI Gene IDs, fold-change and padj strings, including NA, into three columns for the independent oracle: 1,652,144 bytes, SHA-256 `3ce64b13f1ad2365b4cb2ba0eb9aff562f69b93c9b75b4e6758e52531a879194`. No identity substitution, gene filtering or statistical recalculation occurs.
+
+[GEO GSE147352](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE147352) records 85 GBM, 18 lower-grade glioma and 15 normal-brain samples. The inspected reanalysis script excludes LGG, filters count row sums ≥10 and fits DESeq2 `~ Condition` for GBM relative to Healthy. A separate filter-only audit of the posted count matrix using the exact 85+15 GEO columns reproduced the **same 37,101-gene result family**. This supports full-table scope without rerunning differential expression. The script does not explicitly show export of the separately posted full CSV; its selected APOE row matches the separately posted annotated subset. The source's `org.Hs.eg.db` first-match display mappings are not adopted.
+
+The original cohort publication is [Huang et al., Molecular Cell (2021)](https://doi.org/10.1016/j.molcel.2021.01.015), PMID 33539787, [PMC7979509](https://pmc.ncbi.nlm.nih.gov/articles/PMC7979509/). Inspected methods link Northwestern NSTB glioma and NIH NeuroBioBank normal tissue to GSE147352. These are sample counts, not independently established unique-donor counts. Original cohort processing and the portfolio's NCBI-named GRCh38.p13 count-matrix generation must not be conflated: the latter pipeline/version was not reconstructed. DESeq2 version, covariate adjustment beyond Condition and independent review of the reanalysis are not established. Tumor composition, collection/processing, age and other confounding limit interpretation. Repository MIT terms do not establish underlying cohort redistribution rights; full experiment/count tables stay outside Git and hosting.
+
+| Check | Observed result |
+| --- | --- |
+| Input | 37,101 unique NCBI Gene IDs; all rows retained |
+| Incomplete statistics | 1,441 padj NA rows retained outside the eligible background |
+| Background / default selected | N=35,660 / n=13,027 |
+| HGNC mapping | 27,880 mapped, 9,221 unresolved, no collisions (all input rows) |
+| Reactome-mapped eligible genes / tested family | 10,800 / 2,717 pathways, including zero-hit pathways |
+| Pathway BH ≤0.05 | 211 |
+| APOE / original ID | `APOE` / `348` |
+| Supplied APOE log₂FC / padj | +2.2201675785994 / 4.3996355993083e-17 |
+| Lipoprotein pathway R-HSA-174824 | K=73, k=29; p=0.3248527419423045; q=0.909762354831971 |
+| Independent SciPy comparison | All 2,717 pathways' N/n/K/k, overlaps, p and BH agree; maximum absolute/relative error 1.22e-10 / 5.92e-10 |
+
+The lipoprotein pathway is **not significant** at pathway BH ≤0.05. The report is gated by selected APOE and applied observational/bulk-brain context, not by pathway significance. Its existing Mathys/Murphy AD papers remain published interpretation context; they neither explain this GBM result nor become independent replication or new graph findings. The two proposed contributions remain nonexclusive, with no winner. This case checks import, calculation, provenance and interaction behavior; it does not validate the source model, mechanism, proposed experiment or usefulness to a researcher.
+
+### Reproduce locally
+
+Retrieve the immutable source URL recorded in the manifest into an external directory; the commands below do not fetch data or install dependencies.
+
+```sh
+python3 tools/analysis/prepare-gbm-validation.py --input /tmp/DESeq2_results_GBM_vs_Healthy.csv --output /tmp/gbm-validation.csv
+python3 tools/analysis/prepare-gbm-validation.py --input /tmp/DESeq2_results_GBM_vs_Healthy.csv --output /tmp/gbm-validation.csv --check
+npm run reference:check
+```
+
+Run from the repository root with the declared NCBI namespace and actual context:
+
+```sh
+node --experimental-strip-types --input-type=module <<'JS'
+import {readFile, writeFile} from 'node:fs/promises';
+import {parseExperiment} from './apps/web/src/lib/experiment.ts';
+import {validateGeneIdentityReference} from './apps/web/src/lib/gene-identifiers.ts';
+import {runExperimentAnalysis, validatePathwayReference} from './apps/web/src/lib/experiment-analysis.ts';
+const manifest = JSON.parse(await readFile('data/validation/gse147352-gbm.json', 'utf8'));
+const table = parseExperiment(await readFile('/tmp/gbm-validation.csv', 'utf8'), 'gbm-validation.csv');
+const genes = validateGeneIdentityReference(JSON.parse(await readFile('data/reference/hgnc-ncbi-gene.json', 'utf8')));
+const pathways = validatePathwayReference(JSON.parse(await readFile('data/reference/reactome-pathways.json', 'utf8')));
+const result = runExperimentAnalysis(table, {comparison: manifest.comparison, context: manifest.context,
+  allTestedGenes: true, ncbiGeneIdsConfirmed: true, allowUnresolvedIds: true, thresholds: manifest.thresholds}, pathways, genes);
+await writeFile('/tmp/gbm-pathways.json', JSON.stringify(result.pathways));
+JS
+```
+
+```sh
+python3 tools/analysis/validate-results.py --input /tmp/gbm-validation.csv --results /tmp/gbm-pathways.json --sha256 3ce64b13f1ad2365b4cb2ba0eb9aff562f69b93c9b75b4e6758e52531a879194 --identifier-type ncbi_gene
+python3 tools/apoe-explanations-smoke.py --url http://127.0.0.1:4173/ --real-table /tmp/gbm-validation.csv --real-manifest data/validation/gse147352-gbm.json --mayo-table /tmp/mayo-validation.csv
+```
+
+The NCBI reference uses the same pinned raw HGNC bytes as Ensembl, preserving all 44,997 identities with 44,382 assigned cross-references and 615 nulls. New normalized digest: `ade9370607ec7c0cca9d5993bd8b8b007ba2027f109502bae3512a04721b1284`. Its [standard-library checker](../tools/analysis/prepare-ncbi-identifiers.py) is included in `reference:check`. Only exact positive numeric strings are accepted; a required declaration confirms NCBI Gene/Entrez IDs rather than row indices, including for programmatic analysis. Unresolved/ambiguous IDs require separate acknowledgement, retain original IDs and eligible N/n, and are excluded from all annotation/member/sensitivity/grouping paths. Regression cases cover literal Reactome numeric viral labels `6`/`8`, which must never be treated as annotations of unresolved human IDs. Existing symbol matching, Ensembl asset, Reactome reference and curated graph bytes remain unchanged.

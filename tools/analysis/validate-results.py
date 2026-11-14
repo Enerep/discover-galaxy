@@ -2,7 +2,7 @@
 
 Optional local QA only: requires an existing SciPy, installs nothing, fetches
 nothing and is not part of the application runtime. Input is a normalized
-gene/log2FoldChange/padj CSV/TSV, with symbols or human Ensembl gene IDs.
+gene/log2FoldChange/padj CSV/TSV, with symbols, human Ensembl or NCBI Gene IDs.
 """
 
 import argparse
@@ -19,7 +19,7 @@ def main():
     parser.add_argument('--input', type=Path, required=True)
     parser.add_argument('--results', type=Path, required=True)
     parser.add_argument('--sha256', required=True, help='Expected normalized input bytes.')
-    parser.add_argument('--identifier-type', choices=['symbol', 'ensembl'], required=True)
+    parser.add_argument('--identifier-type', choices=['symbol', 'ensembl', 'ncbi_gene'], required=True)
     parser.add_argument('--gene-fdr', type=float, default=0.05)
     parser.add_argument('--min-log2fc', type=float, default=1)
     args = parser.parse_args()
@@ -30,22 +30,26 @@ def main():
     assert len(raw) <= 5 * 1024 * 1024 and hashlib.sha256(raw).hexdigest() == args.sha256, 'Input digest/size differs.'
     records = list(csv.DictReader(raw.decode().splitlines(), delimiter='\t' if args.input.suffix == '.tsv' else ','))
     index = {}
-    if args.identifier_type == 'ensembl':
-        for hgnc, symbol, ensembl in json.loads((root / 'data/reference/hgnc-ensembl.json').read_text())['genes']:
-            if ensembl:
-                index.setdefault(ensembl, []).append((hgnc, symbol))
-    identifiers, seen, stable_seen = [], set(), set()
+    if args.identifier_type != 'symbol':
+        filename = 'hgnc-ensembl.json' if args.identifier_type == 'ensembl' else 'hgnc-ncbi-gene.json'
+        for hgnc, symbol, identifier in json.loads((root / 'data/reference' / filename).read_text())['genes']:
+            if identifier:
+                index.setdefault(identifier, []).append((hgnc, symbol))
+    identifiers, unannotated, seen, stable_seen = [], set(), set(), set()
     for row in records:
         original = row['gene'].strip()
         canonical = original
-        if args.identifier_type == 'ensembl':
-            assert re.fullmatch(r'ENSG[0-9]{11}(\.[0-9]+)?', original)
-            stable = original.split('.')[0]
+        if args.identifier_type != 'symbol':
+            pattern = r'ENSG[0-9]{11}(\.[0-9]+)?' if args.identifier_type == 'ensembl' else r'[1-9][0-9]{0,11}'
+            assert re.fullmatch(pattern, original)
+            stable = original.split('.')[0] if args.identifier_type == 'ensembl' else original
             assert stable not in stable_seen, 'Duplicate stable input.'
             stable_seen.add(stable)
             matches = index.get(stable, [])
             if len(matches) == 1:
                 canonical = matches[0][1]
+            else:
+                unannotated.add(canonical)
         assert canonical not in seen, 'Duplicate gene identity.'
         seen.add(canonical)
         values = [row[key].strip() for key in ['log2FoldChange', 'padj']]
@@ -59,7 +63,7 @@ def main():
     sets = json.loads((root / 'data/reference/reactome-pathways.json').read_text())['pathways']
     expected = []
     for pathway in sets:
-        members = background.intersection(pathway['genes'])
+        members = background.difference(unannotated).intersection(pathway['genes'])
         if members:
             overlap = sorted(members.intersection(selected))
             expected.append((pathway['id'], len(members), overlap, float(hypergeom.sf(len(overlap) - 1, len(background), len(members), len(selected)))))

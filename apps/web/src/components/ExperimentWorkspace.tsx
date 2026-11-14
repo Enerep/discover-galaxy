@@ -54,6 +54,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
   const [identifierColumn, setIdentifierColumn] = useState('');
   const [mapping, setMapping] = useState<GeneMappingReport | null>(null);
   const [allowUnresolvedIds, setAllowUnresolvedIds] = useState(false);
+  const [ncbiGeneIdsConfirmed, setNcbiGeneIdsConfirmed] = useState(false);
   const [pendingTable, setPendingTable] = useState<ExperimentTable | null>(null);
   const [analysis, setAnalysis] = useState<ExperimentAnalysis | null>(null);
   const [comparison, setComparison] = useState('');
@@ -120,12 +121,13 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
   const selectedPathway = (pathwayId ? pathwayLookup.get(pathwayId) : null) ?? filtered[0];
   const selectedGenes = useMemo(() => new Set(analysis?.selected.map(({ gene }) => gene) ?? []), [analysis]);
   const eligibleGenes = useMemo(() => new Set(analysis?.backgroundGenes ?? []), [analysis]);
+  const unannotatedGenes = useMemo(() => new Set(analysis?.unannotatedGenes ?? []), [analysis]);
   const eligibleMembers = useMemo(() => {
     const reference = analysis?.reference.pathways.find(({ id }) => id === selectedPathway?.id);
     const members = new Set(reference?.genes ?? []);
-    return (analysis?.rows ?? []).filter(({ gene }) => eligibleGenes.has(gene) && members.has(gene))
+    return (analysis?.rows ?? []).filter(({ gene }) => eligibleGenes.has(gene) && !unannotatedGenes.has(gene) && members.has(gene))
       .sort((a, b) => Number(selectedGenes.has(b.gene)) - Number(selectedGenes.has(a.gene)) || a.gene.localeCompare(b.gene, 'en-US'));
-  }, [analysis, selectedPathway?.id, selectedGenes, eligibleGenes]);
+  }, [analysis, selectedPathway?.id, selectedGenes, eligibleGenes, unannotatedGenes]);
   const questions = useMemo(() => analysis && selectedPathway ? buildExperimentQuestions(snapshot, analysis, selectedPathway.id) : [], [snapshot, analysis, selectedPathway]);
   const curatedGenes = useMemo(() => new Set(snapshot.entities.filter(({ type }) => type === 'gene').map(({ label }) => label)), [snapshot]);
   const changed = analysis && (pendingTable !== analysis.table || comparison.trim() !== analysis.comparison
@@ -139,7 +141,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
     setContext(normalizeExperimentContext());
     const sequence = ++readSequence.current;
     setBusy('reading'); setError(''); setPendingTable(null); setAllTestedGenes(false);
-    setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
+    setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); setNcbiGeneIdsConfirmed(false); geneReference.current = null;
     let text = '';
     try {
       if (file.size > MAX_EXPERIMENT_BYTES) throw new Error('Use a results file no larger than 5 MiB.');
@@ -161,7 +163,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
   function chooseColumn(value: string) {
     if (!columnInput) return;
     setIdentifierColumn(value); setError(''); setPendingTable(null); setAllTestedGenes(false);
-    setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
+    setMapping(null); setAllowUnresolvedIds(false); setNcbiGeneIdsConfirmed(false); geneReference.current = null;
     if (value === '') return;
     try { setPendingTable(parseExperiment(columnInput.text, columnInput.filename, { identifierColumn: Number(value) })); }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to read this identifier column.'); }
@@ -172,9 +174,10 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
     if (!pendingTable || busy) return;
     setBusy('analyzing'); setError('');
     try {
+      if (pendingTable.identifierType === 'ncbi_gene' && !ncbiGeneIdsConfirmed) throw new Error('Confirm that the numeric identifiers are NCBI Gene IDs (Entrez), not row numbers.');
       let identities: GeneIdentityReference | undefined;
-      if (pendingTable.identifierType === 'ensembl') {
-        identities = geneReference.current?.table === pendingTable ? geneReference.current.reference : await loadGeneIdentityReference();
+      if (pendingTable.identifierType !== 'symbol') {
+        identities = geneReference.current?.table === pendingTable ? geneReference.current.reference : await loadGeneIdentityReference(pendingTable.identifierType);
         geneReference.current = { table: pendingTable, reference: identities };
         const report = resolveGeneIdentifiers(pendingTable, identities);
         pendingMappingFocus.current = report.collisionCount > 0 || (report.unresolvedCount > 0 && !allowUnresolvedIds);
@@ -183,7 +186,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
         if (report.unresolvedCount && !allowUnresolvedIds) return;
       }
       const reference = await loadPathwayReference();
-      const result = runExperimentAnalysis(pendingTable, { comparison, context, allTestedGenes, allowUnresolvedIds,
+      const result = runExperimentAnalysis(pendingTable, { comparison, context, allTestedGenes, allowUnresolvedIds, ncbiGeneIdsConfirmed,
         thresholds: { adjustedPMax: Number(geneFdr), minAbsLog2FoldChange: Number(minimumFoldChange) } }, reference, identities);
       applyAnalysis(result);
     } catch (cause) {
@@ -222,7 +225,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
     if (pendingTable?.isSynthetic) setComparison('');
     setContext(normalizeExperimentContext());
     setPendingTable(null); setAnalysis(null); setAllTestedGenes(false); setBusy(null); setError('');
-    setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); geneReference.current = null;
+    setColumnInput(null); setIdentifierColumn(''); setMapping(null); setAllowUnresolvedIds(false); setNcbiGeneIdsConfirmed(false); geneReference.current = null;
     setGroupOverlaps(false); setSensitivityOpen(false);
     if (fileInput.current) fileInput.current.value = '';
     onResults(null); fileInput.current?.focus();
@@ -277,6 +280,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
           </select></label>
         </div>
       </details>
+      {pendingTable?.identifierType === 'ncbi_gene' && <label className="experiment-background"><input type="checkbox" required checked={ncbiGeneIdsConfirmed} onChange={(event) => setNcbiGeneIdsConfirmed(event.target.checked)} disabled={busy !== null} />These are NCBI Gene IDs (Entrez), not row numbers</label>}
       <label className="experiment-background"><input type="checkbox" required checked={allTestedGenes} onChange={(event) => setAllTestedGenes(event.target.checked)} />This table contains all tested genes</label>
       <div className="experiment-run-actions"><button className="primary-button" type="submit" disabled={!pendingTable || busy !== null}>
         {busy === 'analyzing' ? 'Analyzing…' : changed ? 'Apply changes' : 'Analyze results'}<Icon name="arrow" size={16} />
@@ -288,8 +292,8 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
         <GeneMappingDetails key={pendingTable?.filename} report={mapping} />
       </div>}
       <details className="experiment-input-details"><summary>Input format and privacy</summary>
-        <p id="experiment-format">CSV or TSV with one human gene symbol or Ensembl gene ID per row and columns <code>gene</code>, <code>log2FoldChange</code> and <code>padj</code>. Choose the identifier column if several are present. Include the full tested table, including nonsignificant genes. Maximum 5 MiB and 50,000 rows.</p>
-        <p>Ensembl IDs use a pinned HGNC cross-reference, with ambiguous/unmapped IDs reported and duplicate gene mappings blocked. Symbol inputs keep exact spelling. Rows missing either statistic remain in the input but are excluded from enrichment. Input species and annotation release are not verified.</p>
+        <p id="experiment-format">CSV or TSV with one human gene symbol, Ensembl gene ID or NCBI Gene ID per row and columns <code>gene</code>, <code>log2FoldChange</code> and <code>padj</code>. Choose the identifier column if several are present. Include the full tested table, including nonsignificant genes. Maximum 5 MiB and 50,000 rows.</p>
+        <p>Ensembl and NCBI Gene IDs use pinned HGNC cross-references, with ambiguous/unmapped IDs reported and duplicate gene mappings blocked. NCBI Gene IDs are positive whole-number identifiers (Entrez IDs), not row numbers. Symbol inputs keep exact spelling. Rows missing either statistic remain in the input but are excluded from enrichment. Input species and annotation release are not verified.</p>
         <p>File contents are processed on this device and stay in this tab. They are not uploaded or automatically saved. The CSV template contains synthetic values and demonstrates the format only.</p>
       </details>
     </form>

@@ -53,7 +53,7 @@ export function useExperimentRobustness(analysis: ExperimentAnalysis | null) {
       if (job.pending.has(kind) || job.complete.has(kind)) return;
       job.pending.add(kind);
       setState((current) => ({ ...(current.owner === analysis ? current : stateFor(analysis)), [kind]: { status: 'running', result: null, error: '' } }));
-      const message: RobustnessRequest = { kind, input: { rows: analysis.rows, backgroundGenes: analysis.backgroundGenes, pathways: analysis.reference.pathways, thresholds: analysis.thresholds, baseline: analysis.pathways } };
+      const message: RobustnessRequest = { kind, input: { rows: analysis.rows, backgroundGenes: analysis.backgroundGenes, unannotatedGenes: analysis.unannotatedGenes, pathways: analysis.reference.pathways, thresholds: analysis.thresholds, baseline: analysis.pathways } };
       job.worker.postMessage(message);
     } catch {
       job?.pending.delete(kind);

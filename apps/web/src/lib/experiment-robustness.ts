@@ -7,6 +7,8 @@ import type { ExperimentRow, ExperimentThresholds } from './experiment.ts';
 export interface RobustnessInput {
   rows: ExperimentRow[];
   backgroundGenes: string[];
+  /** Eligible unresolved identifiers retain their place in N but cannot match reference labels. */
+  unannotatedGenes?: string[];
   pathways: PathwayGeneSet[];
   thresholds: ExperimentThresholds;
   baseline: EnrichmentResult[];
@@ -60,7 +62,7 @@ export function analyzeThresholdSensitivity(input: RobustnessInput): ThresholdSe
     const thresholds = { adjustedPMax, minAbsLog2FoldChange };
     const applied = adjustedPMax === input.thresholds.adjustedPMax && minAbsLog2FoldChange === input.thresholds.minAbsLog2FoldChange;
     const selected = selectExperimentHits({ rows: input.rows }, thresholds);
-    const results = applied ? input.baseline : enrichPathways(input.backgroundGenes, selected.map(({ gene }) => gene), input.pathways);
+    const results = applied ? input.baseline : enrichPathways(input.backgroundGenes, selected.map(({ gene }) => gene), input.pathways, input.unannotatedGenes);
     if (results.length !== family.size || results.some(({ id }) => !family.has(id))) throw new Error('The tested pathway family changed across cutoffs.');
     return { thresholds, applied, selectedCount: selected.length, pathwayCount: results.length,
       significantCount: results.filter(({ adjustedPValue }) => adjustedPValue <= 0.05).length,
@@ -70,10 +72,11 @@ export function analyzeThresholdSensitivity(input: RobustnessInput): ThresholdSe
 }
 
 /** Greedy representative groups, never transitive clusters or combined significance tests. */
-export function groupOverlappingPathways(input: Pick<RobustnessInput, 'backgroundGenes' | 'pathways' | 'baseline'>): PathwayGrouping {
+export function groupOverlappingPathways(input: Pick<RobustnessInput, 'backgroundGenes' | 'unannotatedGenes' | 'pathways' | 'baseline'>): PathwayGrouping {
   const background = new Set(input.backgroundGenes);
+  const unannotated = new Set(input.unannotatedGenes);
   const family = new Set(input.baseline.map(({ id }) => id));
-  const profiles = new Map(input.pathways.filter(({ id }) => family.has(id)).map(({ id, genes }) => [id, new Set(genes.filter((gene) => background.has(gene)))]));
+  const profiles = new Map(input.pathways.filter(({ id }) => family.has(id)).map(({ id, genes }) => [id, new Set(genes.filter((gene) => background.has(gene) && !unannotated.has(gene)))]));
   const ranked = [...input.baseline].sort((a, b) => a.logAdjustedPValue - b.logAdjustedPValue || a.logPValue - b.logPValue || a.id.localeCompare(b.id, 'en-US'));
   const groups: PathwayGroup[] = [];
   const representatives: Set<string>[] = [];

@@ -44,7 +44,7 @@ test('unknown, ambiguous or inconsistent columns and malformed quoting fail with
 
 test('duplicate genes and unsupported identifiers are rejected without casing conversion or merging', () => {
   assert.throws(() => parseExperiment(`${HEADER}\nAPOE,1,.01\n APOE ,-2,.001`, 'synthetic.csv'), /Row 3, gene: duplicate/);
-  for (const gene of ['Apoe', 'apoe', '348', 'ENSG123', 'ENSMUSG00000002985', 'APOE;ABCA1', 'C11orf' + '6'.repeat(65)]) {
+  for (const gene of ['Apoe', 'apoe', 'ENSG123', 'ENSMUSG00000002985', 'APOE;ABCA1', 'C11orf' + '6'.repeat(65)]) {
     assert.throws(() => parseExperiment(`${HEADER}\n${gene},1,.01`, 'synthetic.csv'), /Row 2, gene:/);
   }
   // Syntactic acceptance is not a claim that the uploaded symbol exists in HGNC.
@@ -57,6 +57,31 @@ test('Ensembl versions and unnamed R row names are preserved; mixed types need a
   assert.equal(table.identifierType, 'ensembl');
   assert.equal(table.rows[0].gene, 'ENSG00000130203.12');
   assert.throws(() => parseExperiment(`${HEADER}\nAPOE,2,.01\nENSG00000095970,1,.02`, 'synthetic.csv'), /cannot be mixed/);
+});
+
+test('NCBI Gene identifiers retain canonical digit strings, including bounds and recognized Entrez headers', () => {
+  for (const column of ['gene', 'ncbi_gene_id', 'entrez_id', 'entrez_gene_id', '']) {
+    const table = parseExperiment(`${column},log2FC,padj\n1,1e0,.05\n348,2.2201675785994,4.3996355993083e-17\n999999999999,NA,NA`, 'synthetic-ncbi.csv');
+    assert.equal(table.identifierType, 'ncbi_gene');
+    assert.deepEqual(table.rows.map(({ gene }) => gene), ['1', '348', '999999999999']);
+    assert.equal(table.rows[1].log2FoldChange, 2.2201675785994);
+    assert.equal(table.rows[1].padj, 4.3996355993083e-17);
+    assert.equal(table.missingStatisticsCount, 1);
+  }
+  for (const gene of ['0', '0348', '+348', '-348', '348.0', '348.1', '3.48e2', '348e0', '348E0', 'NCBIGene:348', 'entrez:348', '1000000000000']) {
+    assert.throws(() => parseExperiment(`${HEADER}\n${gene},1,.01`, 'synthetic-ncbi.csv'), /Row 2, gene:/);
+  }
+});
+
+test('NCBI Gene IDs cannot mix with symbols or Ensembl IDs and duplicates never merge', () => {
+  for (const genes of [['348', 'APOE'], ['348', 'ENSG00000130203'], ['APOE', '348'], ['ENSG00000130203', '348']]) {
+    assert.throws(() => parseExperiment(`${HEADER}\n${genes.map((gene) => `${gene},1,.01`).join('\n')}`, 'synthetic-mixed.csv'), /cannot be mixed/);
+  }
+  assert.throws(() => parseExperiment(`${HEADER}\n348,1,.01\n 348 ,-2,.001`, 'synthetic-duplicate.csv'), /Row 3, gene: duplicate identifier/);
+  const text = 'entrez_id,symbol,log2FC,padj\n348,APOE,2,.01';
+  assert.throws(() => parseExperiment(text, 'synthetic-columns.csv'), /Choose the column/);
+  assert.equal(parseExperiment(text, 'synthetic-columns.csv', { identifierColumn: 0 }).identifierType, 'ncbi_gene');
+  assert.equal(parseExperiment(text, 'synthetic-columns.csv', { identifierColumn: 1 }).identifierType, 'symbol');
 });
 
 test('explicit column selection resolves multiple identifier columns without changing data or guessing a symbol', () => {

@@ -122,6 +122,8 @@ This is a user writing workflow. It does not add curator-reviewed questions, est
 - [x] Exercise upload/recovery/privacy, keyboard/themes/mobile/WebGL fallback and existing explorer flows in browser QA; record final observations in verification.
 - [x] Add pinned HGNC/Ensembl mapping, explicit column choice, original-ID/version traceability, ambiguity acknowledgement and blocked duplicate mappings.
 - [x] Validate supplied public MAYO AD and original Ensembl airway results against independent SciPy calculations; record conversions, source scopes and rejected data-quality candidates.
+- [x] Accept explicitly confirmed NCBI Gene IDs using a separate pinned HGNC reference; retain unresolved genes without allowing numeric pathway-label collisions.
+- [x] Check a real APOE-positive GBM/normal full results table at unchanged default cutoffs against SciPy and the browser workflow, recording source/model/reuse limits separately from biological validation.
 - [x] Compare nearby gene cutoffs in local workers while preserving the eligible background and complete pathway-BH family.
 - [x] Group overlapping eligible pathway memberships with original statistics, explicit similarity and access to every member; avoid claims of independent mechanisms.
 - [x] Add a one-click synthetic example using the normal analysis, sensitivity, grouping and evidence-navigation flows, with persistent synthetic provenance.

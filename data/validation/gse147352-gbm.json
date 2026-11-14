@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "normalized_sha256": "3ce64b13f1ad2365b4cb2ba0eb9aff562f69b93c9b75b4e6758e52531a879194",
+  "comparison": "GSE147352 reanalysis: GBM / normal brain",
+  "context": {
+    "model": "Adult brain biopsies",
+    "condition": "GBM vs normal brain (GSE147352 reanalysis)",
+    "design": "observational",
+    "sampleType": "bulk_brain_tissue"
+  },
+  "allow_unresolved_ids": true,
+  "ncbi_gene_ids_confirmed": true,
+  "thresholds": {
+    "adjustedPMax": 0.05,
+    "minAbsLog2FoldChange": 1
+  },
+  "expected": {
+    "background": 35660,
+    "selected": 13027,
+    "reference_mapped": 10800,
+    "family": 2717,
+    "input_rows": 37101,
+    "incomplete": 1441,
+    "identifier_mapping": {
+      "mapped": 27880,
+      "unresolved": 9221,
+      "collisions": 0
+    },
+    "apoe": {
+      "original_id": "348",
+      "symbol": "APOE",
+      "log2_fold_change": 2.2201675785994,
+      "adjusted_p": 4.3996355993083e-17
+    },
+    "pathway": {
+      "id": "R-HSA-174824",
+      "name": "Plasma lipoprotein assembly, remodeling, and clearance",
+      "K": 73,
+      "k": 29,
+      "p_value": 0.3248527419423045,
+      "adjusted_p": 0.909762354831971
+    }
+  },
+  "provenance": {
+    "inspected_at_utc": "2026-11-14T07:34:22Z",
+    "checkpoint_scope": "Computational import, exact identifier mapping and pathway-workflow QA on externally held human bulk brain results. Does not validate a GBM mechanism, AD mechanism, source statistical model, curated graph claim, or research question.",
+    "source_kind": "Public author-posted portfolio reanalysis of a primary human brain RNA-seq cohort; not the original study authors' differential-expression table. Independent scientific review of the portfolio analysis was not established.",
+    "reanalysis_author": "Katarzyna Zielińska (GitHub Katarzyna-Zielinska); repository LICENSE identifies copyright (c) 2026 Katja Zielka.",
+    "repository": "https://github.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2",
+    "commit": "51bfb386dccb6c62e31af69c2da2fc46759d519e",
+    "full_result_added_commit": {
+      "sha": "dd0dc66277fa0538e770457acfba5f2d724c9a73",
+      "committer_date": "2026-07-05T10:33:02Z",
+      "message": "Add files via upload"
+    },
+    "full_result": {
+      "url": "https://raw.githubusercontent.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2/51bfb386dccb6c62e31af69c2da2fc46759d519e/results/DESeq2_results_GBM_vs_Healthy.csv",
+      "bytes": 4438050,
+      "sha256": "5aa64640aafcada36a12f1207860c451f912752de2fc23f1644a67c2b0dd4dc7"
+    },
+    "normalized_result": {
+      "bytes": 1652144,
+      "sha256": "3ce64b13f1ad2365b4cb2ba0eb9aff562f69b93c9b75b4e6758e52531a879194",
+      "columns": [
+        "gene",
+        "log2FoldChange",
+        "padj"
+      ],
+      "operation": "Retain all 37,101 original rows and ordering. Copy blank-header NCBI Gene ID column to gene and retain both supplied statistical strings, including NA. UTF-8 CSV with LF line endings. No mapping, threshold filtering, missing-row deletion, merging, renaming of IDs or recalculation."
+    },
+    "preparation_helper": "tools/analysis/prepare-gbm-validation.py",
+    "script": {
+      "url": "https://raw.githubusercontent.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2/51bfb386dccb6c62e31af69c2da2fc46759d519e/scripts/01_bulk_rnaseq_analysis.R",
+      "bytes": 9731,
+      "sha256": "f8d4008d19e8f1849408e7a3c840dd53b61da902c6d05f97fba257d950d98762"
+    },
+    "model": {
+      "input_file": "data/counts/GSE147352_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+      "metadata": "getGEO(\"GSE147352\", GSEMatrix=TRUE), tissue type:ch1",
+      "condition_levels": [
+        "Normal brain tissues -> Healthy",
+        "glioblastoma tissues -> GBM",
+        "lower grade glioma tissues -> LGG"
+      ],
+      "sample_selection": "Exclude LGG, drop unused condition level, subset count columns to metadata Sample, assert sample column ordering.",
+      "pretest_filter": "rowSums(counts(dds)) >= 10 after sample selection",
+      "design": "~ Condition",
+      "estimation": "DESeq(dds); results(dds) with no explicit contrast or lfcShrink call; Healthy is first factor level and GBM second.",
+      "effect_interpretation": "Author-coded GBM relative to Healthy; positive values mean higher modeled RNA in GBM.",
+      "adjusted_pvalues": "Supplied DESeq2 padj fields preserved verbatim. results(dds) default filtering/model not independently rerun; DESeq2 version not recorded in inspected script.",
+      "ordering": "Author script sorts results by padj.",
+      "annotation_scope": "Author script maps NCBI Gene IDs with org.Hs.eg.db using multiVals=\"first\" for displays and significant subset. This extraction does not use those symbols or this potentially lossy annotation.",
+      "full_csv_export_limit": "Inspected script does not explicitly save DESeq2_results_GBM_vs_Healthy.csv. The separately posted full CSV has the exact pretest-filtered identifier family; its significant APOE row exactly matches the separately posted annotated significant-only CSV. No differential-expression statistics were recomputed."
+    },
+    "table_audit": {
+      "input_rows": 37101,
+      "unique_original_ncbi_gene_ids": 37101,
+      "duplicate_ids": 0,
+      "canonical_id_pattern": "[1-9][0-9]*",
+      "complete_log2fc_rows": 37101,
+      "complete_pvalue_rows": 37101,
+      "supplied_padj_NA_rows": 1441,
+      "complete_eligible_rows": 35660,
+      "selected_at_padj_le_0_05_abs_log2fc_ge_1": 13027,
+      "cutoffs_unchanged": true,
+      "incomplete_rows_retained": true
+    },
+    "apoe": {
+      "original_ncbi_gene_id": "348",
+      "log2FoldChange": "2.2201675785994",
+      "padj": "4.3996355993083e-17",
+      "pvalue": "3.54586447347506e-18",
+      "pass_default_cutoffs": true,
+      "crosscheck": "The separately posted significant-only table explicitly labels NCBI Gene 348 as APOE and supplies identical statistics. It was used only for this identity/statistics crosscheck, never as the tested background."
+    },
+    "annotated_subset_crosscheck": {
+      "url": "https://raw.githubusercontent.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2/51bfb386dccb6c62e31af69c2da2fc46759d519e/results/Significant_genes_GBM_vs_Healthy.csv",
+      "bytes": 1714972,
+      "sha256": "b1b6d5755b827346a7de67303089ea9de33d461b59975e0750cade4cd8d17ee3"
+    },
+    "full_family_independent_audit": {
+      "source_url": "https://raw.githubusercontent.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2/51bfb386dccb6c62e31af69c2da2fc46759d519e/data/counts/GSE147352_raw_counts_GRCh38.p13_NCBI.tsv.gz",
+      "bytes": 5041093,
+      "sha256": "e982b0a7d0918bc02b4b008fdd6be2a9de19ff5e1224df916e0206bb135670a7",
+      "raw_gene_rows": 39376,
+      "columns": 118,
+      "contrast_columns": 100,
+      "retained_rows": 37101,
+      "retained_identifiers_equal_result_identifiers": true,
+      "method": "Apply the posted row-sum>=10 pretest filter to the exact 100 GEO-identified GBM/normal columns of the posted count matrix; compare identifiers only, without running differential expression. All 37,101 retained identifiers match the full result set exactly."
+    },
+    "primary_cohort": {
+      "geo": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE147352",
+      "title": "Transcriptome profiling of human glioma and normal brain tissues by rRNA-deleted total RNAseq",
+      "organism": "Homo sapiens",
+      "assay": "Human bulk brain biopsies, rRNA-depleted stranded total RNA-seq; not cultured cells, single nuclei or pseudobulk.",
+      "geo_series_sample_counts": {
+        "adult_glioblastoma_tissues": 85,
+        "lower_grade_glioma_tissues": 18,
+        "normal_brain_tissues": 15
+      },
+      "analyzed_contrast_sample_counts": {
+        "glioblastoma_tissues": 85,
+        "normal_brain_tissues": 15,
+        "total": 100
+      },
+      "n_scope": "GEO sample/biopsy counts confirmed in the series matrix. Unique donor count or paired design was not independently established.",
+      "primary_reported_processing": "GEO describes RNA isolation with RNeasy or Trizol, Illumina stranded total RNA TruSEQ, HiSeq4000, HISAT2 2.1.0 GRCh38 alignment, HTSeq-count 0.10.0 and DESeq2 1.20.0 normalization. This describes the original cohort, not a verified generation pipeline for the portfolio's NCBI-named count matrix.",
+      "count_matrix_generation_limit": "The portfolio filename identifies GRCh38.p13/NCBI counts. Its generation procedure, exact annotation release, mapping/version assignment and relation to original authors' HTSeq counts were not independently reconstructed.",
+      "geo_public_on": "2021-01-26",
+      "geo_last_update": "2022-02-12",
+      "soft": {
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE147352&targ=self&form=text&view=full",
+        "bytes": 6883,
+        "sha256": "3083d609fbe42142bf71b9fa5ae0deac6d3c09ae509b09ead61444d615fdfe4d"
+      },
+      "series_matrix": {
+        "url": "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE147nnn/GSE147352/matrix/GSE147352_series_matrix.txt.gz",
+        "bytes": 6855,
+        "sha256": "01ff6e5fbae40ee2b1cfb5d7b314e5cfb09b266d4284a98877b32fe06b42a9d0"
+      }
+    },
+    "primary_publication": {
+      "title": "PRMT6 methylation of RCC1 regulates mitosis, tumorigenicity, and radiation response of glioblastoma stem cells",
+      "authors": "Huang T et al.",
+      "year": 2021,
+      "journal": "Molecular Cell",
+      "doi": "10.1016/j.molcel.2021.01.015",
+      "pmid": "33539787",
+      "pmcid": "PMC7979509",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7979509/",
+      "inspected_locations": [
+        "Method Details: Bioinformatic Analyses of PRMT6 Expression",
+        "Data and Code Availability",
+        "Supplementary table captions S1-S5"
+      ],
+      "cohort_provenance": "Inspected methods connect Northwestern NSTB clinical glioma specimens and NIH NeuroBioBank normal brain tissue specimens to supplementary Table S3 and GSE147352. The paper also includes cultured cells and mice; those experiments are not this observational tissue comparison.",
+      "supplement_limit": "Table S3 is a PRMT-family expression/clinical table, not a full DEG family. Supplement full text and underlying raw differential-expression model were not exhaustively reanalyzed."
+    },
+    "reuse": {
+      "repository_license": {
+        "url": "https://raw.githubusercontent.com/Katarzyna-Zielinska/02_Bulk_RNAseq_Glioblastoma_DESeq2/51bfb386dccb6c62e31af69c2da2fc46759d519e/LICENSE",
+        "bytes": 1069,
+        "sha256": "052065b89035b6286aec64d54241288cb995a4ee3f59bbd3f8742c70946cfbc6"
+      },
+      "repository_software_license": "MIT",
+      "underlying_data_redistribution_rights": "Not independently established. MIT Software/documentation terms are not treated as a blanket relicense of third-party cohort data or publication content. Experimental source/normalized/count tables stay outside Git and the hosted app.",
+      "publication_reuse": "PubMed reports Elsevier Inc. 2021 all rights reserved; accessible NIH author manuscript was inspected, without republication of article text or supplementary data.",
+      "attribution": "Credit portfolio reanalysis and original Huang et al. cohort/GSE147352 separately. Do not attribute portfolio statistics to the original publication."
+    },
+    "interpretation_limits": [
+      "Observational brain-tumor versus nonmalignant tissue comparison. Tumor cells, immune infiltration, glial abundance, tissue handling and other composition effects can contribute to bulk RNA differences.",
+      "The source model includes Condition only; age, sex, tumor subtype/IDH status, collection/processing and other potential confounders are not adjusted in the inspected model.",
+      "Unresolved or ambiguous current HGNC cross-references must remain in the eligible denominator and retain original NCBI IDs; no alias repair or upstream multiVals=\"first\" mappings are adopted.",
+      "The AD human-paper interpretation catalog provides general context only; it does not explain or validate this GBM case or establish a shared mechanism.",
+      "No protein abundance, pathway activity, causation, novelty, replication or researcher approval follows from numerical/browser agreement."
+    ],
+    "verification": [
+      "Preparation and --check succeed on exact pinned source.",
+      "Independent CSV comparison verifies every original ID/statistical string and order is retained, including all 1,441 NA rows.",
+      "Same-size altered input is rejected before creating output.",
+      "Altered output --check is rejected and leaves bytes unchanged.",
+      "Input=output source overwrite is rejected.",
+      "Python syntax compilation succeeds without installing dependencies."
+    ]
+  },
+  "numerical_oracle": {
+    "tool": "tools/analysis/validate-results.py",
+    "scipy_version": "1.17.0",
+    "all_pathways_checked": 2717,
+    "significant_at_pathway_bh_0_05": 211,
+    "max_absolute_error": 1.22e-10,
+    "max_relative_error": 5.92e-10
+  },
+  "interpretation_scope": "A real input exercises the rule-based report. The selected lipoprotein pathway has q > 0.05; the report is triggered by selected APOE and explicit context, not enrichment significance. Existing AD paper premises are context, not explanations validated for GBM. The graph is unchanged.",
+  "identifier_type": "ncbi_gene"
+}

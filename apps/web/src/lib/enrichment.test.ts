@@ -68,6 +68,26 @@ test('original reference product labels remain intact and never become guessed g
   }
 });
 
+test('unresolved identifiers never match literal numeric pathway labels and retain full N and n', () => {
+  const background = Object.freeze(['APOE', '6', '8']);
+  const selected = Object.freeze(['APOE', '6']);
+  const unannotated = Object.freeze(['6', '8']);
+  const sets = [
+    pathway('synthetic-apoe', ['APOE', '6', '8']),
+    pathway('synthetic-viral-six', ['6']),
+    pathway('synthetic-viral-eight', ['8']),
+  ];
+  const before = JSON.stringify({ background, selected, unannotated, sets });
+  const results = enrichPathways(background, selected, sets, unannotated);
+  assert.deepEqual(results.map(({ id }) => id), ['synthetic-apoe']);
+  assert.deepEqual([results[0].backgroundSize, results[0].selectedSize, results[0].pathwayMeasuredSize, results[0].overlapSize], [3, 2, 1, 1]);
+  assert.deepEqual(results[0].overlapGenes, ['APOE']);
+  close(results[0].pValue, 2 / 3);
+  close(results[0].adjustedPValue, 2 / 3);
+  assert.equal(JSON.stringify({ background, selected, unannotated, sets }), before);
+  assert.equal(enrichPathways(background, selected, sets).length, 3, 'Existing callers retain exact literal matching when no exclusion is supplied.');
+});
+
 test('empty selections, complete selections and finite-support boundaries retain exact probabilities', () => {
   const sets = [pathway('synthetic-a', genes(8))];
   assert.equal(enrichPathways(genes(10), [], sets)[0].pValue, 1);
