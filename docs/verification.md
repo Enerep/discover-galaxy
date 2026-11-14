@@ -374,3 +374,25 @@ The only locked install-script declaration was the optional macOS package `fseve
 The four association claims are scoped to particular variants and study populations. Source lookup was AI-assisted and limited to abstracts and bibliographic metadata. All claim and evidence records remain draft, with no human reviewer recorded. Source reuse assessments and correction/retraction checks are incomplete.
 
 There are no pathway claims, verified disagreement comparisons, research-question cards, live AI explanations, biomedical API integrations, backend, database, or deployment. Follow [steps.md](../steps.md) and the [starter notes](../data/alzheimers/README.md) before expanding or releasing scientific content.
+
+## Real APOE input checkpoint — 2026-11-14
+
+The production build adds exact NCBI Gene/Entrez input mapping with a separate lazy, pinned HGNC asset. `npm run check:ci` passed **188 Node tests**, **7 Python security tests**, strict application/tool typechecks, data/reference/curation/coverage/seed checks and production build. `check:ci:security` inspected all 68 locked package publications, reported zero npm advisories and no exact matches in the three pinned IOC feeds. Dependencies, lockfile, `.npmrc`, existing Reactome/Ensembl bytes and curated graph records are unchanged. The existing bundle-size advisory remains a performance observation; the build succeeds.
+
+The externally held full [GSE147352 portfolio reanalysis](experimental-validation.md#real-apoe-positive-workflow-gse147352) preserves 37,101 rows, including 1,441 incomplete rows. The original CSV also parses directly and equals the lossless three-column conversion. At unchanged defaults, N=35,660, n=13,027, Reactome-mapped=10,800 and family=2,717. Every pathway's N/n/K/k, overlap identities, p and BH matched independent SciPy (maximum absolute/relative error 1.22e-10 / 5.92e-10). Source/normalized integrity checks and altered-source/output rejection checks passed; experimental/count tables remain outside Git/hosting.
+
+The extended pilot browser checks passed synthetic desktop/light, 360px mobile/dark/reduced-motion and WebGL fallback; pinned real MAYO negative; and the real GBM positive input in all three viewports. Observed assertions include:
+
+- Numeric namespace confirmation blocks reference loading and analysis until checked, and resets on replacement/removal.
+- Every real input row and incomplete-row count is retained; exact default N/n, mapped coverage and tested family match the numerical audit.
+- Applied observational/bulk-brain context enables **Possible explanations**, with original APOE ID `348`, log₂FC +2.2201675785994 and padj 4.3996355993083e-17; synthetic provenance remains distinct.
+- Lipoprotein pathway K=73/k=29 and q≈0.91 remain visible. This pathway is not significant; the pilot gate uses selected APOE rather than enrichment significance.
+- Mathys correction, same-cohort Murphy reanalysis, donor/nuclear-RNA limits, nonexclusive alternatives and actual context/source scope remain accessible.
+- Gene-evidence navigation preserves the analysis; stricter effect cutoffs suppress the report; removal/replacement reset input context and declarations.
+- Requests remain same-origin asset GETs; input/context/statistics do not enter network requests, storage or shared URLs. Screenshots show readable light/dark layouts without horizontal overflow.
+
+A separate live fallback/reduced-motion regression uploaded synthetic NCBI IDs `6`, `8`, `348`: N=3/n=3, mapped=1 and 34 APOE-member pathways. The viral-only pathway `R-HSA-9727281` is absent and the lipoprotein member list contains only APOE. All nine sensitivity settings and grouping complete; both actual bundled-worker requests carry `unannotatedGenes=['6','8']` and omit context/comparison. Original unresolved IDs stay in N/n without gaining symbol annotations. No page errors or input persistence were observed.
+
+Local pilot screenshots are in ignored `artifacts/real-apoe-validation/`, including real desktop, mobile and fallback report images; desktop/mobile were visually inspected. This is computational/interaction validation of supplied GBM results, not an AD experiment, source-model reproduction, independent scientific review or validation of a biological explanation. The [manifest](../data/validation/gse147352-gbm.json) and validation notes preserve primary-cohort/reanalysis, model, provenance and reuse limits.
+
+Focused existing-browser regressions also passed Ensembl column/mapping/retry/collision handling, analysis upload/error recovery, local-worker sensitivity/grouping/failure/cancellation, the authored example, pending/applied context and pathway evidence on desktop/mobile/themes/fallback. A first broad run stopped at the existing focused-graph idle assertion (4 requested frames under concurrent browser load); an isolated repeat passed both focused/expanded desktop/mobile graph checks with zero idle frames/draws. The broad runner was not claimed as fully completed; the affected analysis suites were run separately and passed. No graph code was changed.

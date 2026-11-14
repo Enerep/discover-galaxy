@@ -17,6 +17,22 @@ function fixture(): RobustnessInput {
   return { rows, backgroundGenes, pathways, thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 }, baseline: enrichPathways(backgroundGenes, ['A', 'B', 'D'], pathways) };
 }
 
+function unresolvedNumericFixture(): RobustnessInput {
+  const rows = [
+    { gene: 'APOE', sourceId: '348', log2FoldChange: 2, padj: 0.01 },
+    { gene: 'ABCA1', sourceId: '19', log2FoldChange: 0, padj: 0.8 },
+    { gene: '6', sourceId: '6', log2FoldChange: 2, padj: 0.01 },
+    { gene: '8', sourceId: '8', log2FoldChange: 0.75, padj: 0.08 },
+    { gene: 'UNMATCHED', log2FoldChange: 0, padj: 0.8 },
+    { gene: 'SECONDUNMATCHED', log2FoldChange: 0, padj: 0.8 },
+  ];
+  const backgroundGenes = rows.map(({ gene }) => gene);
+  const unannotatedGenes = ['6', '8'];
+  const pathways = [pathway('P-APOE', ['APOE', '6', '8']), pathway('P-ABCA1', ['ABCA1', '6', '8']), pathway('P-UNRESOLVED', ['6', '8'])];
+  return { rows, backgroundGenes, unannotatedGenes, pathways, thresholds: { adjustedPMax: 0.05, minAbsLog2FoldChange: 1 },
+    baseline: enrichPathways(backgroundGenes, ['APOE', '6'], pathways, unannotatedGenes) };
+}
+
 test('cutoff sensitivity agrees with exact hypergeometric/BH fractions while keeping N and the full family fixed', () => {
   const input = fixture(); const before = JSON.stringify(input);
   const report = analyzeThresholdSensitivity(input);
@@ -33,6 +49,37 @@ test('cutoff sensitivity agrees with exact hypergeometric/BH fractions while kee
     approximately(result.adjustedPValue, setting.selectedCount === 2 ? 3 / 22 : setting.selectedCount === 3 ? 3 / 220 : 3 / 55);
     assert.ok(setting.results.some(({ id, overlapSize, adjustedPValue }) => id === 'P3' && overlapSize === 0 && adjustedPValue === 1));
   }
+  assert.equal(JSON.stringify(input), before);
+});
+
+test('sensitivity retains unresolved numeric identifiers in N and selection without matching literal reference labels', () => {
+  const input = unresolvedNumericFixture(); const before = JSON.stringify(input);
+  const report = analyzeThresholdSensitivity(input);
+  assert.equal(report.backgroundSize, 6);
+  assert.equal(report.settings.length, 9);
+  assert.ok(report.settings.every(({ pathwayCount }) => pathwayCount === 2));
+  for (const setting of report.settings) {
+    const expectedSelected = setting.thresholds.adjustedPMax === 0.1 && setting.thresholds.minAbsLog2FoldChange === 0.5 ? 3 : 2;
+    assert.equal(setting.selectedCount, expectedSelected);
+    assert.deepEqual(setting.results.map(({ id }) => id).sort(), ['P-ABCA1', 'P-APOE']);
+    const apoe = setting.results.find(({ id }) => id === 'P-APOE')!;
+    assert.equal(apoe.overlapSize, 1);
+    approximately(apoe.adjustedPValue, expectedSelected / 3);
+    const zero = setting.results.find(({ id }) => id === 'P-ABCA1')!;
+    assert.deepEqual([zero.overlapSize, zero.adjustedPValue], [0, 1]);
+  }
+  assert.equal(JSON.stringify(input), before);
+});
+
+test('overlap profiles exclude unresolved numeric labels instead of creating a false shared-member group', () => {
+  const input = unresolvedNumericFixture(); const before = JSON.stringify(input);
+  const report = groupOverlappingPathways(input);
+  assert.equal(report.backgroundSize, 6);
+  assert.equal(report.pathwayCount, 2);
+  assert.deepEqual(report.groups, [
+    { representativeId: 'P-APOE', members: [{ id: 'P-APOE', jaccard: 1, sharedCount: 1, eligibleSize: 1 }] },
+    { representativeId: 'P-ABCA1', members: [{ id: 'P-ABCA1', jaccard: 1, sharedCount: 1, eligibleSize: 1 }] },
+  ]);
   assert.equal(JSON.stringify(input), before);
 });
 

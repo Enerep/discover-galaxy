@@ -10,6 +10,8 @@ import { describeExperimentContext, MAX_CONTEXT_LENGTH, normalizeExperimentConte
 import type { ExperimentContext } from './experiment-context.ts';
 import { analyzeThresholdSensitivity, groupOverlappingPathways } from './experiment-robustness.ts';
 import { buildPathwayEvidence, coverageLabel } from './pathway-evidence.ts';
+import { validateGeneIdentityReference } from './gene-identifiers.ts';
+import { buildApoeExplanationComparison } from './experiment-explanations.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const referenceBytes = await readFile(new URL('../../../../data/reference/reactome-pathways.json', import.meta.url));
@@ -250,6 +252,69 @@ test('analysis declares an eligible tested universe, keeps unannotated eligible 
   assert.throws(() => runExperimentAnalysis(input, { ...options(), comparison: ' ' }, reference), /comparison/);
   assert.throws(() => runExperimentAnalysis(input, { ...options(), thresholds: { adjustedPMax: 2, minAbsLog2FoldChange: 1 } }, reference), /adjusted p-value/);
   assert.throws(() => runExperimentAnalysis(parseExperiment('gene,log2FoldChange,padj\nAPOE,NA,NA\n', 'synthetic-incomplete.csv'), options(), reference), /No genes have both/);
+});
+
+test('NCBI analysis retains unresolved genes in N and selection, corrects zero-hit pathways and carries original IDs into explanations', async () => {
+  const template = JSON.parse(await readFile(new URL('../../../../data/reference/hgnc-ensembl.json', import.meta.url), 'utf8'));
+  const identities = validateGeneIdentityReference({ ...template, reference_id: 'hgnc-ncbi-gene-6bb2951c5620', columns: ['hgnc_id', 'symbol', 'ncbi_gene_id'], genes: [
+    ['HGNC:613', 'APOE', '348'], ['HGNC:29', 'ABCA1', '19'], ['HGNC:20', 'SYNTHETICINCOMPLETE', '20'],
+    ['HGNC:1', 'SYNTHETICFIRST', '999'], ['HGNC:2', 'SYNTHETICSECOND', '999'],
+  ] });
+  const input = parseExperiment('gene,log2FC,padj\n348,2.2201675785994,4.3996355993083e-17\n999,-2,.01\n998,1.2,.02\n19,0,.8\n997,0,.8\n996,0,.8\n995,0,.8\n994,0,.8\n993,0,.8\n992,0,.8\n20,NA,NA', 'synthetic-ncbi-background.csv');
+  const before = JSON.stringify(input);
+  const pathwayReference = validatePathwayReference({ ...reference, pathways: [
+    { id: 'R-HSA-1', name: 'Synthetic APOE pathway', url: 'https://reactome.org/content/detail/R-HSA-1', genes: ['APOE'] },
+    { id: 'R-HSA-2', name: 'Synthetic zero-hit pathway', url: 'https://reactome.org/content/detail/R-HSA-2', genes: ['ABCA1'] },
+    { id: 'R-HSA-3', name: 'Synthetic ineligible pathway', url: 'https://reactome.org/content/detail/R-HSA-3', genes: ['SYNTHETICINCOMPLETE'] },
+  ] });
+  assert.throws(() => runExperimentAnalysis(input, { ...options(), ncbiGeneIdsConfirmed: true }, pathwayReference, identities), /Review unresolved/);
+  const result = runExperimentAnalysis(input, { ...options(), allowUnresolvedIds: true, ncbiGeneIdsConfirmed: true,
+    context: { design: 'observational', sampleType: 'bulk_brain_tissue' } }, pathwayReference, identities);
+  assert.equal(result.rows.length, 11);
+  assert.equal(result.table.missingStatisticsCount, 1);
+  assert.equal(result.backgroundGenes.length, 10);
+  assert.equal(result.mappedGenesCount, 2);
+  assert.deepEqual(result.unannotatedGenes, ['999', '998', '997', '996', '995', '994', '993', '992']);
+  assert.deepEqual(result.selected.map(({ gene }) => gene), ['APOE', '999', '998']);
+  assert.deepEqual(result.rows.map(({ sourceId }) => sourceId), input.rows.map(({ gene }) => gene));
+  assert.deepEqual(result.rows.map(({ log2FoldChange, padj }) => ({ log2FoldChange, padj })), input.rows.map(({ log2FoldChange, padj }) => ({ log2FoldChange, padj })));
+  assert.ok(result.backgroundGenes.includes('997'));
+  assert.ok(!result.backgroundGenes.includes('SYNTHETICFIRST'));
+  assert.ok(!result.backgroundGenes.includes('SYNTHETICSECOND'));
+  assert.ok(!result.backgroundGenes.includes('SYNTHETICINCOMPLETE'));
+  assert.equal(result.pathways.length, 2);
+  const hit = result.pathways.find(({ id }) => id === 'R-HSA-1')!;
+  assert.deepEqual([hit.backgroundSize, hit.selectedSize, hit.pathwayMeasuredSize, hit.overlapSize], [10, 3, 1, 1]);
+  assert.ok(Math.abs(hit.pValue - 0.3) < 1e-12);
+  assert.ok(Math.abs(hit.adjustedPValue - 0.6) < 1e-12);
+  const zero = result.pathways.find(({ id }) => id === 'R-HSA-2')!;
+  assert.deepEqual([zero.overlapSize, zero.pValue, zero.adjustedPValue], [0, 1, 1]);
+  const explanation = buildApoeExplanationComparison(result, hit.id)!;
+  assert.deepEqual(explanation.observation, { gene: 'APOE', sourceId: '348', log2FoldChange: 2.2201675785994, padj: 4.3996355993083e-17 });
+  assert.equal(explanation.isSynthetic, false);
+  assert.equal(JSON.stringify(input), before);
+});
+
+test('unresolved NCBI IDs cannot annotate literal Reactome viral labels while retaining the full N and n', async () => {
+  const identities = validateGeneIdentityReference(JSON.parse(await readFile(new URL('../../../../data/reference/hgnc-ncbi-gene.json', import.meta.url), 'utf8')));
+  const input = parseExperiment('entrez_id,log2FC,padj\n348,2,.01\n6,-2,.02\n8,0,.8\n999999999999,NA,NA', 'synthetic-ncbi-label-collision.csv');
+  const before = JSON.stringify(input);
+  const result = runExperimentAnalysis(input, { ...options(), ncbiGeneIdsConfirmed: true, allowUnresolvedIds: true }, reference, identities);
+  assert.deepEqual(result.backgroundGenes, ['APOE', '6', '8']);
+  assert.deepEqual(result.selected.map(({ gene }) => gene), ['APOE', '6']);
+  assert.deepEqual(result.unannotatedGenes, ['6', '8']);
+  assert.equal(result.mappedGenesCount, 1);
+  assert.equal(result.rows.length, 4);
+  assert.equal(result.rows[0].sourceId, '348');
+  assert.deepEqual(result.rows.slice(1), input.rows.slice(1).map((row) => ({ ...row, sourceId: row.gene })));
+  assert.deepEqual(result.pathways.map(({ id }) => id).sort(), reference.pathways.filter(({ genes }) => genes.includes('APOE')).map(({ id }) => id).sort());
+  for (const pathway of result.pathways) {
+    assert.deepEqual([pathway.backgroundSize, pathway.selectedSize, pathway.pathwayMeasuredSize, pathway.overlapSize], [3, 2, 1, 1]);
+    assert.deepEqual(pathway.overlapGenes, ['APOE']);
+    assert.ok(Math.abs(pathway.pValue - 2 / 3) < 1e-12);
+  }
+  assert.ok(!result.pathways.some(({ id }) => id === 'R-HSA-9727281'));
+  assert.equal(JSON.stringify(input), before);
 });
 
 test('unmapped or empty selected sets produce honest results without changing background or inventing an opportunity', () => {

@@ -72,8 +72,8 @@ function logHypergeometricTail(N: number, K: number, n: number, observed: number
 /**
  * Overrepresentation conditional on the eligible tested background supplied by
  * the caller, defined before selection cutoffs. Unannotated eligible genes remain
- * in N. Every pathway with an eligible member is in the BH family, including
- * pathways with no selected hit.
+ * in N and selected n, but cannot match reference labels. Every pathway with an
+ * eligible member is in the BH family, including pathways with no selected hit.
  * This tests membership overrepresentation, never activation or biological cause.
  * Numeric p=0 denotes IEEE underflow: use the accompanying log value or a bound
  * when formatting it. It is not a claim of an impossible null event.
@@ -82,10 +82,12 @@ export function enrichPathways(
   backgroundGenes: readonly string[],
   selectedGenes: readonly string[],
   pathways: readonly PathwayGeneSet[],
+  unannotatedGenes: readonly string[] = [],
 ): EnrichmentResult[] {
   const background = uniqueGenes(backgroundGenes, 'The measured background');
   if (!background.size) throw new Error('Upload the measured gene background before testing pathways.');
   const selected = uniqueGenes(selectedGenes, 'The selected set');
+  const unannotated = uniqueGenes(unannotatedGenes, 'The unannotated set');
   if ([...selected].some((gene) => !background.has(gene))) throw new Error('Every selected gene must belong to the measured background.');
   if (!Array.isArray(pathways) || pathways.length > MAX_PATHWAYS) throw new Error(`Choose at most ${MAX_PATHWAYS} pathway gene sets.`);
   const factorials = new Float64Array(background.size + 1);
@@ -108,7 +110,7 @@ export function enrichPathways(
       // Reference files can contain literal RNA/product labels or comma-separated
       // names. Preserve them exactly; an unmatched label is not a symbol alias.
       if (typeof gene !== 'string' || !gene.trim() || gene.length > 500 || /\p{Cc}/u.test(gene)) throw new Error('A pathway contains an invalid member label.');
-      if (background.has(gene)) measured.add(gene);
+      if (background.has(gene) && !unannotated.has(gene)) measured.add(gene);
     }
     if (!measured.size) continue;
     const overlapGenes = [...measured].filter((gene) => selected.has(gene)).sort();

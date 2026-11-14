@@ -29,7 +29,7 @@ export function WorkspaceHelp({ workspace }: { workspace: 'explore' | 'analysis'
       </> : <>
         <p>Bring a processed human RNA-seq results table to find pathways with more selected genes than expected among all the genes tested.</p>
         <ol>
-          <li>Upload CSV/TSV with gene symbols or Ensembl IDs, log₂ fold changes and adjusted p-values. Include the full tested table, including nonsignificant genes.</li>
+          <li>Upload CSV/TSV with gene symbols, Ensembl IDs or NCBI Gene IDs, log₂ fold changes and adjusted p-values. Include the full tested table, including nonsignificant genes.</li>
           <li>Name the groups compared, choose gene cutoffs and select Analyze. Use <strong>Try example</strong> to start with invented measurements.</li>
           <li>Choose a pathway to inspect its genes, cutoff sensitivity, overlapping pathways and available scientific evidence.</li>
         </ol>

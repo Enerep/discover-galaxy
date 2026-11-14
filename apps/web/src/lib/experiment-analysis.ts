@@ -27,6 +27,8 @@ export interface ExperimentAnalysis {
   thresholds: ExperimentThresholds;
   reference: PathwayReference;
   backgroundGenes: string[];
+  /** Eligible unresolved IDs stay in N/n but cannot match literal reference labels. */
+  unannotatedGenes: string[];
   selected: ExperimentRow[];
   mappedGenesCount: number;
   pathways: EnrichmentResult[];
@@ -92,13 +94,14 @@ export async function loadPathwayReference(): Promise<PathwayReference> {
   return validatePathwayReference(payload);
 }
 
-export function runExperimentAnalysis(table: ExperimentTable, options: { comparison: string; context?: Partial<ExperimentContext>; thresholds: ExperimentThresholds; allTestedGenes: boolean; allowUnresolvedIds?: boolean }, reference: PathwayReference, geneReference?: GeneIdentityReference): ExperimentAnalysis {
+export function runExperimentAnalysis(table: ExperimentTable, options: { comparison: string; context?: Partial<ExperimentContext>; thresholds: ExperimentThresholds; allTestedGenes: boolean; allowUnresolvedIds?: boolean; ncbiGeneIdsConfirmed?: boolean }, reference: PathwayReference, geneReference?: GeneIdentityReference): ExperimentAnalysis {
   if (options.allTestedGenes !== true) throw new Error('Use the full tested-gene table as the background, including genes that did not pass your cutoffs.');
+  if (table.identifierType === 'ncbi_gene' && options.ncbiGeneIdsConfirmed !== true) throw new Error('Confirm these are NCBI Gene IDs (Entrez), not row numbers, before analysis.');
   if (typeof options.comparison !== 'string' || !options.comparison.trim() || options.comparison.trim().length > 160) throw new Error('Name the comparison, in numerator / denominator order.');
   const context = normalizeExperimentContext(options.context);
   validatePathwayReference(reference);
-  if (table.identifierType === 'ensembl' && !geneReference) throw new Error('Load the pinned Ensembl identifier reference before analysis.');
-  const identifierMapping = table.identifierType === 'ensembl' ? resolveGeneIdentifiers(table, geneReference!) : null;
+  if (table.identifierType !== 'symbol' && !geneReference) throw new Error(`Load the pinned ${table.identifierType === 'ensembl' ? 'Ensembl' : 'NCBI Gene'} identifier reference before analysis.`);
+  const identifierMapping = table.identifierType !== 'symbol' ? resolveGeneIdentifiers(table, geneReference!) : null;
   if (identifierMapping?.unresolvedCount && options.allowUnresolvedIds !== true) throw new Error('Review unresolved identifiers before analysis. They remain unannotated in the eligible background.');
   const rows = identifierMapping ? applyGeneMapping(table, identifierMapping) : table.rows;
   const selected = selectExperimentHits({ ...table, rows }, options.thresholds);
@@ -106,10 +109,13 @@ export function runExperimentAnalysis(table: ExperimentTable, options: { compari
   // was untestable or independently filtered and could never enter this set.
   const background = rows.filter(({ padj, log2FoldChange }) => padj !== null && log2FoldChange !== null).map(({ gene }) => gene);
   if (!background.length) throw new Error('No genes have both a fold change and an adjusted p-value. Supply complete tested-gene results for enrichment.');
-  const pathways = enrichPathways(background, selected.map(({ gene }) => gene), reference.pathways);
+  const unannotatedGenes = identifierMapping ? identifierMapping.rows.flatMap(({ status, inputId }, index) =>
+    (status === 'unmapped' || status === 'ambiguous') && rows[index].padj !== null && rows[index].log2FoldChange !== null ? [inputId] : []) : [];
+  const unannotated = new Set(unannotatedGenes);
+  const pathways = enrichPathways(background, selected.map(({ gene }) => gene), reference.pathways, unannotatedGenes);
   const annotated = new Set(reference.pathways.flatMap(({ genes }) => genes));
-  return { table, rows, identifierMapping, comparison: options.comparison.trim(), context, thresholds: { ...options.thresholds }, reference, selected, backgroundGenes: background,
-    mappedGenesCount: background.filter((gene) => annotated.has(gene)).length, pathways, createdAt: new Date().toISOString(),
+  return { table, rows, identifierMapping, comparison: options.comparison.trim(), context, thresholds: { ...options.thresholds }, reference, selected, backgroundGenes: background, unannotatedGenes,
+    mappedGenesCount: background.filter((gene) => !unannotated.has(gene) && annotated.has(gene)).length, pathways, createdAt: new Date().toISOString(),
     backgroundDeclaration: 'full_tested_table_supplied' };
 }
 

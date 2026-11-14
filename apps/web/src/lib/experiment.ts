@@ -4,7 +4,7 @@ const MAX_COLUMNS = 128;
 
 export interface ExperimentRow {
   gene: string;
-  /** Original Ensembl ID when a separate mapping produced the display symbol. */
+  /** Original identifier when a separate mapping produced the display symbol. */
   sourceId?: string;
   log2FoldChange: number | null;
   padj: number | null;
@@ -18,7 +18,8 @@ export interface ExperimentTable {
   columns: { gene: string; log2FoldChange: string; padj: string };
   rows: ExperimentRow[];
   missingStatisticsCount: number;
-  identifierType: 'symbol' | 'ensembl';
+  /** Syntactic namespace; numeric candidates require explicit NCBI Gene confirmation before analysis. */
+  identifierType: 'symbol' | 'ensembl' | 'ncbi_gene';
 }
 
 export interface ExperimentThresholds {
@@ -28,7 +29,7 @@ export interface ExperimentThresholds {
 
 type RecordRow = { values: string[]; line: number };
 const HEADER_ALIASES = {
-  gene: ['gene', 'gene_symbol', 'symbol', 'gene_id', 'ensembl_gene_id', 'ensembl_id', 'genename'],
+  gene: ['gene', 'gene_symbol', 'symbol', 'gene_id', 'ensembl_gene_id', 'ensembl_id', 'ncbi_gene_id', 'entrez_id', 'entrez_gene_id', 'genename'],
   log2FoldChange: ['log2foldchange', 'log2fc'],
   padj: ['padj', 'fdr', 'adj.p.val'],
 } as const;
@@ -154,9 +155,9 @@ export function parseExperiment(text: string, filename: string, options: { ident
     if (record.values.length !== header.length) throw new Error(`Row ${record.line} has ${record.values.length} columns; the header has ${header.length}.`);
     const gene = record.values[indices.gene].trim();
     if (gene.length > 64) throw new Error(`Row ${record.line}, gene: identifiers must contain at most 64 characters.`);
-    const type = /^ENSG\d{11}(?:\.\d+)?$/u.test(gene) ? 'ensembl' : 'symbol';
-    if (type === 'symbol' && (/^ENS[A-Z]*G\d/u.test(gene) || gene.length > 64 || !/^(?:[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*|C(?:\d+|X|Y)orf\d+(?:-[A-Z0-9]+)*)$/u.test(gene))) throw new Error(`Row ${record.line}, gene: use human gene symbols or human Ensembl gene IDs. Species and identifiers are not guessed.`);
-    if (identifierType && identifierType !== type) throw new Error(`Row ${record.line}, gene: use one identifier type per column; symbols and Ensembl IDs cannot be mixed.`);
+    const type = /^ENSG\d{11}(?:\.\d+)?$/u.test(gene) ? 'ensembl' : /^[1-9]\d{0,11}$/u.test(gene) ? 'ncbi_gene' : 'symbol';
+    if (type === 'symbol' && (/^ENS[A-Z]*G\d/u.test(gene) || gene.length > 64 || !/^(?:[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*|C(?:\d+|X|Y)orf\d+(?:-[A-Z0-9]+)*)$/u.test(gene))) throw new Error(`Row ${record.line}, gene: use human gene symbols, human Ensembl gene IDs or canonical NCBI Gene IDs. Species and identifiers are not guessed.`);
+    if (identifierType && identifierType !== type) throw new Error(`Row ${record.line}, gene: use one identifier type per column; symbols, Ensembl IDs and NCBI Gene IDs cannot be mixed.`);
     identifierType = type;
     if (seen.has(gene)) throw new Error(`Row ${record.line}, gene: duplicate ${type === 'symbol' ? 'symbol' : 'identifier'}. Supply one result per gene; duplicates are not merged.`);
     seen.add(gene);

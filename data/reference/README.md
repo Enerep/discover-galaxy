@@ -58,3 +58,14 @@ The [reanalysis table](https://raw.githubusercontent.com/pgristow/rnaseq-deseq2-
 The table contains 15,513 rows with Ensembl IDs, optional symbols and finite fold changes/adjusted p-values. A documented QA conversion selected `symbol`, `log2FoldChange` and `padj`, excluded 1,902 missing-symbol rows and all 24 rows belonging to 12 duplicated symbols, and retained **13,587 unambiguous symbol rows**. Numeric values were preserved. At adjusted p-value ≤0.05 and absolute log2 fold change ≥1, 710 rows pass (385 positive, 325 negative). Exactly 7,682 symbols match this reference's member strings with case preserved. These counts describe the converted table and pinned reference; they do not establish biological validity or reproduce the original study's analysis.
 
 The reanalysis README licenses its code under MIT and separately attributes the data to Bioconductor's [airway package](https://bioconductor.org/packages/airway/), whose package metadata reports LGPL. Data redistribution has not been resolved from the code license. Raw and converted experiment tables therefore remain outside the repository; no patient-level or sample-level table is shipped.
+
+## NCBI Gene identifiers
+
+The separate lazy [HGNC NCBI Gene reference](hgnc-ncbi-gene.json) uses the same pinned raw HGNC mirror as the Ensembl reference and preserves its 44,997 identities. It contains 44,382 assigned NCBI Gene IDs and 615 missing cross-references; no ID is ambiguous in this snapshot. New retrieval: 2026-11-14. Normalized bytes: 1,541,903; SHA-256 `ade9370607ec7c0cca9d5993bd8b8b007ba2027f109502bae3512a04721b1284`. The mirror's reported source date remains unverified against the official archive; HGNC terms remain CC0. Existing Reactome and Ensembl assets are byte-unchanged.
+
+```sh
+python3 tools/analysis/prepare-ncbi-identifiers.py --input /path/to/hgnc_complete_set.tsv.gz --check
+npm run reference:check
+```
+
+The checker performs no network operation and pins both source and normalized bytes. The importer accepts exact positive whole-number strings only after the user explicitly confirms the NCBI Gene/Entrez namespace. It retains original IDs/statistics, blocks collisions and requires acknowledgement for unresolved IDs. Unresolved eligible genes remain in N/n and are explicitly excluded from annotation matching, including Reactome's literal numeric viral labels. Mapping does not verify sample species or annotation release. [Real-data checks and source limits](../../docs/experimental-validation.md#real-apoe-positive-workflow-gse147352) are separate from this reference.

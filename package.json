@@ -13,7 +13,7 @@
     "typecheck": "npm run typecheck --workspace @discovery-galaxy/web",
     "typecheck:tools": "tsc --project tools/tsconfig.json",
     "test": "node --experimental-strip-types --test apps/web/src/lib/dataset.test.ts apps/web/src/lib/explorer-graph.test.ts apps/web/src/lib/galaxy-layout.test.ts apps/web/src/lib/relationship-label.test.ts apps/web/src/lib/share-state.test.ts apps/web/src/lib/compare-evidence.test.ts apps/web/src/lib/research-brief.test.ts apps/web/src/lib/experiment.test.ts apps/web/src/lib/gene-identifiers.test.ts apps/web/src/lib/enrichment.test.ts apps/web/src/lib/experiment-analysis.test.ts apps/web/src/lib/experiment-explanations.test.ts apps/web/src/lib/experiment-robustness.test.ts tools/curation/review-packet.test.ts tools/curation/openalex-intake.test.ts tools/curation/candidate-coverage.test.ts tools/curation/biomedical-intake.test.ts tools/curation/intake-review.test.ts",
-    "reference:check": "python3 tools/analysis/prepare-pathways.py --check && python3 tools/analysis/prepare-identifiers.py --check",
+    "reference:check": "python3 tools/analysis/prepare-pathways.py --check && python3 tools/analysis/prepare-identifiers.py --check && python3 tools/analysis/prepare-ncbi-identifiers.py --check",
     "curation:packet": "node --experimental-strip-types tools/curation/review-packet.ts",
     "curation:check": "node --experimental-strip-types tools/curation/review-packet.ts --check",
     "curation:intake": "node --use-env-proxy --experimental-strip-types tools/curation/openalex-intake.ts",

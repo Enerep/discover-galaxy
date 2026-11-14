@@ -22,7 +22,7 @@ export function GeneMappingDetails({ report }: { report: GeneMappingReport }) {
       </div>
       <div className="experiment-pagination"><span>{page * 20 + 1}–{Math.min((page + 1) * 20, filtered.length)} of {filtered.length.toLocaleString('en-US')}</span><nav aria-label="Identifier mapping pages"><button className="secondary-button" type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(page + 1) * 20 >= filtered.length} onClick={() => setPage(page + 1)}>Next</button></nav></div>
     </> : <p>No matching identifiers.</p>}
-    <p>{report.versionedCount.toLocaleString('en-US')} version suffixes removed for lookup only; original IDs and statistics are retained. No alias or case conversion. Unresolved IDs stay unannotated in the eligible background; duplicate mappings block analysis.</p>
+    <p>{report.identifierType === 'ensembl' ? `${report.versionedCount.toLocaleString('en-US')} version suffixes removed for lookup only. ` : 'Exact NCBI Gene cross-references only. '}Original IDs and statistics are retained. No alias or case conversion. Unresolved IDs stay unannotated in the eligible background; duplicate mappings block analysis.</p>
     <p>{report.reference.source.attribution} <a href={report.reference.source.url} target="_blank" rel="noreferrer">Pinned HGNC reference</a> · <a href={report.reference.source.terms_url} target="_blank" rel="noreferrer">CC0</a><br />Reference: {report.reference.reference_id}<br />SHA-256: {report.reference.source.sha256}</p>
   </details>;
 }
