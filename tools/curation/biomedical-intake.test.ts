@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { buildAnnotationRequest, fetchAnnotations, MAX_BYTES, normalizeAnnotationResponse, validateIdentity } from './biomedical-intake.ts';
 import type { GeneIdentity, Provider } from './biomedical-intake.ts';
+import { normalizeAnnotationResponse as normalizeSharedAnnotation } from '../../shared/source-intake/biomedical.ts';
 
 // Every provider payload in these tests is authored synthetic data, never production evidence.
 const identity: GeneIdentity = { symbol: 'SYNTHETIC1', ensembl: 'ENSG00000000001', uniprot: 'P00001' };
@@ -20,6 +21,18 @@ const fixtures = {
 };
 const bytes = (value: unknown) => Buffer.from(JSON.stringify(value));
 const normalize = (provider: Provider, value: unknown = fixtures[provider]) => normalizeAnnotationResponse(bytes(value), { provider, identity, processedAt });
+
+test('shared normalization retains the Node packet contract with a caller-computed raw-byte digest', () => {
+  for (const provider of ['uniprot', 'reactome', 'opentargets'] as const) {
+    const raw = Buffer.from(`${JSON.stringify(fixtures[provider], null, 2)}\n`);
+    const options = { provider, identity, processedAt };
+    const digest = createHash('sha256').update(raw).digest('hex');
+    assert.deepEqual(normalizeSharedAnnotation(raw, options, digest), normalizeAnnotationResponse(raw, options));
+    for (const invalid of ['', 'f'.repeat(63), 'F'.repeat(64), 'g'.repeat(64)]) {
+      assert.throws(() => normalizeSharedAnnotation(raw, options, invalid), /SHA-256/);
+    }
+  }
+});
 
 test('fixed provider requests bind exact human identities and limit direct associations to one page', () => {
   assert.match(buildAnnotationRequest('uniprot', identity).url, /P00001\.json$/u);

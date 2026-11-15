@@ -3,11 +3,25 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { buildOpenAlexRequest, DEFAULT_QUERY, fetchOpenAlexCandidates, normalizeOpenAlexBytes, normalizeOpenAlexResponse } from './openalex-intake.ts';
+import { normalizeOpenAlexBytes as normalizeSharedOpenAlex } from '../../shared/source-intake/openalex.ts';
 
 const fixtureUrl = new URL('./fixtures/openalex-response.json', import.meta.url);
 const fixtureBytes = await readFile(fixtureUrl);
 const fixture = JSON.parse(fixtureBytes.toString('utf8'));
 const context = { query: DEFAULT_QUERY, processedAt: '2026-10-22T00:00:00Z', requestUrl: buildOpenAlexRequest() };
+
+test('shared byte normalization preserves Node metadata and provenance without hashing parsed JSON', () => {
+  const raw = Buffer.from(`${JSON.stringify(fixture, null, 2)}\n`);
+  const digest = createHash('sha256').update(raw).digest('hex');
+  for (const dataOrigin of ['offline_input', 'live_api_response'] as const) {
+    const options = { ...context, dataOrigin };
+    assert.deepEqual(normalizeSharedOpenAlex(raw, options, digest), normalizeOpenAlexBytes(raw, options));
+    assert.equal(normalizeOpenAlexResponse(fixture, options).response_sha256, null);
+  }
+  for (const invalid of ['', 'f'.repeat(63), 'F'.repeat(64), 'g'.repeat(64)]) {
+    assert.throws(() => normalizeSharedOpenAlex(raw, context, invalid), /SHA-256/);
+  }
+});
 
 test('candidate metadata preserves nullable fields and stays separate from graph evidence', () => {
   const packet = normalizeOpenAlexResponse(fixture, context);

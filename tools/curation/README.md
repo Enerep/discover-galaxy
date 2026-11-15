@@ -2,6 +2,8 @@
 
 These command-line tools prepare material for review. They do not promote records into the graph, establish biological support, or create human-review attestations.
 
+The website's separate [Live sources pilot](../../docs/live-sources.md) reuses the pure request/normalization contracts in `shared/source-intake/`. The Node commands below keep their existing schemas and staging behavior; the explicit browser view is read-only and never promotes results into the graph.
+
 ## Current snapshot review packet
 
 `npm run curation:packet` prints the existing snapshot's review extract; `npm run curation:check` verifies the committed packet is current. Record actual reviews in the source dataset, then regenerate the extract.

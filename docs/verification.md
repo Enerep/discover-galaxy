@@ -396,3 +396,31 @@ A separate live fallback/reduced-motion regression uploaded synthetic NCBI IDs `
 Local pilot screenshots are in ignored `artifacts/real-apoe-validation/`, including real desktop, mobile and fallback report images; desktop/mobile were visually inspected. This is computational/interaction validation of supplied GBM results, not an AD experiment, source-model reproduction, independent scientific review or validation of a biological explanation. The [manifest](../data/validation/gse147352-gbm.json) and validation notes preserve primary-cohort/reanalysis, model, provenance and reuse limits.
 
 Focused existing-browser regressions also passed Ensembl column/mapping/retry/collision handling, analysis upload/error recovery, local-worker sensitivity/grouping/failure/cancellation, the authored example, pending/applied context and pathway evidence on desktop/mobile/themes/fallback. A first broad run stopped at the existing focused-graph idle assertion (4 requested frames under concurrent browser load); an isolated repeat passed both focused/expanded desktop/mobile graph checks with zero idle frames/draws. The broad runner was not claimed as fully completed; the affected analysis suites were run separately and passed. No graph code was changed.
+
+## Live browser sources checkpoint — 2026-11-15
+
+The new **Live sources** disclosure supports the exact curated human APOE/ABCA1 gene/protein identities. Local `check:ci` passed **198 Node tests**, **seven Python security tests**, strict application/tool typechecks, reference/data/curation/coverage/seed checks and production build. Shared-core extraction preserves the existing CLI schemas, offline/live provenance and errors; compact/formatted-byte parity and caller-computed digest checks pass. The dependency metadata/audit/pinned-IOC checks passed with zero advisories or exact IOC matches. No dependency, lockfile, npm safeguard, numerical-reference or curated-graph changes were made. The existing bundle-size advisory remains; the build succeeds.
+
+`tools/live-sources-smoke.py` passed deterministic mocked desktop/light, 360px mobile/dark/reduced-motion and WebGL fallback cases. Observed checks include:
+
+- Loading, selection and opening the disclosure make no provider request; the explicit action makes only the four fixed public requests, with no authentication, cookies or referrer.
+- Supported human gene/protein records expose the same checked public identities; mouse, TREM2 and malformed identity responses stay outside the pilot.
+- Exact response-body hashes, timestamps, terms, version strings, coverage, provider retraction flags, aggregate-score meanings and unreviewed labels remain accessible.
+- HTTP 403/429 failures, one-provider retry, successful siblings, dated prior results after failed refresh, malformed UniProt identity and late responses behave explicitly; retries keep keyboard focus.
+- Entity navigation aborts pending requests and discards stale completion. The live component has no experimental props or graph mutation callbacks.
+- An uploaded synthetic analysis's filename, comparison, context, fold change and p-value stay outside provider URLs/bodies, storage and shared links. Existing curated findings remain available. The new component adds no export path; existing brief/PNG exports were not re-exercised by this focused suite.
+
+Actual ordinary-Chromium requests succeeded for all four providers from localhost and the existing Vercel origin on 2026-11-14. On 2026-11-15, the **new local production-build UI** completed eight HTTP 200 requests for APOE and ABCA1. Independent Python `hashlib.sha256(response.body())` matched every displayed digest, rather than hashing parsed or reserialized JSON. Exact metadata are in the [technical check record](../data/annotations/live-browser-check-2026-11-15.json):
+
+| Provider | APOE | ABCA1 |
+| --- | --- | --- |
+| UniProt | P02649, human, entry 281 | O95477, human, entry 244 |
+| Reactome | 12 human protein-to-pathway mappings | 4 human protein-to-pathway mappings |
+| Open Targets | First 20 of 2,836 direct associations | First 20 of 1,797 direct associations |
+| OpenAlex | First 5 of 21,237 text-search matches | First 5 of 515 text-search matches |
+
+UniProt reports release `2026_04`, with annotation updates 2026-11-04. Open Targets components remain exact strings `{year:"26",month:"09",iteration:null}`. Reactome record revisions are retained while its global release stays unknown; no global OpenAlex release is invented. Totals and metadata can change on later requests. The actual checks verified normalized records, source scores/terms/coverage, explicit-only requests, no input storage, no page errors and real WebGL rendering. They do not establish scientific support, independence, completeness or biological validation.
+
+Managed-browser verification used the inherited proxy and write permission for existing NSS database locks; TLS verification stayed enabled with existing configured CA anchors. No CA changes, user-agent spoofing or proxy bypass were used. Python's default client received a Reactome signature-based 403 while ordinary Chromium succeeded. Provider/CORS/quota failures remain expected runtime states rather than a requirement for CI or the curated explorer.
+
+Ignored screenshots are in `artifacts/live-sources/`: mocked desktop/mobile/fallback and actual APOE/ABCA1/provider views. Desktop, mobile and actual provider panels were visually inspected and remain readable without overflow. The Vercel-origin check verifies provider access from that origin; it does not attest that this feature has been merged or deployed. The [scope document](live-sources.md) records the completed research-preview flow and future scientific-review boundary.
