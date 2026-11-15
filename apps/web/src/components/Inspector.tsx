@@ -11,6 +11,8 @@ import { StudyContextNote } from './StudyContextNote.tsx';
 import { formatProbability } from '../lib/experiment-analysis.ts';
 import type { ExperimentObservation } from '../lib/experiment-analysis.ts';
 import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
+import { LiveSources } from './LiveSources.tsx';
+import { getLiveLookupIdentity } from '../lib/live-source-lookup.ts';
 
 function Disclosure({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -139,6 +141,7 @@ interface Props {
 export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin, experimentObservation }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
+  const liveIdentity = getLiveLookupIdentity(selected);
   useLayoutEffect(() => {
     // A new record starts at its heading without moving the document on mobile.
     if (panelRef.current) panelRef.current.scrollTop = 0;
@@ -180,6 +183,7 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
           {active ? <Finding key={active.id} snapshot={snapshot} claim={active} selected={selected} onFollow={onFollow} pinned={pinnedClaimIds.includes(active.id)} onPin={onPin} />
             : <p className="no-findings">No findings for this record in the current dataset.</p>}
         </section>
+        {liveIdentity && <LiveSources identity={liveIdentity} />}
         {(selected.external_ids.length > 0 || selected.description) && (
           <Disclosure label="Entity details">
             <dl className="context-list identifiers">

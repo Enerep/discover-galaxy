@@ -29,13 +29,16 @@ flowchart LR
     Reference[Pinned Reactome gene sets] --> Analysis
     Analysis --> Questions[Source-linked question proposals]
     Analysis --> Inspector
+    Inspector -->|Explicit public-identity lookup| Live[Live source adapter]
+    Providers[UniProt, Reactome, Open Targets, OpenAlex] --> Live
+    Live --> Results[Separate unreviewed provider panels]
 ```
 
-The diagram shows the current application. The galaxy, list, and inspector are views of the same local records. A structural validation pass permits development use; it does not establish scientific validity. See the [data model](data-model.md) for schema `0.1.0` and the [evidence policy](evidence-policy.md) for publication rules.
+The diagram shows the current application. The galaxy, list, and inspector are views of the same local records. A structural validation pass permits development use; it does not establish scientific validity. See the [data model](data-model.md) for schema `0.2.0` and the [evidence policy](evidence-policy.md) for publication rules.
 
 ## Component boundaries
 
-Database expansion uses an offline curation boundary: `biomedical-intake.ts` builds fixed UniProt/Reactome/Open Targets requests, normalizes allowlisted facts and writes source-linked staging packets. It never runs in the browser, reads experiments or promotes scientific records. The bounded [reference seed](../data/annotations/README.md) is reproducible from existing HGNC/Reactome bytes and explicitly distinct from API retrieval. Live provider access is blocked in the current cloud workspace; archived/simulated-response checks are separate from a successful live integration. A separate source-checked snapshot diff is required to display facts in the explorer.
+Database expansion uses an offline curation boundary: `biomedical-intake.ts` builds fixed UniProt/Reactome/Open Targets requests, normalizes allowlisted facts and writes source-linked staging packets. The Node entry point never runs in the browser, reads experiments or promotes scientific records. Its pure request/normalization contracts and the OpenAlex contracts live in `shared/source-intake/`, reused by the separate [Live sources pilot](live-sources.md). Explicit browser lookups accept only fixed public human APOE/ABCA1 identities and show ephemeral, unreviewed provider panels; they never reconstruct or modify the curated graph. The bounded [reference seed](../data/annotations/README.md) remains reproducible from pinned HGNC/Reactome bytes, distinct from API retrieval. Actual browser access and UI checks are recorded in [verification](verification.md); mocked checks are separate. A source-checked snapshot diff is required to change curated findings.
 
 | Boundary | Responsibility |
 | --- | --- |
@@ -44,6 +47,7 @@ Database expansion uses an offline curation boundary: `biomedical-intake.ts` bui
 | Explorer state | Own query, selected identifiers, active filters, and view mode; keep the canvas and HTML views synchronized. |
 | Galaxy scene | Render nodes, edges, labels, camera focus, and visible selection state. Keep scientific logic outside render components. |
 | Evidence inspector | Present the selected draft claim, source-linked notes, study context, limitations, original references, and review status. |
+| Live sources | Explicitly fetch fixed public identities through shared validators; bound and hash responses, preserve source meaning/provenance, isolate failures and cancel stale requests. No experimental inputs, storage or graph writes. |
 | Finding comparison | Align two findings' recorded context and preserve source-specific values, limitations, review fields, and publication identities in the view and Markdown brief. |
 | Sharing | Capture the graph on demand, generate a cited PNG in the browser, and encode validated explorer state in a shareable URL fragment. |
 | Research brief | Own bounded user notes and claim references separately from scientific records; save locally and export complete cited evidence. |

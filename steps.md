@@ -134,6 +134,16 @@ This completes the product milestone for a **public research preview**: processe
 
 This workflow interprets processed results; it does not run raw-count differential expression, verify input species/identity, model gene-length/expression selection bias, prove pathway activity or promote questions into the curated scientific snapshot. No backend, upload service or live AI model was added.
 
+### Live sources research-preview checkpoint
+
+- [x] Share the existing pure provider request/validation contracts between browser and Node adapters without changing CLI schemas or provenance.
+- [x] Add explicit, bounded, keyless lookups for the exact curated human APOE/ABCA1 gene/protein identities; keep uploaded data outside requests.
+- [x] Separate four unreviewed provider views from curated findings, retaining meanings, version/terms/digest/retrieval provenance and access to all returned rows.
+- [x] Preserve partial successes, explicit retry/refresh, stale-request cancellation and keyboard focus.
+- [x] Verify deterministic desktop/mobile/fallback failure/privacy flows and actual four-provider browser requests; record exact observed scope.
+
+This checkpoint completes the planned real-input → cited evidence → optional current-provider lookup research-preview flow. Broader scientific review and observed researcher feedback remain future work; provider metadata never creates an approved finding or biological validation.
+
 ### Reproducible database annotation intake
 
 - [x] Add bounded, identity-checked UniProt/Reactome/Open Targets adapters with archived-response replay, byte digests, actual/offline retrieval provenance and separate database/experimental meanings.

@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "verification": "actual_new_ui_requests",
+  "page_origin": "http://127.0.0.1:4174/",
+  "started_at": "2026-11-15T01:54:56.257Z",
+  "tls_verification": "enabled",
+  "provider_mocks": false,
+  "raw_provider_responses_saved": false,
+  "identities": [
+    {
+      "identity": {
+        "symbol": "APOE",
+        "ensembl": "ENSG00000130203",
+        "uniprot": "P02649"
+      },
+      "providers": [
+        {
+          "provider": "openalex",
+          "identity": {
+            "symbol": "APOE",
+            "ensembl": "ENSG00000130203",
+            "uniprot": "P02649"
+          },
+          "request_url": "https://api.openalex.org/works?search.title_and_abstract=Alzheimer+AND+APOE&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+          "method": "GET",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:03.203Z",
+          "response_sha256": "4dacb25aa42c6ab0dcf415799084a5c47977c5c41eac475fcbb810145ffc5ef6",
+          "response_bytes": 3863,
+          "license": "CC0-1.0",
+          "terms_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "provider_release": null,
+          "provider_version": null,
+          "query": "Alzheimer AND APOE",
+          "retained": 5,
+          "returned_records": 5,
+          "duplicate_records": 0,
+          "total_reported": 21237,
+          "truncated": true,
+          "scope": "First five text-search metadata records; relevance does not establish biological support or independent studies"
+        },
+        {
+          "provider": "opentargets",
+          "identity": {
+            "symbol": "APOE",
+            "ensembl": "ENSG00000130203",
+            "uniprot": "P02649"
+          },
+          "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+          "method": "POST",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:03.685Z",
+          "response_sha256": "8a1808389516f25a7817bf5bab7a32cb72aa0eff6a955451cc0383bf2d54fd14",
+          "response_bytes": 5675,
+          "license": "CC0-1.0",
+          "terms_url": "https://platform-docs.opentargets.org/licence",
+          "provider_release": "26.09",
+          "provider_version": {
+            "year": "26",
+            "month": "09",
+            "iteration": null
+          },
+          "retained": 20,
+          "total_reported": 2836,
+          "truncated": true,
+          "scope": "First 20 direct target–disease associations; enableIndirect=false; provider-defined scores, not probabilities"
+        },
+        {
+          "provider": "reactome",
+          "identity": {
+            "symbol": "APOE",
+            "ensembl": "ENSG00000130203",
+            "uniprot": "P02649"
+          },
+          "request_url": "https://reactome.org/ContentService/data/mapping/UniProt/P02649/pathways?species=9606",
+          "method": "GET",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:03.764Z",
+          "response_sha256": "58e052001dd4c2b9f78902ef7b3e6dd895101a341dde0007239486ae7284b314",
+          "response_bytes": 4888,
+          "license": "CC0-1.0",
+          "terms_url": "https://reactome.org/license",
+          "provider_release": null,
+          "provider_version": null,
+          "retained": 12,
+          "total_reported": null,
+          "truncated": null,
+          "record_revisions": [
+            "R-HSA-1251985.7",
+            "R-HSA-3000480.2",
+            "R-HSA-381426.4",
+            "R-HSA-8864260.5",
+            "R-HSA-8957275.2",
+            "R-HSA-8963888.2",
+            "R-HSA-8963901.2",
+            "R-HSA-8964026.3",
+            "R-HSA-8964058.4",
+            "R-HSA-9029569.2",
+            "R-HSA-975634.4",
+            "R-HSA-977225.8"
+          ],
+          "scope": "Human lower-level pathways mapped from the declared UniProt accession; no molecular-state inference"
+        },
+        {
+          "provider": "uniprot",
+          "identity": {
+            "symbol": "APOE",
+            "ensembl": "ENSG00000130203",
+            "uniprot": "P02649"
+          },
+          "request_url": "https://rest.uniprot.org/uniprotkb/P02649.json",
+          "method": "GET",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:03.514Z",
+          "response_sha256": "092114effe4244e54e48c0e220b17dd15e96d65ded46d384238a193a29a83203",
+          "response_bytes": 180671,
+          "license": "CC-BY-4.0",
+          "terms_url": "https://rest.uniprot.org/help/license",
+          "provider_release": "2026_04",
+          "provider_version": null,
+          "entry_version": 281,
+          "annotation_updated_at": "2026-11-04",
+          "retained": 1,
+          "total_reported": 1,
+          "truncated": false,
+          "scope": "Single declared human protein entry; identity metadata only"
+        }
+      ]
+    },
+    {
+      "identity": {
+        "symbol": "ABCA1",
+        "ensembl": "ENSG00000165029",
+        "uniprot": "O95477"
+      },
+      "providers": [
+        {
+          "provider": "openalex",
+          "identity": {
+            "symbol": "ABCA1",
+            "ensembl": "ENSG00000165029",
+            "uniprot": "O95477"
+          },
+          "request_url": "https://api.openalex.org/works?search.title_and_abstract=Alzheimer+AND+ABCA1&per_page=5&page=1&select=id%2Cids%2Cdoi%2Ctitle%2Cpublication_year%2Cpublication_date%2Ctype%2Cis_retracted%2Cupdated_date",
+          "method": "GET",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:13.861Z",
+          "response_sha256": "8ed515e87c8f5a5f8974e60d3fa051a234e096687fca434a539fd73ae8fd6a14",
+          "response_bytes": 3876,
+          "license": "CC0-1.0",
+          "terms_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "provider_release": null,
+          "provider_version": null,
+          "query": "Alzheimer AND ABCA1",
+          "retained": 5,
+          "returned_records": 5,
+          "duplicate_records": 0,
+          "total_reported": 515,
+          "truncated": true,
+          "scope": "First five text-search metadata records; relevance does not establish biological support or independent studies"
+        },
+        {
+          "provider": "opentargets",
+          "identity": {
+            "symbol": "ABCA1",
+            "ensembl": "ENSG00000165029",
+            "uniprot": "O95477"
+          },
+          "request_url": "https://api.platform.opentargets.org/api/v4/graphql",
+          "method": "POST",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:14.007Z",
+          "response_sha256": "39428ebc6794cd529fd7446fbb896d05827b39eb06d4eaf90a46e8c81912100c",
+          "response_bytes": 5246,
+          "license": "CC0-1.0",
+          "terms_url": "https://platform-docs.opentargets.org/licence",
+          "provider_release": "26.09",
+          "provider_version": {
+            "year": "26",
+            "month": "09",
+            "iteration": null
+          },
+          "retained": 20,
+          "total_reported": 1797,
+          "truncated": true,
+          "scope": "First 20 direct target–disease associations; enableIndirect=false; provider-defined scores, not probabilities"
+        },
+        {
+          "provider": "reactome",
+          "identity": {
+            "symbol": "ABCA1",
+            "ensembl": "ENSG00000165029",
+            "uniprot": "O95477"
+          },
+          "request_url": "https://reactome.org/ContentService/data/mapping/UniProt/O95477/pathways?species=9606",
+          "method": "GET",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:14.395Z",
+          "response_sha256": "06aa17f8a26e14bf818df483ac21533d3c8fe62f85645e2019bf67a68c3b84d7",
+          "response_bytes": 1637,
+          "license": "CC0-1.0",
+          "terms_url": "https://reactome.org/license",
+          "provider_release": null,
+          "provider_version": null,
+          "retained": 4,
+          "total_reported": null,
+          "truncated": null,
+          "record_revisions": [
+            "R-HSA-1989781.6",
+            "R-HSA-5682113.5",
+            "R-HSA-8963896.2",
+            "R-HSA-9029569.2"
+          ],
+          "scope": "Human lower-level pathways mapped from the declared UniProt accession; no molecular-state inference"
+        },
+        {
+          "provider": "uniprot",
+          "identity": {
+            "symbol": "ABCA1",
+            "ensembl": "ENSG00000165029",
+            "uniprot": "O95477"
+          },
+          "request_url": "https://rest.uniprot.org/uniprotkb/O95477.json",
+          "method": "GET",
+          "status": 200,
+          "retrieved_at": "2026-11-15T01:55:13.671Z",
+          "response_sha256": "cc09f5c6c6d66ac2e406096e47eab9b32ac32abd93d7c5a1d7f6abd17ade26cb",
+          "response_bytes": 188144,
+          "license": "CC-BY-4.0",
+          "terms_url": "https://rest.uniprot.org/help/license",
+          "provider_release": "2026_04",
+          "provider_version": null,
+          "entry_version": 244,
+          "annotation_updated_at": "2026-11-04",
+          "retained": 1,
+          "total_reported": 1,
+          "truncated": false,
+          "scope": "Single declared human protein entry; identity metadata only"
+        }
+      ]
+    }
+  ],
+  "status": "passed",
+  "completed_at": "2026-11-15T01:55:22.700Z",
+  "checks": {
+    "no_fetch_before_explicit_action": true,
+    "four_providers_per_identity": true,
+    "fixed_public_identity_requests_only": true,
+    "no_auth_cookie_or_referrer": true,
+    "independent_python_body_hash_matches_display": true,
+    "versions_and_coverage_match_bodies": true,
+    "scores_and_literature_metadata_match_bodies": true,
+    "terms_and_scopes_visible": true,
+    "no_provider_fetch_on_metadata_disclosures": true,
+    "no_input_storage": true,
+    "page_errors": 0,
+    "screenshots_visually_inspected": true,
+    "real_webgl_ui_rendered": true
+  },
+  "screenshots": "artifacts/live-sources/real-{apoe,abca1}-{overview,uniprot,reactome,open-targets,openalex}.png",
+  "scope": "Technical verification of explicit read-only provider lookups in a local production build; not a scientific review, graph import, immutable provider snapshot or deployment attestation."
+}

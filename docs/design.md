@@ -111,3 +111,9 @@ Before calling an interface refinement complete:
 9. Pin findings, include a comparison, write and reload a brief, then download the actual Markdown. Check user-note/evidence separation, keyboard and mobile access, both themes, storage failure/conflict recovery, and explicit dataset refresh without losing notes.
 
 The current scientific dataset remains a development starter. A cleaner presentation does not make its records scientifically approved or complete the MVP release gates.
+
+## Live sources
+
+Keep a closed **Live sources** disclosure after a supported human APOE/ABCA1 record's curated findings and before Entity details. One explicit **Check live sources** action starts four independent provider panels. State which public identifiers are sent before the action; never place experimental inputs in the lookup component. Opening the disclosure or changing selection does not fetch.
+
+Keep **Live results · unreviewed**, provider meanings, partial failures and actual retrieval times clear. Show five records initially, retaining access to all returned records and detailed request/digest/version/terms/coverage behind native disclosures. Preserve provider-score and metadata limits. Retry one failed provider without clearing successful siblings; retained previous results after failed refreshes must stay labeled with their earlier timestamp. Keep request controls mounted and focusable while aria-disabled, guard duplicate actions, abort stale requests on entity changes and avoid completion focus/scroll changes. Use existing semantic tokens and reduced motion. No live result alters curated findings or graph relationships.
