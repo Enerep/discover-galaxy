@@ -39,10 +39,18 @@ export interface EvidenceComparison {
 
 const DIMENSIONS = ['organism', 'variant', 'intervention', 'outcome', 'study_design', 'population', 'tissue', 'sample_size'];
 const EXPERIMENT_DIMENSIONS = ['experimental_system', 'binding_condition', 'assay', 'protein_form', 'ligand_preparation', 'immobilized_partner', 'assay_replicates', 'replicate_unit', 'experiments_reported', 'controls'];
+export const RNA_RESULT_FIELDS: readonly string[] = ['microglial_apoe_rna', 'astrocytic_apoe_rna'];
+const RNA_DIMENSIONS = [...RNA_RESULT_FIELDS, 'tissue', 'contrast', 'sample_size', 'donor_groups', 'assay', 'nucleus_sampling', 'analysis_model', 'replicate_unit', 'reported_statistics'];
 const LABELS: Record<string, string> = {
   organism: 'Organism', variant: 'Variant', intervention: 'Intervention', outcome: 'Outcome',
   study_design: 'Study design', population: 'Population', tissue: 'Tissue', sample_size: 'Sample size',
+  microglial_apoe_rna: 'Microglial APOE RNA', astrocytic_apoe_rna: 'Astrocytic APOE RNA',
+  contrast: 'Comparison tested', analysis_model: 'Analysis method',
 };
+
+function isRnaObservation(claim: Claim): boolean {
+  return claim.predicate === 'associated_with' && claim.context.association_scope === 'rna_expression';
+}
 
 /** Only explicit, source-linked notes from the validated snapshot; no inferred disagreements. */
 export function getStudyContextNotes(snapshot: Snapshot, claimId: string): Conflict[] {
@@ -59,7 +67,9 @@ export function findComparisonPartner(snapshot: Snapshot, claimId: string): Clai
   };
   const activeKind = sourceKind(active);
   if (!activeKind) return undefined;
-  const others = snapshot.claims.filter((claim) => claim.id !== claimId && sourceKind(claim) === activeKind);
+  const rna = isRnaObservation(active);
+  const others = snapshot.claims.filter((claim) =>
+    claim.id !== claimId && isRnaObservation(claim) === rna && sourceKind(claim) === activeKind);
   const related = others.filter((claim) => claim.predicate === active.predicate && (
     (claim.subject_id === active.subject_id && claim.object_id === active.object_id)
     || (active.predicate === 'interacts_with' && claim.subject_id === active.object_id && claim.object_id === active.subject_id)
@@ -165,8 +175,16 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
   const keys = new Set(columns.flatMap(({ claim, evidence }) => [
     ...Object.keys(claim.context), ...evidence.flatMap(({ evidence: item }) => Object.keys(item.study_context)),
   ]));
+  const rna = columns.every(({ claim }) => isRnaObservation(claim));
+  const binding = columns.every(({ claim }) => typeof claim.context.binding_condition === 'string');
   const experiment = columns.every(({ evidence }) => evidence.every(({ evidence: item }) => typeof item.study_context.experimental_system === 'string' && item.study_context.experimental_system.trim().length > 0));
-  const dimensions = [...(experiment ? EXPERIMENT_DIMENSIONS.filter((key) => keys.has(key)) : []), ...DIMENSIONS];
+  if (rna) {
+    keys.delete('finding_label');
+    keys.delete('association_scope');
+  }
+  const dimensions = rna
+    ? [...new Set([...RNA_DIMENSIONS, ...DIMENSIONS])].filter((key) => keys.has(key))
+    : [...(experiment ? EXPERIMENT_DIMENSIONS.filter((key) => keys.has(key)) : []), ...DIMENSIONS];
   const extras = [...keys].filter((key) => !dimensions.includes(key)).sort();
   const contextRows = [...dimensions, ...extras].map((key): ComparisonContextRow => {
     const left = cell(columns[0], key); const right = cell(columns[1], key);
@@ -197,8 +215,9 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
     ...(different.has('population') ? ['Check population definitions and any reused participants in the original sources.'] : []),
     ...(['organism', 'study_design', 'intervention', 'outcome'].some((key) => different.has(key))
       ? ['Check whether organisms, study designs, interventions, and endpoints allow a meaningful comparison.'] : []),
-    ...(['assay', 'protein_form', 'ligand_preparation', 'immobilized_partner'].some((key) => different.has(key))
+    ...(binding && ['assay', 'protein_form', 'ligand_preparation', 'immobilized_partner'].some((key) => different.has(key))
       ? ['Check how protein preparation and surface presentation affect the assay readout before interpreting the binding results together.'] : []),
+    ...(rna ? ['Read each cell-type result against its own pathology measure and brain region. Check how the models account for nuclei or preparations from the same donor.'] : []),
     ...(missing.length ? [`Find the unrecorded study context in the original sources: ${missing.join(', ')}.`] : []),
     sharedSources.length ? 'Inspect the shared source records before treating the findings as separate observations.'
       : experiment ? 'Check shared protein preparations, experiments and study provenance; different citations alone do not establish replication.'

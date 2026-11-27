@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { buildComparisonBrief, buildEvidenceComparison } from '../lib/compare-evidence.ts';
+import { buildComparisonBrief, buildEvidenceComparison, RNA_RESULT_FIELDS } from '../lib/compare-evidence.ts';
 import type { ComparisonColumn, ComparisonContextCell, ContextValue } from '../lib/compare-evidence.ts';
 import type { Snapshot } from '../lib/types.ts';
 import { findingLabel, sourceCitation } from '../lib/source-format.ts';
@@ -39,6 +39,10 @@ function ContextValues({ cell, column }: { cell: ComparisonContextCell; column: 
   );
 }
 
+function columnHeading(column: ComparisonColumn, fallback: string) {
+  return column.sources.length === 1 ? sourceCitation(column.sources[0]) : fallback;
+}
+
 function FindingCard({ column }: { column: ComparisonColumn }) {
   const { claim, subject, evidence, limitations } = column;
   const heading = (typeof claim.context.binding_condition === 'string' || typeof claim.context.finding_label === 'string') && column.sources.length === 1
@@ -46,7 +50,7 @@ function FindingCard({ column }: { column: ComparisonColumn }) {
   const draft = claim.review.status !== 'approved' || claim.review.human_reviewed !== true
     || evidence.some(({ evidence: item }) => item.review.status !== 'approved' || item.review.human_reviewed !== true);
   return (
-    <section className="comparison-finding" aria-label={`${subject.label} finding`}>
+    <section className="comparison-finding" aria-label={`${heading} finding`}>
       <h3>{heading}{draft && <span className="draft-label">Draft</span>}</h3>
       <p>{claim.statement}</p>
       <ul className="comparison-sources">
@@ -85,6 +89,9 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose, onIn
     catch (cause) { return { comparison: null, error: cause instanceof Error ? cause.message : 'Unable to compare these findings.' }; }
   }, [snapshot, claimIds]);
   const comparison = result.comparison;
+  const leftHeading = comparison ? columnHeading(comparison.columns[0], 'Finding A') : 'Finding A';
+  const rightHeading = comparison ? columnHeading(comparison.columns[1], 'Finding B') : 'Finding B';
+  const sameHeading = leftHeading === rightHeading;
 
   useEffect(() => {
     if (claimIds && !dialog.current?.open) dialog.current?.showModal();
@@ -119,9 +126,9 @@ export function EvidenceComparison({ snapshot, claimIds, onChange, onClose, onIn
         <div className="comparison-table-wrap" tabIndex={0} role="region" aria-label="Study context comparison">
           <table className="comparison-table">
             <caption className="sr-only">Source-specific study context for the two selected findings</caption>
-            <thead><tr><th scope="col">Recorded field</th><th scope="col">Finding A</th><th scope="col">Finding B</th></tr></thead>
+            <thead><tr><th scope="col">Recorded field</th><th scope="col">{sameHeading ? 'Finding A' : leftHeading}</th><th scope="col">{sameHeading ? 'Finding B' : rightHeading}</th></tr></thead>
             <tbody>{comparison.contextRows.map((row) => <tr key={row.key} data-state={row.status}>
-              <th scope="row">{row.label}{' '}<span className={row.status === 'matching' ? 'sr-only' : 'context-status'} data-state={row.status}>{row.status === 'matching' ? 'Same recorded value' : row.status === 'different' ? 'Different' : 'Missing context'}</span></th>
+              <th scope="row">{row.label}{!RNA_RESULT_FIELDS.includes(row.key) && <>{' '}<span className={row.status === 'matching' ? 'sr-only' : 'context-status'} data-state={row.status}>{row.status === 'matching' ? 'Same recorded value' : row.status === 'different' ? 'Different' : 'Missing context'}</span></>}</th>
               <td><ContextValues cell={row.left} column={comparison.columns[0]} /></td>
               <td><ContextValues cell={row.right} column={comparison.columns[1]} /></td>
             </tr>)}</tbody>

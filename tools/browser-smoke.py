@@ -1874,7 +1874,7 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         expect(evidence.locator('.experiment-coverage-summary')).to_have_text('No selected genes in this pathway at the applied cutoffs.')
         expect(evidence.locator('.experiment-paper')).to_have_count(0)
         expect(coverage_table).to_have_count(0)
-        # Gene-level literature can include variant/protein studies and curated assay notes.
+        # Gene-level literature includes RNA observations and the existing variant and binding studies.
         form.get_by_label('Human RNA-seq results', exact=True).set_input_files({'name': 'synthetic-paper-context.csv', 'mimeType': 'text/csv',
             'buffer': b'gene,log2FoldChange,padj\nAPOE,2,.01\nTREM2,.1,.8\n'})
         form.get_by_role('spinbutton', name='Gene FDR', exact=True).fill('0.05')
@@ -1884,10 +1884,10 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         search.fill('R-HSA-174824')
         workspace.get_by_role('button', name='Plasma lipoprotein assembly, remodeling, and clearance', exact=True).click()
         expect(evidence.locator('.experiment-coverage-summary')).to_have_text('1 of 1 selected genes have paper findings in this library.')
-        expect(evidence.locator('.experiment-paper')).to_have_count(5)
+        expect(evidence.locator('.experiment-paper')).to_have_count(7)
         expect(evidence.locator('.experiment-paper[data-source-id="source-cheng-2021"]')).to_have_count(0)
-        note = evidence.locator('.study-context-note')
-        expect(note).to_have_count(1)
+        expect(evidence.locator('.study-context-note')).to_have_count(2)
+        note = evidence.locator('[data-note-id="conflict-r47h-binding-context"]')
         expect(note.locator('h5')).to_contain_text('Different R47H binding results')
         note.get_by_text('What differs', exact=True).click()
         expect(note).to_contain_text('a non-significant result is not an equivalence test')
@@ -1896,6 +1896,10 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         expect(bailey.locator('.publication-status')).to_contain_text('Correction recorded')
         notice = next(source for source in SNAPSHOT['sources'] if source['id'] == 'source-bailey-2015')['publication_status']['notice_url']
         expect(bailey.get_by_role('link', name='View notice', exact=True)).to_have_attribute('href', notice)
+        rna_note = evidence.locator('[data-note-id="context-apoe-cell-type-rna"]')
+        expect(rna_note.get_by_role('link', name='Mathys et al. · 2019', exact=True)).to_have_attribute('href', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/')
+        expect(rna_note.get_by_role('link', name='Smith et al. · 2022', exact=True)).to_have_attribute('href', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8732962/')
+        expect(rna_note).to_contain_text('no statistically significant association with local pathology burden')
         form.get_by_role('button', name='Remove results', exact=True).click()
         expect(evidence).to_have_count(0)
         assert all(method == 'GET' and data is None for method, _, data in requests)

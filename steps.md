@@ -179,6 +179,14 @@ Snapshot 0.5.0 adds Lessard 2018's scoped APOE3 BLI finding and one source-check
 
 Snapshot 0.8.0 has 45 entities, 49 claims, 49 evidence records and 49 sources plus one unchanged context comparison. This is a visible evidence checkpoint, not completion of the broader possible-explanations pilot, hypotheses or independent scientific-release gate. [The change record](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) retains actual source limits; browser verification is recorded separately. Wahrle 2004 has left the reading plan; five publication candidates remain.
 
+### Human APOE RNA evidence comparison
+
+- [x] Check two original human brain studies and keep their cell types, pathology measures, donor counts and statistical methods with their own findings.
+- [x] Add the two APOE RNA findings and paper links as a source-checked draft, including a context comparison and the Mathys correction.
+- [x] Open the paired comparison from the APOE inspector and surface the original findings in pathway evidence for selected APOE.
+
+This comparison deepens the existing Alzheimer's branch. The [source record](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-090--2026-11-27) identifies the inspected figure, supplement rows and review limits.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
 Future content work can continue from the 49-claim/49-evidence source packet and five staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
