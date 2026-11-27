@@ -23,7 +23,7 @@ export function PathwayEvidence({ snapshot, analysis, pathwayId, onInspectFindin
   return <section className="experiment-literature" aria-label="Pathway evidence">
     <h4>Evidence</h4>
     <p className="experiment-coverage-summary">{report.genes.length
-      ? `${covered} of ${report.genes.length} selected genes have paper findings in this library.`
+      ? `${covered} of ${report.genes.length} selected genes have paper findings in the ${snapshot.scope.disease} map.`
       : 'No selected genes in this pathway at the applied cutoffs.'}</p>
     {report.genes.length > 0 && <details className="experiment-coverage">
       <summary>Coverage by selected gene</summary>

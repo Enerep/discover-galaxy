@@ -1,0 +1,1025 @@
+{
+  "schema_version": "0.2.0",
+  "dataset_version": "lewy-bodies-source-checked-0.1.0",
+  "release_status": "development",
+  "created_at": "2026-11-27",
+  "scope": {
+    "disease": "Dementia with Lewy bodies",
+    "inclusion_criteria": "Human DLB genetic association findings for APOE, SNCA and GBA1 from three original studies. Includes a comparison of APOE ε4 in autopsy-defined groups with low or absent Alzheimer’s co-pathology.",
+    "limitations": [
+      "Selective coverage of human genetic associations in DLB. Case definitions, Alzheimer’s co-pathology thresholds, controls, and analysis methods vary by study.",
+      "Variant-level case–control associations do not establish mechanisms, pathway activity, individual disease probabilities or treatment effects.",
+      "Mondo and HGNC supply disease and gene identity. The cited papers supply the association findings. Participant overlap across papers was not checked.",
+      "Reading covered the cited methods, results and tables. The Kaivola correction and notice metadata were checked. Independent scientific review is a future milestone."
+    ]
+  },
+  "upstream_releases": [
+    {
+      "provider": "Mondo via EMBL-EBI OLS",
+      "release": "2026-11-03",
+      "accessed_at": "2026-11-27",
+      "source_url": "https://www.ebi.ac.uk/ols4/api/ontologies/mondo/terms?short_form=MONDO_0007488",
+      "reuse_terms_url": "https://raw.githubusercontent.com/monarch-initiative/mondo/v2026-11-03/LICENSE",
+      "attribution": "Mondo Disease Ontology (Monarch Initiative), CC BY 4.0."
+    },
+    {
+      "provider": "HGNC",
+      "release": null,
+      "accessed_at": "2026-11-27",
+      "source_url": "https://rest.genenames.org/",
+      "reuse_terms_url": "https://www.genenames.org/about/license/",
+      "attribution": "HUGO Gene Nomenclature Committee (RRID:SCR_002827), CC0."
+    },
+    {
+      "provider": "PubMed Central",
+      "release": null,
+      "accessed_at": "2026-11-27",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/",
+      "reuse_terms_url": "https://pmc.ncbi.nlm.nih.gov/about/copyright/",
+      "attribution": "Primary papers by Tsuang, Kaivola and Guerreiro and colleagues, with PubMed and Crossref bibliographic and notice checks."
+    }
+  ],
+  "entities": [
+    {
+      "id": "disease-dlb",
+      "type": "disease",
+      "label": "Dementia with Lewy bodies",
+      "aliases": [
+        "DLB"
+      ],
+      "external_ids": [
+        {
+          "namespace": "MONDO",
+          "value": "MONDO_0007488"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-mondo-dlb"
+      ]
+    },
+    {
+      "id": "gene-apoe",
+      "type": "gene",
+      "label": "APOE",
+      "aliases": [
+        "apolipoprotein E"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:613"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "348"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000130203"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-apoe"
+      ],
+      "taxonomy_id": 9606
+    },
+    {
+      "id": "gene-snca",
+      "type": "gene",
+      "label": "SNCA",
+      "aliases": [
+        "synuclein alpha",
+        "alpha-synuclein",
+        "α-synuclein"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:11138"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "6622"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000145335"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-snca"
+      ],
+      "taxonomy_id": 9606
+    },
+    {
+      "id": "gene-gba1",
+      "type": "gene",
+      "label": "GBA1",
+      "aliases": [
+        "glucosylceramidase beta 1",
+        "GBA",
+        "glucocerebrosidase"
+      ],
+      "external_ids": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:4177"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "2629"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000177628"
+        }
+      ],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-hgnc-gba1"
+      ],
+      "taxonomy_id": 9606
+    },
+    {
+      "id": "paper-tsuang-2013",
+      "type": "paper",
+      "label": "Tsuang et al. · 2013",
+      "aliases": [
+        "APOE ε4 increases risk for dementia in pure synucleinopathies",
+        "23407718"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-tsuang-2013"
+      ],
+      "source_id": "source-tsuang-2013"
+    },
+    {
+      "id": "paper-kaivola-2022",
+      "type": "paper",
+      "label": "Kaivola et al. · 2022",
+      "aliases": [
+        "Genetic evaluation of dementia with Lewy bodies implicates distinct disease subgroups",
+        "35381062"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-kaivola-2022"
+      ],
+      "source_id": "source-kaivola-2022"
+    },
+    {
+      "id": "paper-guerreiro-2018",
+      "type": "paper",
+      "label": "Guerreiro et al. · 2018",
+      "aliases": [
+        "Investigating the genetic architecture of dementia with Lewy bodies: a two-stage genome-wide association study",
+        "29263008"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-guerreiro-2018"
+      ],
+      "source_id": "source-guerreiro-2018"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-dlb-apoe-e4-low-pathology-tsuang-2013",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "Tsuang and colleagues reported higher odds of DLB among APOE ε4 carriers in their low or absent Alzheimer’s co-pathology group (OR 6.1, 95% CI 3.5–10.5).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Autopsy-based case–control association",
+        "outcome": "DLB with low or absent Alzheimer’s co-pathology",
+        "finding_label": "ε4 · Low or absent AD changes"
+      },
+      "evidence_ids": [
+        "evidence-dlb-apoe-e4-low-pathology-tsuang-2013"
+      ],
+      "summary": "The adjusted analysis compared 91 autopsy-defined cases with 269 autopsied controls from studies of normal aging.",
+      "limitations": [
+        "The low-pathology definition includes all changes below the study’s high threshold.",
+        "Control selection and retrospective classification limit generalization. The authors lacked ancestry-informative markers."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s classification and statistical methods, results, and Tables 2–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "claim-dlb-apoe-e4-low-pathology-kaivola-2022",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "Kaivola and colleagues found no statistically significant APOE ε4 association for their DLB group with low or absent Alzheimer’s co-pathology (OR 0.75, 95% CI 0.43–1.30).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Pathology-subgroup case–control association",
+        "outcome": "DLB with low or absent Alzheimer’s co-pathology",
+        "finding_label": "ε4 · Low or absent AD changes"
+      },
+      "evidence_ids": [
+        "evidence-dlb-apoe-e4-low-pathology-kaivola-2022"
+      ],
+      "summary": "This analysis compared 88 pathology-confirmed cases with 2,928 neurologically healthy controls. The confidence interval includes an odds ratio of 1.",
+      "limitations": [
+        "The interval leaves lower or higher odds possible in this subgroup. Only 88 of 495 pathology-subgroup cases met these criteria.",
+        "The sampled controls and thresholds differ from Tsuang 2013. Case or control overlap across publications was not assessed."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "PMC methods, Table 1 and the pathology-subgroup results were inspected. PubMed indexed a correction. The correction text and the reported subgroup estimates were checked separately."
+      }
+    },
+    {
+      "id": "claim-dlb-apoe-e4-higher-pathology-kaivola-2022",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "Kaivola and colleagues reported higher odds with APOE ε4 for DLB with intermediate Alzheimer’s co-pathology (OR 2.31) and for DLB with high co-pathology (OR 4.25), each compared with the same controls.",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Pathology-subgroup case–control association",
+        "outcome": "DLB with intermediate or high Alzheimer’s co-pathology, analyzed as separate groups",
+        "finding_label": "ε4 · Intermediate or high AD changes"
+      },
+      "evidence_ids": [
+        "evidence-dlb-apoe-e4-higher-pathology-kaivola-2022"
+      ],
+      "summary": "Both groups met the study’s subgroup significance threshold. Each estimate came from its own case–control test.",
+      "limitations": [
+        "The estimates use a shared control group. These contrasts do not directly test an interaction or a mechanism for the co-pathology differences."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "PMC methods, Table 1 and the pathology-subgroup results were inspected. PubMed indexed a correction. The correction text and the reported subgroup estimates were checked separately."
+      }
+    },
+    {
+      "id": "claim-dlb-apoe-rs429358-guerreiro-2018",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "In Guerreiro and colleagues’ two-stage DLB study, the C allele at rs429358 was associated with higher odds of DLB (combined OR 2.46, 95% CI 2.22–2.74).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "rs429358 C",
+        "study_design": "Two-stage GWAS and fixed-effects meta-analysis",
+        "outcome": "DLB case status",
+        "finding_label": "rs429358 · DLB GWAS"
+      },
+      "evidence_ids": [
+        "evidence-dlb-apoe-rs429358-guerreiro-2018"
+      ],
+      "summary": "Table 2 reports this marker at the APOE locus. The quoted estimate combines the discovery and replication stages.",
+      "limitations": [
+        "The tested C allele is an APOE ε4 marker in this study. The additive per-allele model and overall DLB cohort differ from the carrier-based autopsy subgroup tests.",
+        "The estimates cover the overall DLB cohort and selected controls. The source does not stratify this table’s combined result by Alzheimer’s co-pathology."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s cohort methods, statistical analysis, and Tables 1–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "claim-dlb-snca-rs7681440-guerreiro-2018",
+      "subject_id": "gene-snca",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "In Guerreiro and colleagues’ two-stage DLB study, the C allele at rs7681440 was associated with lower odds of DLB (combined OR 0.73, 95% CI 0.67–0.79).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "rs7681440 C",
+        "study_design": "Two-stage GWAS and fixed-effects meta-analysis",
+        "outcome": "DLB case status",
+        "finding_label": "rs7681440 · DLB GWAS"
+      },
+      "evidence_ids": [
+        "evidence-dlb-snca-rs7681440-guerreiro-2018"
+      ],
+      "summary": "Table 2 reports this marker at the SNCA locus. The quoted estimate combines the discovery and replication stages.",
+      "limitations": [
+        "This estimate is for the tested C allele near SNCA. The association does not establish a functional variant or an effect of SNCA expression.",
+        "The estimates cover the overall DLB cohort and selected controls. The source does not stratify this table’s combined result by Alzheimer’s co-pathology."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s cohort methods, statistical analysis, and Tables 1–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "claim-dlb-gba1-rs35749011-guerreiro-2018",
+      "subject_id": "gene-gba1",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "In Guerreiro and colleagues’ two-stage DLB study, the G allele at rs35749011 was associated with higher odds of DLB (combined OR 2.27, 95% CI 1.75–2.95).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "rs35749011 G",
+        "study_design": "Two-stage GWAS and fixed-effects meta-analysis",
+        "outcome": "DLB case status",
+        "finding_label": "rs35749011 · DLB GWAS"
+      },
+      "evidence_ids": [
+        "evidence-dlb-gba1-rs35749011-guerreiro-2018"
+      ],
+      "summary": "Table 2 reports this marker at the GBA locus. The quoted estimate combines the discovery and replication stages.",
+      "limitations": [
+        "This is the G allele of the GBA1-locus marker rs35749011. Kaivola tested a different variant, rs2230288.",
+        "The estimates cover the overall DLB cohort and selected controls. The source does not stratify this table’s combined result by Alzheimer’s co-pathology."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s cohort methods, statistical analysis, and Tables 1–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "claim-dlb-gba1-rs2230288-low-pathology-kaivola-2022",
+      "subject_id": "gene-gba1",
+      "object_id": "disease-dlb",
+      "predicate": "associated_with",
+      "statement": "Kaivola and colleagues reported an association between GBA1 rs2230288 T and higher odds of DLB with low or absent Alzheimer’s co-pathology (OR 4.52, 95% CI 1.94–10.44).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "GBA1 rs2230288 T",
+        "study_design": "Pathology-subgroup case–control association",
+        "outcome": "DLB with low or absent Alzheimer’s co-pathology",
+        "finding_label": "rs2230288 · Low or absent AD changes"
+      },
+      "evidence_ids": [
+        "evidence-dlb-gba1-rs2230288-low-pathology-kaivola-2022"
+      ],
+      "summary": "This is the pathology-subgroup result, based on seven carriers in the 88-case subgroup and 51 among 2,928 controls.",
+      "limitations": [
+        "The estimate has a wide interval and only seven case carriers. Different subgroup p-values do not establish different effects.",
+        "The 2023 correction concerns the separate APOE-stratified GWAS. This claim quotes the pathology-subgroup estimate from Results."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "PMC methods, Table 1 and the pathology-subgroup results were inspected. PubMed indexed a correction. The correction text and the reported subgroup estimates were checked separately."
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "evidence-dlb-apoe-e4-low-pathology-tsuang-2013",
+      "claim_id": "claim-dlb-apoe-e4-low-pathology-tsuang-2013",
+      "source_id": "source-tsuang-2013",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The age-at-death- and sex-adjusted analysis estimated an OR of 6.1 for the group labeled pDLB, comparing any APOE ε4 allele with no ε4 allele.",
+      "locator": "Subjects and Clinical Evaluation, Subject Classification and Genotyping, Statistical Analyses, Table 2 genotypes and Table 3 pDLB adjusted row.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Autopsy-based case–control association",
+        "outcome": "DLB with low or absent Alzheimer’s co-pathology",
+        "taxonomy_id": 9606,
+        "case_count": 91,
+        "control_count": 269,
+        "population": "US multicenter autopsy cohort, self-reported White participants",
+        "pathology_definition": "Limbic or neocortical Lewy body changes. High AD changes required Braak IV–VI plus moderate or frequent CERAD plaques. All lesser AD changes went into the low category.",
+        "control_selection": "Cognitively normal at entry and unimpaired at last assessment within three years of death. Autopsies found no Lewy body changes or high AD changes.",
+        "analysis_model": "Dominant carrier model from multinomial logistic regression, adjusted for sex and age at death",
+        "carrier_counts": "47 of 91 cases and 37 of 269 controls, summed from Table 2 genotypes",
+        "reported_statistics": "Adjusted OR 6.1 (95% CI 3.5–10.5), p = 1.3 × 10⁻¹⁰"
+      },
+      "limitations": [
+        "The low-pathology definition includes all changes below the study’s high threshold.",
+        "Control selection and retrospective classification limit generalization. The authors lacked ancestry-informative markers."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s classification and statistical methods, results, and Tables 2–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "evidence-dlb-apoe-e4-low-pathology-kaivola-2022",
+      "claim_id": "claim-dlb-apoe-e4-low-pathology-kaivola-2022",
+      "source_id": "source-kaivola-2022",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The low or absent co-pathology group did not reach the prespecified subgroup significance threshold for the ε4 carrier test.",
+      "locator": "Study cohort, Neuropathological subgrouping, Genetic analysis, Subgroup analysis, Table 1 and Results, APOE associations with DLB subgroups.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Pathology-subgroup case–control association",
+        "outcome": "DLB with low or absent Alzheimer’s co-pathology",
+        "taxonomy_id": 9606,
+        "case_count": 88,
+        "control_count": 2928,
+        "population": "European-ancestry DLB study, restricted to cases with comparable co-pathology grading",
+        "pathology_definition": "Braak 0–II and CERAD 0–A",
+        "control_selection": "Neurologically healthy controls aged at least 50. The comparison uses the study-wide control group.",
+        "analysis_model": "Dominant carrier model. The low-pathology subgroup model included genetic principal components 1, 2 and 6.",
+        "carrier_counts": "17 of 88 cases and 657 of 2,928 controls",
+        "reported_statistics": "OR 0.75 (95% CI 0.43–1.30), p = 0.31. Subgroup significance threshold p < 0.017."
+      },
+      "limitations": [
+        "The interval leaves lower or higher odds possible in this subgroup. Only 88 of 495 pathology-subgroup cases met these criteria.",
+        "The sampled controls and thresholds differ from Tsuang 2013. Case or control overlap across publications was not assessed."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "PMC methods, Table 1 and the pathology-subgroup results were inspected. PubMed indexed a correction. The correction text and the reported subgroup estimates were checked separately."
+      }
+    },
+    {
+      "id": "evidence-dlb-apoe-e4-higher-pathology-kaivola-2022",
+      "claim_id": "claim-dlb-apoe-e4-higher-pathology-kaivola-2022",
+      "source_id": "source-kaivola-2022",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The intermediate and high co-pathology carrier estimates in the subgroup results were above 1, with both confidence intervals excluding 1.",
+      "locator": "Neuropathological subgrouping, Subgroup analysis, Table 1 and Results, APOE associations with DLB subgroups.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Pathology-subgroup case–control association",
+        "outcome": "DLB with intermediate or high Alzheimer’s co-pathology, analyzed as separate groups",
+        "taxonomy_id": 9606,
+        "case_groups": "66 intermediate and 341 high co-pathology cases",
+        "control_count": 2928,
+        "population": "European-ancestry DLB study, restricted to cases with comparable co-pathology grading",
+        "pathology_definition": "Intermediate: Braak III and CERAD A–C. High: Braak IV–VI and CERAD B–C.",
+        "control_selection": "Same 2,928 neurologically healthy controls aged at least 50 for both contrasts",
+        "analysis_model": "Separate dominant carrier models with subgroup-specific genetic principal components",
+        "reported_statistics": "Intermediate OR 2.31 (95% CI 1.40–3.83), p = 0.0011. High OR 4.25 (95% CI 3.35–5.39), p = 1.29 × 10⁻³²."
+      },
+      "limitations": [
+        "The estimates use a shared control group. These contrasts do not directly test an interaction or a mechanism for the co-pathology differences."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "PMC methods, Table 1 and the pathology-subgroup results were inspected. PubMed indexed a correction. The correction text and the reported subgroup estimates were checked separately."
+      }
+    },
+    {
+      "id": "evidence-dlb-apoe-rs429358-guerreiro-2018",
+      "claim_id": "claim-dlb-apoe-rs429358-guerreiro-2018",
+      "source_id": "source-guerreiro-2018",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The direction was higher odds per tested C allele in both stages. The combined p-value was 3.31 × 10⁻⁶⁴.",
+      "locator": "Methods, Replication, Tables 1 and 3 for cohorts, and Table 2 Global cohort, APOE rs429358 row. The combined estimate is in the meta-analysis columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "rs429358 C",
+        "study_design": "Two-stage GWAS and fixed-effects meta-analysis",
+        "outcome": "DLB case status",
+        "taxonomy_id": 9606,
+        "case_count": 1743,
+        "control_count": 4454,
+        "population": "European-ancestry cohorts. DLB cases met clinical or neuropathological criteria.",
+        "stage_counts": "Discovery: 1,216 cases and 3,791 controls after quality control. Replication: 527 cases and 663 controls. Overall, 1,324 cases were neuropathologically diagnosed.",
+        "analysis_model": "Per-allele association. Discovery adjusted for sex and six genetic principal components. Replication adjusted for age and sex. Fixed-effects meta-analysis combined allelic odds ratios.",
+        "reported_statistics": "Discovery OR 2.40 (2.14–2.70), p = 1.05 × 10⁻⁴⁸. Replication OR 2.74 (2.15–3.49), p = 4.00 × 10⁻¹⁶. Combined OR 2.46 (95% CI 2.22–2.74), p = 3.31 × 10⁻⁶⁴."
+      },
+      "limitations": [
+        "The tested C allele is an APOE ε4 marker in this study. The additive per-allele model and overall DLB cohort differ from the carrier-based autopsy subgroup tests.",
+        "The estimates cover the overall DLB cohort and selected controls. The source does not stratify this table’s combined result by Alzheimer’s co-pathology."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s cohort methods, statistical analysis, and Tables 1–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "evidence-dlb-snca-rs7681440-guerreiro-2018",
+      "claim_id": "claim-dlb-snca-rs7681440-guerreiro-2018",
+      "source_id": "source-guerreiro-2018",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The direction was lower odds per tested C allele in both stages. The combined p-value was 9.22 × 10⁻¹³.",
+      "locator": "Methods, Replication, Tables 1 and 3 for cohorts, and Table 2 Global cohort, SNCA rs7681440 row. The combined estimate is in the meta-analysis columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "rs7681440 C",
+        "study_design": "Two-stage GWAS and fixed-effects meta-analysis",
+        "outcome": "DLB case status",
+        "taxonomy_id": 9606,
+        "case_count": 1743,
+        "control_count": 4454,
+        "population": "European-ancestry cohorts. DLB cases met clinical or neuropathological criteria.",
+        "stage_counts": "Discovery: 1,216 cases and 3,791 controls after quality control. Replication: 527 cases and 663 controls. Overall, 1,324 cases were neuropathologically diagnosed.",
+        "analysis_model": "Per-allele association. Discovery adjusted for sex and six genetic principal components. Replication adjusted for age and sex. Fixed-effects meta-analysis combined allelic odds ratios.",
+        "reported_statistics": "Discovery OR 0.73 (0.66–0.81), p = 6.39 × 10⁻¹⁰. Replication OR 0.68 (0.56–0.82), p = 6.00 × 10⁻⁵. Combined OR 0.73 (95% CI 0.67–0.79), p = 9.22 × 10⁻¹³."
+      },
+      "limitations": [
+        "This estimate is for the tested C allele near SNCA. The association does not establish a functional variant or an effect of SNCA expression.",
+        "The estimates cover the overall DLB cohort and selected controls. The source does not stratify this table’s combined result by Alzheimer’s co-pathology."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s cohort methods, statistical analysis, and Tables 1–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "evidence-dlb-gba1-rs35749011-guerreiro-2018",
+      "claim_id": "claim-dlb-gba1-rs35749011-guerreiro-2018",
+      "source_id": "source-guerreiro-2018",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The direction was higher odds per tested G allele in both stages. The combined p-value was 6.57 × 10⁻¹⁰.",
+      "locator": "Methods, Replication, Tables 1 and 3 for cohorts, and Table 2 Global cohort, GBA rs35749011 row. The combined estimate is in the meta-analysis columns.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "rs35749011 G",
+        "study_design": "Two-stage GWAS and fixed-effects meta-analysis",
+        "outcome": "DLB case status",
+        "taxonomy_id": 9606,
+        "case_count": 1743,
+        "control_count": 4454,
+        "population": "European-ancestry cohorts. DLB cases met clinical or neuropathological criteria.",
+        "stage_counts": "Discovery: 1,216 cases and 3,791 controls after quality control. Replication: 527 cases and 663 controls. Overall, 1,324 cases were neuropathologically diagnosed.",
+        "analysis_model": "Per-allele association. Discovery adjusted for sex and six genetic principal components. Replication adjusted for age and sex. Fixed-effects meta-analysis combined allelic odds ratios.",
+        "reported_statistics": "Discovery OR 2.55 (1.88–3.46), p = 1.78 × 10⁻⁹. Replication OR 1.81 (1.05–3.11), p = 0.033. Combined OR 2.27 (95% CI 1.75–2.95), p = 6.57 × 10⁻¹⁰."
+      },
+      "limitations": [
+        "This is the G allele of the GBA1-locus marker rs35749011. Kaivola tested a different variant, rs2230288.",
+        "The estimates cover the overall DLB cohort and selected controls. The source does not stratify this table’s combined result by Alzheimer’s co-pathology."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The PMC author manuscript’s cohort methods, statistical analysis, and Tables 1–3 were inspected. Publication status was checked in PubMed and Crossref."
+      }
+    },
+    {
+      "id": "evidence-dlb-gba1-rs2230288-low-pathology-kaivola-2022",
+      "claim_id": "claim-dlb-gba1-rs2230288-low-pathology-kaivola-2022",
+      "source_id": "source-kaivola-2022",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The reported low-pathology association met the subgroup significance threshold. The other two co-pathology group tests did not meet that threshold.",
+      "locator": "Neuropathological subgrouping, Subgroup analysis, Table 1 and Results, pathology-subgroup association paragraphs. See also the separate 2023 correction.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "GBA1 rs2230288 T",
+        "study_design": "Pathology-subgroup case–control association",
+        "outcome": "DLB with low or absent Alzheimer’s co-pathology",
+        "taxonomy_id": 9606,
+        "case_count": 88,
+        "control_count": 2928,
+        "pathology_definition": "Braak 0–II and CERAD 0–A",
+        "control_selection": "Neurologically healthy controls aged at least 50",
+        "analysis_model": "Case–control subgroup association with genetic principal components 1, 2 and 6. The paper uses GBA for the gene now listed as GBA1.",
+        "carrier_counts": "Seven cases (one homozygote) and 51 controls",
+        "reported_statistics": "OR 4.52 (95% CI 1.94–10.44), p = 0.0004, from Results. Discussion prints the lower CI bound as 1.95."
+      },
+      "limitations": [
+        "The estimate has a wide interval and only seven case carriers. Different subgroup p-values do not establish different effects.",
+        "The 2023 correction concerns the separate APOE-stratified GWAS. This claim quotes the pathology-subgroup estimate from Results."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "PMC methods, Table 1 and the pathology-subgroup results were inspected. PubMed indexed a correction. The correction text and the reported subgroup estimates were checked separately."
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "source-mondo-dlb",
+      "kind": "database_record",
+      "title": "Mondo MONDO:0007488 · Dementia with Lewy bodies",
+      "url": "https://www.ebi.ac.uk/ols4/ontologies/mondo/classes/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252FMONDO_0007488",
+      "identifiers": [
+        {
+          "namespace": "MONDO",
+          "value": "MONDO_0007488"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "Mondo via EMBL-EBI OLS",
+      "release": "2026-11-03",
+      "retrieved_at": "2026-11-27T12:49:47.281376Z",
+      "reuse": {
+        "terms_url": "https://raw.githubusercontent.com/monarch-initiative/mondo/v2026-11-03/LICENSE",
+        "attribution": "Mondo Disease Ontology (Monarch Initiative), EMBL-EBI OLS, CC BY 4.0.",
+        "retained_content": "Concept identifier and the DLB search term. Clinical and pathology definitions are taken from the original studies.",
+        "date_checked": "2026-11-27",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-hgnc-apoe",
+      "kind": "database_record",
+      "title": "HGNC APOE · human gene",
+      "url": "https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:613",
+      "identifiers": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:613"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "348"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000130203"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "HGNC",
+      "release": "Record modified 2023-01-20 (API); database release unknown",
+      "retrieved_at": "2026-11-27T12:50:42.307863Z",
+      "reuse": {
+        "terms_url": "https://www.genenames.org/about/license/",
+        "attribution": "HUGO Gene Nomenclature Committee (RRID:SCR_002827), CC0.",
+        "retained_content": "Approved human gene symbol, name, selected search aliases and exact cross-references.",
+        "date_checked": "2026-11-27",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-hgnc-snca",
+      "kind": "database_record",
+      "title": "HGNC SNCA · human gene",
+      "url": "https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:11138",
+      "identifiers": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:11138"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "6622"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000145335"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "HGNC",
+      "release": "Record modified 2023-01-20 (API); database release unknown",
+      "retrieved_at": "2026-11-27T12:50:42.611904Z",
+      "reuse": {
+        "terms_url": "https://www.genenames.org/about/license/",
+        "attribution": "HUGO Gene Nomenclature Committee (RRID:SCR_002827), CC0.",
+        "retained_content": "Approved human gene symbol, name, selected search aliases and exact cross-references.",
+        "date_checked": "2026-11-27",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-hgnc-gba1",
+      "kind": "database_record",
+      "title": "HGNC GBA1 · human gene",
+      "url": "https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:4177",
+      "identifiers": [
+        {
+          "namespace": "HGNC",
+          "value": "HGNC:4177"
+        },
+        {
+          "namespace": "NCBIGene",
+          "value": "2629"
+        },
+        {
+          "namespace": "Ensembl",
+          "value": "ENSG00000177628"
+        }
+      ],
+      "authors": [],
+      "year": null,
+      "provider": "HGNC",
+      "release": "Record modified 2023-01-20 (API); database release unknown",
+      "retrieved_at": "2026-11-27T12:50:42.314881Z",
+      "reuse": {
+        "terms_url": "https://www.genenames.org/about/license/",
+        "attribution": "HUGO Gene Nomenclature Committee (RRID:SCR_002827), CC0.",
+        "retained_content": "Approved human gene symbol, name, selected search aliases and exact cross-references.",
+        "date_checked": "2026-11-27",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "not_checked",
+        "checked_at": null,
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-tsuang-2013",
+      "kind": "publication",
+      "title": "APOE ε4 increases risk for dementia in pure synucleinopathies",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3580799/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "23407718"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1001/jamaneurol.2013.600"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC3580799"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Debby Tsuang",
+        "James B Leverenz",
+        "Oscar L Lopez",
+        "Ronald L Hamilton",
+        "David A Bennett",
+        "Julie A Schneider",
+        "Aron S Buchman",
+        "Eric B Larson",
+        "Paul K Crane",
+        "Jeffrey A Kaye",
+        "Patricia Kramer",
+        "Randy Woltjer",
+        "John Q Trojanowski",
+        "Daniel Weintraub",
+        "Alice S Chen-Plotkin",
+        "David J Irwin",
+        "Jacqueline Rick",
+        "Gerard D Schellenberg",
+        "G Stennis Watson",
+        "Walter Kukull",
+        "Peter T Nelson",
+        "Gregory A Jicha",
+        "Janna H Neltner",
+        "Doug Galasko",
+        "Eliezer Masliah",
+        "Joseph F Quinn",
+        "Kathryn A Chung",
+        "Dora Yearout",
+        "Ignacio F Mata",
+        "Jia Y Wan",
+        "Karen L Edwards",
+        "Thomas J Montine",
+        "Cyrus P Zabetian"
+      ],
+      "year": 2013,
+      "provider": "PubMed Central",
+      "release": "PMC author manuscript",
+      "retrieved_at": "2026-11-27T12:48:37.596990Z",
+      "reuse": {
+        "terms_url": "https://pmc.ncbi.nlm.nih.gov/about/copyright/",
+        "attribution": "Tsuang and colleagues, JAMA neurology, 2013, doi:10.1001/jamaneurol.2013.600.",
+        "retained_content": "Bibliographic facts, links, project-authored paraphrases and selected reported counts or estimates from the inspected text. Article text, tables, figures and participant data are excluded.",
+        "date_checked": "2026-11-27",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "no_notice_found",
+        "checked_at": "2026-11-27",
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-kaivola-2022",
+      "kind": "publication",
+      "title": "Genetic evaluation of dementia with Lewy bodies implicates distinct disease subgroups",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9423712/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "35381062"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1093/brain/awab402"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC9423712"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Karri Kaivola",
+        "Zalak Shah",
+        "Ruth Chia",
+        "International LBD Genomics Consortium",
+        "Sonja W Scholz"
+      ],
+      "year": 2022,
+      "provider": "PubMed Central",
+      "release": "PMC full text of the Brain article, with separate 2023 correction",
+      "retrieved_at": "2026-11-27T12:48:37.598304Z",
+      "reuse": {
+        "terms_url": "https://academic.oup.com/journals/pages/open_access/funder_policies/chorus/standard_publication_model",
+        "attribution": "Kaivola and colleagues, Brain : a journal of neurology, 2022, doi:10.1093/brain/awab402.",
+        "retained_content": "Bibliographic facts, links, project-authored paraphrases and selected reported counts or estimates from the inspected text. Article text, tables, figures and participant data are excluded. The correction changes a separate APOE-stratified GWAS analysis. The pathology-subgroup results cited here were outside that notice.",
+        "date_checked": "2026-11-27",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "corrected",
+        "checked_at": "2026-11-27",
+        "notice_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10393388/"
+      }
+    },
+    {
+      "id": "source-guerreiro-2018",
+      "kind": "publication",
+      "title": "Investigating the genetic architecture of dementia with Lewy bodies: a two-stage genome-wide association study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5805394/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "29263008"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1016/S1474-4422(17)30400-3"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC5805394"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Rita Guerreiro",
+        "Owen A Ross",
+        "Celia Kun-Rodrigues",
+        "Dena G Hernandez",
+        "Tatiana Orme",
+        "John D Eicher",
+        "Claire E Shepherd",
+        "Laura Parkkinen",
+        "Lee Darwent",
+        "Michael G Heckman",
+        "Sonja W Scholz",
+        "Juan C Troncoso",
+        "Olga Pletnikova",
+        "Olaf Ansorge",
+        "Jordi Clarimon",
+        "Alberto Lleo",
+        "Estrella Morenas-Rodriguez",
+        "Lorraine Clark",
+        "Lawrence S Honig",
+        "Karen Marder",
+        "Afina Lemstra",
+        "Ekaterina Rogaeva",
+        "Peter St George-Hyslop",
+        "Elisabet Londos",
+        "Henrik Zetterberg",
+        "Imelda Barber",
+        "Anne Braae",
+        "Kristelle Brown",
+        "Kevin Morgan",
+        "Claire Troakes",
+        "Safa Al-Sarraj",
+        "Tammaryn Lashley",
+        "Janice Holton",
+        "Yaroslau Compta",
+        "Vivianna Van Deerlin",
+        "Geidy E Serrano",
+        "Thomas G Beach",
+        "Suzanne Lesage",
+        "Douglas Galasko",
+        "Eliezer Masliah",
+        "Isabel Santana",
+        "Pau Pastor",
+        "Monica Diez-Fairen",
+        "Miquel Aguilar",
+        "Pentti J Tienari",
+        "Liisa Myllykangas",
+        "Minna Oinas",
+        "Tamas Revesz",
+        "Andrew Lees",
+        "Brad F Boeve",
+        "Ronald C Petersen",
+        "Tanis J Ferman",
+        "Valentina Escott-Price",
+        "Neill Graff-Radford",
+        "Nigel J Cairns",
+        "John C Morris",
+        "Stuart Pickering-Brown",
+        "David Mann",
+        "Glenda M Halliday",
+        "John Hardy",
+        "John Q Trojanowski",
+        "Dennis W Dickson",
+        "Andrew Singleton",
+        "David J Stone",
+        "Jose Bras"
+      ],
+      "year": 2018,
+      "provider": "PubMed Central",
+      "release": "PMC author manuscript",
+      "retrieved_at": "2026-11-27T12:48:37.711659Z",
+      "reuse": {
+        "terms_url": "https://pmc.ncbi.nlm.nih.gov/about/copyright/",
+        "attribution": "Guerreiro and colleagues, The Lancet. Neurology, 2018, doi:10.1016/S1474-4422(17)30400-3.",
+        "retained_content": "Bibliographic facts, links, project-authored paraphrases and selected reported counts or estimates from the inspected text. Article text, tables, figures and participant data are excluded.",
+        "date_checked": "2026-11-27",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "no_notice_found",
+        "checked_at": "2026-11-27",
+        "notice_url": null
+      }
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "context-dlb-apoe-e4-low-pathology",
+      "claim_ids": [
+        "claim-dlb-apoe-e4-low-pathology-tsuang-2013",
+        "claim-dlb-apoe-e4-low-pathology-kaivola-2022"
+      ],
+      "evidence_ids": [
+        "evidence-dlb-apoe-e4-low-pathology-tsuang-2013",
+        "evidence-dlb-apoe-e4-low-pathology-kaivola-2022"
+      ],
+      "label": "APOE ε4 in DLB with low Alzheimer’s changes",
+      "comparison": "Tsuang 2013 reported higher odds with APOE ε4 (OR 6.1, 95% CI 3.5–10.5). Kaivola 2022 did not detect an association in its low or absent co-pathology group (OR 0.75, 95% CI 0.43–1.30). Both used a carrier model and autopsy-defined cases. They set different pathology thresholds and used different controls.",
+      "context_differences": [
+        "Pathology groups. Tsuang classified all Alzheimer’s changes below its high threshold as low. Kaivola required Braak 0–II and CERAD 0–A for its low group and modeled intermediate changes separately.",
+        "Controls. Tsuang used 269 autopsied controls with low or absent Alzheimer’s changes, no Lewy body changes, and no cognitive impairment at their last evaluation. Kaivola used 2,928 neurologically healthy controls aged at least 50. APOE ε4 carrier counts were 37 and 657, respectively.",
+        "Models. Tsuang adjusted the multinomial model for age at death and sex. Kaivola’s subgroup methods identify genetic principal components 1, 2 and 6 for the low-pathology contrast.",
+        "The observed differences can guide source reading. The studies do not establish which design choices explain the estimates, equivalence or independent replication."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The case and control inclusion rules, carrier counts, model terms and two reported estimates were checked at the named locators. No common reanalysis or participant-level overlap check was performed."
+      }
+    }
+  ],
+  "hypotheses": []
+}

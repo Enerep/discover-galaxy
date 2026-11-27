@@ -226,7 +226,7 @@ function EntityNode({ entity, position, selected, onSelect, glow, reducedMotion,
       const height = worldPerPixel * (entity.type === 'paper' ? 22 : 24) * label.lines;
       labelSprite.current.scale.set(height * label.aspect, height, 1);
       // Clamp visible labels inside the canvas while retaining their depth.
-      const above = entity.type === 'pathway' || (entity.type === 'paper' && position[1] >= 0) || (compact && entity.type === 'disease');
+      const above = entity.type === 'pathway' || (entity.type === 'paper' && position[1] >= 0) || (compact && entity.type === 'disease' && !selected);
       const labelY = (above ? 1 : -1) * (radius * screenScale + height * 0.7);
       labelPosition.copy(worldPosition);
       labelPosition.y += labelY;

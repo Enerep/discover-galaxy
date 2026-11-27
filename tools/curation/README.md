@@ -6,7 +6,7 @@ The website's separate [Live sources pilot](../../docs/live-sources.md) reuses t
 
 ## Current snapshot review packet
 
-`npm run curation:packet` prints the existing snapshot's review extract; `npm run curation:check` verifies the committed packet is current. Record actual reviews in the source dataset, then regenerate the extract.
+`npm run curation:packet` prints the Alzheimer’s review extract. `npm run curation:check` verifies the committed extract. Use `npm run curation:packet -- lewy-bodies` to generate the DLB extract. Record actual reviews in the source dataset before regenerating.
 
 ## Candidate-source coverage
 

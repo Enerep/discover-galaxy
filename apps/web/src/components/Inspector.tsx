@@ -135,13 +135,14 @@ interface Props {
   onFollow: (entityId: string, claimId: string) => void;
   pinnedClaimIds: string[];
   onPin: (claimId: string) => void;
+  liveSourcesEnabled: boolean;
   experimentObservation: ExperimentObservation | null;
 }
 
-export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin, experimentObservation }: Props) {
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin, liveSourcesEnabled, experimentObservation }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
-  const liveIdentity = getLiveLookupIdentity(selected);
+  const liveIdentity = liveSourcesEnabled ? getLiveLookupIdentity(selected) : undefined;
   useLayoutEffect(() => {
     // A new record starts at its heading without moving the document on mobile.
     if (panelRef.current) panelRef.current.scrollTop = 0;

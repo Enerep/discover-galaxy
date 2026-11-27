@@ -71,12 +71,12 @@ Bounded UniProt/Reactome/Open Targets tools stage provider facts with exact iden
 
 ## Existing workflow: build a research argument
 
-The research brief workspace adds a complete working flow on top of the existing Alzheimer's evidence:
+The research brief workspace supports the following workflow in either disease map.
 
 1. Use **Pin finding** in the inspector or **Add to research brief** from a comparison.
 2. Write a research question, explanation, assumptions and proposed experiment beside the selected evidence.
 3. Keep original citations and context accessible, and include one comparison without losing its methodological limits.
-4. Save one draft locally and download a cited Markdown document for discussion.
+4. Save one draft per map locally and download a cited Markdown document for discussion.
 
 The workspace supports up to 12 pinned findings and one comparison. It keeps user text separate from scientific records and never creates graph hypotheses or approvals. Storage errors leave writing/export usable; corrupt saved data and conflicting tabs require explicit recovery. Dataset changes retain notes and require an explicit evidence refresh. There are no accounts, cloud sync, brief imports or AI-generated answers. Explorer sharing links and PNGs do not carry the user's notes.
 
@@ -179,3 +179,9 @@ This is a deliberate stopping point for the research preview. No backend, API ke
 The human **APOE** gene now leads to source-checked findings from Mathys and Smith. Select either finding and open **Compare findings** to align results by cell type, then inspect the two brain regions and pathology designs. The same papers and comparison appear in pathway evidence when APOE is selected in that pathway. The comparison can be downloaded or added to a research brief.
 
 Both original studies reported higher microglial APOE RNA in their respective analyses. Mathys reported lower astrocytic RNA across pathology groups. Smith did not find a statistically significant astrocyte association with local amyloid-β or phosphorylated tau. The chosen datasets and statistical scales are described separately. The original figure, four supplementary regression rows, donor units, correction and reuse checks are recorded in the [0.9.0 change record](../data/alzheimers/CHANGELOG.md#alzheimers-source-checked-090--2026-11-27). The comparison uses nuclear RNA and remains a source-checked draft.
+
+## Completed checkpoint: dementia with Lewy bodies map
+
+Explore offers a second source-checked map with seven findings from three original human studies. Select dementia with Lewy bodies, then compare the two APOE ε4 findings in groups with low or absent Alzheimer’s co-pathology. The paper cards retain each estimate, control group and pathology definition. SNCA and GBA1 have their own variant-specific findings. [DLB source record](../data/lewy-bodies/README.md)
+
+The map picker reuses the graph, list, citations and comparison flow. Older shared links open Alzheimer’s. Each map has a device-local research brief. The selected pathway’s evidence changes with the map while the applied RNA-seq results stay available. Both snapshots use the same structural validator and scientific-release gate.

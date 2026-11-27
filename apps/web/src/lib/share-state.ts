@@ -1,3 +1,5 @@
+import { DEFAULT_COLLECTION, isCollectionId } from '../../../../data/collections.ts';
+import type { CollectionId } from '../../../../data/collections.ts';
 import { getEntityClaims } from './dataset.ts';
 import type { EntityType, Snapshot } from './types.ts';
 
@@ -9,7 +11,7 @@ export interface ExplorerShareState {
   view: 'graph' | 'list';
 }
 
-const KEYS = ['entity', 'claim', 'q', 'type', 'view'] as const;
+const KEYS = ['collection', 'entity', 'claim', 'q', 'type', 'view'] as const;
 const FILTERS = new Set(['all', 'gene', 'protein', 'pathway', 'disease', 'paper']);
 const MAX_QUERY_LENGTH = 256;
 const MAX_FRAGMENT_LENGTH = 4096;
@@ -22,8 +24,7 @@ function isValidState(state: ExplorerShareState, snapshot: Snapshot): boolean {
     && FILTERS.has(state.filter) && (state.view === 'graph' || state.view === 'list');
 }
 
-/** Invalid or unrelated fragments leave the explorer at its ordinary default. */
-export function parseShareState(url: URL, snapshot: Snapshot): ExplorerShareState | null {
+function readShareParams(url: URL): URLSearchParams | null {
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
   const fragment = url.hash.slice(1);
   if (!fragment || fragment.length > MAX_FRAGMENT_LENGTH) return null;
@@ -34,7 +35,18 @@ export function parseShareState(url: URL, snapshot: Snapshot): ExplorerShareStat
     return null;
   }
   const params = new URLSearchParams(fragment);
-  if (KEYS.some((key) => params.getAll(key).length > 1)) return null;
+  return KEYS.some((key) => params.getAll(key).length > 1) ? null : params;
+}
+
+export function readSharedCollection(url: URL): CollectionId {
+  const id = readShareParams(url)?.get('collection') ?? null;
+  return isCollectionId(id) ? id : DEFAULT_COLLECTION;
+}
+
+/** Invalid or unrelated fragments leave the explorer at its ordinary default. */
+export function parseShareState(url: URL, snapshot: Snapshot, collectionId: CollectionId = DEFAULT_COLLECTION): ExplorerShareState | null {
+  const params = readShareParams(url);
+  if (!params || (params.get('collection') ?? DEFAULT_COLLECTION) !== collectionId) return null;
   const entityId = params.get('entity');
   if (!entityId) return null;
   const state: ExplorerShareState = {
@@ -48,7 +60,7 @@ export function parseShareState(url: URL, snapshot: Snapshot): ExplorerShareStat
 }
 
 /** Fragments keep search text out of HTTP requests; unrelated URL tokens are omitted. */
-export function buildShareUrl(base: URL, state: ExplorerShareState, snapshot: Snapshot): string {
+export function buildShareUrl(base: URL, state: ExplorerShareState, snapshot: Snapshot, collectionId: CollectionId = DEFAULT_COLLECTION): string {
   if (base.protocol !== 'https:' && base.protocol !== 'http:') throw new Error('Sharing requires an HTTP or HTTPS address.');
   if (!isValidState(state, snapshot)) throw new Error('Cannot share an invalid explorer selection or search.');
   const url = new URL(base.href);
@@ -57,6 +69,7 @@ export function buildShareUrl(base: URL, state: ExplorerShareState, snapshot: Sn
   url.search = '';
   url.hash = '';
   const params = new URLSearchParams({ entity: state.entityId });
+  if (collectionId !== DEFAULT_COLLECTION) params.set('collection', collectionId);
   if (state.claimId !== null) params.set('claim', state.claimId);
   if (state.query) params.set('q', state.query);
   if (state.filter !== 'all') params.set('type', state.filter);
