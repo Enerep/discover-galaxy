@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { DEFAULT_COLLECTION, DISEASE_COLLECTIONS, isCollectionId } from '../../data/collections.ts';
 import { getClaimEvidence, loadDataset } from '../../apps/web/src/lib/dataset.ts';
 import type { Context, Review, Snapshot } from '../../apps/web/src/lib/types.ts';
 
-const DATASET = new URL('../../data/alzheimers/dataset.json', import.meta.url);
 const PACKET = new URL('../../data/alzheimers/review-packet.md', import.meta.url);
 
 function text(value: unknown): string {
@@ -32,8 +32,9 @@ export function renderReviewPacket(snapshot: Snapshot): string {
   loadDataset(snapshot);
   const claims = [...snapshot.claims].sort((a, b) => a.id.localeCompare(b.id, 'en'));
   const sources = [...snapshot.sources].sort((a, b) => a.id.localeCompare(b.id, 'en'));
+  const disease = snapshot.scope.disease === "Alzheimer's disease" ? 'Alzheimer’s' : snapshot.scope.disease;
   const lines = [
-    '# Alzheimer’s source-review packet', '',
+    `# ${text(disease)} source-review packet`, '',
     'Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.',
     'Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.', '',
     `- **Dataset:** ${text(snapshot.dataset_version)}`,
@@ -114,18 +115,27 @@ export function renderReviewPacket(snapshot: Snapshot): string {
       `- **Publication status checked:** ${text(source.publication_status.checked_at)}`,
       `- **Notice URL:** ${text(source.publication_status.notice_url)}`, '');
   }
-  lines.push('## Reproduce this packet', '',
-    'Generate: `node --experimental-strip-types tools/curation/review-packet.ts`', '',
-    'Check the committed extract: `node --experimental-strip-types tools/curation/review-packet.ts --check`', '',
-    'The tool makes no network requests and does not change scientific records or review attestations.', '');
+  const collectionId = Object.entries(DISEASE_COLLECTIONS)
+    .find(([, { data }]) => data.dataset_version === snapshot.dataset_version)?.[0];
+  if (collectionId) {
+    const argument = collectionId === DEFAULT_COLLECTION ? '' : ` ${collectionId}`;
+    lines.push('## Reproduce this packet', '',
+      `Generate: \`node --experimental-strip-types tools/curation/review-packet.ts${argument}\``, '');
+    if (collectionId === DEFAULT_COLLECTION) {
+      lines.push('Check the committed extract: `node --experimental-strip-types tools/curation/review-packet.ts --check`', '');
+    }
+  }
+  lines.push('The tool makes no network requests and does not change scientific records or review attestations.', '');
   return lines.join('\n');
 }
 
 async function main() {
-  if (process.argv.slice(2).some((arg) => arg !== '--check') || process.argv.slice(2).length > 1) throw new Error('Usage: review-packet.ts [--check]');
-  const snapshot = loadDataset(JSON.parse(await readFile(DATASET, 'utf8')));
+  const [argument, ...extra] = process.argv.slice(2);
+  const collectionId = argument === '--check' || argument === undefined ? DEFAULT_COLLECTION : argument;
+  if (extra.length || !isCollectionId(collectionId)) throw new Error('Usage: review-packet.ts [--check | alzheimers | lewy-bodies]');
+  const snapshot = loadDataset(DISEASE_COLLECTIONS[collectionId].data);
   const packet = renderReviewPacket(snapshot);
-  if (process.argv.includes('--check')) {
+  if (argument === '--check') {
     if (await readFile(PACKET, 'utf8') !== packet) throw new Error('Review packet is stale. Regenerate the extract from the dataset; do not edit it manually.');
     console.log(`Review packet matches ${snapshot.dataset_version}; scientific review remains a separate task.`);
   } else process.stdout.write(packet);
