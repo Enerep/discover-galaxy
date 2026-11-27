@@ -1,8 +1,12 @@
 # Alzheimer's source-checked snapshot
 
-`dataset.json` is **alzheimers-source-checked-0.8.0**: 45 entities, 49 claims, 49 evidence records, 49 sources, and one draft study-context comparison. It contains one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and ten paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
+`dataset.json` is **alzheimers-source-checked-0.9.0** with 47 entities, 51 claims, 51 evidence records, 51 sources and two draft study-context comparisons. It contains one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and twelve paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
 The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and five assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Human APOE RNA in 0.9.0
+
+Select the human **APOE** gene and either APOE RNA finding, then open **Compare findings**. Mathys and Smith report higher microglial RNA in their respective analyses. Mathys reports lower astrocytic RNA across pathology groups. Smith's astrocyte tests with local pathology markers miss the adjusted significance cutoff. The comparison preserves each brain region, cohort and statistical contrast. Each paper is searchable in Explore and reachable from the APOE evidence in an eligible analyzed pathway. The original figure, supplementary rows, correction and reuse checks are documented in the [change record](CHANGELOG.md#alzheimers-source-checked-090--2026-11-27).
 
 ## APOE/ABCA1 evidence in 0.8.0
 

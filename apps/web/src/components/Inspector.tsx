@@ -131,7 +131,7 @@ interface Props {
   onShowSelected: () => void;
   onBack: () => void;
   panelRef: RefObject<HTMLElement | null>;
-  onCompare: () => void;
+  onCompare?: () => void;
   onFollow: (entityId: string, claimId: string) => void;
   pinnedClaimIds: string[];
   onPin: (claimId: string) => void;
@@ -168,7 +168,7 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
           <details><summary>Experiment context</summary><ExperimentContextDetails context={experimentObservation.context} /></details>
         </section>}
         <section className="findings" aria-label="Findings">
-          {active && snapshot.claims.length > 1 && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
+          {active && onCompare && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
           {claims.length > 1 && (
             <div className="claim-list" aria-label="Choose a finding">
               {claims.map((claim) => (

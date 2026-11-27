@@ -1,5 +1,44 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.9.0 — 2026-11-27
+
+Two original human studies add **two APOE RNA findings, two paper nodes and one study comparison**. The snapshot contains 47 entities, 51 claims, 51 evidence records, 51 sources and two study comparisons. Both new claims connect the human APOE gene to the existing Alzheimer’s disease record and use `context.association_scope: rna_expression`. This scope describes measured nuclear RNA in a pathology comparison. All new review records are source-checked drafts.
+
+| Study and inspected locations | Cohort and method | Reported APOE RNA findings |
+| --- | --- | --- |
+| [Mathys et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/#F1), Nature 570, 332–337. Fig. 1g image and caption, differential-expression Results and Methods, and participant selection. | Prefrontal cortex, Brodmann area 10. The Religious Orders Study contributed 48 donors in ROSMAP, 24 with AD pathology and 24 with no/low pathology. The latter group could include cognitive impairment. The authors profiled 80,660 nuclei across cortical cell classes. Their differential-expression analyses used a nucleus-level Wilcoxon test and a Poisson mixed model accounting for donor of origin and unwanted variation. | The original group comparison reports higher microglial and lower astrocytic APOE RNA with AD pathology. The Results cite adjusted Wilcoxon p < 0.01. Fig. 1g shows mixed-model z-scores with separate significance marks. The panel uses microglial nuclei 955 vs 965 and astrocytic nuclei 1,830 vs 1,562, with 24 donors in each group. |
+| [Smith et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8732962/#Sec23), Acta Neuropathologica 143, 75–91. APOE Results subsection, participant and enrichment Methods, differential-expression Methods, Table 1 and Supplementary Tables 6–7. | Paired entorhinal and somatosensory samples from 12 donors in two UK brain banks, 6 AD and 6 controls, yielding 24 preparations. The authors enriched glial nuclei and ran separate MAST regressions for regional amyloid-β and phosphorylated tau (pTau), with a preparation-level random effect and adjustments for detection rate, mitochondrial fraction, sex and region. Histology came from matching regions of the opposite hemisphere. | Microglial APOE RNA rose with each measured pathology marker. Both astrocyte associations exceeded the adjusted p-value cutoff of 0.05, leaving the effect uncertain in those regressions. |
+
+The Smith [publisher supplement](https://static-content.springer.com/esm/art%3A10.1007%2Fs00401-021-02372-6/MediaObjects/401_2021_2372_MOESM2_ESM.pdf) gives the following rounded values in the `ENSG00000130203` rows. These are the authors’ reported `logFC` and `padj` for total microglia or total astrocytes in each pathology regression.
+
+| Cell type | Pathology marker | Published logFC | Adjusted p | PDF page |
+| --- | --- | ---: | ---: | ---: |
+| Microglia | Amyloid-β | 1.061 | 0.009 | 87 |
+| Microglia | pTau | 1.117 | 0.029 | 62 |
+| Astrocytes | Amyloid-β | 0.451 | 0.187 | 47 |
+| Astrocytes | pTau | 0.515 | 0.080 | 40 |
+
+The side-by-side comparison keeps Mathys’s pathology group contrast separate from Smith’s continuous markers. The microglial results point upward in their respective analyses. Mathys’s lower astrocyte RNA and Smith’s nonsignificant astrocyte tests leave open how the result varies by region and design. The papers name different cohorts, and the source check did not match donor identifiers or pool effects. Nuclei and two regions from a single brain do not add independent donors. The readout is nuclear RNA, with separate evidence needed for intact tissue composition, APOE protein, genotype effects or causal mechanisms.
+
+The [Mathys author correction](https://www.nature.com/articles/s41586-019-1329-6) concerns acknowledgements and reversed early/late column labels in Supplementary Table 2, columns Y/Z. Fig. 1g uses a separate group comparison. [Murphy, Fancy and Skene (2023)](https://doi.org/10.7554/eLife.90214.3) reused the same 48-donor dataset and reported sensitivity to quality control and differential-expression methods. This is analytical context for reading Mathys. An APOE-specific rerun or reanalysis-table verification was outside this pass.
+
+### Source access and reuse
+
+Checked on November 27, 2026. Reproduction starts at the linked primary sources and inspected locations. Hashes identify retrieved representations, and publisher/PMC bytes can change. The Smith notice check covered the publisher article, PubMed metadata and Crossref update relations. The Smith article was published online in November 2021 and in the January 2022 issue. The publisher and Crossref identify the version of record as [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Mathys text and figure reuse remains pending. The retained data consist of citation facts, locators, limited reported numbers and project-authored paraphrases. Raw figures, article text, supplements and donor data stay outside the repository.
+
+| Inspected representation | Retrieved (UTC) | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| [Mathys PMC author manuscript](https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/) | `2026-11-27T12:07:24.095144Z` | 270,692 | `73bf840babed2c8d3c6755931d4abedce4aee17969abd1dd54bbed612388cf98` |
+| [Mathys Figure 1 JPEG](https://cdn.ncbi.nlm.nih.gov/pmc/blobs/e20a/6865822/bff5c91f5a1e/nihms-1049060-f0001.jpg) | `2026-11-27T12:09:22.701921Z` | 430,470 | `871f38bc3b53afc13217608d4bbb30fd34c3797126080b0e9f18346f0581d775` |
+| [Mathys correction](https://www.nature.com/articles/s41586-019-1329-6) | `2026-11-27T12:09:25.499827Z` | 253,382 | `f5e0c2b167b102fa32e22d222ff5d065754a668df6a15401befc392e2ff09492` |
+| [Mathys Crossref record](https://api.crossref.org/works/10.1038/s41586-019-1195-2) | `2026-11-27T12:09:22.316110Z` | 26,120 | `1850c476b455362e0ee8864920d281e8d305ed6b6037122dc14d1bc3181368f2` |
+| [Smith PMC full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC8732962/) | `2026-11-27T12:07:24.419283Z` | 286,756 | `4b115d6d41393dcc6383c9b39a82d4313d20f69b30ba2b163d370682a2034aec` |
+| [Smith publisher full text](https://link.springer.com/article/10.1007/s00401-021-02372-6) | `2026-11-27T12:09:26.622411Z` | 662,899 | `2d3826ec414280a8e30fb9eb52873a13c10b0476fe3c967bd65bb13ad3285123` |
+| [Smith publisher supplement PDF](https://static-content.springer.com/esm/art%3A10.1007%2Fs00401-021-02372-6/MediaObjects/401_2021_2372_MOESM2_ESM.pdf) | `2026-11-27T12:11:33.510451Z` | 22,942,791 | `44354a5354d4be6321ad50e86e142e5f35d78bad75548ccb79bce49ea65602f6` |
+| [Smith Crossref record](https://api.crossref.org/works/10.1007/s00401-021-02372-6) | `2026-11-27T12:09:22.359098Z` | 43,041 | `bc51de5bb2fd29851b405c44913ad1415cff443df15752d4f2aea5b03f29d3d6` |
+| [Murphy Europe PMC full-text XML](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10695556/fullTextXML) | `2026-11-27T12:09:40.213615Z` | 134,950 | `1f1c5ba9f7095186edd959f4697bc45543d8cde2686d7e942d217f8b817e635d` |
+| [Murphy versioned Crossref record](https://api.crossref.org/works/10.7554/eLife.90214.3) | `2026-11-27T12:09:22.815709Z` | 16,188 | `d4a6c5be7f2e8a0a8eec84f916e03dcf132b93a7eeec486d8707f33f9e28e819` |
+
 ## alzheimers-source-checked-0.8.0 — 2026-11-05
 
 **45 entities, 49 claims, 49 evidence records, 49 sources and one unchanged draft study-context comparison.** Five new nodes comprise two mouse genes, one mouse protein and two papers. Eight new claims comprise three experimental findings, two gene orthology annotations, one mouse gene/product mapping and two separately labeled human Open Targets aggregates. Existing human identity findings gain live UniProt provenance without duplicate finding or citation cards. All scientific records remain draft with `human_reviewed: false`.

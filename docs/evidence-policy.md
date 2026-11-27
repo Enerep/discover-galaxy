@@ -1,6 +1,6 @@
 # Scientific evidence policy
 
-Status: policy for the Alzheimer's explorer. The [45-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
+Status: policy for the Alzheimer's explorer. The [47-entity source-checked development snapshot](../data/alzheimers/README.md) records inspected sources and scoped draft annotations. The owner has deferred independent scientific review to a future milestone; it does not block development expansion or hosting. The [validator and schema](data-model.md) distinguish development records from a future approved scientific release.
 
 Discovery Galaxy helps researchers inspect published evidence and formulate testable questions. It does not establish causality, discover treatments, or provide clinical recommendations. A visually prominent object, short graph path, or AI explanation is not evidence of biological importance.
 

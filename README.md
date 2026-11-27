@@ -20,7 +20,9 @@ Each analyzed pathway now has an **Evidence** view: coverage of its selected gen
 
 [Database intake tooling](tools/curation/README.md#gene-and-protein-api-intake) supports bounded UniProt, Reactome and Open Targets responses with archived replay and source provenance. These tools run outside the browser and stage facts for a separate snapshot diff. The [first reproducible seed](data/annotations/README.md) used pinned HGNC/Reactome references while live access was blocked; the later APOE/ABCA1 checkpoint records successful provider access on 2026-11-05. Neither intake workflow transmits uploaded genes. The separate [browser lookup](docs/live-sources.md) supports explicit, read-only requests for the curated human APOE/ABCA1 identities.
 
-**The source-checked explorer contains 45 entities and 49 cited claims, with 49 evidence records.** It covers one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and ten papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The source-checked explorer contains 47 entities and 51 cited claims, with 51 evidence records.** It covers one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and twelve papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+
+**Compare APOE RNA in human brain cells.** In Explore, select **APOE**, choose the Mathys or Smith RNA finding and open **Compare findings**. The two columns align microglial and astrocytic APOE results, brain regions, donor counts and analysis methods. Open either original paper or download the comparison for a research brief. The two pathology comparisons and Smith's supplementary results are documented in the [0.9.0 change record](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-090--2026-11-27).
 
 The pinned-reference batch adds **COL1A1, COL1A2, COL3A1 and SAA1** with separate proteins, approved identity cross-references and gene-level scavenger-pathway annotations. These use the [reproducible pinned-reference seed](data/annotations/README.md); they are database records, not new paper findings or a successful live API import. They appear in the 3D/list explorer and analysis coverage audit.
 
@@ -117,7 +119,7 @@ The security command requires network access for npm advisories and the pinned I
 
 **Review API updates** with `npm run --silent curation:review -- --packet data/staging/normalized-packet.json`; repeat `--packet` for a small batch and add matching `--previous` packets for a diff. The offline report separates record changes from retrieval/release/terms changes and shows conservative graph identifier matches. It writes to stdout, keeps unreviewed status and never updates the website or graph. See [commands and review limits](tools/curation/README.md#review-staged-api-updates).
 
-The [AD source-review packet](data/alzheimers/review-packet.md) collects the 49 current claims, 49 evidence records, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
+The [AD source-review packet](data/alzheimers/review-packet.md) collects the 51 current claims, 51 evidence records, citations, source context, and outstanding checks. It is a generated extract, not scientific approval. Check or regenerate it from the repository root:
 
 ```sh
 npm run curation:check
@@ -156,7 +158,7 @@ In this cloud workspace, npm's default cache directory may be read-only. Use `ex
 7. Select the Atagi or Lessard R47H binding finding to read **Different R47H binding results**, then compare the cited assays.
 8. Pin useful findings, or choose **Add to research brief** from a comparison. Open **Research brief**, write your question and reasoning, and download the cited document for discussion.
 
-The current explorer implements these steps, including one draft study-context comparison and a user-authored brief. The TREM2 protein → DAP12 signaling route is also available. Further disagreement curation and curator-reviewed research questions remain planned; a user's notes do not complete those milestones. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
+The current explorer implements these steps, including two study-context comparisons and a user-authored brief. The TREM2 protein → DAP12 signaling route is also available. Further disagreement curation and curator-reviewed research questions remain planned; a user's notes do not complete those milestones. Pathway annotations do not demonstrate AD-specific mechanisms; gene, protein, variant, and protein-state meanings remain distinct.
 
 Briefs save automatically after editing. If another tab changes the saved draft or saved data cannot be read, automatic saving pauses until **Save this version** is chosen. If the dataset changes, inspect the current pinned findings, remove unavailable references, then choose **Refresh evidence** before adding evidence or exporting. When storage is unavailable, writing and downloading still work in memory.
 

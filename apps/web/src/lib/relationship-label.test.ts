@@ -8,6 +8,18 @@ import type { Claim, Entity, Snapshot } from './types.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 
+test('published RNA measurements use their own relationship label on the APOE gene edge', () => {
+  const observations = getEntityClaims(snapshot, 'gene-apoe').filter(({ context }) => context.association_scope === 'rna_expression');
+  assert.equal(observations.length, 2);
+  for (const claim of observations) {
+    assert.equal(claim.subject_id, 'gene-apoe');
+    assert.equal(claim.object_id, 'disease-alzheimers');
+    assert.equal(relationshipLabel(claim), 'RNA observation');
+    assert.equal(relationshipLabel(claim, true), 'RNA observation');
+    assert.ok(!getEntityClaims(snapshot, 'protein-apoe').includes(claim));
+  }
+});
+
 test('one pathway keeps gene annotations distinct from protein participation in both directions', () => {
   const members = getEntityClaims(snapshot, 'pathway-scavenger-receptors');
   const geneClaims = members.filter(({ context }) => context.annotation_level === 'gene');

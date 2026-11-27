@@ -87,6 +87,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const selected = snapshot.entities.find(({ id }) => id === selectedId) ?? snapshot.entities[0];
   const related = getEntityClaims(snapshot, selected.id);
   const activeClaim = related.find(({ id }) => id === selectedClaimId) ?? related[0];
+  const comparisonPartner = useMemo(() => activeClaim ? findComparisonPartner(snapshot, activeClaim.id) : undefined, [snapshot, activeClaim]);
   const shareUrl = useMemo(() => {
     try {
       return buildShareUrl(new URL(window.location.href), {
@@ -150,9 +151,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   }
 
   function openComparison() {
-    if (!activeClaim) return;
-    const other = findComparisonPartner(snapshot, activeClaim.id);
-    if (other) setComparisonIds([activeClaim.id, other.id]);
+    if (activeClaim && comparisonPartner) setComparisonIds([activeClaim.id, comparisonPartner.id]);
   }
   function changeComparison(side: 0 | 1, id: string) {
     setComparisonIds((current) => {
@@ -386,7 +385,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
 
         <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
-          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={openComparison} onFollow={followConnection}
+          onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={comparisonPartner ? openComparison : undefined} onFollow={followConnection}
           pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin}
           experimentObservation={experiment && observation ? { comparison: experiment.comparison, context: experiment.context, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
             selected: experiment.selected.some(({ gene }) => gene === observation.gene) } : null} />

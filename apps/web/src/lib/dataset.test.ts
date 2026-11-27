@@ -213,7 +213,7 @@ test('reference-derived coverage keeps gene-set membership separate from protein
     assert.equal(membership.review.human_reviewed, false);
   }
   assert.equal(snapshot.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
-  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 10);
+  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 12);
 });
 
 test('scavenger evidence connects typed genes and proteins to APOE without promoting RNA results into AD-risk claims', async () => {
@@ -371,9 +371,8 @@ test('a release can pass only with explicit review, provenance, rights and size 
 
 test('a study-context comparison cites evidence for every compared claim and cannot create scientific approval', async () => {
   const data = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
-  assert.equal(data.conflicts.length, 1);
-  const note = data.conflicts[0];
-  assert.equal(note.id, 'conflict-r47h-binding-context');
+  assert.equal(data.conflicts.length, 2);
+  const note = data.conflicts.find(({ id }) => id === 'conflict-r47h-binding-context')!;
   assert.deepEqual(note.claim_ids, ['claim-trem2-r47h-apoe-binding', 'claim-lessard-trem2-r47h-apoe3-binding']);
   for (const id of note.claim_ids) assert.ok(note.evidence_ids.some((eid) => data.evidence.find((item) => item.id === eid)?.claim_id === id));
   assert.equal(note.review.status, 'draft');
@@ -387,7 +386,7 @@ test('a study-context comparison cites evidence for every compared claim and can
   assert.equal(lessard.study_context.experiments_reported, null);
   assert.equal(lessard.study_context.sample_size, null);
   const broken = structuredClone(data);
-  broken.conflicts[0].claim_ids.push('claim-apoe-e4-risk');
+  broken.conflicts.find(({ id }) => id === note.id)!.claim_ids.push('claim-apoe-e4-risk');
   assert.ok(validateDataset(broken).errors.some((error) => error.includes('needs cited evidence in the comparison')));
   const source = data.sources.find(({ id }) => id === lessard.source_id)!;
   assert.equal(source.reuse.permission_status, 'permitted');

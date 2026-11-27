@@ -37,6 +37,37 @@ test('comparison opens a curated pair before matching conditions without inferri
   assert.equal(findComparisonPartner(repeatedMetadata, binding)?.id, variant);
 });
 
+test('the APOE RNA comparison keeps each cell-type result with its cohort, contrast and source', () => {
+  const mathys = 'claim-apoe-rna-mathys-2019';
+  const smith = 'claim-apoe-rna-smith-2022';
+  assert.equal(findComparisonPartner(snapshot, mathys)?.id, smith);
+  assert.equal(findComparisonPartner(snapshot, smith)?.id, mathys);
+  assert.equal(findComparisonPartner(snapshot, FIRST)?.id, SECOND);
+  const withoutSmith = { ...snapshot, claims: snapshot.claims.filter(({ id }) => id !== smith) };
+  assert.equal(findComparisonPartner(withoutSmith, mathys), undefined);
+
+  const comparison = buildEvidenceComparison(snapshot, mathys, smith);
+  assert.deepEqual(comparison.contextNotes.map(({ id }) => id), ['context-apoe-cell-type-rna']);
+  assert.equal(comparison.scopeStatus, 'different recorded scope');
+  const [microglia, astrocytes, tissue, contrast, sampleSize] = comparison.contextRows;
+  assert.equal(microglia.label, 'Microglial APOE RNA');
+  assert.match(String(microglia.left.studies[0].value), /^Higher/);
+  assert.match(String(microglia.right.studies[0].value), /^Higher/);
+  assert.equal(astrocytes.label, 'Astrocytic APOE RNA');
+  assert.match(String(astrocytes.left.studies[0].value), /^Lower/);
+  assert.match(String(astrocytes.right.studies[0].value), /statistically significant association/);
+  assert.equal(tissue.status, 'different');
+  assert.equal(contrast.status, 'different');
+  assert.deepEqual([sampleSize.left.studies[0].value, sampleSize.right.studies[0].value], [48, 12]);
+  assert.ok(!comparison.prompts.some((prompt) => /protein preparation/.test(prompt)));
+  assert.deepEqual(buildEvidenceComparison(snapshot, mathys, FIRST).contextNotes, []);
+
+  const brief = buildComparisonBrief(snapshot, mathys, smith);
+  for (const value of ['PMC6865822', 'PMC8732962', 'https://www.nature.com/articles/s41586-019-1329-6', 'adjusted p 0.187', '24 preparations', 'same donors as Mathys']) {
+    assert.ok(brief.includes(value), value);
+  }
+});
+
 test('automatic partners keep database primary sources apart from publications while retaining discovery provenance', () => {
   // Synthetic database candidates exercise navigation only, never graph evidence.
   const fixture = structuredClone(snapshot);
