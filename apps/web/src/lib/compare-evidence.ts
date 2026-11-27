@@ -178,10 +178,9 @@ export function buildEvidenceComparison(snapshot: Snapshot, firstClaimId: string
   const rna = columns.every(({ claim }) => isRnaObservation(claim));
   const binding = columns.every(({ claim }) => typeof claim.context.binding_condition === 'string');
   const experiment = columns.every(({ evidence }) => evidence.every(({ evidence: item }) => typeof item.study_context.experimental_system === 'string' && item.study_context.experimental_system.trim().length > 0));
-  if (rna) {
-    keys.delete('finding_label');
-    keys.delete('association_scope');
-  }
+  keys.delete('finding_label');
+  keys.delete('comparison_group');
+  if (rna) keys.delete('association_scope');
   const dimensions = rna
     ? [...new Set([...RNA_DIMENSIONS, ...DIMENSIONS])].filter((key) => keys.has(key))
     : [...(experiment ? EXPERIMENT_DIMENSIONS.filter((key) => keys.has(key)) : []), ...DIMENSIONS];

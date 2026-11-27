@@ -15,15 +15,14 @@ export function WorkspaceHelp({ workspace }: { workspace: 'explore' | 'analysis'
         <button className="icon-button dialog-close" aria-label="Close workspace help" onClick={() => dialog.current?.close()}><Icon name="close" /></button>
       </div>
       {explore ? <>
-        <p>Browse biological connections and the scientific sources behind them. The curated evidence library focuses on Alzheimer’s disease.</p>
         <ol>
-          <li>Search for a gene, protein, pathway or paper.</li>
+          <li>Choose a disease map, then search for a gene, protein, pathway or paper.</li>
           <li>Select an entity to see its direct connections. Expand one level, retrace with Back, or use Overview to see the library with the selection’s connections.</li>
           <li>Choose a finding in the evidence panel and follow its original paper or database record. List provides the same library without using 3D.</li>
         </ol>
         <section className="workspace-help-example" aria-label="Explore example">
           <h3>For example</h3>
-          <p>Search <strong>APOE</strong> and choose the gene. Its variant-specific Alzheimer’s association findings and gene-to-protein mapping appear separately. Select <strong>Encodes · APOE protein</strong>, then <strong>View APOE protein</strong> to follow the protein’s pathway and binding evidence.</p>
+          <p>Search <strong>APOE</strong> in either map. Select a finding, then choose <strong>Compare findings</strong> to read the original sources side by side.</p>
         </section>
         <p>Each finding retains its study context and limitations. A missing connection describes this library’s coverage.</p>
       </> : <>
@@ -44,7 +43,7 @@ export function WorkspaceHelp({ workspace }: { workspace: 'explore' | 'analysis'
           <p>Of 120 tested genes, 12 pass. Ten of the 12 selected genes belong to a Reactome lipoprotein pathway, compared with 13 of the 120 tested genes overall. The app tests that overlap, then links covered genes to the curated evidence library.</p>
           <p>For an observational bulk-brain experiment, select <strong>Bulk brain tissue</strong> and <strong>Observational comparison</strong> under Experiment context, then apply. When APOE passes your cutoffs in the selected pathway, <strong>Possible explanations</strong> compares cell proportions with RNA changes within cell types, with cited premises and a proposed measurement. Synthetic data retain the label <strong>Example explanations</strong>.</p>
         </section>
-        <p>Files stay in this tab. Enrichment describes gene membership; pathway activity needs separate evidence. Human pathway analysis extends beyond Alzheimer’s, while the curated evidence library remains focused on it.</p>
+        <p>Files stay in this tab. Pathway analysis uses the full pinned human reference. The Evidence section uses the disease map selected in Explore.</p>
       </>}
     </dialog>
   </>;

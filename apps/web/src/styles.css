@@ -105,7 +105,7 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 360px; background: var(--page); }
+body { margin: 0; min-width: 320px; background: var(--page); }
 button, input, select { font: inherit; }
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; border: 0; background: none; cursor: pointer; }
@@ -167,8 +167,11 @@ p { line-height: 1.65; }
 .experiment-observation .context-list { margin: 12px 0 0; }
 .experiment-observation summary { min-height: 44px; padding-block: 12px; font-size: 13px; color: var(--secondary-ink); cursor: pointer; }
 .explorer { min-width: 0; outline: none; }
-.page-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 25px; }
-.page-heading h1 { font-size: 32px; font-weight: 550; letter-spacing: -1.15px; margin: 0; line-height: 1.2; }
+.page-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 25px; }
+.disease-map { position: relative; min-width: 0; max-width: 100%; }
+.disease-map select { appearance: none; width: 100%; min-height: 44px; padding: 0 33px 0 12px; border: 1px solid var(--control-border); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: clamp(17px, 2.1vw, 25px); font-weight: 550; letter-spacing: -.5px; cursor: pointer; }
+.disease-map option { font-size: 16px; font-weight: 400; }
+.disease-map > svg { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); color: var(--icon); pointer-events: none; }
 .workspace-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .brief-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 4px; background: var(--soft-accent); color: var(--accent); font-size: 12px; }
 .explorer-tools { display: grid; grid-template-columns: minmax(0, 1fr) 142px auto; align-items: center; gap: 10px; margin-bottom: 18px; }
@@ -451,7 +454,6 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
   .workspace { grid-template-columns: minmax(0, 1fr) 330px; gap: 24px; padding: 28px; }
   .app-header { padding: 0 28px; }
   .inspector { padding-left: 24px; }
-  .page-heading h1 { font-size: 29px; }
   .view-toolbar { padding-left: 13px; gap: 8px; }
   .result-status { font-size: 11px; }
   .view-switch button { min-width: 64px; padding: 0 8px; }
@@ -490,11 +492,10 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
   .project-link { display: none; }
   .workspace { padding: 25px 18px; gap: 24px; }
   .page-heading { margin-bottom: 20px; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
-  .page-heading h1 { flex-basis: 100%; }
+  .disease-map { width: 100%; }
   .workspace-actions { width: 100%; }
   .brief-trigger { flex: 1; }
   .share-trigger { min-height: 40px; padding: 0 10px; margin-top: 1px; font-size: 12px; }
-  .page-heading h1 { font-size: 28px; letter-spacing: -.9px; }
   .explorer-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
   .search-control { grid-column: 1 / -1; }
   .search-field { padding: 0 10px; gap: 8px; }

@@ -1,6 +1,7 @@
 import { Component, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import rawDataset from '../../../data/alzheimers/dataset.json';
+import { DISEASE_COLLECTIONS, isCollectionId } from '../../../data/collections.ts';
+import type { CollectionId } from '../../../data/collections.ts';
 import { EntitySearch } from './components/EntitySearch.tsx';
 import { Inspector } from './components/Inspector.tsx';
 import { ShareDialog } from './components/ShareDialog.tsx';
@@ -14,14 +15,16 @@ import type { EntityType, Snapshot } from './lib/types.ts';
 import { buildExplorerGraph } from './lib/explorer-graph.ts';
 import type { GraphScope } from './lib/explorer-graph.ts';
 import { useReducedMotion } from './lib/useReducedMotion.ts';
-import { buildShareUrl, parseShareState } from './lib/share-state.ts';
+import { buildShareUrl, parseShareState, readSharedCollection } from './lib/share-state.ts';
 import type { ExplorerShareState } from './lib/share-state.ts';
 import { findComparisonPartner } from './lib/compare-evidence.ts';
 import { useResearchBrief } from './lib/useResearchBrief.ts';
+import { BRIEF_STORAGE_KEY } from './lib/research-brief.ts';
 import type { ExperimentAnalysis } from './lib/experiment-analysis.ts';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const ExperimentWorkspace = lazy(() => import('./components/ExperimentWorkspace.tsx'));
+const COLLECTION_IDS = Object.keys(DISEASE_COLLECTIONS) as CollectionId[];
 const FILTERS: { value: EntityType | 'all'; label: string }[] = [
   { value: 'all', label: 'All types' }, { value: 'gene', label: 'Genes' },
   { value: 'protein', label: 'Proteins' }, { value: 'pathway', label: 'Pathways' },
@@ -36,8 +39,10 @@ class SceneBoundary extends Component<{ children: ReactNode; onFail: () => void 
 }
 
 export default function App() {
-  let snapshot: Snapshot;
-  try { snapshot = loadDataset(rawDataset); }
+  let snapshots: Record<CollectionId, Snapshot>;
+  try {
+    snapshots = Object.fromEntries(COLLECTION_IDS.map((id) => [id, loadDataset(DISEASE_COLLECTIONS[id].data)])) as typeof snapshots;
+  }
   catch (error) {
     return (
       <main className="load-error">
@@ -47,15 +52,23 @@ export default function App() {
       </main>
     );
   }
-  return <Explorer snapshot={snapshot} />;
+  return <Explorer snapshots={snapshots} />;
 }
 
-function Explorer({ snapshot }: { snapshot: Snapshot }) {
-  const defaultState = useMemo<ExplorerShareState>(() => ({
-    entityId: snapshot.entities.find(({ id }) => id === 'gene-apoe')?.id ?? snapshot.entities[0].id,
-    claimId: null, query: '', filter: 'all', view: 'graph',
-  }), [snapshot]);
-  const [initialState] = useState(() => parseShareState(new URL(window.location.href), snapshot) ?? defaultState);
+function defaultView(collectionId: CollectionId, view: ExplorerShareState['view'] = 'graph'): ExplorerShareState {
+  return { entityId: DISEASE_COLLECTIONS[collectionId].initialEntityId, claimId: null, query: '', filter: 'all', view };
+}
+
+function readLocation(snapshots: Record<CollectionId, Snapshot>) {
+  const url = new URL(window.location.href);
+  const id = readSharedCollection(url);
+  return { id, state: parseShareState(url, snapshots[id], id) ?? defaultView(id) };
+}
+
+function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) {
+  const [{ id: initialCollection, state: initialState }] = useState(() => readLocation(snapshots));
+  const [collectionId, setCollectionId] = useState(initialCollection);
+  const snapshot = snapshots[collectionId];
   const [query, setQuery] = useState(initialState.query);
   const [filter, setFilter] = useState<EntityType | 'all'>(initialState.filter);
   const [selectedId, setSelectedId] = useState(initialState.entityId);
@@ -73,7 +86,10 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   const [workspace, setWorkspace] = useState<'explore' | 'analysis'>('explore');
   const [analysisVisited, setAnalysisVisited] = useState(false);
   const [experiment, setExperiment] = useState<ExperimentAnalysis | null>(null);
-  const research = useResearchBrief(snapshot);
+  const research = {
+    alzheimers: useResearchBrief(snapshots.alzheimers),
+    'lewy-bodies': useResearchBrief(snapshots['lewy-bodies'], `${BRIEF_STORAGE_KEY}:lewy-bodies`),
+  }[collectionId];
   const graphCapture = useRef<(() => HTMLCanvasElement) | null>(null);
   const receiveCapture = useCallback((capture: (() => HTMLCanvasElement) | null) => { graphCapture.current = capture; }, []);
   const captureGraph = useCallback(() => graphCapture.current?.(), []);
@@ -92,9 +108,9 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     try {
       return buildShareUrl(new URL(window.location.href), {
         entityId: selected.id, claimId: activeClaim?.id ?? null, query, filter, view,
-      }, snapshot);
+      }, snapshot, collectionId);
     } catch { return ''; }
-  }, [snapshot, selected.id, activeClaim?.id, query, filter, view]);
+  }, [snapshot, collectionId, selected.id, activeClaim?.id, query, filter, view]);
   const paperCount = snapshot.entities.filter(({ type }) => type === 'paper').length;
   const filtered = !!query.trim() || filter !== 'all';
   const experimentRows = useMemo(() => new Map(experiment?.rows.map((row) => [row.gene, row]) ?? []), [experiment]);
@@ -160,11 +176,22 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     });
   }
 
+  function chooseCollection(id: string) {
+    if (!isCollectionId(id) || id === collectionId) return;
+    const url = buildShareUrl(new URL(window.location.href), defaultView(id, view), snapshots[id], id);
+    window.location.hash = new URL(url).hash;
+  }
+
   useEffect(() => {
     const restore = () => {
       if (['#explorer', '#experiment-workspace'].includes(window.location.hash)) return;
-      const next = parseShareState(new URL(window.location.href), snapshot) ?? defaultState;
+      const { id, state: next } = readLocation(snapshots);
+      setCollectionId(id);
       setWorkspace('explore');
+      setShareOpen(false);
+      setComparisonIds(null);
+      setBriefOpen(false);
+      if (aboutRef.current?.open) aboutRef.current.close();
       setGraphMode('focus');
       setExpanded(false);
       setTrail([]);
@@ -176,7 +203,7 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
     };
     window.addEventListener('hashchange', restore);
     return () => window.removeEventListener('hashchange', restore);
-  }, [snapshot, defaultState, webglFailed]);
+  }, [snapshots, webglFailed]);
 
   const graph = useMemo(() => buildExplorerGraph(snapshot, {
     selectedId, selectedClaimId: activeClaim?.id ?? null, mode: graphMode, expanded, query, filter,
@@ -244,9 +271,16 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
   }
   function backToGraph() { moveTo(graphRef.current); }
 
+  const workspaceId = workspace === 'explore' ? 'explorer' : 'experiment-workspace';
   return (
     <div className="app-shell">
-      <a className="skip-link" href={workspace === 'explore' ? '#explorer' : '#experiment-workspace'}>Skip to workspace</a>
+      <a className="skip-link" href={`#${workspaceId}`} onClick={(event) => {
+        const target = document.getElementById(workspaceId);
+        if (!target) return;
+        event.preventDefault();
+        target.focus({ preventScroll: true });
+        target.scrollIntoView();
+      }}>Skip to workspace</a>
       <header className="app-header">
         <a className="brand" href="/" aria-label="Discovery Galaxy home"><Icon name="galaxy" size={29} /><span>Discovery Galaxy</span></a>
         <div className="header-actions">
@@ -276,7 +310,13 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
       <div className="workspace" hidden={workspace !== 'explore'}>
         <main className="explorer" id="explorer" tabIndex={-1}>
           <div className="page-heading">
-            <h1>Alzheimer’s disease</h1>
+            <div className="disease-map">
+              <h1 className="sr-only">{snapshot.scope.disease.replaceAll("'", '’')}</h1>
+              <select aria-label="Disease map" value={collectionId} onChange={(event) => chooseCollection(event.target.value)}>
+                {COLLECTION_IDS.map((id) => <option key={id} value={id}>{snapshots[id].scope.disease.replaceAll("'", '’')}</option>)}
+              </select>
+              <Icon name="down" size={17} />
+            </div>
             <div className="workspace-actions">
               <button ref={briefTrigger} className="secondary-button brief-trigger" aria-label="Research brief" onClick={() => setBriefOpen(true)}><Icon name="brief" size={17} />Research brief
                 {research.brief.pinned_claim_ids.length > 0 && <span className="brief-count" aria-hidden="true">{research.brief.pinned_claim_ids.length}</span>}
@@ -383,10 +423,10 @@ function Explorer({ snapshot }: { snapshot: Snapshot }) {
           </div>
         </main>
 
-        <Inspector snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
+        <Inspector key={collectionId} snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
           onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={comparisonPartner ? openComparison : undefined} onFollow={followConnection}
-          pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin}
+          pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin} liveSourcesEnabled={DISEASE_COLLECTIONS[collectionId].liveSources}
           experimentObservation={experiment && observation ? { comparison: experiment.comparison, context: experiment.context, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
             selected: experiment.selected.some(({ gene }) => gene === observation.gene) } : null} />
       </div>

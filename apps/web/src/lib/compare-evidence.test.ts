@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { DISEASE_COLLECTIONS } from '../../../../data/collections.ts';
 import { loadDataset } from './dataset.ts';
 import { buildComparisonBrief, buildEvidenceComparison, buildFindingBrief, findComparisonPartner, getStudyContextNotes } from './compare-evidence.ts';
 import { findingLabel } from './source-format.ts';
@@ -9,6 +10,25 @@ import type { Snapshot } from './types.ts';
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const FIRST = 'claim-apoe-e4-risk';
 const SECOND = 'claim-apoe-e2-risk';
+
+test('DLB APOE comparison retains the two low-pathology definitions, control counts and correction', () => {
+  const dlb = loadDataset(DISEASE_COLLECTIONS['lewy-bodies'].data);
+  const tsuang = 'claim-dlb-apoe-e4-low-pathology-tsuang-2013';
+  const kaivola = 'claim-dlb-apoe-e4-low-pathology-kaivola-2022';
+  const higherPathology = 'claim-dlb-apoe-e4-higher-pathology-kaivola-2022';
+  assert.equal(findComparisonPartner(dlb, tsuang)?.id, kaivola);
+  assert.equal(findComparisonPartner(dlb, kaivola)?.id, tsuang);
+  const comparison = buildEvidenceComparison(dlb, tsuang, kaivola);
+  assert.deepEqual(comparison.contextNotes.map(({ id }) => id), ['context-dlb-apoe-e4-low-pathology']);
+  assert.ok(!comparison.contextRows.some(({ key }) => key === 'finding_label'));
+  const row = comparison.contextRows.find(({ key }) => key === 'control_count');
+  assert.deepEqual([row?.left.studies[0].value, row?.right.studies[0].value], [269, 2928]);
+  assert.deepEqual(buildEvidenceComparison(dlb, tsuang, higherPathology).contextNotes, []);
+  const brief = buildComparisonBrief(dlb, tsuang, kaivola);
+  for (const value of ['OR 6.1', 'OR 0.75', 'PMC3580799', 'PMC9423712', 'PMC10393388', 'Braak 0–II and CERAD 0–A']) {
+    assert.ok(brief.includes(value), value);
+  }
+});
 
 test('comparison opens a curated pair before matching conditions without inferring comparability', () => {
   const binding = 'claim-trem2-apoe-binding';

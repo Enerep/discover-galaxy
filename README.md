@@ -6,9 +6,9 @@ Discovery Galaxy is an interactive map of scientific evidence in development. Gl
 
 The `?` beside Explore and Analyze results explains each workspace with a concrete example. Gene diamonds, rounded proteins and ring pathways match the legend. Focused pathways use spaced gene/protein rows, and selecting a relationship reveals its name on the connection. The 3D view starts with one entity’s direct connections. Expand one level, use Back to retrace a branch, or open Overview and the complete searchable List; original findings and citations remain in the evidence panel.
 
-Researchers can also bring their own processed human RNA-seq results into **Analyze results**: test pathway overrepresentation, inspect signed gene changes, and investigate source-linked questions. This is the current product focus. The curated evidence library remains Alzheimer's-specific; human pathway analysis does not depend on that small graph for its statistical background.
+Researchers can also bring their own processed human RNA-seq results into **Analyze results**: test pathway overrepresentation, inspect signed gene changes, and investigate source-linked questions. This is the current product focus. Explore provides two curated disease maps. Pathway statistics use a separate pinned human reference.
 
-The first version focuses on **Alzheimer's disease**, with a release target of **20–50 curated entities**. Its value comes from making evidence easy to follow: every scientific relationship and explanation must lead back to its sources.
+Each relationship in the maps links to its original sources. The Alzheimer's map meets the **20–50 curated entity** size target. The smaller dementia with Lewy bodies (DLB) map focuses on human genetic evidence.
 
 ## Project status
 
@@ -20,7 +20,9 @@ Each analyzed pathway now has an **Evidence** view: coverage of its selected gen
 
 [Database intake tooling](tools/curation/README.md#gene-and-protein-api-intake) supports bounded UniProt, Reactome and Open Targets responses with archived replay and source provenance. These tools run outside the browser and stage facts for a separate snapshot diff. The [first reproducible seed](data/annotations/README.md) used pinned HGNC/Reactome references while live access was blocked; the later APOE/ABCA1 checkpoint records successful provider access on 2026-11-05. Neither intake workflow transmits uploaded genes. The separate [browser lookup](docs/live-sources.md) supports explicit, read-only requests for the curated human APOE/ABCA1 identities.
 
-**The source-checked explorer contains 47 entities and 51 cited claims, with 51 evidence records.** It covers one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and twelve papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+**The Alzheimer's map contains 47 entities and 51 cited claims, with 51 evidence records.** It includes the disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and twelve papers. The selectable 3D graph, alias-aware search, type filters, synchronized list, evidence inspector, original references, reduced-motion support, and WebGL fallback are implemented.
+
+**Explore dementia with Lewy bodies.** Choose it in the **Disease map** picker in Explore. The map links APOE, SNCA and GBA1 to seven findings from three original human studies. **Compare findings** opens the two APOE ε4 studies on DLB with low or absent Alzheimer's co-pathology, with each study's estimates, controls and pathology thresholds. [DLB sources and inspection record](data/lewy-bodies/README.md)
 
 **Compare APOE RNA in human brain cells.** In Explore, select **APOE**, choose the Mathys or Smith RNA finding and open **Compare findings**. The two columns align microglial and astrocytic APOE results, brain regions, donor counts and analysis methods. Open either original paper or download the comparison for a research brief. The two pathology comparisons and Smith's supplementary results are documented in the [0.9.0 change record](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-090--2026-11-27).
 
@@ -32,13 +34,13 @@ One toolbar groups search, the type filter and Graph/List. The selected entity, 
 
 The appearance control offers Light, Dark, and System. System follows the operating system by default; explicit choices are remembered locally. Dark uses a `#1F1F24` page background. The graph stays dark in either theme, and exported citation cards keep their light background.
 
-Sharing supports a PNG of the graph and selected finding, with source references, dataset version, and draft status. Native image sharing is offered where supported; downloading works without it. Copied links restore the entity, finding, search, filter, and view, but not the camera position. Images are created in the browser without an upload service.
+Sharing supports a PNG of the graph and selected finding, with source references, dataset version, and draft status. Native image sharing is offered where supported; downloading works without it. Copied links restore the disease map, entity, finding, search, filter and view. Existing links open the Alzheimer's map. Images are created in the browser without an upload service.
 
 Pasting the website link into a compatible social app uses a separate **1200 × 630 social preview**, with Open Graph and Twitter metadata in the initial HTML. It represents the explorer as a whole; selected findings in URL fragments do not create different thumbnails. The public address is [discover-galaxy-web.vercel.app](https://discover-galaxy-web.vercel.app/). See [social preview maintenance](docs/social-preview.md) for checks, domain changes, and cache behavior.
 
 **Compare findings** opens two findings side by side with their original citations, study populations, variants, endpoints, limitations, and review status. Recorded fields are labeled matching, different, or missing; those labels do not determine agreement, contradiction, or study independence. A downloadable Markdown brief keeps the complete context and dataset version. Reading prompts identify source checks to make, not verified research gaps or new hypotheses.
 
-**Research brief** turns selected evidence into a working document. Pin findings or add a comparison, write your question, explanation, assumptions and proposed experiment, then download a cited Markdown brief. One draft with up to 12 findings and one comparison is saved on this browser/device; no account or AI key is needed. Notes stay separate from the scientific records and retain their user-authored status in the export. Download the file to share it or keep a copy: explorer links and PNG sharing do not include your notes, and device storage is not cloud sync or a backup.
+**Research brief** turns selected evidence into a working document. Pin findings or add a comparison, write your question, explanation, assumptions and proposed experiment, then download a cited Markdown brief. Each map saves one local draft with up to 12 findings and one comparison. Notes stay separate from the scientific records and retain their user-authored status in the export. Download the file to share it or keep a copy: explorer links and PNG sharing do not include your notes, and device storage is not cloud sync or a backup.
 
 The interface uses **Source-checked draft**. Each finding records its source, inspected location, context, and limitations. Four existing human genetic-association findings keep their variant/population scopes; the database assertions include fifteen gene–protein mappings, eleven protein-level pathway-participation annotations, four gene-level pathway annotations, one TREM2–DAP12 binding annotation, two mouse/human orthology annotations and two separately labeled Open Targets aggregate associations. Database records are labeled separately from original papers. Use **View …** in a finding to follow a connection from a gene to its protein and pathway, with keyboard focus preserved.
 
@@ -52,7 +54,7 @@ Independent scientific review is deferred to a future milestone, as requested by
 
 See the [dataset notes](data/alzheimers/README.md) and [change log](data/alzheimers/CHANGELOG.md) for source checks and lookup limits. The development snapshot meets the **20–50 entity size target**; the remaining MVP capabilities and future scientific-release checks in [steps.md](steps.md) are separate.
 
-The owner reports a working Vercel development deployment. **The curated evidence library remains Alzheimer's-focused.** The [checkpoint plan](docs/checkpoints.md) now prioritizes interpreting experimental data and developing grounded follow-up questions; broader curated disease coverage remains separate work.
+The owner reports a working Vercel development deployment. In Analyze results, **Evidence** follows the map selected in Explore. Switching maps preserves the applied analysis and any pending input. [Checkpoint plan](docs/checkpoints.md)
 
 The [APOE/ABCA1 evidence checkpoint](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-080--2026-11-05) adds three original-paper mouse findings: altered ApoE particle lipidation in cultured astrocytes and lower soluble ApoE in two mouse brain models. Follow human **ABCA1 → Abca1 (mouse) → ApoE protein (mouse)** to inspect them. Explicit mouse identities and orthology links keep these experiments separate from human findings. Open Targets connections say **Database association**; metadata is not another experiment. Human RNA evidence coverage does not borrow mouse papers through orthology.
 
@@ -125,6 +127,8 @@ The [AD source-review packet](data/alzheimers/review-packet.md) collects the 51 
 npm run curation:check
 npm run --silent curation:packet > data/alzheimers/review-packet.md
 ```
+
+Generate the DLB extract with `npm run --silent curation:packet -- lewy-bodies`.
 
 Record actual scientific reviews in the source dataset, then regenerate; do not edit the packet as a separate review record. The packet generator makes no API requests and does not change the graph.
 

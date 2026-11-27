@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { DISEASE_COLLECTIONS } from '../../../../data/collections.ts';
 import { loadDataset } from './dataset.ts';
-import { buildShareUrl, parseShareState } from './share-state.ts';
+import { buildShareUrl, parseShareState, readSharedCollection } from './share-state.ts';
 import type { ExplorerShareState } from './share-state.ts';
 
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
@@ -86,4 +87,27 @@ test('minimal links use safe defaults and unsupported protocols cannot be shared
   assert.deepEqual(parseShareState(new URL(`${base.href}#entity=gene-apoe`), snapshot), { ...selected, claimId: null });
   assert.equal(parseShareState(new URL('javascript:alert(1)#entity=gene-apoe'), snapshot), null);
   assert.throws(() => buildShareUrl(new URL('javascript:alert(1)'), selected, snapshot), /HTTP or HTTPS/);
+});
+
+test('DLB links restore a study finding on the shared APOE identity in the correct collection', () => {
+  const id = 'lewy-bodies';
+  const dlb = loadDataset(DISEASE_COLLECTIONS[id].data);
+  const state = { ...selected, claimId: 'claim-dlb-apoe-e4-low-pathology-kaivola-2022', view: 'list' as const };
+  const url = new URL(buildShareUrl(base, state, dlb, id));
+  assert.equal(readSharedCollection(url), id);
+  assert.deepEqual(parseShareState(url, dlb, id), state);
+  assert.equal(parseShareState(url, snapshot), null);
+
+  const legacy = new URL(buildShareUrl(base, selected, snapshot));
+  assert.equal(readSharedCollection(legacy), 'alzheimers');
+  assert.deepEqual(parseShareState(legacy, snapshot), selected);
+  assert.equal(parseShareState(legacy, dlb, id), null);
+});
+
+test('unknown and duplicate collection fields fall back without restoring a linked selection', () => {
+  for (const value of ['unknown', 'constructor', 'lewy-bodies&collection=alzheimers']) {
+    const url = new URL(`${base.href}#entity=gene-apoe&collection=${value}`);
+    assert.equal(readSharedCollection(url), 'alzheimers');
+    assert.equal(parseShareState(url, snapshot), null);
+  }
 });

@@ -1,10 +1,10 @@
 # Implementation steps
 
-**Current stage: human RNA-seq interpretation is implemented beside the 45-entity Source-checked draft explorer and local research brief; independent scientific review is a future milestone.**
+**Current stage.** Human RNA-seq interpretation works alongside source-checked draft maps for Alzheimer’s disease and dementia with Lewy bodies. Independent scientific review remains a future milestone.
 
 Checkboxes distinguish implemented work from remaining milestones. Complete them in order unless a documented dependency allows parallel work. Check an item only after its acceptance criteria are met. Actual setup and check commands are in [README.md](README.md).
 
-The [checkpoint plan](docs/checkpoints.md) now prioritizes interpreting experimental results and developing ideas to investigate. The curated evidence library remains Alzheimer's-only; a separate broad human pathway reference supports analysis. Further source curation and independent review remain separate future milestones.
+The [checkpoint plan](docs/checkpoints.md) now prioritizes interpreting experimental results and developing ideas to investigate. The curated evidence library has two disease maps. A separate pinned human pathway reference supports analysis. Further source curation and independent review remain separate future milestones.
 
 ## M0 — Establish the foundation
 
@@ -187,6 +187,14 @@ Snapshot 0.8.0 has 45 entities, 49 claims, 49 evidence records and 49 sources pl
 
 This comparison deepens the existing Alzheimer's branch. The [source record](data/alzheimers/CHANGELOG.md#alzheimers-source-checked-090--2026-11-27) identifies the inspected figure, supplement rows and review limits.
 
+### Dementia with Lewy bodies map
+
+- [x] Inspect three original human studies and preserve the scoped APOE, SNCA and GBA1 findings and publication correction.
+- [x] Compare the two APOE ε4 low co-pathology results with their own thresholds and controls.
+- [x] Offer both maps in Explore with collection-aware links and drafts, and preserve pending and applied RNA-seq work across the switch.
+
+[DLB dataset and source record](data/lewy-bodies/README.md)
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
 Future content work can continue from the 49-claim/49-evidence source packet and five staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
@@ -235,7 +243,7 @@ Start only when multi-user curation, larger queries, frequent updates, or anothe
 - [ ] Add FastAPI/PostgreSQL with migrations, explicit provenance tables, and import/review boundaries.
 - [ ] Implement source-specific imports with current access requirements, rate limits, release tracking, caching, and license checks.
 - [ ] Publish reviewed dataset snapshots reproducibly; imports must not silently change the public graph.
-- [ ] Expand to another disease only after the Alzheimer's evidence workflow is reliable.
+- [x] Reuse the tested Alzheimer’s evidence workflow for a focused DLB development snapshot.
 - [ ] Evaluate graph algorithms as hypothesis-generation aids, preserving their assumptions and avoiding claims of biological validation.
 
 **Done when:** the adopted service has a documented operational purpose, repeatable setup, and checks for data integrity and recovery. There is no current requirement for a graph database or a distributed architecture.

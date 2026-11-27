@@ -1207,12 +1207,13 @@ def assert_experiment_analysis(browser, base_url: str, screenshots: Path, public
     counts = workspace.locator('.experiment-counts dd')
     expect(counts).to_have_text(['10', '4', str(len(background & annotated)), str(family_size)])
     assert any('reactome-pathways' in url for _, url, _ in requests)
-    # Workspace anchors preserve the current work; scientific share hashes
-    # deliberately reveal their destination in the evidence explorer.
+    # Skip navigation preserves both the applied analysis and its current URL.
+    # A new shared link opens the cited finding in Explore.
     skip = page.get_by_role('link', name='Skip to workspace', exact=True)
+    current_url = page.url
     skip.focus()
     page.keyboard.press('Enter')
-    expect(page).to_have_url(re.compile(r'#experiment-workspace$'))
+    expect(page).to_have_url(current_url)
     expect(nav.get_by_role('button', name='Analyze results', exact=True)).to_have_attribute('aria-pressed', 'true')
     expect(page.locator('#experiment-workspace')).to_be_focused()
     expect(page.locator('.selected-title')).to_have_text('TREM2')
@@ -1802,7 +1803,7 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         search.fill('R-HSA-2173782')
         workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
         evidence = workspace.get_by_role('region', name='Pathway evidence', exact=True)
-        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('3 of 4 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text("3 of 4 selected genes have paper findings in the Alzheimer's disease map.")
         expect(evidence.locator('.experiment-paper')).to_have_count(1)
         gene_action = workspace.get_by_role('region', name='Eligible pathway members', exact=True).get_by_role('button', name='View APOE evidence', exact=True)
         expect(gene_action).to_be_visible()
@@ -1851,7 +1852,7 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         # A pathway whose selected gene has only database annotations must not borrow APOE's papers.
         search.fill('R-HSA-9029569')
         workspace.get_by_role('button', name='NR1H3 & NR1H2 regulate gene expression linked to cholesterol transport and efflux', exact=True).click()
-        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('0 of 1 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text("0 of 1 selected genes have paper findings in the Alzheimer's disease map.")
         expect(evidence.locator('.experiment-paper')).to_have_count(0)
         evidence.get_by_text('Coverage by selected gene', exact=True).click()
         expect(coverage_table.get_by_role('rowheader', name='NR1H2', exact=True).locator('..')).to_contain_text('Database records only')
@@ -1862,7 +1863,7 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         expect(workspace.locator('.experiment-counts dd').nth(1)).to_have_text('3')
         search.fill('R-HSA-2173782')
         workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
-        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('1 of 2 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text("1 of 2 selected genes have paper findings in the Alzheimer's disease map.")
         paper.locator(':scope > summary').click()
         expect(paper.locator('article')).to_have_count(1)
         expect(marco.locator('.experiment-finding-genes')).to_have_text('Selected gene: MARCO')
@@ -1883,7 +1884,7 @@ def assert_pathway_evidence(browser, base_url: str, screenshots: Path) -> None:
         expect(workspace.locator('.experiment-counts dd').nth(1)).to_have_text('1')
         search.fill('R-HSA-174824')
         workspace.get_by_role('button', name='Plasma lipoprotein assembly, remodeling, and clearance', exact=True).click()
-        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('1 of 1 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text("1 of 1 selected genes have paper findings in the Alzheimer's disease map.")
         expect(evidence.locator('.experiment-paper')).to_have_count(7)
         expect(evidence.locator('.experiment-paper[data-source-id="source-cheng-2021"]')).to_have_count(0)
         expect(evidence.locator('.study-context-note')).to_have_count(2)
@@ -2093,7 +2094,7 @@ def assert_annotation_expansion(browser, base_url: str, screenshots: Path) -> No
         workspace.get_by_role('searchbox', name='Find pathways', exact=True).fill('R-HSA-2173782')
         workspace.get_by_role('button', name='Binding and Uptake of Ligands by Scavenger Receptors', exact=True).click()
         evidence = workspace.get_by_role('region', name='Pathway evidence', exact=True)
-        expect(evidence.locator('.experiment-coverage-summary')).to_have_text('2 of 6 selected genes have paper findings in this library.')
+        expect(evidence.locator('.experiment-coverage-summary')).to_have_text("2 of 6 selected genes have paper findings in the Alzheimer's disease map.")
         expect(evidence.locator('.experiment-paper')).to_have_count(1)
         evidence.get_by_text('Coverage by selected gene', exact=True).click()
         coverage = evidence.get_by_role('region', name='Selected gene evidence coverage', exact=True)
@@ -2203,7 +2204,8 @@ def assert_workspace_help(browser, base_url: str, screenshots: Path) -> None:
                 expect(dialog.get_by_role("button", name="Close workspace help", exact=True)).to_be_in_viewport()
                 page.screenshot(path=str(screenshots / f'help-analysis-{mobile}-{fallback}.png'))
             else:
-                expect(dialog).to_contain_text("Encodes · APOE protein")
+                expect(dialog).to_contain_text("Choose a disease map")
+                expect(dialog).to_contain_text("Compare findings")
                 page.screenshot(path=str(screenshots / f'help-explore-{mobile}-{fallback}.png'))
             page.keyboard.press("Escape")
             expect(dialog).not_to_be_visible()
@@ -2224,6 +2226,56 @@ def assert_workspace_help(browser, base_url: str, screenshots: Path) -> None:
         assert not errors, errors
         context.close()
     print("PASS: on-demand workspace help explains source exploration and processed results with concrete examples, preserves pending work, traps/returns focus, and supports mobile themes/reduced motion/WebGL fallback without loading references.")
+
+
+def assert_disease_collections(browser, base_url: str) -> None:
+    context = browser.new_context(viewport={'width': 1440, 'height': 1000}, reduced_motion='reduce')
+    try:
+        page = context.new_page()
+        errors = []
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.goto(f'{base_url}#entity=gene-apoe&claim=claim-apoe-e2-risk&view=list', wait_until='networkidle')
+        picker = page.get_by_role('combobox', name='Disease map', exact=True)
+        expect(picker).to_have_value('alzheimers')
+        pin = page.get_by_role('button', name='Pin finding', exact=True)
+        pin.click()
+        picker.select_option('lewy-bodies')
+        expect(page.locator('.selected-title')).to_have_text('Dementia with Lewy bodies')
+        expect(page.get_by_role('button', name='List view', exact=True)).to_have_attribute('aria-pressed', 'true')
+        page.get_by_role('button', name='Compare findings', exact=True).click()
+        comparison = page.get_by_role('dialog', name='Compare findings')
+        expect(comparison.get_by_role('combobox', name='Finding A')).to_have_value('claim-dlb-apoe-e4-low-pathology-tsuang-2013')
+        expect(comparison.get_by_role('combobox', name='Finding B')).to_have_value('claim-dlb-apoe-e4-low-pathology-kaivola-2022')
+        comparison.get_by_role('button', name='Add to research brief', exact=True).click()
+        brief = page.get_by_role('dialog', name='Research brief', exact=True)
+        expect(brief.locator('.brief-finding')).to_have_count(2)
+        page.keyboard.press('Escape')
+
+        nav = page.get_by_role('navigation', name='Workspace', exact=True)
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        analysis = page.get_by_role('main', name='Analyze results', exact=True)
+        analysis.get_by_role('button', name='Try example', exact=True).click()
+        expect(analysis.locator('#experiment-results-title')).to_contain_text('Synthetic example', timeout=15000)
+        analysis.get_by_role('searchbox', name='Find pathways', exact=True).fill('R-HSA-174824')
+        analysis.get_by_role('button', name='Plasma lipoprotein assembly, remodeling, and clearance', exact=True).click()
+        evidence = analysis.get_by_role('region', name='Pathway evidence', exact=True)
+        expect(evidence.locator('[data-source-id="source-tsuang-2013"]')).to_be_visible()
+        results = analysis.locator('.experiment-results-heading').text_content()
+        nav.get_by_role('button', name='Explore', exact=True).click()
+        picker.select_option('alzheimers')
+        expect(pin).to_have_attribute('aria-pressed', 'false')
+        page.get_by_role('button', name='Research brief', exact=True).click()
+        expect(brief.locator('.brief-finding')).to_have_count(1)
+        expect(brief.locator('.brief-finding')).to_have_attribute('data-claim-id', 'claim-apoe-e2-risk')
+        page.keyboard.press('Escape')
+        nav.get_by_role('button', name='Analyze results', exact=True).click()
+        expect(analysis.locator('.experiment-results-heading')).to_have_text(results)
+        expect(evidence.locator('[data-source-id="source-mathys-2019"]')).to_be_visible()
+        expect(evidence.locator('[data-source-id="source-tsuang-2013"]')).to_have_count(0)
+        assert not errors, errors
+    finally:
+        context.close()
+    print('PASS: disease maps, cited APOE comparison, independent briefs and applied pathway evidence across a map change.')
 
 
 def pick_focused_disease(page: Page) -> None:
@@ -2437,7 +2489,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         print("PASS: entity changes reset only inspector scroll; keyboard search keeps wrapped active options visible without page movement.")
 
         search.fill("Alzheimer’s disease")
-        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(1)
+        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(2)
         expect(page.locator(".result-status")).to_contain_text("related")
         search.press("Enter")
         expect(page.locator(".selected-title")).to_have_text("Alzheimer's disease")
@@ -2446,7 +2498,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(search).to_have_attribute("aria-expanded", "false")
         expect(page.locator(".result-status")).to_have_text(f"{ENTITY_COUNT} entities · {PAPER_COUNT} papers")
         search.fill("APOE")
-        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(11)
+        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(13)
         search.press("ArrowDown")
         expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Corder et al. · 1993")
         search.press("Enter")
@@ -2455,7 +2507,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(search).to_have_value("")
         search.fill("APOE")
         search.press("ArrowUp")
-        expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Hirsch-Reinshagen et al. · 2005")
+        expect(page.get_by_role("listbox").get_by_role("option").last).to_have_attribute("aria-selected", "true")
         search.press("Escape")
         expect(search).to_have_value("")
         expect(search).to_have_attribute("aria-expanded", "false")
@@ -2636,6 +2688,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_experiment_example(browser, base_url, screenshots)
         assert_experiment_context(browser, base_url, screenshots)
         assert_pathway_evidence(browser, base_url, screenshots)
+        assert_disease_collections(browser, base_url)
         assert_scavenger_evidence(browser, base_url, screenshots)
         assert_annotation_expansion(browser, base_url, screenshots)
         if public_ad_table is not None:

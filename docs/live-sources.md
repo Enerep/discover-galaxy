@@ -1,6 +1,6 @@
 # Live sources research-preview checkpoint
 
-The website now offers a bounded, read-only lookup for the exact human APOE and ABCA1 gene/protein records. Select one in **Explore**, open **Live sources** below the curated findings and choose **Check live sources**. Opening the disclosure, selecting a record or uploading a file does not request providers. The curated explorer and local pathway analysis remain usable independently of provider availability.
+The website offers a bounded, read-only lookup for the human APOE and ABCA1 genes and proteins in the Alzheimer’s map. Select one in **Explore**, open **Live sources** below the curated findings and choose **Check live sources**. Opening the disclosure, selecting a record or uploading a file does not request providers. The curated explorer and local pathway analysis remain usable independently of provider availability.
 
 ## What the lookup returns
 

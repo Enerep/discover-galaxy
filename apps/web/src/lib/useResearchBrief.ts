@@ -5,16 +5,17 @@ import type { BriefAction, ResearchBrief } from './research-brief.ts';
 
 export type BriefSaveStatus = 'empty' | 'saving' | 'saved' | 'unavailable' | 'invalid' | 'conflict';
 
-function restore(snapshot: Snapshot): { brief: ResearchBrief; raw: string | null; status: BriefSaveStatus } {
+function restore(snapshot: Snapshot, storageKey: string): { brief: ResearchBrief; raw: string | null; status: BriefSaveStatus } {
   let raw: string | null = null;
   try {
-    raw = localStorage.getItem(BRIEF_STORAGE_KEY);
+    raw = localStorage.getItem(storageKey);
     return { brief: raw === null ? createResearchBrief(snapshot) : parseResearchBrief(raw), raw, status: raw === null ? 'empty' : 'saved' };
   } catch { return { brief: createResearchBrief(snapshot), raw, status: raw === null ? 'unavailable' : 'invalid' }; }
 }
 
-export function useResearchBrief(snapshot: Snapshot) {
-  const [initial] = useState(() => restore(snapshot));
+/** Each mounted draft owns a stable key across its lifetime. */
+export function useResearchBrief(snapshot: Snapshot, storageKey = BRIEF_STORAGE_KEY) {
+  const [initial] = useState(() => restore(snapshot, storageKey));
   const [brief, setBrief] = useState(initial.brief);
   const [status, setStatus] = useState<BriefSaveStatus>(initial.status);
   const [error, setError] = useState('');
@@ -33,10 +34,10 @@ export function useResearchBrief(snapshot: Snapshot) {
       if (paused.current) return;
       try {
         if (raw === stored.current) return;
-        if (localStorage.getItem(BRIEF_STORAGE_KEY) !== stored.current) {
+        if (localStorage.getItem(storageKey) !== stored.current) {
           paused.current = true; setStatus('conflict'); return;
         }
-        localStorage.setItem(BRIEF_STORAGE_KEY, raw);
+        localStorage.setItem(storageKey, raw);
         stored.current = raw;
         setStatus('saved');
       } catch { setStatus('unavailable'); }
@@ -48,17 +49,17 @@ export function useResearchBrief(snapshot: Snapshot) {
       window.clearTimeout(timer);
       window.removeEventListener('pagehide', save);
     };
-  }, [brief]);
+  }, [brief, storageKey]);
 
   useEffect(() => {
     const changed = (event: StorageEvent) => {
-      if ((event.key === BRIEF_STORAGE_KEY || event.key === null) && event.newValue !== stored.current) {
+      if ((event.key === storageKey || event.key === null) && event.newValue !== stored.current) {
         paused.current = true; setStatus('conflict');
       }
     };
     window.addEventListener('storage', changed);
     return () => window.removeEventListener('storage', changed);
-  }, []);
+  }, [storageKey]);
 
   function accept(next: ResearchBrief) {
     setBrief(next);
@@ -77,7 +78,7 @@ export function useResearchBrief(snapshot: Snapshot) {
   function saveThisVersion() {
     try {
       const raw = JSON.stringify(brief);
-      localStorage.setItem(BRIEF_STORAGE_KEY, raw);
+      localStorage.setItem(storageKey, raw);
       stored.current = raw; paused.current = false; setStatus('saved');
     } catch { setStatus('unavailable'); }
   }

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Help researchers interpret experimental data by connecting measured gene changes to pathway annotations, source-specific findings and questions they can investigate. Human RNA-seq results are the first supported input; the curated literature map remains an Alzheimer's slice.
+Help researchers interpret experimental data by connecting measured gene changes to pathway annotations, source-specific findings and questions they can investigate. Human RNA-seq results are the first supported input. The curated library offers Alzheimer’s and dementia with Lewy bodies maps.
 
 The central product promise is **from experimental results to a traceable explanation and a question to test**.
 
@@ -16,7 +16,7 @@ The primary audience is researchers interpreting processed human RNA-seq differe
 
 Upload a full human-symbol or Ensembl results table, name the contrast, declare its completeness and choose gene-level cutoffs. Inspect overrepresented pathways against the eligible tested genes, then examine signed member-level results and the linked pathway record. Follow covered genes into the curated explorer without turning RNA changes into genetic-risk or protein-binding claims. Investigate rule-based questions with explicit premises, assumptions and suggested tests. The uploaded table stays in this tab and creates no scientific record or review attestation.
 
-For each pathway, **Evidence** brings together original-paper findings for its selected genes and their cited encoded proteins. Papers are grouped once, with their individual findings and source-specific statements retained; **View finding** opens the exact inspector record. A coverage disclosure distinguishes original papers, database-only records, genes without linked findings and genes outside this selective library. It does not classify unrepresented relationships as unexplored science or treat gene/protein literature as validation of the user's pathway result. Existing curated study-context notes appear only with all their cited findings and evidence; no disagreement is inferred automatically.
+For each pathway, **Evidence** brings together original-paper findings for its selected genes and their cited encoded proteins in the active map. The map picker leaves the applied RNA-seq analysis available. Papers are grouped once, with their individual findings and source-specific statements retained; **View finding** opens the exact inspector record. A coverage disclosure distinguishes original papers, database-only records, genes without linked findings and genes outside this selective library. It does not classify unrepresented relationships as unexplored science or treat gene/protein literature as validation of the user's pathway result. Existing curated study-context notes appear only with all their cited findings and evidence; no disagreement is inferred automatically.
 
 The initial analysis uses a pinned broad Reactome library with unknown exact upstream release. It tests threshold-selected genes in either direction with right-tailed hypergeometric probabilities and BH correction over all pathways with eligible members, including zero hits. Incomplete statistics exclude a row from ORA eligibility; unannotated eligible genes remain in the background. Gene FDR input and adjusted pathway p-values are distinct. Gene-length/expression selection bias, annotation coverage and overlapping pathways limit interpretation; significant rows are not independent mechanisms or activity measurements.
 
@@ -25,7 +25,7 @@ Inspect a pathway's FDR across nearby gene cutoffs without changing the applied 
 ## Core journey
 
 1. Open a restrained galaxy view with a visible search field, legend, and list-view option.
-2. Search for “Alzheimer's disease” or a curated alias and focus the disease neighborhood.
+2. Choose a disease map. Search by entity name or a curated alias to focus its neighborhood.
 3. Select APOE or another source-checked entity. See its type, identifiers, description, and connected claims.
 4. Select a relationship. Read the exact claim, evidence, study context, source references, and limitations.
 5. Choose **Compare findings**. Read the two source records side by side, inspect recorded context differences and unknowns, then download a cited brief for further reading.
@@ -45,7 +45,7 @@ Search is local entity/alias lookup in the first version. Unsupported searches e
 | Search and filters | Search labels, aliases, and curated identifiers; show active filters and no-result states |
 | Evidence inspection | Show exact claims, evidence direction, context, uncertainty, and links to original references |
 | Finding comparison | Align claim scope and source-specific context without pooling participants or inferring agreement, conflict, independence, or strength; preserve citations in a downloadable brief |
-| Research brief workspace | Pin up to 12 findings and one comparison, write separate user notes, retain one draft on this device, and export the notes with complete source context |
+| Research brief workspace | Pin up to 12 findings and one comparison, write separate user notes, retain one draft per disease map on this device, and export the notes with complete source context |
 | Pathways | Represent reviewed pathway relationships using stable identifiers and cited provenance |
 | Conflicting findings | Show curator-reviewed comparisons with context and limitations |
 | Research questions | Present testable, sourced questions, labeled as hypotheses or proposals |
