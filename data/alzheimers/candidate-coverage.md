@@ -3,7 +3,7 @@
 Generated from candidate-coverage.json and the current snapshot. Edit the JSON, then regenerate. This is a reading plan: candidates are unreviewed, outside the graph, and do not establish support for any existing or proposed claim.
 
 - **Prepared:** 2026-11-05
-- **Baseline snapshot:** alzheimers-source-checked-0.8.0
+- **Baseline snapshot:** alzheimers-source-checked-0.9.0
 - **Staged sources:** 5 (5 publications, 0 pathway records)
 - **Selection:** Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.
 
@@ -14,7 +14,7 @@ Generated from candidate-coverage.json and the current snapshot. Edit the JSON, 
 - Sample sizes, effect estimates, experiment-level species and methods, cohort overlap, and publication-status checks require extraction from original sources. Unknown fields are not negative findings.
 - Human Reactome records describe curated biological processes, not an AD-specific causal mechanism. Their database release and record versions were not captured; an attempted version endpoint lookup was unavailable.
 - Gene and protein identities remain separate. The candidate papers need assay-level extraction before their experimental findings can become graph claims.
-- These staging questions are not novel hypotheses or classified contradictions. The 40-entity development snapshot has a separate source-checked context note; scientific release remains a future milestone.
+- The staging questions are prompts for reading original sources. The graph's separate curated study comparisons have their own evidence and review records.
 - Wahrle2004 entered snapshot0.8.0 through a separate original-methods/figure inspection, with three model/readout-scoped findings across that paper and Hirsch-Reinshagen2005. This remaining plan does not automatically promote metadata or establish study independence.
 
 ## Existing findings and recorded review status
@@ -34,6 +34,8 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-apoe-e4-risk | [8346443](https://pubmed.ncbi.nlm.nih.gov/8346443/) | draft | draft | No |
 | claim-apoe-encodes | [source-uniprot-apoe](https://rest.uniprot.org/uniprotkb/P02649.txt) | draft | draft | No |
 | claim-apoe-opentargets-association | [source-opentargets-apoe-direct-association](https://platform.opentargets.org/target/ENSG00000130203/associations) | draft | draft | No |
+| claim-apoe-rna-mathys-2019 | [31042697](https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/) | draft | draft | No |
+| claim-apoe-rna-smith-2022 | [34767070](https://pmc.ncbi.nlm.nih.gov/articles/PMC8732962/) | draft | draft | No |
 | claim-apoe-scavenger-pathway | [source-reactome-apoe-scavenger](https://reactome.org/content/detail/R-HSA-3221641) | draft | draft | No |
 | claim-bailey-trem2-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |
 | claim-bailey-trem2-r47h-apoe-binding | [26374897](https://pubmed.ncbi.nlm.nih.gov/26374897/) | draft | draft | No |

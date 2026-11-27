@@ -1,14 +1,15 @@
 {
   "schema_version": "0.2.0",
-  "dataset_version": "alzheimers-source-checked-0.8.0",
-  "created_at": "2026-11-05",
+  "dataset_version": "alzheimers-source-checked-0.9.0",
+  "created_at": "2026-11-27",
   "release_status": "development",
   "scope": {
     "disease": "Alzheimer's disease",
-    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and one source-checked study-context comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations.",
+    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and a source-checked binding comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations. Adds two human postmortem APOE nuclear RNA findings and a comparison of their cell-type results and study context.",
     "limitations": [
       "Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.",
       "The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
+      "APOE nuclear RNA observations are specific to their cell types, regions and pathology measures. Protein abundance, variant risk and individual diagnosis require separate evidence.",
       "The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.",
       "Human and explicitly species-qualified mouse genes/proteins remain separate. Orthology permits navigation, not transfer of experimental effects or human RNA measurements. Molecular preparations/fractions remain in context rather than distinct isoform/state nodes.",
       "Reactome assertions are attributed curated records, not independent experiments. Access dates are recorded; the exact Reactome database release was not captured.",
@@ -1113,6 +1114,38 @@
       "source_id": "source-hirsch-reinshagen-2005",
       "provenance_source_ids": [
         "source-hirsch-reinshagen-2005"
+      ]
+    },
+    {
+      "id": "paper-mathys-2019",
+      "type": "paper",
+      "label": "Mathys et al. · 2019",
+      "aliases": [
+        "31042697",
+        "APOE RNA prefrontal cortex BA10",
+        "Single-cell transcriptomic analysis of Alzheimer’s disease"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-mathys-2019",
+      "provenance_source_ids": [
+        "source-mathys-2019"
+      ]
+    },
+    {
+      "id": "paper-smith-2022",
+      "type": "paper",
+      "label": "Smith et al. · 2022",
+      "aliases": [
+        "34767070",
+        "APOE RNA entorhinal somatosensory cortex",
+        "Diverse human astrocyte and microglial transcriptional responses to Alzheimer’s pathology"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "source_id": "source-smith-2022",
+      "provenance_source_ids": [
+        "source-smith-2022"
       ]
     }
   ],
@@ -2688,6 +2721,72 @@
         "date": "2026-11-05",
         "human_reviewed": false,
         "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "claim-apoe-rna-mathys-2019",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "In human prefrontal cortex, Mathys and colleagues reported higher APOE RNA in microglia and lower APOE RNA in astrocytes in the Alzheimer’s pathology group compared with the no/low-pathology group.",
+      "context": {
+        "organism": "Homo sapiens",
+        "association_scope": "rna_expression",
+        "finding_label": "APOE RNA · Prefrontal cortex (BA10)",
+        "study_design": "Observational postmortem study",
+        "tissue": "Prefrontal cortex (BA10)",
+        "contrast": "AD pathology versus no or low pathology",
+        "outcome": "APOE nuclear RNA",
+        "microglial_apoe_rna": "Higher in the AD-pathology group",
+        "astrocytic_apoe_rna": "Lower in the AD-pathology group"
+      },
+      "evidence_ids": [
+        "evidence-apoe-rna-mathys-2019"
+      ],
+      "summary": "The study compared pathology groups in one region. The authors displayed APOE direction using a mixed-model z-score for each cell class.",
+      "limitations": [
+        "The readout is nuclear RNA. APOE protein abundance, isoform effects and causality are outside its scope.",
+        "These comparisons use prefrontal cortex and group-level pathology. Clinical diagnosis and other brain regions require their own evidence."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The author manuscript text, actual Fig. 1g image and caption, participant and differential-expression Methods, Crossref record and original correction were checked. The correction concerns acknowledgements and swapped early/late column labels in Supplementary Table 2. The Fig. 1g panel is a separate pathology-group contrast."
+      }
+    },
+    {
+      "id": "claim-apoe-rna-smith-2022",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "Using samples from human entorhinal and somatosensory cortex, Smith and colleagues reported higher microglial APOE RNA with greater amyloid-β and phosphorylated tau burden. Neither association reached significance in astrocytes.",
+      "context": {
+        "organism": "Homo sapiens",
+        "association_scope": "rna_expression",
+        "finding_label": "APOE RNA · Entorhinal and somatosensory cortex",
+        "study_design": "Observational postmortem study",
+        "tissue": "Entorhinal and somatosensory cortex",
+        "contrast": "Quantitative local amyloid-β and phosphorylated tau burden",
+        "outcome": "APOE nuclear RNA",
+        "microglial_apoe_rna": "Higher with both pathology markers",
+        "astrocytic_apoe_rna": "Neither marker showed a statistically significant association"
+      },
+      "evidence_ids": [
+        "evidence-apoe-rna-smith-2022"
+      ],
+      "summary": "This study measured local pathology in two cortical regions and used each burden measure in a separate regression. The astrocyte tests leave the effect uncertain in this cohort.",
+      "limitations": [
+        "The readout is nuclear RNA. APOE protein abundance, isoform effects and causality are outside its scope.",
+        "The regressions address regional pathology burden in selected postmortem samples. The astrocyte tests leave effects of either direction possible."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The publisher and PMC full text, cohort methods, primary APOE results and four exact supplementary rows were checked. The study appeared online in 2021 and in the 2022 issue. The notice check was limited to the publisher, PubMed metadata and Crossref update relations."
       }
     }
   ],
@@ -4322,6 +4421,84 @@
         "date": "2026-11-05",
         "human_reviewed": false,
         "rationale": "The cited original locations and identities were inspected. This source-checked draft preserves model, readout and unknowns; it is not independent scientific review."
+      }
+    },
+    {
+      "id": "evidence-apoe-rna-mathys-2019",
+      "claim_id": "claim-apoe-rna-mathys-2019",
+      "source_id": "source-mathys-2019",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The original Figure 1g shows opposite APOE RNA directions in microglia and astrocytes. The groups were defined by pathology and included 24 donors each. The no/low-pathology group included some donors with cognitive impairment.",
+      "locator": "PMC author manuscript, Results on differential expression, Fig. 1g image and caption, and Methods on study participants and differential expression.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Observational postmortem study",
+        "tissue": "Prefrontal cortex (BA10)",
+        "contrast": "AD pathology versus no or low pathology",
+        "outcome": "APOE nuclear RNA",
+        "microglial_apoe_rna": "Higher in the AD-pathology group",
+        "astrocytic_apoe_rna": "Lower in the AD-pathology group",
+        "taxonomy_id": 9606,
+        "population": "Religious Orders Study donors in ROSMAP, selected by neuropathology",
+        "sample_size": 48,
+        "donor_groups": "24 AD-pathology and 24 no/low-pathology donors",
+        "replicate_unit": "Human donor. Nuclei come from the sampled donors.",
+        "assay": "Droplet-based single-nucleus RNA sequencing (10x 3′ v2)",
+        "nucleus_sampling": "Nuclei profiled across cortical cell classes after quality control",
+        "analysis_model": "Nucleus-level Wilcoxon rank-sum tests plus a Poisson mixed model accounting for donor of origin and unwanted variation",
+        "nucleus_counts": "80,660 study-wide. Figure 1g uses 955 versus 965 microglial and 1,830 versus 1,562 astrocytic nuclei (AD pathology versus no/low pathology).",
+        "reported_statistics": "The Results give Wilcoxon adjusted p < 0.01. Figure 1g displays Poisson mixed-model z-scores with separate significance marks."
+      },
+      "limitations": [
+        "Murphy, Fancy and Skene (2023, DOI 10.7554/eLife.90214.3) reanalyzed the same 48 donors and found that many differential-expression calls depended on quality control and analysis method. This comparison preserves the direction reported by Mathys.",
+        "The nucleus count measures sequencing coverage. The biological sample count is 48 donors."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The author manuscript text, actual Fig. 1g image and caption, participant and differential-expression Methods, Crossref record and original correction were checked. The correction concerns acknowledgements and swapped early/late column labels in Supplementary Table 2. The Fig. 1g panel is a separate pathology-group contrast."
+      }
+    },
+    {
+      "id": "evidence-apoe-rna-smith-2022",
+      "claim_id": "claim-apoe-rna-smith-2022",
+      "source_id": "source-smith-2022",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "The microglial regressions had positive APOE logFC and adjusted p below 0.05 for each marker. Both astrocyte estimates were positive, with adjusted p above 0.05. The pathology models used staining in matching regions of the opposite hemisphere.",
+      "locator": "Version of Record, Results subsection on microglial APOE, Methods on participants, glial enrichment and differential expression, Table 1, and APOE (ENSG00000130203) in Supplementary Tables 6–7, PDF pp. 40, 47, 62 and 87.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "study_design": "Observational postmortem study",
+        "tissue": "Entorhinal and somatosensory cortex",
+        "contrast": "Quantitative local amyloid-β and phosphorylated tau burden",
+        "outcome": "APOE nuclear RNA",
+        "microglial_apoe_rna": "Higher with both pathology markers",
+        "astrocytic_apoe_rna": "Neither marker showed a statistically significant association",
+        "taxonomy_id": 9606,
+        "population": "London Neurodegeneration and Parkinson’s UK Brain Bank donors",
+        "sample_size": 12,
+        "donor_groups": "6 AD cases (Braak III–VI) and 6 controls (Braak 0–II)",
+        "replicate_unit": "12 donors supplied 24 region-specific preparations. The published model uses a random effect for each preparation.",
+        "assay": "Single-nucleus RNA sequencing (10x 3′ v3) with regional amyloid-β and pTau histology",
+        "nucleus_sampling": "Glial enrichment by sorting out NeuN-positive and SOX10-positive nuclei",
+        "analysis_model": "MAST mixed models for each pathology marker with preparation as a random effect and adjustment for detection rate, mitochondrial fraction, sex and region",
+        "nucleus_counts": "27,592 microglial and 52,706 astrocytic nuclei after enrichment",
+        "reported_statistics": "Supplementary Table 7 microglia. Amyloid-β logFC 1.061, adjusted p 0.009. pTau logFC 1.117, adjusted p 0.029. Supplementary Table 6 astrocytes. Amyloid-β logFC 0.451, adjusted p 0.187. pTau logFC 0.515, adjusted p 0.080. Values are as printed for the separate pathology regressions."
+      },
+      "limitations": [
+        "The estimated associations are specific to the two pathology regressions. The published logFC entries cannot be pooled with the Mathys group comparison.",
+        "The 24 preparations come from 12 donors. Glial enrichment changes the relative capture of nuclei and limits interpretation of those fractions as tissue cell composition."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "The publisher and PMC full text, cohort methods, primary APOE results and four exact supplementary rows were checked. The study appeared online in 2021 and in the 2022 issue. The notice check was limited to the publisher, PubMed metadata and Crossref update relations."
       }
     }
   ],
@@ -5972,6 +6149,109 @@
         "notice_url": null
       },
       "publication_type": "primary_research"
+    },
+    {
+      "id": "source-mathys-2019",
+      "kind": "publication",
+      "title": "Single-cell transcriptomic analysis of Alzheimer’s disease",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "31042697"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1038/s41586-019-1195-2"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC6865822"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Hansruedi Mathys",
+        "Jose Davila-Velderrain",
+        "Zhuyu Peng",
+        "Fan Gao",
+        "Shahin Mohammadi",
+        "Jennie Z Young",
+        "Madhvi Menon",
+        "Liang He",
+        "Fatema Abdurrob",
+        "Xueqiao Jiang",
+        "Anthony J Martorell",
+        "Richard M Ransohoff",
+        "Brian P Hafler",
+        "David A Bennett",
+        "Manolis Kellis",
+        "Li-Huei Tsai"
+      ],
+      "year": 2019,
+      "retrieved_at": "2026-11-27T12:07:24.095144Z",
+      "reuse": {
+        "terms_url": "https://www.nature.com/reprints",
+        "attribution": "Mathys H and colleagues, Nature 570, 332–337 (2019), doi:10.1038/s41586-019-1195-2. Citation references the author manuscript in PMC.",
+        "retained_content": "Citation facts, links and project-authored paraphrases. Article and figure reuse remains pending. The inspected Crossref TDM link does not confer redistribution rights.",
+        "date_checked": "2026-11-27",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "corrected",
+        "checked_at": "2026-11-27",
+        "notice_url": "https://www.nature.com/articles/s41586-019-1329-6"
+      }
+    },
+    {
+      "id": "source-smith-2022",
+      "kind": "publication",
+      "title": "Diverse human astrocyte and microglial transcriptional responses to Alzheimer’s pathology",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8732962/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "34767070"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1007/s00401-021-02372-6"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC8732962"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Amy M Smith",
+        "Karen Davey",
+        "Stergios Tsartsalis",
+        "Combiz Khozoie",
+        "Nurun Fancy",
+        "See Swee Tang",
+        "Eirini Liaptsi",
+        "Maria Weinert",
+        "Aisling McGarry",
+        "Robert C J Muirhead",
+        "Steve Gentleman",
+        "David R Owen",
+        "Paul M Matthews"
+      ],
+      "year": 2022,
+      "retrieved_at": "2026-11-27T12:07:24.419283Z",
+      "reuse": {
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Smith AM and colleagues, Acta Neuropathologica 143, 75–91 (2022), doi:10.1007/s00401-021-02372-6. © The Authors 2021. CC BY 4.0. Project-authored paraphrases and limited reported numeric facts.",
+        "retained_content": "Citation facts, links, project-authored paraphrases and four rounded APOE regression results. Publisher and PMC rights statements and the Crossref Version-of-Record license were checked.",
+        "date_checked": "2026-11-27",
+        "permission_status": "permitted"
+      },
+      "publication_status": {
+        "status": "no_notice_found",
+        "checked_at": "2026-11-27",
+        "notice_url": null
+      }
     }
   ],
   "conflicts": [
@@ -5999,6 +6279,32 @@
         "date": "2026-10-23",
         "human_reviewed": false,
         "rationale": "The two scoped findings, named locators and methodological distinctions were source-checked. Lessard explicitly discusses differences from earlier binding reports. This draft is a contextual comparison, not a definitive contradiction, causal explanation or independent scientific approval."
+      }
+    },
+    {
+      "id": "context-apoe-cell-type-rna",
+      "claim_ids": [
+        "claim-apoe-rna-mathys-2019",
+        "claim-apoe-rna-smith-2022"
+      ],
+      "evidence_ids": [
+        "evidence-apoe-rna-mathys-2019",
+        "evidence-apoe-rna-smith-2022"
+      ],
+      "label": "APOE RNA in microglia and astrocytes",
+      "comparison": "Both studies report higher microglial APOE RNA in their respective analyses. For astrocytes, Mathys reported lower RNA across pathology groups, and Smith found no statistically significant association with local pathology burden. The astrocyte tests address different questions.",
+      "context_differences": [
+        "Mathys compared groups in prefrontal cortex. Smith modeled local amyloid-β and phosphorylated tau across entorhinal and somatosensory cortex.",
+        "Mathys sampled 48 Religious Orders Study donors across cortical cell types. Smith enriched for glial nuclei from two regions in each of 12 donors from two UK brain banks. The nucleus and preparation counts describe sampling within people.",
+        "The Mathys figure uses Poisson mixed-model z-scores. Smith reports logFC for separate pathology regressions. Their scales and contrasts support separate interpretations.",
+        "Murphy, Fancy and Skene reanalyzed the original Mathys data with different quality control and a donor-level approach. The methods check uses the same donors as Mathys."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-27",
+        "human_reviewed": false,
+        "rationale": "Both primary reports and their quantitative context were checked. Cohort sources, regions and models differ. The review is limited to the cited locations and preserves the authors’ scoped estimates."
       }
     }
   ],

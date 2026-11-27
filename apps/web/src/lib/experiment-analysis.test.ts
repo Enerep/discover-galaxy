@@ -91,13 +91,15 @@ test('curated comparison notes require both displayed findings and their cited e
   const result = runExperimentAnalysis(table(), options(), reference);
   const pathway = result.pathways.find(({ overlapGenes }) => overlapGenes.includes('APOE'))!;
   const report = buildPathwayEvidence(snapshot, result, pathway.id);
-  assert.deepEqual(report.contextNotes.map(({ id }) => id), ['conflict-r47h-binding-context']);
+  assert.deepEqual(report.contextNotes.map(({ id }) => id), ['conflict-r47h-binding-context', 'context-apoe-cell-type-rna']);
   assert.equal(report.papers.filter(({ source }) => source.id === 'source-atagi-2015').length, 1);
   const bailey = report.papers.find(({ source }) => source.id === 'source-bailey-2015')!;
   assert.equal(bailey.source.publication_status.status, 'corrected');
   assert.ok(bailey.source.publication_status.notice_url);
   const changed = structuredClone(snapshot);
   changed.evidence = changed.evidence.filter(({ claim_id }) => claim_id !== 'claim-lessard-trem2-r47h-apoe3-binding');
+  assert.deepEqual(buildPathwayEvidence(changed, result, pathway.id).contextNotes.map(({ id }) => id), ['context-apoe-cell-type-rna']);
+  changed.evidence = changed.evidence.filter(({ claim_id }) => claim_id !== 'claim-apoe-rna-smith-2022');
   assert.equal(buildPathwayEvidence(changed, result, pathway.id).contextNotes.length, 0);
 });
 
@@ -226,7 +228,7 @@ test('the analysis reference has pinned provenance and keeps original descriptiv
   assert.equal(reference.upstream_release, null);
   assert.equal(reference.source.license, 'CC0-1.0');
   assert.ok(reference.pathways.some(({ genes }) => genes.includes('CSF2 gene')));
-  assert.equal(snapshot.entities.length, 45);
+  assert.equal(snapshot.entities.length, 47);
   assert.throws(() => validatePathwayReference({ ...reference, source: { ...reference.source, sha256: 'unverified' } }));
   assert.throws(() => validatePathwayReference({ ...reference, pathways: [reference.pathways[0], reference.pathways[0]] }));
 });
