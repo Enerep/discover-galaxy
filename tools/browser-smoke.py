@@ -1223,9 +1223,11 @@ def assert_experiment_analysis(browser, base_url: str, screenshots: Path, public
     expect(page.locator('.selected-title')).to_have_text('ABCA1')
     expect(page.get_by_role('combobox', name='Filter by entity type')).to_have_value('gene')
     expect(page.get_by_role('button', name='Graph view', exact=True)).to_have_attribute('aria-pressed', 'true')
+    current_url = page.url
     skip.focus()
     page.keyboard.press('Enter')
-    expect(page).to_have_url(re.compile(r'#explorer$'))
+    expect(page).to_have_url(current_url)
+    expect(page.locator('#explorer')).to_be_focused()
     expect(page.locator('.selected-title')).to_have_text('ABCA1')
     nav.get_by_role('button', name='Analyze results', exact=True).click()
     expect(heading).to_have_text('QA synthetic RNA numerator / denominator')
