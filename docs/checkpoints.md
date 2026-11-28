@@ -185,3 +185,7 @@ Both original studies reported higher microglial APOE RNA in their respective an
 Explore offers a second source-checked map with seven findings from three original human studies. Select dementia with Lewy bodies, then compare the two APOE ε4 findings in groups with low or absent Alzheimer’s co-pathology. The paper cards retain each estimate, control group and pathology definition. SNCA and GBA1 have their own variant-specific findings. [DLB source record](../data/lewy-bodies/README.md)
 
 The map picker reuses the graph, list, citations and comparison flow. Older shared links open Alzheimer’s. Each map has a device-local research brief. The selected pathway’s evidence changes with the map while the applied RNA-seq results stay available. Both snapshots use the same structural validator and scientific-release gate.
+
+## Completed checkpoint: finding evidence from pathway results
+
+Choose a pathway from **Try example** or an uploaded analysis. The details show its FDR and member counts with direct access to **Genes**, **Evidence**, and the available explanation report. Open a gene or an original-paper finding in Explore, then use **Back to pathway** to resume at the same control. The pathway list remains available through **Back to pathways** on narrow screens. Results, filters, and open paper disclosures survive the round trip. [Browser checks](verification.md)

@@ -195,6 +195,12 @@ This comparison deepens the existing Alzheimer's branch. The [source record](dat
 
 [DLB dataset and source record](data/lewy-bodies/README.md)
 
+### Pathway evidence navigation
+
+- [x] Show the pathway’s statistics and direct controls for genes, evidence and available explanations in the details.
+- [x] Open the selected paper finding in Explore and return to the same pathway, disclosure and focused control.
+- [x] Provide a direct return to the selected pathway row on narrow screens.
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
 Future content work can continue from the 49-claim/49-evidence source packet and five staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).

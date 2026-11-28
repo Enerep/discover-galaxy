@@ -30,7 +30,7 @@ export function WorkspaceHelp({ workspace }: { workspace: 'explore' | 'analysis'
         <ol>
           <li>Upload CSV/TSV with gene symbols, Ensembl IDs or NCBI Gene IDs, log₂ fold changes and adjusted p-values. Include the full tested table, including nonsignificant genes.</li>
           <li>Name the groups compared, choose gene cutoffs and select Analyze. Use <strong>Try example</strong> to start with invented measurements.</li>
-          <li>Choose a pathway to inspect its genes, cutoff sensitivity, overlapping pathways and available scientific evidence.</li>
+          <li>Choose a pathway, then use <strong>Genes</strong> or <strong>Evidence</strong> in its details. After opening a finding in Explore, use <strong>Back to pathway</strong> to pick up where you left off.</li>
         </ol>
         <dl className="workspace-help-terms">
           <div><dt>Gene FDR</dt><dd>The adjusted p-value supplied in your table. A lower cutoff selects fewer genes.</dd></div>

@@ -15,7 +15,7 @@ interface Props {
   analysis: ExperimentAnalysis;
   pathwayId: string;
   headingRef: RefObject<HTMLHeadingElement | null>;
-  onInspectFinding: (claimId: string) => void;
+  onInspectFinding: (claimId: string, trigger: HTMLButtonElement) => void;
 }
 
 export function PathwayEvidence({ snapshot, analysis, pathwayId, headingRef, onInspectFinding }: Props) {
@@ -50,7 +50,8 @@ export function PathwayEvidence({ snapshot, analysis, pathwayId, headingRef, onI
           <p className="experiment-finding-genes">Selected {genes.length === 1 ? 'gene' : 'genes'}: {genes.join(', ')}</p>
           <p>{claim.statement}</p>
           {evidence.filter(({ relation }) => relation !== 'supports').map((item) => <p className="experiment-finding-relation" key={item.id}>Recorded evidence: {item.relation}</p>)}
-          <button className="text-button" type="button" aria-label={`View finding: ${findingLabel(snapshot, claim)}`} onClick={() => onInspectFinding(claim.id)}>View finding<Icon name="arrow" size={14} /></button>
+          <button className="text-button" type="button" aria-label={`View finding: ${findingLabel(snapshot, claim)}`}
+            onClick={(event) => onInspectFinding(claim.id, event.currentTarget)}>View finding<Icon name="arrow" size={14} /></button>
         </article>)}
       </details>)}</div>
       {report.contextNotes.map((note) => <StudyContextNote key={note.id} snapshot={snapshot} note={note} headingLevel={5} />)}

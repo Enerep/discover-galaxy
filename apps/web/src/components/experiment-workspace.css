@@ -184,9 +184,9 @@
   .experiment-member-table > thead > tr > th:first-child { width: 22%; }
   .experiment-member-gene svg { display: none; }
   .experiment-member-gene span { text-decoration: underline; text-underline-offset: 3px; }
-  .experiment-member-table thead th:nth-child(2) { width: 30%; }
+  .experiment-member-table thead th:nth-child(2) { width: 28%; }
   .experiment-member-table thead th:nth-child(3) { width: 28%; }
-  .experiment-member-table thead th:nth-child(4) { width: 20%; }
+  .experiment-member-table thead th:nth-child(4) { width: 22%; white-space: nowrap; }
   .experiment-sensitivity-table { min-width: 0; table-layout: fixed; }
   .experiment-sensitivity-table th, .experiment-sensitivity-table tbody td { padding-inline: 6px; white-space: normal; overflow-wrap: anywhere; }
 }

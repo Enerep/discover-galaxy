@@ -130,6 +130,9 @@ interface Props {
   visible: boolean;
   onShowSelected: () => void;
   onBack: () => void;
+  pathwayOrigin?: string;
+  onBackToPathway: () => void;
+  showFindingFirst: boolean;
   panelRef: RefObject<HTMLElement | null>;
   onCompare?: () => void;
   onFollow: (entityId: string, claimId: string) => void;
@@ -139,7 +142,8 @@ interface Props {
   experimentObservation: ExperimentObservation | null;
 }
 
-export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, panelRef, onCompare, onFollow, pinnedClaimIds, onPin, liveSourcesEnabled, experimentObservation }: Props) {
+export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, pathwayOrigin, onBackToPathway, showFindingFirst,
+  panelRef, onCompare, onFollow, pinnedClaimIds, onPin, liveSourcesEnabled, experimentObservation }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
   const liveIdentity = liveSourcesEnabled ? getLiveLookupIdentity(selected) : undefined;
@@ -147,8 +151,24 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
     // A new record starts at its heading without moving the document on mobile.
     if (panelRef.current) panelRef.current.scrollTop = 0;
   }, [selected.id, panelRef]);
+  const finding = active ? <Finding key={active.id} snapshot={snapshot} claim={active} selected={selected} onFollow={onFollow} pinned={pinnedClaimIds.includes(active.id)} onPin={onPin} />
+    : <p className="no-findings">No findings for this record in the current dataset.</p>;
+  const observation = experimentObservation && <section className="experiment-observation" aria-label={experimentObservation.isSynthetic ? 'Synthetic RNA-seq example' : 'Your RNA-seq result'}>
+    <h3>{experimentObservation.isSynthetic ? 'Synthetic RNA-seq example' : 'Your RNA-seq result'}</h3><p>{experimentObservation.comparison}</p>
+    <dl className="context-list">
+      {experimentObservation.row.sourceId && <div><dt>Input ID</dt><dd>{experimentObservation.row.sourceId}</dd></div>}
+      <div><dt>log₂ fold change</dt><dd>{experimentObservation.row.log2FoldChange ?? 'Not recorded'}</dd></div>
+      <div><dt>Gene FDR</dt><dd>{experimentObservation.row.padj === null ? 'Not recorded' : formatProbability(experimentObservation.row.padj)}</dd></div>
+      <div><dt>Selection</dt><dd>{experimentObservation.row.log2FoldChange === null || experimentObservation.row.padj === null ? 'Incomplete statistics'
+        : experimentObservation.selected ? 'Meets gene cutoffs' : 'Outside gene cutoffs'}</dd></div>
+    </dl>
+    <details><summary>Experiment context</summary><ExperimentContextDetails context={experimentObservation.context} /></details>
+  </section>;
   return (
     <aside className="inspector" aria-label="Entity and evidence inspector" ref={panelRef}>
+      {pathwayOrigin && <button className="secondary-button pathway-return" type="button" aria-label="Back to pathway" aria-describedby="pathway-return-origin" onClick={onBackToPathway}>
+        <Icon name="back" size={16} /><span>Back to pathway<small id="pathway-return-origin">{pathwayOrigin}</small></span>
+      </button>}
       <button className="back-to-graph" onClick={onBack}><Icon name="back" size={16} />Back to graph</button>
       <div className="sr-only" role="status">Selected {selected.label}. {claims.length} findings available.</div>
       <div className="inspector-content" key={selected.id}>
@@ -157,18 +177,9 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
           <h2 className={`selected-title ${selected.type === 'paper' ? 'paper-title' : ''}`} tabIndex={-1}>{selected.label}</h2>
         </div>
         {!visible && <button className="show-selected" onClick={onShowSelected}>Show in the current view <Icon name="arrow" size={14} /></button>}
-        {experimentObservation && <section className="experiment-observation" aria-label={experimentObservation.isSynthetic ? 'Synthetic RNA-seq example' : 'Your RNA-seq result'}>
-          <h3>{experimentObservation.isSynthetic ? 'Synthetic RNA-seq example' : 'Your RNA-seq result'}</h3><p>{experimentObservation.comparison}</p>
-          <dl className="context-list">
-            {experimentObservation.row.sourceId && <div><dt>Input ID</dt><dd>{experimentObservation.row.sourceId}</dd></div>}
-            <div><dt>log₂ fold change</dt><dd>{experimentObservation.row.log2FoldChange ?? 'Not recorded'}</dd></div>
-            <div><dt>Gene FDR</dt><dd>{experimentObservation.row.padj === null ? 'Not recorded' : formatProbability(experimentObservation.row.padj)}</dd></div>
-            <div><dt>Selection</dt><dd>{experimentObservation.row.log2FoldChange === null || experimentObservation.row.padj === null ? 'Incomplete statistics'
-              : experimentObservation.selected ? 'Meets gene cutoffs' : 'Outside gene cutoffs'}</dd></div>
-          </dl>
-          <details><summary>Experiment context</summary><ExperimentContextDetails context={experimentObservation.context} /></details>
-        </section>}
+        {!showFindingFirst && observation}
         <section className="findings" aria-label="Findings">
+          {showFindingFirst && finding}
           {active && onCompare && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
           {claims.length > 1 && (
             <div className="claim-list" aria-label="Choose a finding">
@@ -181,9 +192,9 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
               ))}
             </div>
           )}
-          {active ? <Finding key={active.id} snapshot={snapshot} claim={active} selected={selected} onFollow={onFollow} pinned={pinnedClaimIds.includes(active.id)} onPin={onPin} />
-            : <p className="no-findings">No findings for this record in the current dataset.</p>}
+          {!showFindingFirst && finding}
         </section>
+        {showFindingFirst && observation}
         {liveIdentity && <LiveSources identity={liveIdentity} />}
         {(selected.external_ids.length > 0 || selected.description) && (
           <Disclosure label="Entity details">
