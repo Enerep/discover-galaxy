@@ -450,3 +450,11 @@ The production-build check followed **Try example** through the first lipoprotei
 Chromium 154 passed keyboard and touch navigation on desktop, 320px mobile and forced WebGL fallback. The paper visit put the selected Mathys finding and original citation in view. **Back to pathway** restored the open paper and focused **View finding** again. A gene visit returned focus to its gene button. Changing the disease map during a paper visit returned to the same pathway heading with the new map’s evidence. **Back to pathways** restored the selected result row on mobile. The 320px layout fit the viewport, and the recorded round trip kept requests on the local preview and preserved the browser URL until an explicit map change.
 
 `npm run check:ci` passed 203 Node tests, seven Python tests, strict types, pinned-reference and curation checks, and the build. The dedicated APOE explanation browser checks passed on desktop, mobile and WebGL fallback. The npm audit reported zero advisories and the pinned indicator scan found zero exact matches among 68 locked packages.
+
+## APOE ε4 across disease maps — 2026-11-28
+
+The source check verified the AD and pDLB case definitions and control selection in the original autopsy study. It summed carrier genotypes from Table 2 and checked the two adjusted estimates and intervals against Table 3. Both snapshots passed development and JSON Schema validation. The scientific-release check rejected the draft records. [Source check and retrieval digests](apoe-map-comparison.md)
+
+`npm run check:ci` passed 205 Node tests, seven Python tests, typechecks, curation and reference checks, and the production build. `npm run check:ci:security` checked 68 locked packages and reported zero npm advisories and zero exact matches in the pinned indicator feeds.
+
+Chromium 154 verified the comparison from both maps on the production build, including desktop Light, 320 px mobile Dark, and WebGL fallback. The browser checks verified the original citation target and both case counts and estimates, downloaded cited Markdown, and restored focus after dismissal. Each case button selected the exact finding in its map. Browser Back restored the starting selection. Requests stayed on the local preview. The map-switch check confirmed that applied pathway results persisted and displayed the case finding specific to the active map.
