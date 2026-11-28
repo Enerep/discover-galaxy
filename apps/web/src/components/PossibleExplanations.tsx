@@ -1,17 +1,18 @@
-import { useMemo } from 'react';
-import type { ExperimentAnalysis } from '../lib/experiment-analysis.ts';
+import type { RefObject } from 'react';
 import { formatProbability } from '../lib/experiment-analysis.ts';
-import { buildApoeExplanationComparison } from '../lib/experiment-explanations.ts';
+import type { ApoeExplanationComparison } from '../lib/experiment-explanations.ts';
 import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
 import { Icon } from './ui.tsx';
 
-export function PossibleExplanations({ analysis, pathwayId }: { analysis: ExperimentAnalysis; pathwayId: string }) {
-  const report = useMemo(() => buildApoeExplanationComparison(analysis, pathwayId), [analysis, pathwayId]);
-  if (!report) return null;
+export function PossibleExplanations({ report, label, detailsRef }: {
+  report: ApoeExplanationComparison;
+  label: string;
+  detailsRef: RefObject<HTMLDetailsElement | null>;
+}) {
   const higher = report.observation.log2FoldChange > 0;
   const signedFoldChange = `${higher ? '+' : ''}${report.observation.log2FoldChange}`;
-  return <details className="experiment-explanations" data-synthetic={report.isSynthetic}>
-    <summary>{report.isSynthetic ? 'Example explanations' : 'Possible explanations'}</summary>
+  return <details ref={detailsRef} className="experiment-explanations" data-synthetic={report.isSynthetic}>
+    <summary>{label}</summary>
     <h4>What could contribute to {higher ? 'higher' : 'lower'} APOE RNA?</h4>
     {report.isSynthetic && <p>Synthetic example · invented measurements</p>}
     <p>{report.comparison}</p>

@@ -34,6 +34,7 @@
 .experiment-counts dd { margin: 0; color: var(--ink); font-size: 25px; line-height: 1; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
 .experiment-results-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 32px; align-items: start; }
 .experiment-pathways, .experiment-pathway-detail { min-width: 0; }
+.experiment-pathways > h3 { margin: 0 0 14px; font-size: 19px; font-weight: 550; scroll-margin-top: 20px; }
 .experiment-table-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 10px; margin-bottom: 14px; }
 .experiment-significance { grid-column: 1 / -1; }
 .experiment-table-scroll { max-width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 7px; scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; }
@@ -46,18 +47,25 @@
 .experiment-table tbody td { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .experiment-table tbody tr[data-selected=true] > * { background: var(--selected-surface); }
 .experiment-table tbody tr:last-child > * { border-bottom: 0; }
-.experiment-pathway-choice { min-height: 40px; text-align: left; color: var(--source-ink); line-height: 1.6; padding: 0; overflow-wrap: anywhere; }
+.experiment-pathway-choice { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; text-align: left; color: var(--source-ink); line-height: 1.6; padding: 0; overflow-wrap: anywhere; }
 .experiment-pathway-choice:hover { text-decoration: underline; text-underline-offset: 3px; }
 .experiment-table > thead > tr > th:first-child { width: 47%; }
 .experiment-pagination { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .experiment-pagination > span { font-size: 12px; color: var(--muted); }
 .experiment-pagination > nav { display: flex; gap: 8px; }
 .experiment-pagination .secondary-button { min-height: 40px; padding-inline: 12px; font-size: 12px; }
-.experiment-pathway-detail { padding-left: 28px; border-left: 1px solid var(--border); }
-.experiment-pathway-detail h3 { margin: 0 0 8px; font-size: 21px; font-weight: 550; line-height: 1.45; letter-spacing: -.35px; scroll-margin-top: 24px; }
+.experiment-pathway-detail { padding-left: 28px; border-left: 1px solid var(--border); scroll-margin-top: 16px; }
+.experiment-pathway-detail h3 { margin: 0; font-size: 21px; font-weight: 550; line-height: 1.45; letter-spacing: -.35px; overflow-wrap: anywhere; scroll-margin-top: 24px; }
 .experiment-source-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--source-ink); font-size: 12px; }
 .experiment-source-link:hover { text-decoration: underline; text-underline-offset: 3px; }
-.experiment-pathway-summary { color: var(--secondary-ink); margin: 6px 0 18px; font-size: 13px; }
+.experiment-pathway-metrics { display: flex; flex-wrap: wrap; gap: 12px 28px; margin: 16px 0 0; }
+.experiment-pathway-metrics dt { color: var(--secondary-ink); font-size: 12px; }
+.experiment-pathway-metrics dd { margin: 4px 0 0; font-size: 18px; font-weight: 550; font-variant-numeric: tabular-nums; }
+.experiment-pathway-jumps { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+.experiment-pathway-jumps .secondary-button { min-height: 44px; }
+.text-button.experiment-back-pathways { display: none; }
+.experiment-members-heading, .experiment-literature h4 { margin: 0 0 12px; font-size: 16px; font-weight: 550; scroll-margin-top: 20px; }
+.experiment-workspace :is(h3, h4)[tabindex]:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
 .experiment-member-table { min-width: 360px; }
 .experiment-member-table > thead > tr > th:first-child { width: auto; }
 .experiment-member-table tbody th { overflow-wrap: anywhere; }
@@ -68,7 +76,6 @@
 .experiment-member-gene svg { flex-shrink: 0; }
 .experiment-member-gene:hover { text-decoration: underline; text-underline-offset: 3px; }
 .experiment-literature { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
-.experiment-literature h4 { margin: 0 0 12px; font-size: 16px; font-weight: 550; }
 .experiment-coverage-summary, .experiment-literature-scope { margin: 0; font-size: 13px; line-height: 1.75; color: var(--secondary-ink); }
 .experiment-literature .text-button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; text-align: left; }
 .experiment-coverage-table { min-width: 0; table-layout: fixed; }
@@ -89,7 +96,7 @@
 .experiment-paper article .experiment-finding-genes, .experiment-paper article .experiment-finding-relation { color: var(--secondary-ink); font-size: 12px; }
 .experiment-literature .study-context-note { margin-top: 18px; }
 .experiment-explanations { margin-top: 22px; border-block: 1px solid var(--border); overflow-wrap: anywhere; }
-.experiment-explanations > summary { color: var(--ink); font-size: 15px; font-weight: 550; }
+.experiment-explanations > summary { color: var(--ink); font-size: 15px; font-weight: 550; scroll-margin-top: 20px; }
 .experiment-explanations h4 { margin: 8px 0 12px; font-size: 16px; font-weight: 550; line-height: 1.6; }
 .experiment-explanations h5 { margin: 0 0 6px; font-size: 14px; font-weight: 550; line-height: 1.7; }
 .experiment-explanation-observation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin: 18px 0; }
@@ -153,6 +160,7 @@
   .experiment-context-fields { grid-template-columns: 1fr; }
   .experiment-results-layout { grid-template-columns: 1fr; gap: 30px; }
   .experiment-pathway-detail { border-left: 0; border-top: 1px solid var(--border); padding: 26px 0 0; }
+  .text-button.experiment-back-pathways { display: inline-flex; padding-inline: 0; margin: -8px 0 6px; gap: 8px; }
   .experiment-member-table { min-width: 440px; }
 }
 @media (max-width: 600px) {
