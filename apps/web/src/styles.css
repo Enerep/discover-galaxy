@@ -270,6 +270,9 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .scene-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 12px; color: #adc1b8; font-size: 13px; }
 .loading-ring { height: 17px; width: 17px; border: 1px solid #55756a; border-top-color: #c3e0cd; border-radius: 50%; animation: spin 1s linear infinite; }
 .inspector { position: sticky; top: 24px; max-height: calc(100dvh - 48px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; border-left: 1px solid var(--border); padding: 6px 0 12px 30px; scroll-margin-top: 20px; }
+.secondary-button.pathway-return { width: 100%; text-align: left; justify-content: flex-start; align-items: flex-start; min-height: 44px; padding: 10px 12px; margin-bottom: 16px; }
+.pathway-return > span { min-width: 0; line-height: 1.5; }
+.pathway-return small { display: block; margin-top: 2px; color: var(--secondary-ink); font-size: 12px; overflow-wrap: anywhere; }
 .inspector-content { animation: panel-in 220ms var(--ease); }
 .entity-heading { display: flex; align-items: center; gap: 12px; }
 .selected-title { min-width: 0; font-size: 31px; font-weight: 550; line-height: 1.2; letter-spacing: -.8px; margin: 0; outline: none; overflow-wrap: anywhere; }

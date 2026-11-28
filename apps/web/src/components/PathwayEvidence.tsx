@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import type { RefObject } from 'react';
 import type { ExperimentAnalysis } from '../lib/experiment-analysis.ts';
 import type { Snapshot } from '../lib/types.ts';
 import { buildPathwayEvidence, coverageLabel } from '../lib/pathway-evidence.ts';
@@ -13,15 +14,16 @@ interface Props {
   snapshot: Snapshot;
   analysis: ExperimentAnalysis;
   pathwayId: string;
-  onInspectFinding: (claimId: string) => void;
+  headingRef: RefObject<HTMLHeadingElement | null>;
+  onInspectFinding: (claimId: string, trigger: HTMLButtonElement) => void;
 }
 
-export function PathwayEvidence({ snapshot, analysis, pathwayId, onInspectFinding }: Props) {
+export function PathwayEvidence({ snapshot, analysis, pathwayId, headingRef, onInspectFinding }: Props) {
   const report = useMemo(() => buildPathwayEvidence(snapshot, analysis, pathwayId), [snapshot, analysis, pathwayId]);
   const [page, setPage] = useState(0);
   const covered = report.genes.filter(({ paperIds }) => paperIds.length).length;
   return <section className="experiment-literature" aria-label="Pathway evidence">
-    <h4>Evidence</h4>
+    <h4 ref={headingRef} tabIndex={-1}>Evidence</h4>
     <p className="experiment-coverage-summary">{report.genes.length
       ? `${covered} of ${report.genes.length} selected genes have paper findings in the ${snapshot.scope.disease} map.`
       : 'No selected genes in this pathway at the applied cutoffs.'}</p>
@@ -48,7 +50,8 @@ export function PathwayEvidence({ snapshot, analysis, pathwayId, onInspectFindin
           <p className="experiment-finding-genes">Selected {genes.length === 1 ? 'gene' : 'genes'}: {genes.join(', ')}</p>
           <p>{claim.statement}</p>
           {evidence.filter(({ relation }) => relation !== 'supports').map((item) => <p className="experiment-finding-relation" key={item.id}>Recorded evidence: {item.relation}</p>)}
-          <button className="text-button" type="button" aria-label={`View finding: ${findingLabel(snapshot, claim)}`} onClick={() => onInspectFinding(claim.id)}>View finding<Icon name="arrow" size={14} /></button>
+          <button className="text-button" type="button" aria-label={`View finding: ${findingLabel(snapshot, claim)}`}
+            onClick={(event) => onInspectFinding(claim.id, event.currentTarget)}>View finding<Icon name="arrow" size={14} /></button>
         </article>)}
       </details>)}</div>
       {report.contextNotes.map((note) => <StudyContextNote key={note.id} snapshot={snapshot} note={note} headingLevel={5} />)}

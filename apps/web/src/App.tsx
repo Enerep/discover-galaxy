@@ -21,6 +21,7 @@ import { findComparisonPartner } from './lib/compare-evidence.ts';
 import { useResearchBrief } from './lib/useResearchBrief.ts';
 import { BRIEF_STORAGE_KEY } from './lib/research-brief.ts';
 import type { ExperimentAnalysis } from './lib/experiment-analysis.ts';
+import type { PathwayOrigin } from './components/ExperimentWorkspace.tsx';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const ExperimentWorkspace = lazy(() => import('./components/ExperimentWorkspace.tsx'));
@@ -86,6 +87,8 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
   const [workspace, setWorkspace] = useState<'explore' | 'analysis'>('explore');
   const [analysisVisited, setAnalysisVisited] = useState(false);
   const [experiment, setExperiment] = useState<ExperimentAnalysis | null>(null);
+  const [pathwayOrigin, setPathwayOrigin] = useState<(PathwayOrigin & { fromFinding?: boolean }) | null>(null);
+  const pendingPathwayReturn = useRef<PathwayOrigin | null>(null);
   const research = {
     alzheimers: useResearchBrief(snapshots.alzheimers),
     'lewy-bodies': useResearchBrief(snapshots['lewy-bodies'], `${BRIEF_STORAGE_KEY}:lewy-bodies`),
@@ -122,6 +125,16 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
     focusConnection.current = false;
   }, [selectedId, selectedClaimId]);
 
+  useLayoutEffect(() => {
+    const origin = pendingPathwayReturn.current;
+    if (workspace !== 'analysis' || !origin) return;
+    pendingPathwayReturn.current = null;
+    const returningToTrigger = origin.trigger.getClientRects().length > 0;
+    const target = returningToTrigger ? origin.trigger : origin.heading;
+    target?.focus({ preventScroll: true });
+    target?.scrollIntoView({ block: returningToTrigger ? 'center' : 'start', inline: 'nearest' });
+  }, [workspace]);
+
   function togglePin(claimId: string) {
     const success = research.change(research.brief.pinned_claim_ids.includes(claimId)
       ? { type: 'unpin', claimId } : { type: 'pin', claimIds: [claimId] });
@@ -145,20 +158,29 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
     requestAnimationFrame(openEvidence);
   }
   function openAnalysis() {
+    pendingPathwayReturn.current = pathwayOrigin;
+    setPathwayOrigin(null);
     setAnalysisVisited(true);
     setWorkspace('analysis');
   }
-  function inspectExperimentGene(gene: string) {
+  function recordAnalysis(result: ExperimentAnalysis | null) {
+    setExperiment(result);
+    setPathwayOrigin(null);
+    pendingPathwayReturn.current = null;
+  }
+  function inspectExperimentGene(gene: string, origin: PathwayOrigin) {
     const entity = snapshot.entities.find((entity) => entity.type === 'gene' && entity.label === gene);
     if (!entity) return;
+    setPathwayOrigin(origin);
     setWorkspace('explore');
     clearFilters();
     selectEntity(entity.id);
     requestAnimationFrame(openEvidence);
   }
-  function inspectExperimentFinding(claimId: string) {
+  function inspectExperimentFinding(claimId: string, origin: PathwayOrigin) {
     const claim = snapshot.claims.find(({ id }) => id === claimId);
     if (!claim) return;
+    setPathwayOrigin({ ...origin, fromFinding: true });
     setWorkspace('explore');
     clearFilters();
     focusEntity(claim.subject_id);
@@ -267,6 +289,7 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
     target?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
   }
   function openEvidence() {
+    if (inspectorRef.current) inspectorRef.current.scrollTop = 0;
     moveTo(inspectorRef.current, inspectorRef.current?.querySelector<HTMLElement>('.selected-title'));
   }
   function backToGraph() { moveTo(graphRef.current); }
@@ -304,7 +327,7 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
       </nav>
       {analysisVisited && <div className="analysis-view" hidden={workspace !== 'analysis'}>
         <Suspense fallback={<p className="workspace-loading" role="status">Loading analysis…</p>}>
-          <ExperimentWorkspace snapshot={snapshot} onInspectGene={inspectExperimentGene} onInspectFinding={inspectExperimentFinding} onResults={setExperiment} />
+          <ExperimentWorkspace snapshot={snapshot} onInspectGene={inspectExperimentGene} onInspectFinding={inspectExperimentFinding} onResults={recordAnalysis} />
         </Suspense>
       </div>}
       <div className="workspace" hidden={workspace !== 'explore'}>
@@ -326,7 +349,7 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
           </div>
           {experiment && <section className="experiment-context" aria-label="Active experiment">
             <div><strong>{experiment.comparison}</strong><span>{experiment.table.isSynthetic ? 'Synthetic example · invented measurements' : experiment.table.filename}</span></div>
-            <button className="text-button" onClick={openAnalysis}>Analysis results<Icon name="arrow" size={14} /></button>
+            {!pathwayOrigin && <button className="text-button" onClick={openAnalysis}>Analysis results<Icon name="arrow" size={14} /></button>}
           </section>}
           <div className="explorer-tools">
             <EntitySearch query={query} matches={matches} onQuery={setQuery} onSelect={focusEntity} />
@@ -427,6 +450,7 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
           onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={comparisonPartner ? openComparison : undefined} onFollow={followConnection}
           pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin} liveSourcesEnabled={DISEASE_COLLECTIONS[collectionId].liveSources}
+          pathwayOrigin={pathwayOrigin?.name} onBackToPathway={openAnalysis} showFindingFirst={pathwayOrigin?.fromFinding === true}
           experimentObservation={experiment && observation ? { comparison: experiment.comparison, context: experiment.context, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
             selected: experiment.selected.some(({ gene }) => gene === observation.gene) } : null} />
       </div>

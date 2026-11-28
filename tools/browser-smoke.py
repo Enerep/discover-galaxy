@@ -2230,6 +2230,128 @@ def assert_workspace_help(browser, base_url: str, screenshots: Path) -> None:
     print("PASS: on-demand workspace help explains source exploration and processed results with concrete examples, preserves pending work, traps/returns focus, and supports mobile themes/reduced motion/WebGL fallback without loading references.")
 
 
+def assert_pathway_navigation(browser, base_url: str, screenshots: Path) -> None:
+    title = 'Plasma lipoprotein assembly, remodeling, and clearance'
+    original = 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6865822/'
+    for label, width, fallback in [('desktop', 1440, False), ('mobile', 320, False), ('fallback', 360, True)]:
+        mobile = width < 960
+        context = browser.new_context(viewport={'width': width, 'height': 900}, is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light', reduced_motion='reduce')
+        try:
+            if fallback:
+                context.add_init_script("""const getContext = HTMLCanvasElement.prototype.getContext;
+                    HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+                      return type.startsWith('webgl') ? null : getContext.call(this, type, ...args);
+                    };""")
+            page = context.new_page()
+            errors, requests = [], []
+            page.on('pageerror', lambda error: errors.append(str(error)))
+            page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+            page.goto(base_url, wait_until='networkidle')
+            initial_url = page.url
+            if fallback:
+                expect(page.locator('.fallback-notice')).to_be_visible()
+            nav = page.get_by_role('navigation', name='Workspace', exact=True)
+            nav.get_by_role('button', name='Analyze results', exact=True).press('Enter')
+            analysis = page.get_by_role('main', name='Analyze results', exact=True)
+            analysis.get_by_role('button', name='Try example', exact=True).press('Enter')
+            expect(analysis.locator('#experiment-results-title')).to_contain_text('Synthetic example', timeout=15000)
+            pathway_list = analysis.get_by_role('region', name='Pathway results', exact=True)
+            pathway = pathway_list.get_by_role('button', name=title, exact=True)
+            expect(pathway).to_be_in_viewport()
+            assert_touch_target(pathway)
+            pathway.tap() if mobile else pathway.press('Enter')
+            heading = analysis.get_by_role('heading', name=title, exact=True)
+            expect(heading).to_be_focused()
+            detail = analysis.get_by_role('region', name=title, exact=True)
+            overview = detail.locator('.experiment-pathway-metrics')
+            expect(overview).to_contain_text('10 / 13')
+            expect(overview).to_contain_text('1.16e-7')
+            controls = detail.get_by_role('navigation', name='Pathway detail sections', exact=True)
+            genes = controls.get_by_role('button', name='Genes', exact=True)
+            evidence_button = controls.get_by_role('button', name='Evidence', exact=True)
+            example = controls.get_by_role('button', name='Example explanations', exact=True)
+            expect(example).to_have_count(0)
+            form = analysis.get_by_role('form', name='RNA-seq analysis')
+            form.get_by_text('Experiment context (optional)', exact=True).click()
+            form.get_by_role('combobox', name='Sample type', exact=True).select_option('bulk_brain_tissue')
+            form.get_by_role('combobox', name='Study design', exact=True).select_option('observational')
+            form.locator('button[type=submit]').click()
+            expect(example).to_be_visible()
+            pathway.tap() if mobile else pathway.press('Enter')
+            expect(heading).to_be_focused()
+            for button in [genes, evidence_button, example]:
+                assert_touch_target(button)
+                assert_text_contrast(button)
+                expect(button).to_be_in_viewport()
+            if not fallback:
+                page.screenshot(path=str(screenshots / f'pathway-details-{label}.png'))
+
+            example.tap() if mobile else example.press('Enter')
+            report = detail.locator('.experiment-explanations')
+            expect(report).to_have_attribute('open', '')
+            summary = report.locator(':scope > summary')
+            expect(summary).to_be_focused()
+            expect(report.get_by_role('heading', name='What could contribute to higher APOE RNA?')).to_be_visible()
+            summary.press('Enter')
+            expect(report).not_to_have_attribute('open', '')
+            genes.press('Enter')
+            expect(detail.get_by_role('heading', name='Eligible genes', exact=True)).to_be_focused()
+            gene = detail.get_by_role('button', name='View APOE evidence', exact=True)
+            gene.press('Enter')
+            inspector = page.get_by_role('complementary', name='Entity and evidence inspector', exact=True)
+            expect(inspector.get_by_role('heading', name='APOE', exact=True)).to_be_focused()
+            expect(inspector.get_by_role('region', name='Synthetic RNA-seq example', exact=True)).to_contain_text('0.008')
+            back = inspector.get_by_role('button', name='Back to pathway', exact=True)
+            expect(back).to_have_accessible_description(title)
+            expect(back).to_be_in_viewport()
+            assert_touch_target(back)
+            assert_text_contrast(back)
+            back.tap() if mobile else back.press('Enter')
+            expect(gene).to_be_focused()
+            expect(gene).to_be_in_viewport()
+
+            evidence_button.tap() if mobile else evidence_button.press('Enter')
+            evidence = detail.get_by_role('region', name='Pathway evidence', exact=True)
+            expect(evidence.get_by_role('heading', name='Evidence', exact=True)).to_be_focused()
+            paper = evidence.locator('[data-source-id="source-mathys-2019"]')
+            paper.locator('summary').press('Enter')
+            expect(paper.get_by_role('link', name='Original paper', exact=True)).to_have_attribute('href', original)
+            finding = paper.get_by_role('button', name=re.compile(r'^View finding: Mathys'))
+            finding.tap() if mobile else finding.press('Enter')
+            expect(inspector.locator('.source-link')).to_have_attribute('href', original)
+            expect(inspector.locator('.source-link')).to_be_in_viewport()
+            expect(back).to_be_in_viewport()
+            if not fallback:
+                page.screenshot(path=str(screenshots / f'pathway-finding-{label}.png'))
+            back.tap() if mobile else back.press('Enter')
+            expect(finding).to_be_focused()
+            expect(finding).to_be_in_viewport()
+            expect(paper).to_have_attribute('open', '')
+            expect(overview).to_contain_text('1.16e-7')
+            assert page.url == initial_url
+
+            if mobile:
+                detail.get_by_role('button', name='Back to pathways', exact=True).tap()
+                expect(pathway).to_be_focused()
+                expect(pathway).to_be_in_viewport()
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Page overflows its viewport'
+            else:
+                finding.press('Enter')
+                page.get_by_role('combobox', name='Disease map', exact=True).select_option('lewy-bodies')
+                expect(inspector.get_by_role('heading', name='Dementia with Lewy bodies', exact=True)).to_be_visible()
+                back.press('Enter')
+                expect(heading).to_be_focused()
+                expect(evidence.locator('[data-source-id="source-tsuang-2013"]')).to_be_visible()
+                expect(overview).to_contain_text('1.16e-7')
+            assert all(method == 'GET' and urlsplit(url).netloc == urlsplit(base_url).netloc and body is None
+                       for method, url, body in requests), requests
+            assert not errors, errors
+        finally:
+            context.close()
+    print('PASS: pathway details lead to genes, eligible explanations and source-linked findings, with an exact, focused return on desktop, narrow mobile and WebGL fallback.')
+
+
 def assert_disease_collections(browser, base_url: str) -> None:
     context = browser.new_context(viewport={'width': 1440, 'height': 1000}, reduced_motion='reduce')
     try:
@@ -2690,6 +2812,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_experiment_example(browser, base_url, screenshots)
         assert_experiment_context(browser, base_url, screenshots)
         assert_pathway_evidence(browser, base_url, screenshots)
+        assert_pathway_navigation(browser, base_url, screenshots)
         assert_disease_collections(browser, base_url)
         assert_scavenger_evidence(browser, base_url, screenshots)
         assert_annotation_expansion(browser, base_url, screenshots)

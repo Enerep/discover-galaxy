@@ -5,6 +5,7 @@ import { ExperimentColumnChoiceError, MAX_EXPERIMENT_BYTES, parseExperiment } fr
 import type { ExperimentTable } from '../lib/experiment.ts';
 import { buildExperimentQuestions, formatProbability, loadPathwayReference, runExperimentAnalysis } from '../lib/experiment-analysis.ts';
 import type { ExperimentAnalysis } from '../lib/experiment-analysis.ts';
+import type { EnrichmentResult } from '../lib/enrichment.ts';
 import { useReducedMotion } from '../lib/useReducedMotion.ts';
 import { Icon } from './ui.tsx';
 import { loadGeneIdentityReference, resolveGeneIdentifiers } from '../lib/gene-identifiers.ts';
@@ -19,12 +20,19 @@ import type { ExperimentContext } from '../lib/experiment-context.ts';
 import { ExperimentContextDetails } from './ExperimentContextDetails.tsx';
 import { PathwayEvidence } from './PathwayEvidence.tsx';
 import { PossibleExplanations } from './PossibleExplanations.tsx';
+import { buildApoeExplanationComparison } from '../lib/experiment-explanations.ts';
 import './experiment-workspace.css';
+
+export interface PathwayOrigin {
+  name: string;
+  trigger: HTMLButtonElement;
+  heading: HTMLHeadingElement | null;
+}
 
 interface Props {
   snapshot: Snapshot;
-  onInspectGene: (gene: string) => void;
-  onInspectFinding: (claimId: string) => void;
+  onInspectGene: (gene: string, origin: PathwayOrigin) => void;
+  onInspectFinding: (claimId: string, origin: PathwayOrigin) => void;
   onResults: (result: ExperimentAnalysis | null) => void;
 }
 
@@ -43,7 +51,13 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
   const workspace = useRef<HTMLElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
+  const pathwayListHeading = useRef<HTMLHeadingElement>(null);
+  const detailPanel = useRef<HTMLElement>(null);
   const detailHeading = useRef<HTMLHeadingElement>(null);
+  const membersHeading = useRef<HTMLHeadingElement>(null);
+  const evidenceHeading = useRef<HTMLHeadingElement>(null);
+  const explanationsDetails = useRef<HTMLDetailsElement>(null);
+  const pathwayTrigger = useRef<{ id: string; button: HTMLButtonElement } | null>(null);
   const groupToggle = useRef<HTMLInputElement>(null);
   const readSequence = useRef(0);
   const pendingResultFocus = useRef(false);
@@ -129,6 +143,9 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
       .sort((a, b) => Number(selectedGenes.has(b.gene)) - Number(selectedGenes.has(a.gene)) || a.gene.localeCompare(b.gene, 'en-US'));
   }, [analysis, selectedPathway?.id, selectedGenes, eligibleGenes, unannotatedGenes]);
   const questions = useMemo(() => analysis && selectedPathway ? buildExperimentQuestions(snapshot, analysis, selectedPathway.id) : [], [snapshot, analysis, selectedPathway]);
+  const selectedPathwayId = selectedPathway?.id;
+  const explanations = useMemo(() => analysis && selectedPathwayId ? buildApoeExplanationComparison(analysis, selectedPathwayId) : null, [analysis, selectedPathwayId]);
+  const explanationsLabel = explanations?.isSynthetic ? 'Example explanations' : 'Possible explanations';
   const curatedGenes = useMemo(() => new Set(snapshot.entities.filter(({ type }) => type === 'gene').map(({ label }) => label)), [snapshot]);
   const changed = analysis && (pendingTable !== analysis.table || comparison.trim() !== analysis.comparison
     || context.model.trim() !== analysis.context.model || context.condition.trim() !== analysis.context.condition || context.design !== analysis.context.design || context.sampleType !== analysis.context.sampleType
@@ -196,6 +213,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
 
   function applyAnalysis(result: ExperimentAnalysis) {
     pendingResultFocus.current = true;
+    pathwayTrigger.current = null;
     setAnalysis(result); onResults(result);
     setQuery(''); setPage(0); setMemberPage(0); setPathwayId(null); setSignificantOnly(false);
     setGroupOverlaps(false); setSensitivityOpen(false);
@@ -222,6 +240,7 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
     ++readSequence.current;
     pendingResultFocus.current = false;
     pendingMappingFocus.current = false;
+    pathwayTrigger.current = null;
     if (pendingTable?.isSynthetic) setComparison('');
     setContext(normalizeExperimentContext());
     setPendingTable(null); setAnalysis(null); setAllTestedGenes(false); setBusy(null); setError('');
@@ -238,12 +257,39 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  function choosePathway(id: string) {
-    setPathwayId(id); setMemberPage(0);
-    if (window.matchMedia('(max-width: 960px)').matches) requestAnimationFrame(() => {
-      detailHeading.current?.focus({ preventScroll: true });
-      detailHeading.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+  function reveal(target: HTMLElement | null, block: ScrollLogicalPosition = 'start', scrollTarget = target) {
+    if (!target?.getClientRects().length) return;
+    target.focus({ preventScroll: true });
+    scrollTarget?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block });
+  }
+
+  function choosePathway(id: string, button: HTMLButtonElement) {
+    pathwayTrigger.current = { id, button };
+    setPathwayId(id);
+    setMemberPage(0);
+    const narrow = window.matchMedia('(max-width: 960px)').matches;
+    requestAnimationFrame(() => {
+      const heading = detailHeading.current;
+      reveal(heading, narrow ? 'start' : 'nearest', narrow ? detailPanel.current : heading);
     });
+  }
+
+  function backToPathways() {
+    const trigger = pathwayTrigger.current;
+    const selectedButton = trigger && trigger.id === selectedPathwayId && trigger.button.getClientRects().length ? trigger.button : null;
+    reveal(selectedButton ?? pathwayListHeading.current, selectedButton ? 'center' : 'start');
+  }
+
+  function revealExplanations() {
+    const details = explanationsDetails.current;
+    if (!details) return;
+    details.open = true;
+    reveal(details.querySelector('summary'));
+  }
+
+  function rememberPathway(pathway: EnrichmentResult, trigger: HTMLButtonElement): PathwayOrigin {
+    setPathwayId(pathway.id);
+    return { name: pathway.name, trigger, heading: detailHeading.current };
   }
 
   function changePage(next: number) {
@@ -307,7 +353,8 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
         <div><dt>Tested pathways</dt><dd>{integer(analysis.pathways.length)}</dd></div>
       </dl>
       <div className="experiment-results-layout">
-        <section className="experiment-pathways" aria-label="Pathway enrichment">
+        <section className="experiment-pathways" aria-labelledby="experiment-pathways-title">
+          <h3 ref={pathwayListHeading} tabIndex={-1} id="experiment-pathways-title">Pathways</h3>
           <div className="experiment-table-tools">
             <label className="experiment-pathway-search"><span className="sr-only">Find pathways</span><input type="search" placeholder="Find pathways" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); setPathwayId(null); setMemberPage(0); }} /></label>
             <label><span className="sr-only">Sort pathways</span><select aria-label="Sort pathways" value={sort} onChange={(event) => { setSort(event.target.value); setPage(0); setPathwayId(null); setMemberPage(0); }}>
@@ -324,7 +371,8 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
             <div className="experiment-table-scroll" role="region" aria-label="Pathway results" tabIndex={0}>
               <table className="experiment-table"><thead><tr><th scope="col">Pathway</th><th scope="col">Selected hits</th><th scope="col">Eligible members</th><th scope="col">Pathway FDR</th></tr></thead>
                 <tbody>{visibleRows.map(({ row, group }) => <tr key={row.id} data-selected={row.id === selectedPathway?.id || group?.members.some(({ id }) => id === selectedPathway?.id)}>
-                  <th scope="row"><button type="button" className="experiment-pathway-choice" aria-pressed={row.id === selectedPathway?.id} onClick={() => choosePathway(row.id)}>{row.name}</button>
+                  <th scope="row"><button type="button" className="experiment-pathway-choice" aria-pressed={row.id === selectedPathway?.id} aria-controls="experiment-pathway-detail"
+                    onClick={(event) => choosePathway(row.id, event.currentTarget)}>{row.name}<Icon name="arrow" size={14} /></button>
                     {group && <PathwayGroupMembers group={group} lookup={pathwayLookup} selectedId={selectedPathway?.id} searching={Boolean(query.trim())} onChoose={choosePathway} />}
                   </th>
                   <td>{integer(row.overlapSize)}</td><td>{integer(row.pathwayMeasuredSize)}</td><td>{formatProbability(row.adjustedPValue, row.logAdjustedPValue)}</td>
@@ -338,23 +386,36 @@ export default function ExperimentWorkspace({ snapshot, onInspectGene, onInspect
             {(query || significantOnly) && <button className="secondary-button" type="button" onClick={() => { setQuery(''); setSignificantOnly(false); setPage(0); }}>Show all tested pathways</button>}
           </div>}
         </section>
-        {selectedPathway && <section className="experiment-pathway-detail" aria-labelledby="experiment-pathway-title">
+        {selectedPathway && <section className="experiment-pathway-detail" id="experiment-pathway-detail" ref={detailPanel} aria-labelledby="experiment-pathway-title">
+          <button className="text-button experiment-back-pathways" type="button" onClick={backToPathways}><Icon name="back" size={16} />Back to pathways</button>
           <h3 ref={detailHeading} tabIndex={-1} id="experiment-pathway-title">{selectedPathway.name}</h3>
-          <a className="experiment-source-link" href={selectedPathway.url} target="_blank" rel="noreferrer">{selectedPathway.id}<Icon name="external" size={14} /></a>
-          <p className="experiment-pathway-summary">{integer(selectedPathway.overlapSize)} selected of {integer(selectedPathway.pathwayMeasuredSize)} eligible members</p>
+          <dl className="experiment-pathway-metrics">
+            <div><dt>Pathway FDR</dt><dd>{formatProbability(selectedPathway.adjustedPValue, selectedPathway.logAdjustedPValue)}</dd></div>
+            <div><dt>Selected / eligible members</dt><dd>{integer(selectedPathway.overlapSize)} / {integer(selectedPathway.pathwayMeasuredSize)}</dd></div>
+          </dl>
+          <a className="experiment-source-link" href={selectedPathway.url} target="_blank" rel="noreferrer">Reactome · {selectedPathway.id}<Icon name="external" size={14} /></a>
+          <nav className="experiment-pathway-jumps" aria-label="Pathway detail sections">
+            <button className="secondary-button" type="button" onClick={() => reveal(membersHeading.current)}>Genes</button>
+            <button className="secondary-button" type="button" onClick={() => reveal(evidenceHeading.current)}>Evidence</button>
+            {explanations && <button className="secondary-button" type="button" onClick={revealExplanations}>{explanationsLabel}</button>}
+          </nav>
           <ThresholdSensitivity pathway={selectedPathway} open={sensitivityOpen} onToggle={(open) => { setSensitivityOpen(open); if (open) robustness.request('sensitivity'); }} status={robustness.sensitivity.status} report={robustness.sensitivity.result} error={robustness.sensitivity.error} onRetry={() => robustness.request('sensitivity')} />
+          <h4 className="experiment-members-heading" ref={membersHeading} tabIndex={-1}>Eligible genes</h4>
           <div className="experiment-table-scroll" role="region" aria-label="Eligible pathway members" tabIndex={0}>
             <table className="experiment-table experiment-member-table"><thead><tr><th scope="col">Gene</th><th scope="col">log₂FC</th><th scope="col">Gene FDR</th><th scope="col">Selected</th></tr></thead>
               <tbody>{eligibleMembers.slice(memberPage * MEMBER_PAGE_SIZE, (memberPage + 1) * MEMBER_PAGE_SIZE).map((row) => <tr key={row.gene}>
                 <th scope="row" aria-label={row.gene} className={curatedGenes.has(row.gene) ? 'experiment-member-linked' : undefined}>{curatedGenes.has(row.gene)
-                  ? <button type="button" className="experiment-member-gene" aria-label={`View ${row.gene} evidence`} onClick={() => onInspectGene(row.gene)}><span>{row.gene}</span><Icon name="arrow" size={13} /></button>
+                  ? <button type="button" className="experiment-member-gene" aria-label={`View ${row.gene} evidence`}
+                    onClick={(event) => onInspectGene(row.gene, rememberPathway(selectedPathway, event.currentTarget))}><span>{row.gene}</span><Icon name="arrow" size={13} /></button>
                   : row.gene}</th><td>{foldChange(row.log2FoldChange)}</td><td>{row.padj === null ? 'Not recorded' : formatProbability(row.padj)}</td><td>{selectedGenes.has(row.gene) ? 'Yes' : 'No'}</td>
               </tr>)}</tbody>
             </table>
           </div>
           {eligibleMembers.length > MEMBER_PAGE_SIZE && <div className="experiment-pagination"><span>{integer(memberPage * MEMBER_PAGE_SIZE + 1)}–{integer(Math.min((memberPage + 1) * MEMBER_PAGE_SIZE, eligibleMembers.length))} of {integer(eligibleMembers.length)}</span><nav aria-label="Eligible member pages"><button className="secondary-button" type="button" disabled={memberPage === 0} onClick={() => setMemberPage(memberPage - 1)}>Previous</button><button className="secondary-button" type="button" disabled={(memberPage + 1) * MEMBER_PAGE_SIZE >= eligibleMembers.length} onClick={() => setMemberPage(memberPage + 1)}>Next</button></nav></div>}
-          <PossibleExplanations key={`explanations-${analysis.createdAt}-${selectedPathway.id}`} analysis={analysis} pathwayId={selectedPathway.id} />
-          <PathwayEvidence key={`${analysis.createdAt}-${selectedPathway.id}-${snapshot.dataset_version}`} snapshot={snapshot} analysis={analysis} pathwayId={selectedPathway.id} onInspectFinding={onInspectFinding} />
+          {explanations && <PossibleExplanations key={`explanations-${analysis.createdAt}-${selectedPathway.id}`} report={explanations} label={explanationsLabel} detailsRef={explanationsDetails} />}
+          <PathwayEvidence key={`${analysis.createdAt}-${selectedPathway.id}-${snapshot.dataset_version}`} snapshot={snapshot} analysis={analysis}
+            pathwayId={selectedPathway.id} headingRef={evidenceHeading}
+            onInspectFinding={(id, trigger) => onInspectFinding(id, rememberPathway(selectedPathway, trigger))} />
           {questions.length > 0 && <section className="experiment-questions" aria-label={analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}><h4>{analysis.table.isSynthetic ? 'Example questions' : 'Questions to investigate'}</h4>
             {questions.map((item) => <article key={item.id}><h5>{item.question}</h5><p>{item.premise}</p><details><summary>Assumptions and proposed test</summary><ul>{item.assumptions.map((assumption) => <li key={assumption}>{assumption}</li>)}</ul><p>{item.suggestedTest}</p></details><ul className="experiment-question-sources">{item.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="external" size={13} /></a></li>)}</ul></article>)}
           </section>}
