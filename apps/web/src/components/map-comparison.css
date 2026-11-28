@@ -1,0 +1,43 @@
+.data-dialog.map-comparison-dialog { width: min(860px, calc(100% - 24px)); }
+.data-dialog.map-comparison-dialog h2 { margin-bottom: 8px; }
+.map-comparison-source { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.map-comparison-source a { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; color: var(--source-ink); font-size: 14px; }
+.map-comparison-source a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.map-comparison-dialog .map-comparison-controls { font-size: 14px; margin: 4px 0 12px; }
+.map-comparison-controls strong { color: var(--ink); font-weight: 550; }
+.map-odds { margin: 0; padding: 16px 18px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.map-odds figcaption { color: var(--ink); font-size: 14px; font-weight: 550; margin-bottom: 12px; }
+.map-odds-row { display: grid; grid-template-columns: minmax(120px, 1.1fr) minmax(0, 2fr) minmax(95px, .8fr); gap: 10px 16px; align-items: center; font-size: 13px; }
+.map-odds-row + .map-odds-row { margin-top: 8px; }
+.map-odds-row strong { justify-self: end; white-space: nowrap; font-weight: 550; font-variant-numeric: tabular-nums; }
+.map-odds-track { height: 24px; position: relative; display: flex; align-items: center; }
+.map-odds-track::before { content: ''; position: absolute; inset: 50% 0 auto; border-top: 1px solid var(--border); }
+.map-odds-reference { position: absolute; height: 20px; border-left: 1px dashed var(--muted); }
+.map-odds-interval { position: absolute; height: 2px; background: var(--accent); }
+.map-odds-interval::before, .map-odds-interval::after { content: ''; position: absolute; top: -3px; width: 2px; height: 8px; background: var(--accent); }
+.map-odds-interval::before { left: 0; }
+.map-odds-interval::after { right: 0; }
+.map-odds-marker { position: absolute; width: 9px; height: 9px; transform: translateX(-50%); border-radius: 50%; background: var(--accent); }
+.map-odds-axis { color: var(--secondary-ink); font-size: 11px; }
+.map-odds-axis > span { justify-self: end; }
+.map-odds-ticks { grid-column: 2; position: relative; height: 16px; font-variant-numeric: tabular-nums; }
+.map-odds-ticks span { position: absolute; transform: translateX(-50%); }
+.map-comparison-interpretation { color: var(--secondary-ink); font-size: 13px; margin: 12px 0 0; }
+.map-comparison-dialog .map-comparison-cohorts { margin: 18px 0; }
+.map-cohort { display: flex; flex-direction: column; align-items: flex-start; }
+.map-comparison-dialog .map-cohort > p:first-of-type { margin-top: 0; }
+.map-comparison-dialog .map-cohort .map-cohort-counts { margin: auto 0 0; color: var(--secondary-ink); font-size: 13px; }
+.map-cohort-counts strong { color: var(--ink); font-weight: 550; }
+.map-cohort .text-button { padding-inline: 0; }
+.map-comparison-context { border-top: 1px solid var(--border); padding-top: 4px; }
+.map-comparison-dialog .map-comparison-context p { color: var(--secondary-ink); }
+
+@media (max-width: 600px) {
+  .map-odds { padding-inline: 16px; }
+  .map-odds-row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; }
+  .map-odds-track { grid-column: 1 / -1; grid-row: 2; }
+  .map-odds-row strong { grid-column: 2; grid-row: 1; }
+  .map-odds-axis { gap: 6px; }
+  .map-odds-ticks { grid-column: 1 / -1; }
+  .map-odds-axis > span { grid-column: 1 / -1; }
+}

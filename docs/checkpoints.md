@@ -189,3 +189,7 @@ The map picker reuses the graph, list, citations and comparison flow. Older shar
 ## Completed checkpoint: finding evidence from pathway results
 
 Choose a pathway from **Try example** or an uploaded analysis. The details show its FDR and member counts with direct access to **Genes**, **Evidence**, and the available explanation report. Open a gene or an original-paper finding in Explore, then use **Back to pathway** to resume at the same control. The pathway list remains available through **Back to pathways** on narrow screens. Results, filters, and open paper disclosures survive the round trip. [Browser checks](verification.md)
+
+## Completed checkpoint — APOE ε4 across disease maps
+
+Select **APOE** in either map and open **Compare across maps**. The comparison shows both adjusted odds ratios, intervals and case definitions from the same autopsy paper. It identifies the 269 controls shared by the two estimates and opens each exact finding or downloads a cited Markdown comparison. The records are source-checked drafts. [APOE source check](apoe-map-comparison.md)

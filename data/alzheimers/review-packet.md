@@ -3,18 +3,18 @@
 Generated from the checked-in dataset. Do not edit this extract: record actual reviews and source checks in the dataset, then regenerate it.
 Generating this packet performs structural validation only; it does not inspect publications, establish study independence, or grant scientific approval.
 
-- **Dataset:** alzheimers-source-checked-0.9.0
+- **Dataset:** alzheimers-source-checked-0.10.0
 - **Schema:** 0.2.0
-- **Snapshot date:** 2026-11-27
+- **Snapshot date:** 2026-11-28
 - **Release status:** development
-- **Coverage:** 47 entities, 51 claims, 51 evidence records, 51 sources
+- **Coverage:** 48 entities, 52 claims, 52 evidence records, 52 sources
 - **Disease:** Alzheimer's disease
-- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and a source-checked binding comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations. Adds two human postmortem APOE nuclear RNA findings and a comparison of their cell-type results and study context.
+- **Inclusion criteria:** Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and a source-checked binding comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations. Adds two human postmortem APOE nuclear RNA findings and a comparison of their cell-type results and study context. Adds the Alzheimer’s case group from Tsuang 2013 as a source-checked APOE ε4 finding.
 
 ## Scope limitations
 
 - Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.
-- The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.
+- Human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.
 - APOE nuclear RNA observations are specific to their cell types, regions and pathology measures. Protein abundance, variant risk and individual diagnosis require separate evidence.
 - The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.
 - Human and explicitly species-qualified mouse genes/proteins remain separate. Orthology permits navigation, not transfer of experimental effects or human RNA measurements. Molecular preparations/fractions remain in context rather than distinct isoform/state nodes.
@@ -76,6 +76,7 @@ Each row is one source record, not an independent experiment or cohort. Database
 | source-reactome-trem2-protein | database\_record | claim-trem2-dap12-pathway | Not recorded | permitted | not\_checked |
 | source-reactome-tyrobp-state | database\_record | claim-tyrobp-dap12-pathway | Not recorded | permitted | not\_checked |
 | source-smith-2022 | publication | claim-apoe-rna-smith-2022 | paper-smith-2022 | permitted | no\_notice\_found |
+| source-tsuang-2013 | publication | claim-ad-apoe-e4-tsuang-2013 | paper-tsuang-2013 | pending\_review | no\_notice\_found |
 | source-uniprot-abca1-live-2026-11-05 | database\_record | None | gene-abca1; protein-abca1 | permitted | not\_checked |
 | source-uniprot-apoe | database\_record | claim-apoe-encodes | protein-apoe | permitted | not\_checked |
 | source-uniprot-apoe-live-2026-11-05 | database\_record | None | gene-apoe; protein-apoe | permitted | not\_checked |
@@ -379,6 +380,81 @@ Evidence limitations:
 - Provider aggregation, not a new human genetic finding, mechanistic experiment, causal probability or treatment-benefit estimate.
 - Only the first 20 direct disease rows were retrieved, from 1797 reported for this target; underlying study evidence was not extracted.
 - Distinct databases can reuse the same studies; this summary is not independent replication of the four original variant-scoped findings.
+
+#### Pending review tasks
+
+- [ ] Inspect the original source and verify the claim, variant, endpoints, population, and recorded locator.
+- [ ] Assess study limitations, cohort overlap, independence, and comparability with other findings.
+- [ ] Check source reuse terms, attribution, and correction/retraction status.
+- [ ] Record an actual human scientific review in the source claim and evidence records; keep unresolved checks pending.
+
+### claim-ad-apoe-e4-tsuang-2013
+
+**APOE → Alzheimer's disease · associated\_with**
+
+In Tsuang and colleagues’ autopsy study, APOE ε4 carriers had higher odds of belonging to the Alzheimer’s case group (OR 9.9, 95% CI 6.4–15.3).
+
+**Summary:** The Alzheimer’s group comprised 244 people with dementia and high Alzheimer’s pathology, with no detected Lewy body changes. The adjusted carrier model used the study’s 269 autopsied controls.
+
+#### Claim context
+
+- **finding label:** ε4 · Alzheimer’s pathology
+- **organism:** Homo sapiens
+- **outcome:** Dementia with high Alzheimer’s pathology and no detected Lewy body changes
+- **study design:** Autopsy-based case–control association
+- **variant:** APOE ε4 carrier status
+
+#### Claim review record
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-28
+- **Human reviewed:** false
+- **Review rationale:** Rechecked original classification and control methods, the Alzheimer’s genotype row in Table 2 and the age-at-death- and sex-adjusted row in Table 3. PubMed and Crossref were checked for publication notices.
+
+#### Claim limitations
+
+- The estimated odds ratio is specific to this autopsy-defined case group and the selected older controls.
+- The authors lacked ancestry-informative markers. The estimates support an association in this cohort.
+
+#### Evidence: evidence-ad-apoe-e4-tsuang-2013
+
+- **Original source:** [APOE ε4 increases risk for dementia in pure synucleinopathies](https://pmc.ncbi.nlm.nih.gov/articles/PMC3580799/)
+- **Source record:** source-tsuang-2013
+- **Upstream source records:** Not recorded
+- **Evidence relation:** supports
+- **Inspected location:** Subjects and Clinical Evaluation, Subject Classification and Genotyping, Statistical Analyses, and the AD rows in Tables 2 and 3.
+
+Table 3 gives an adjusted odds ratio of 9.9 for the Alzheimer’s case group versus the autopsied controls when comparing carriers of at least one ε4 allele with people carrying none.
+
+Source-specific study context:
+
+- **analysis model:** Dominant carrier model from multinomial logistic regression, adjusted for sex and age at death
+- **carrier counts:** 153 of 244 cases and 37 of 269 controls, summed from Table 2 genotypes
+- **case count:** 244
+- **control count:** 269
+- **control selection:** Cognitively normal at entry and unimpaired at last assessment within three years of death. Autopsies found no Lewy body changes or high AD changes.
+- **organism:** Homo sapiens
+- **outcome:** Dementia with high Alzheimer’s pathology and no detected Lewy body changes
+- **pathology definition:** High Alzheimer’s changes required Braak stages IV–VI and moderate or frequent CERAD plaques. The study detected no Lewy body changes in this group.
+- **population:** US multicenter autopsy cohort, self-reported White participants
+- **reported statistics:** Adjusted OR 9.9 (95% CI 6.4–15.3), p = 1.2 × 10⁻²⁴
+- **study design:** Autopsy-based case–control association
+- **taxonomy id:** 9606
+- **variant:** APOE ε4 carrier status
+
+Evidence review record:
+
+- **Review status:** draft
+- **Reviewer:** Discovery Galaxy source check (AI)
+- **Review date:** 2026-11-28
+- **Human reviewed:** false
+- **Review rationale:** Rechecked original classification and control methods, the Alzheimer’s genotype row in Table 2 and the age-at-death- and sex-adjusted row in Table 3. PubMed and Crossref were checked for publication notices.
+
+Evidence limitations:
+
+- The estimated odds ratio is specific to this autopsy-defined case group and the selected older controls.
+- The authors lacked ancestry-informative markers. The estimates support an association in this cohort.
 
 #### Pending review tasks
 
@@ -4827,6 +4903,25 @@ Comparison review record:
 - **Retained content:** Citation facts, links, project-authored paraphrases and four rounded APOE regression results. Publisher and PMC rights statements and the Crossref Version-of-Record license were checked.
 - **Publication status:** no\_notice\_found
 - **Publication status checked:** 2026-11-27
+- **Notice URL:** Not recorded
+
+### source-tsuang-2013
+
+[APOE ε4 increases risk for dementia in pure synucleinopathies](https://pmc.ncbi.nlm.nih.gov/articles/PMC3580799/)
+
+- **Kind:** publication
+- **Identifiers:** PMID: 23407718; DOI: 10.1001/jamaneurol.2013.600; PMCID: PMC3580799
+- **Authors:** Debby Tsuang; James B Leverenz; Oscar L Lopez; Ronald L Hamilton; David A Bennett; Julie A Schneider; Aron S Buchman; Eric B Larson; Paul K Crane; Jeffrey A Kaye; Patricia Kramer; Randy Woltjer; John Q Trojanowski; Daniel Weintraub; Alice S Chen-Plotkin; David J Irwin; Jacqueline Rick; Gerard D Schellenberg; G Stennis Watson; Walter Kukull; Peter T Nelson; Gregory A Jicha; Janna H Neltner; Doug Galasko; Eliezer Masliah; Joseph F Quinn; Kathryn A Chung; Dora Yearout; Ignacio F Mata; Jia Y Wan; Karen L Edwards; Thomas J Montine; Cyrus P Zabetian
+- **Year / publication type:** 2013 / primary\_research
+- **Provider / release:** PubMed Central / PMC author manuscript
+- **Retrieved:** 2026-11-28T07:05:21.877227Z
+- **Reuse permission status:** pending\_review
+- **Reuse terms:** https://pmc.ncbi.nlm.nih.gov/about/copyright/
+- **Reuse checked:** 2026-11-28
+- **Attribution:** Tsuang and colleagues, JAMA neurology, 2013, doi:10.1001/jamaneurol.2013.600.
+- **Retained content:** Bibliographic facts, links, project-authored paraphrases and selected reported counts or estimates from the inspected text. Article text, tables, figures and participant data are excluded.
+- **Publication status:** no\_notice\_found
+- **Publication status checked:** 2026-11-28
 - **Notice URL:** Not recorded
 
 ### source-uniprot-abca1-live-2026-11-05

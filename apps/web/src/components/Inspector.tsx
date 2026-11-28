@@ -62,7 +62,7 @@ function Finding({ snapshot, claim, selected, onFollow, pinned, onPin }: { snaps
   const limitations = [...new Set([...claim.limitations, ...evidence.flatMap((item) => item.limitations)])];
   return (
     <section className="finding-content" key={claim.id} aria-label="Selected claim evidence">
-      <p className="finding-statement">{claim.statement}</p>
+      <p className="finding-statement" tabIndex={-1}>{claim.statement}</p>
       {evidence.map((item) => {
         const source = snapshot.sources.find(({ id }) => id === item.source_id);
         return source ? (
@@ -135,6 +135,7 @@ interface Props {
   showFindingFirst: boolean;
   panelRef: RefObject<HTMLElement | null>;
   onCompare?: () => void;
+  onCompareAcrossMaps?: () => void;
   onFollow: (entityId: string, claimId: string) => void;
   pinnedClaimIds: string[];
   onPin: (claimId: string) => void;
@@ -143,7 +144,7 @@ interface Props {
 }
 
 export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, visible, onShowSelected, onBack, pathwayOrigin, onBackToPathway, showFindingFirst,
-  panelRef, onCompare, onFollow, pinnedClaimIds, onPin, liveSourcesEnabled, experimentObservation }: Props) {
+  panelRef, onCompare, onCompareAcrossMaps, onFollow, pinnedClaimIds, onPin, liveSourcesEnabled, experimentObservation }: Props) {
   const claims = getEntityClaims(snapshot, selected.id);
   const active = claims.find(({ id }) => id === selectedClaimId) ?? claims[0];
   const liveIdentity = liveSourcesEnabled ? getLiveLookupIdentity(selected) : undefined;
@@ -180,7 +181,10 @@ export function Inspector({ snapshot, selected, selectedClaimId, onSelectClaim, 
         {!showFindingFirst && observation}
         <section className="findings" aria-label="Findings">
           {showFindingFirst && finding}
-          {active && onCompare && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
+          {(onCompare || onCompareAcrossMaps) && <div className="finding-comparisons">
+            {active && onCompare && <button className="secondary-button comparison-launch" onClick={onCompare}>Compare findings<Icon name="compare" size={17} /></button>}
+            {onCompareAcrossMaps && <button className="secondary-button comparison-launch" aria-haspopup="dialog" onClick={onCompareAcrossMaps}>Compare across maps<Icon name="compare" size={17} /></button>}
+          </div>}
           {claims.length > 1 && (
             <div className="claim-list" aria-label="Choose a finding">
               {claims.map((claim) => (
