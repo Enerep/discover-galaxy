@@ -1,6 +1,6 @@
 {
   "schema_version": "candidate-coverage-1",
-  "dataset_version": "alzheimers-source-checked-0.9.0",
+  "dataset_version": "alzheimers-source-checked-0.10.0",
   "prepared_at": "2026-11-05",
   "selection_method": "Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.",
   "limitations": [

@@ -123,7 +123,7 @@ test('the source-checked snapshot preserves typed pathway journeys and remains a
       assert.notEqual(claim.review.human_reviewed, true);
     }
   }
-  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 5);
   assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
 });
@@ -185,7 +185,7 @@ test('the APOE/ABCA1 checkpoint keeps mouse perturbations, original papers and h
     assert.match(String(claim.context.score_definition), /not a causal probability/);
   }
   assert.deepEqual(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').map(({ id }) => id).sort(),
-    ['claim-abca1-n1800h-risk', 'claim-apoe-e2-risk', 'claim-apoe-e4-risk', 'claim-trem2-r47h-risk']);
+    ['claim-abca1-n1800h-risk', 'claim-ad-apoe-e4-tsuang-2013', 'claim-apoe-e2-risk', 'claim-apoe-e4-risk', 'claim-trem2-r47h-risk']);
   assert.equal(data.hypotheses.length, 0);
   assert.equal(validateDataset(data, { release: true }).valid, false);
 });
@@ -212,8 +212,8 @@ test('reference-derived coverage keeps gene-set membership separate from protein
     assert.equal(membership.review.status, 'draft');
     assert.equal(membership.review.human_reviewed, false);
   }
-  assert.equal(snapshot.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
-  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 12);
+  assert.equal(snapshot.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 5);
+  assert.equal(snapshot.entities.filter(({ type }) => type === 'paper').length, 13);
 });
 
 test('scavenger evidence connects typed genes and proteins to APOE without promoting RNA results into AD-risk claims', async () => {
@@ -234,7 +234,7 @@ test('scavenger evidence connects typed genes and proteins to APOE without promo
     assert.equal(annotation.context.inferred_from, 'Mus musculus reaction');
     assert.ok(annotation.limitations.some((text) => text.includes('not direct experimental evidence in human brain')));
   }
-  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 5);
   assert.equal(data.hypotheses.length, 0);
 });
 
@@ -303,7 +303,7 @@ test('binding assays keep protein endpoints, one paper identity and replicate un
   assert.equal(source.publication_status.status, 'not_checked');
   assert.equal(source.reuse.permission_status, 'pending_review');
   assert.deepEqual(getEntityClaims(data, 'paper-atagi-2015').map(({ id }) => id), ids);
-  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 5);
 });
 
 test('two publication records with one study identifier cannot appear as independent sources', () => {
@@ -349,7 +349,7 @@ test('the second binding publication preserves plasma preparation, technical wel
   }
   const variant = evidence.find(({ claim_id }) => claim_id === 'claim-bailey-trem2-r47h-apoe-binding')!;
   assert.equal(variant.study_context.experiments_reported, 2);
-  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 4);
+  assert.equal(data.claims.filter(({ predicate, context }) => predicate === 'associated_with' && typeof context.variant === 'string').length, 5);
   assert.ok(data.conflicts.every(({ review }) => review.status === 'draft' && review.human_reviewed === false));
   assert.equal(data.hypotheses.length, 0);
 });

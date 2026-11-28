@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { DISEASE_COLLECTIONS } from '../../../../data/collections.ts';
+import { APOE_MAP_COMPARISON } from '../../../../data/map-comparisons.ts';
 import { loadDataset } from './dataset.ts';
+import { buildMapComparison, buildMapComparisonBrief, formatOddsRatio } from './map-comparison.ts';
 import { buildComparisonBrief, buildEvidenceComparison, buildFindingBrief, findComparisonPartner, getStudyContextNotes } from './compare-evidence.ts';
 import { findingLabel } from './source-format.ts';
 import type { Snapshot } from './types.ts';
@@ -10,6 +12,44 @@ import type { Snapshot } from './types.ts';
 const snapshot = loadDataset(JSON.parse(await readFile(new URL('../../../../data/alzheimers/dataset.json', import.meta.url), 'utf8')));
 const FIRST = 'claim-apoe-e4-risk';
 const SECOND = 'claim-apoe-e2-risk';
+
+test('the APOE map comparison uses the two adjusted rows from one autopsy study', () => {
+  const comparison = buildMapComparison({ alzheimers: snapshot, 'lewy-bodies': loadDataset(DISEASE_COLLECTIONS['lewy-bodies'].data) });
+  assert.deepEqual(comparison.cohorts.map(({ tableLabel, count, carriers, estimate, lower, upper }) => ({ tableLabel, count, carriers, estimate, lower, upper })), [
+    { tableLabel: 'AD', count: 244, carriers: 153, estimate: 9.9, lower: 6.4, upper: 15.3 },
+    { tableLabel: 'pDLB', count: 91, carriers: 47, estimate: 6.1, lower: 3.5, upper: 10.5 },
+  ]);
+  assert.equal(comparison.controls.count, 269);
+  assert.equal(comparison.controls.carriers, 37);
+  assert.match(comparison.model, /sex and age at death/);
+  for (const cohort of comparison.cohorts) {
+    const { reported_statistics, carrier_counts } = cohort.evidence.study_context;
+    const interval = formatOddsRatio(cohort).replace('(', '(95% CI ');
+    assert.ok(String(reported_statistics).includes(interval));
+    assert.ok(String(carrier_counts).includes(`${cohort.carriers} of ${cohort.count} cases and ${comparison.controls.carriers} of ${comparison.controls.count} controls`));
+  }
+  const brief = buildMapComparisonBrief(comparison);
+  for (const expected of ['9.9 (6.4–15.3)', '6.1 (3.5–10.5)', '269 shared autopsied controls', 'PMC3580799',
+    'alzheimers-source-checked-0.10.0', 'lewy-bodies-source-checked-0.1.0', 'human reviewed: false']) {
+    assert.ok(brief.includes(expected), expected);
+  }
+});
+
+test('the map comparison rejects a mismatched diagnosis, study, control group or invalid interval', () => {
+  const snapshots = { alzheimers: snapshot, 'lewy-bodies': loadDataset(DISEASE_COLLECTIONS['lewy-bodies'].data) };
+  const wrongDiagnosis = structuredClone(APOE_MAP_COMPARISON);
+  wrongDiagnosis.groups[0].diseaseId = 'disease-dlb';
+  assert.throws(() => buildMapComparison(snapshots, wrongDiagnosis), /unexpected endpoints/);
+  const wrongStudy = structuredClone(APOE_MAP_COMPARISON);
+  wrongStudy.groups[1].claimId = 'claim-dlb-apoe-e4-low-pathology-kaivola-2022';
+  assert.throws(() => buildMapComparison(snapshots, wrongStudy), /original study record/);
+  const wrongControl = structuredClone(snapshots);
+  wrongControl['lewy-bodies'].evidence.find(({ claim_id }) => claim_id === APOE_MAP_COMPARISON.groups[1].claimId)!.study_context.control_count = 268;
+  assert.throws(() => buildMapComparison(wrongControl), /control counts differ/);
+  const badInterval = structuredClone(APOE_MAP_COMPARISON);
+  badInterval.groups[0].lower = 10;
+  assert.throws(() => buildMapComparison(snapshots, badInterval), /invalid odds ratio or interval/);
+});
 
 test('DLB APOE comparison retains the two low-pathology definitions, control counts and correction', () => {
   const dlb = loadDataset(DISEASE_COLLECTIONS['lewy-bodies'].data);

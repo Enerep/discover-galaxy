@@ -228,7 +228,7 @@ test('the analysis reference has pinned provenance and keeps original descriptiv
   assert.equal(reference.upstream_release, null);
   assert.equal(reference.source.license, 'CC0-1.0');
   assert.ok(reference.pathways.some(({ genes }) => genes.includes('CSF2 gene')));
-  assert.equal(snapshot.entities.length, 47);
+  assert.equal(snapshot.entities.length, 48);
   assert.throws(() => validatePathwayReference({ ...reference, source: { ...reference.source, sha256: 'unverified' } }));
   assert.throws(() => validatePathwayReference({ ...reference, pathways: [reference.pathways[0], reference.pathways[0]] }));
 });

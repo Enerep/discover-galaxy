@@ -1,14 +1,14 @@
 {
   "schema_version": "0.2.0",
-  "dataset_version": "alzheimers-source-checked-0.9.0",
-  "created_at": "2026-11-27",
+  "dataset_version": "alzheimers-source-checked-0.10.0",
+  "created_at": "2026-11-28",
   "release_status": "development",
   "scope": {
     "disease": "Alzheimer's disease",
-    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and a source-checked binding comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations. Adds two human postmortem APOE nuclear RNA findings and a comparison of their cell-type results and study context.",
+    "inclusion_criteria": "Selected Alzheimer's association studies, human gene–protein identities, curated cholesterol-regulation and DAP12 records, binding assays from three publications, and a source-checked binding comparison. Adds MARCO and SCARA5 from a validated public AD pathway result, APOB ligand context, curated scavenger-receptor participation and two assay-scoped modified-apoB findings from Cheng 2021. Adds source-checked mouse Abca1/Apoe orthology and genotype-scoped ApoE readouts from Wahrle2004 and Hirsch-Reinshagen2005, plus separately labeled human Open Targets aggregate associations. Adds two human postmortem APOE nuclear RNA findings and a comparison of their cell-type results and study context. Adds the Alzheimer’s case group from Tsuang 2013 as a source-checked APOE ε4 finding.",
     "limitations": [
       "Source-checked draft: inspected locations include study abstracts/metadata, original figure captions, selected search-indexed methods/results passages, and specific database annotations; this is not a comprehensive literature or full-paper review.",
-      "The four human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
+      "Human genetic association findings retain their original variant and population scopes. Database pathways do not establish AD causality, individual risk or treatment benefit.",
       "APOE nuclear RNA observations are specific to their cell types, regions and pathology measures. Protein abundance, variant risk and individual diagnosis require separate evidence.",
       "The APOE–TREM2 binding findings concern in vitro protein constructs. They are not human clinical observations or evidence of signaling, disease causation or treatment benefit.",
       "Human and explicitly species-qualified mouse genes/proteins remain separate. Orthology permits navigation, not transfer of experimental effects or human RNA measurements. Molecular preparations/fractions remain in context rather than distinct isoform/state nodes.",
@@ -1147,6 +1147,21 @@
       "provenance_source_ids": [
         "source-smith-2022"
       ]
+    },
+    {
+      "id": "paper-tsuang-2013",
+      "type": "paper",
+      "label": "Tsuang et al. · 2013",
+      "aliases": [
+        "APOE ε4 increases risk for dementia in pure synucleinopathies",
+        "23407718"
+      ],
+      "external_ids": [],
+      "description_claim_ids": [],
+      "provenance_source_ids": [
+        "source-tsuang-2013"
+      ],
+      "source_id": "source-tsuang-2013"
     }
   ],
   "claims": [
@@ -2787,6 +2802,35 @@
         "date": "2026-11-27",
         "human_reviewed": false,
         "rationale": "The publisher and PMC full text, cohort methods, primary APOE results and four exact supplementary rows were checked. The study appeared online in 2021 and in the 2022 issue. The notice check was limited to the publisher, PubMed metadata and Crossref update relations."
+      }
+    },
+    {
+      "id": "claim-ad-apoe-e4-tsuang-2013",
+      "subject_id": "gene-apoe",
+      "object_id": "disease-alzheimers",
+      "predicate": "associated_with",
+      "statement": "In Tsuang and colleagues’ autopsy study, APOE ε4 carriers had higher odds of belonging to the Alzheimer’s case group (OR 9.9, 95% CI 6.4–15.3).",
+      "context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Autopsy-based case–control association",
+        "outcome": "Dementia with high Alzheimer’s pathology and no detected Lewy body changes",
+        "finding_label": "ε4 · Alzheimer’s pathology"
+      },
+      "evidence_ids": [
+        "evidence-ad-apoe-e4-tsuang-2013"
+      ],
+      "summary": "The Alzheimer’s group comprised 244 people with dementia and high Alzheimer’s pathology, with no detected Lewy body changes. The adjusted carrier model used the study’s 269 autopsied controls.",
+      "limitations": [
+        "The estimated odds ratio is specific to this autopsy-defined case group and the selected older controls.",
+        "The authors lacked ancestry-informative markers. The estimates support an association in this cohort."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-28",
+        "human_reviewed": false,
+        "rationale": "Rechecked original classification and control methods, the Alzheimer’s genotype row in Table 2 and the age-at-death- and sex-adjusted row in Table 3. PubMed and Crossref were checked for publication notices."
       }
     }
   ],
@@ -4499,6 +4543,41 @@
         "date": "2026-11-27",
         "human_reviewed": false,
         "rationale": "The publisher and PMC full text, cohort methods, primary APOE results and four exact supplementary rows were checked. The study appeared online in 2021 and in the 2022 issue. The notice check was limited to the publisher, PubMed metadata and Crossref update relations."
+      }
+    },
+    {
+      "id": "evidence-ad-apoe-e4-tsuang-2013",
+      "claim_id": "claim-ad-apoe-e4-tsuang-2013",
+      "source_id": "source-tsuang-2013",
+      "upstream_source_ids": [],
+      "relation": "supports",
+      "finding": "Table 3 gives an adjusted odds ratio of 9.9 for the Alzheimer’s case group versus the autopsied controls when comparing carriers of at least one ε4 allele with people carrying none.",
+      "locator": "Subjects and Clinical Evaluation, Subject Classification and Genotyping, Statistical Analyses, and the AD rows in Tables 2 and 3.",
+      "study_context": {
+        "organism": "Homo sapiens",
+        "variant": "APOE ε4 carrier status",
+        "study_design": "Autopsy-based case–control association",
+        "outcome": "Dementia with high Alzheimer’s pathology and no detected Lewy body changes",
+        "taxonomy_id": 9606,
+        "case_count": 244,
+        "control_count": 269,
+        "population": "US multicenter autopsy cohort, self-reported White participants",
+        "pathology_definition": "High Alzheimer’s changes required Braak stages IV–VI and moderate or frequent CERAD plaques. The study detected no Lewy body changes in this group.",
+        "control_selection": "Cognitively normal at entry and unimpaired at last assessment within three years of death. Autopsies found no Lewy body changes or high AD changes.",
+        "analysis_model": "Dominant carrier model from multinomial logistic regression, adjusted for sex and age at death",
+        "carrier_counts": "153 of 244 cases and 37 of 269 controls, summed from Table 2 genotypes",
+        "reported_statistics": "Adjusted OR 9.9 (95% CI 6.4–15.3), p = 1.2 × 10⁻²⁴"
+      },
+      "limitations": [
+        "The estimated odds ratio is specific to this autopsy-defined case group and the selected older controls.",
+        "The authors lacked ancestry-informative markers. The estimates support an association in this cohort."
+      ],
+      "review": {
+        "status": "draft",
+        "reviewer": "Discovery Galaxy source check (AI)",
+        "date": "2026-11-28",
+        "human_reviewed": false,
+        "rationale": "Rechecked original classification and control methods, the Alzheimer’s genotype row in Table 2 and the age-at-death- and sex-adjusted row in Table 3. PubMed and Crossref were checked for publication notices."
       }
     }
   ],
@@ -6250,6 +6329,78 @@
       "publication_status": {
         "status": "no_notice_found",
         "checked_at": "2026-11-27",
+        "notice_url": null
+      }
+    },
+    {
+      "id": "source-tsuang-2013",
+      "kind": "publication",
+      "title": "APOE ε4 increases risk for dementia in pure synucleinopathies",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3580799/",
+      "identifiers": [
+        {
+          "namespace": "PMID",
+          "value": "23407718"
+        },
+        {
+          "namespace": "DOI",
+          "value": "10.1001/jamaneurol.2013.600"
+        },
+        {
+          "namespace": "PMCID",
+          "value": "PMC3580799"
+        }
+      ],
+      "publication_type": "primary_research",
+      "authors": [
+        "Debby Tsuang",
+        "James B Leverenz",
+        "Oscar L Lopez",
+        "Ronald L Hamilton",
+        "David A Bennett",
+        "Julie A Schneider",
+        "Aron S Buchman",
+        "Eric B Larson",
+        "Paul K Crane",
+        "Jeffrey A Kaye",
+        "Patricia Kramer",
+        "Randy Woltjer",
+        "John Q Trojanowski",
+        "Daniel Weintraub",
+        "Alice S Chen-Plotkin",
+        "David J Irwin",
+        "Jacqueline Rick",
+        "Gerard D Schellenberg",
+        "G Stennis Watson",
+        "Walter Kukull",
+        "Peter T Nelson",
+        "Gregory A Jicha",
+        "Janna H Neltner",
+        "Doug Galasko",
+        "Eliezer Masliah",
+        "Joseph F Quinn",
+        "Kathryn A Chung",
+        "Dora Yearout",
+        "Ignacio F Mata",
+        "Jia Y Wan",
+        "Karen L Edwards",
+        "Thomas J Montine",
+        "Cyrus P Zabetian"
+      ],
+      "year": 2013,
+      "provider": "PubMed Central",
+      "release": "PMC author manuscript",
+      "retrieved_at": "2026-11-28T07:05:21.877227Z",
+      "reuse": {
+        "terms_url": "https://pmc.ncbi.nlm.nih.gov/about/copyright/",
+        "attribution": "Tsuang and colleagues, JAMA neurology, 2013, doi:10.1001/jamaneurol.2013.600.",
+        "retained_content": "Bibliographic facts, links, project-authored paraphrases and selected reported counts or estimates from the inspected text. Article text, tables, figures and participant data are excluded.",
+        "date_checked": "2026-11-28",
+        "permission_status": "pending_review"
+      },
+      "publication_status": {
+        "status": "no_notice_found",
+        "checked_at": "2026-11-28",
         "notice_url": null
       }
     }

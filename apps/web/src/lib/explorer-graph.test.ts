@@ -16,7 +16,7 @@ test('focus exposes exactly one biological neighbourhood and keeps source findin
   assert.equal(graph.claims.length, 3);
   assert.equal(graph.citationLinks.length, 0);
   assert.equal(graph.canExpand, true);
-  assert.equal(getEntityClaims(snapshot, 'gene-apoe').length, 7);
+  assert.equal(getEntityClaims(snapshot, 'gene-apoe').length, 8);
   assert.equal(JSON.stringify(snapshot), before);
 });
 

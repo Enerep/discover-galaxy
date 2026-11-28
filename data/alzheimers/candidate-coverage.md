@@ -3,7 +3,7 @@
 Generated from candidate-coverage.json and the current snapshot. Edit the JSON, then regenerate. This is a reading plan: candidates are unreviewed, outside the graph, and do not establish support for any existing or proposed claim.
 
 - **Prepared:** 2026-11-05
-- **Baseline snapshot:** alzheimers-source-checked-0.9.0
+- **Baseline snapshot:** alzheimers-source-checked-0.10.0
 - **Staged sources:** 5 (5 publications, 0 pathway records)
 - **Selection:** Targeted, AI-assisted web lookup of original publications around APOE, ABCA1, and TREM2. The two earlier Reactome candidates were checked separately for snapshot 0.2.0. This is a selective reading list, not a systematic search or an OpenAlex API import.
 
@@ -27,6 +27,7 @@ The [starter review packet](review-packet.md) contains the complete findings and
 | claim-abca1-encodes | [source-reactome-abca1-protein](https://reactome.org/content/detail/R-HSA-194209) | draft | draft | No |
 | claim-abca1-n1800h-risk | [26079414](https://pubmed.ncbi.nlm.nih.gov/26079414/) | draft | draft | No |
 | claim-abca1-opentargets-association | [source-opentargets-abca1-direct-association](https://platform.opentargets.org/target/ENSG00000165029/associations) | draft | draft | No |
+| claim-ad-apoe-e4-tsuang-2013 | [23407718](https://pmc.ncbi.nlm.nih.gov/articles/PMC3580799/) | draft | draft | No |
 | claim-apob-encodes | [source-hgnc-scavenger-identities](https://raw.githubusercontent.com/MargoSolo/gene-tidy/37b375b4e4f70445cbb9e40b273a510467b798ae/src/gene_tidy/data/hgnc_complete_set.tsv.gz) | draft | draft | No |
 | claim-apob-scavenger-pathway | [source-reactome-apob-scavenger](https://reactome.org/content/detail/R-HSA-2512789) | draft | draft | No |
 | claim-apoe-cholesterol-pathway | [source-reactome-apoe-expression](https://reactome.org/content/detail/R-HSA-9031512) | draft | draft | No |

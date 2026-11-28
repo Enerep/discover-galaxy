@@ -1,8 +1,12 @@
 # Alzheimer's source-checked snapshot
 
-`dataset.json` is **alzheimers-source-checked-0.9.0** with 47 entities, 51 claims, 51 evidence records, 51 sources and two draft study-context comparisons. It contains one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and twelve paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
+`dataset.json` is **alzheimers-source-checked-0.10.0** with 48 entities, 52 claims, 52 evidence records, 52 sources and two draft study-context comparisons. It contains one disease, fourteen human and two mouse genes, fourteen human and one mouse protein, three pathways, and thirteen paper projections. Every claim/evidence record remains **draft**; the interface calls this **Source-checked draft**. Independent scientific review is deferred to a future milestone and does not block the development explorer.
 
 The [change log](CHANGELOG.md) records all additions, source locations, observed entry versions, terms checks and access limits. The snapshot combines canonical gene/product mappings, attributed Reactome annotations and five assay-scoped APOE–TREM2 binding findings. The four original association studies below retain their variant/population scopes. The separate scientific-release gate still rejects draft records.
+
+## Autopsy-based APOE ε4 association in 0.10.0
+
+The new finding records the Alzheimer’s case group from Tsuang et al. (2013). Its original publication identity matches the finding already in the DLB map. The cross-map comparison aligns both adjusted estimates against the study’s 269 shared controls and retains the two case definitions. [Source check](../../docs/apoe-map-comparison.md)
 
 ## Human APOE RNA in 0.9.0
 

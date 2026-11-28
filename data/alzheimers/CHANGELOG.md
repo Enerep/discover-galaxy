@@ -1,5 +1,9 @@
 # Dataset changes
 
+## alzheimers-source-checked-0.10.0 — 2026-11-28
+
+Added Tsuang 2013’s autopsy-defined Alzheimer’s group as a human APOE ε4 finding, with its paper, evidence record and source. The Alzheimer’s map now has 48 entities, 52 claims and 52 evidence records. The accompanying map comparison pairs the new finding with the existing low-pathology DLB result. Each estimate uses the same 269 autopsied controls. [Original estimates and source record](../../docs/apoe-map-comparison.md)
+
 ## alzheimers-source-checked-0.9.0 — 2026-11-27
 
 Two original human studies add **two APOE RNA findings, two paper nodes and one study comparison**. The snapshot contains 47 entities, 51 claims, 51 evidence records, 51 sources and two study comparisons. Both new claims connect the human APOE gene to the existing Alzheimer’s disease record and use `context.association_scope: rna_expression`. This scope describes measured nuclear RNA in a pathology comparison. All new review records are source-checked drafts.
