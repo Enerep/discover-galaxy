@@ -10,6 +10,8 @@ The primary research task is now **upload processed results → inspect pathway 
 
 The evidence-reading flow remains **search → select an entity → read a finding → open the original study**. Preserve that route when connecting experimental results to the explorer.
 
+Show **Compare across maps** on the human APOE inspector in either map. Put the shared paper and controls before the two adjusted estimates, and keep their exact numbers readable alongside the plot. **View finding** opens the original result in its map and focuses the finding. Keep cohort criteria beside the navigation and methods in a disclosure.
+
 Offer **Try example** beside the CSV template on an empty analysis workspace. Open useful results directly with synthetic data; keep that provenance visible after changing cutoffs, editing the comparison or following a gene into Explore. Do not replace a pending upload or applied analysis with the example. **Remove results** restores the entry point. Example measurements and questions never become curated findings.
 
 Group optional tissue/cell model, treatment/condition and explicit study design under **Experiment context (optional)**. Keep these fields out of the primary upload/cutoff row, use native labeled controls and wrap long context in questions. Apply edits with the same form action; pending text must not change questions or explorer observations until a successful apply. Expose the applied values under Methods and in the gene's RNA observation, including explicit unknowns. A new file or removal clears input context. Do not infer a model, classify a design from text, change reference membership or turn a user label into a source assertion.

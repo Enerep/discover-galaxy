@@ -2395,11 +2395,122 @@ def assert_disease_collections(browser, base_url: str) -> None:
         nav.get_by_role('button', name='Analyze results', exact=True).click()
         expect(analysis.locator('.experiment-results-heading')).to_have_text(results)
         expect(evidence.locator('[data-source-id="source-mathys-2019"]')).to_be_visible()
-        expect(evidence.locator('[data-source-id="source-tsuang-2013"]')).to_have_count(0)
+        tsuang = evidence.locator('[data-source-id="source-tsuang-2013"]')
+        expect(tsuang).to_be_visible()
+        expect(tsuang.locator('[data-claim-id="claim-ad-apoe-e4-tsuang-2013"]')).to_have_count(1)
+        expect(tsuang.locator('[data-claim-id="claim-dlb-apoe-e4-low-pathology-tsuang-2013"]')).to_have_count(0)
         assert not errors, errors
     finally:
         context.close()
     print('PASS: disease maps, cited APOE comparison, independent briefs and applied pathway evidence across a map change.')
+
+
+def assert_map_comparison(browser, base_url: str, screenshots: Path) -> None:
+    original = 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3580799/'
+    maps = {
+        'alzheimers': ('Alzheimer’s disease', 'claim-ad-apoe-e4-tsuang-2013', '9.9', '6.4–15.3'),
+        'lewy-bodies': ('Dementia with Lewy bodies', 'claim-dlb-apoe-e4-low-pathology-tsuang-2013', '6.1', '3.5–10.5'),
+    }
+    for label, width, fallback, start in [('desktop', 1440, False, 'alzheimers'), ('mobile', 320, False, 'lewy-bodies'),
+                                           ('fallback', 360, True, 'alzheimers')]:
+        mobile = width < 960
+        context = browser.new_context(viewport={'width': width, 'height': 900}, is_mobile=mobile, has_touch=mobile,
+                                      color_scheme='dark' if mobile else 'light', reduced_motion='reduce')
+        try:
+            if fallback:
+                context.add_init_script("""const getContext = HTMLCanvasElement.prototype.getContext;
+                    HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+                      return type.startsWith('webgl') ? null : getContext.call(this, type, ...args);
+                    };""")
+            page = context.new_page()
+            errors, requests = [], []
+            page.on('pageerror', lambda error: errors.append(str(error)))
+            page.on('request', lambda request: requests.append((request.method, request.url, request.post_data)))
+            page.goto(f'{base_url}#entity=gene-apoe&claim=claim-apoe-e2-risk', wait_until='networkidle')
+            expect(page.locator('.fallback-notice' if fallback else 'canvas')).to_be_visible(timeout=10000)
+            picker = page.get_by_role('combobox', name='Disease map', exact=True)
+            inspector = page.get_by_role('complementary', name='Entity and evidence inspector', exact=True)
+            launcher = inspector.get_by_role('button', name='Compare across maps', exact=True)
+            dialog = page.get_by_role('dialog', name='APOE ε4 across maps', exact=True)
+            statement = inspector.locator('.finding-statement')
+            if start == 'lewy-bodies':
+                picker.select_option(start)
+                expect(launcher).to_have_count(0)
+                search = page.get_by_role('combobox', name='Search entities', exact=True)
+                search.fill('gene-apoe')
+                search.press('Enter')
+                page.get_by_role('button', name='List view', exact=True).tap()
+                expect(inspector.get_by_role('heading', name='APOE', exact=True)).to_be_visible()
+                assert parse_qs(urlsplit(page.url).fragment)['entity'] == ['disease-dlb']
+            initial_statement = statement.inner_text()
+            expect(inspector.get_by_role('button', name='Compare findings', exact=True)).to_be_visible()
+            assert_touch_target(launcher)
+            launcher.tap() if mobile else launcher.press('Enter')
+            expect(dialog.get_by_role('button', name='Close map comparison', exact=True)).to_be_focused()
+            expect(dialog.get_by_role('link', name='Tsuang et al. · 2013', exact=True)).to_have_attribute('href', original)
+            expect(dialog.get_by_text('269 autopsied controls', exact=True)).to_be_visible()
+            expect(dialog.get_by_text('Source-checked draft', exact=True)).to_be_visible()
+            plot = dialog.get_by_role('figure')
+            expect(plot).to_contain_text('DLB with low or absent Alzheimer’s changes')
+            expect(plot).to_contain_text('9.9 (6.4–15.3)')
+            expect(plot).to_contain_text('6.1 (3.5–10.5)')
+            assert_text_contrast(plot.get_by_text('6.1 (3.5–10.5)', exact=True))
+            expect(dialog.get_by_role('region', name='Alzheimer’s disease', exact=True)).to_contain_text('244 cases · 153 ε4 carriers')
+            expect(dialog.get_by_role('region', name='Dementia with Lewy bodies', exact=True)).to_contain_text('91 cases · 47 ε4 carriers')
+            assert dialog.evaluate('element => element.scrollWidth <= element.clientWidth')
+            if not fallback:
+                page.screenshot(path=str(screenshots / f'apoe-across-maps-{label}.png'))
+            context_summary = dialog.get_by_text('Study context and limits', exact=True)
+            context_summary.press('Enter')
+            expect(dialog.get_by_text('adjusted for sex and age at death', exact=False)).to_be_visible()
+            expect(dialog.get_by_text('self-reported White participants', exact=False)).to_be_visible()
+            context_summary.press('Enter')
+            if not fallback:
+                download_link = dialog.get_by_role('link', name='Download comparison', exact=True)
+                assert_touch_target(download_link)
+                with page.expect_download() as pending:
+                    download_link.tap() if mobile else download_link.press('Enter')
+                download = pending.value
+                assert download.suggested_filename == 'apoe-e4-tsuang-2013-0.1.0.md'
+                content = Path(download.path()).read_text()
+                for text in (original, '269 shared autopsied controls', '9.9 (6.4–15.3)', '6.1 (3.5–10.5)',
+                             DATASET_VERSION, 'lewy-bodies-source-checked-0.1.0', 'Source-checked draft'):
+                    assert text in content
+            page.keyboard.press('Escape')
+            expect(dialog).not_to_be_visible()
+            expect(launcher).to_be_focused()
+            expected_view = 'List view' if mobile or fallback else 'Graph view'
+            for map_id in [key for key in maps if key != start] + [start]:
+                disease, claim, estimate, interval = maps[map_id]
+                launcher.tap() if mobile else launcher.press('Enter')
+                action = dialog.get_by_role('button', name=f'View {disease} finding', exact=True)
+                assert_touch_target(action)
+                action.tap() if mobile else action.press('Enter')
+                expect(dialog).not_to_be_visible()
+                expect(picker).to_have_value(map_id)
+                expect(page.get_by_role('button', name=expected_view, exact=True)).to_have_attribute('aria-pressed', 'true')
+                expect(inspector.get_by_role('heading', name='APOE', exact=True)).to_be_visible()
+                expect(statement).to_be_focused()
+                expect(statement).to_be_in_viewport()
+                expect(statement).to_contain_text(f'OR {estimate}, 95% CI {interval}')
+                expect(inspector.locator('.source-link')).to_have_attribute('href', original)
+                expect(inspector.locator('.source-link')).to_be_in_viewport()
+                assert parse_qs(urlsplit(page.url).fragment)['claim'] == [claim]
+            page.reload(wait_until='networkidle')
+            expect(picker).to_have_value(start)
+            expect(statement).to_contain_text(f'OR {maps[start][2]}')
+            page.go_back()
+            page.go_back()
+            expect(picker).to_have_value(start)
+            expect(statement).to_have_text(initial_statement)
+            expect(launcher).to_be_visible()
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+            assert all(method == 'GET' and urlsplit(url).netloc == urlsplit(base_url).netloc and body is None
+                       for method, url, body in requests), requests
+            assert not errors, errors
+        finally:
+            context.close()
+    print('PASS: same-study APOE comparison from both maps, source and counts, cited downloads, exact finding focus, browser Back, and local-only requests on desktop, mobile and WebGL fallback.')
 
 
 def pick_focused_disease(page: Page) -> None:
@@ -2622,7 +2733,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         expect(search).to_have_attribute("aria-expanded", "false")
         expect(page.locator(".result-status")).to_have_text(f"{ENTITY_COUNT} entities · {PAPER_COUNT} papers")
         search.fill("APOE")
-        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(13)
+        expect(page.get_by_role("listbox").get_by_role("option")).to_have_count(14)
         search.press("ArrowDown")
         expect(page.get_by_role("listbox").get_by_role("option", selected=True)).to_contain_text("Corder et al. · 1993")
         search.press("Enter")
@@ -2814,6 +2925,7 @@ def run(base_url: str, executable: str, screenshots: Path, public_ad_table: Path
         assert_pathway_evidence(browser, base_url, screenshots)
         assert_pathway_navigation(browser, base_url, screenshots)
         assert_disease_collections(browser, base_url)
+        assert_map_comparison(browser, base_url, screenshots)
         assert_scavenger_evidence(browser, base_url, screenshots)
         assert_annotation_expansion(browser, base_url, screenshots)
         if public_ad_table is not None:

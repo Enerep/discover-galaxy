@@ -201,11 +201,19 @@ This comparison deepens the existing Alzheimer's branch. The [source record](dat
 - [x] Open the selected paper finding in Explore and return to the same pathway, disclosure and focused control.
 - [x] Provide a direct return to the selected pathway row on narrow screens.
 
+### Compare APOE ε4 across disease maps
+
+- [x] Check the original case definitions, adjusted estimates and shared controls in Tsuang et al. (2013).
+- [x] Add the Alzheimer’s case finding and open the same comparison from human APOE in either map.
+- [x] Link each group to its exact finding and include both dataset versions and original citations in the download.
+
+[APOE source check](docs/apoe-map-comparison.md)
+
 ## M2 — Deliver the curated Alzheimer's explorer
 
-Future content work can continue from the 49-claim/49-evidence source packet and five staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. See [future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence).
+Future content work can continue from the 52-claim source packet and five staged publications. Keep metadata candidates separate from experimental evidence and distinguish independent studies from follow-ups or reused cohorts. [Future AD content work](docs/checkpoints.md#future-content-work-deepen-the-alzheimers-evidence)
 
-- [x] Reach **20–50 source-checked draft entities**, including paper nodes: 45 total, with scope and original references retained.
+- [x] Reach **20–50 source-checked draft entities**, including paper nodes. The Alzheimer’s map has 48 entities with scope and original references retained.
 - [x] Represent three human Reactome pathways and fifteen distinct proteins (fourteen human and one mouse), retaining source-linked participation and state context where applicable; variant nodes remain deferred.
 - [x] Record access dates, observed entry versions where obtained, attribution, source context and actual check status. Exact Reactome release provenance remains unresolved.
 - [x] Expose all current entity types in one filter, with active state visible.

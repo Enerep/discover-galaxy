@@ -8,6 +8,7 @@ import { ShareDialog } from './components/ShareDialog.tsx';
 import { ThemeControl } from './components/ThemeControl.tsx';
 import { WorkspaceHelp } from './components/WorkspaceHelp.tsx';
 import { EvidenceComparison } from './components/EvidenceComparison.tsx';
+import { MapComparisonDialog } from './components/MapComparisonDialog.tsx';
 import { ResearchBrief } from './components/ResearchBrief.tsx';
 import { EntityShapeMark, Icon, TYPE_LABELS } from './components/ui.tsx';
 import { getEntityClaims, loadDataset, searchEntities } from './lib/dataset.ts';
@@ -22,6 +23,8 @@ import { useResearchBrief } from './lib/useResearchBrief.ts';
 import { BRIEF_STORAGE_KEY } from './lib/research-brief.ts';
 import type { ExperimentAnalysis } from './lib/experiment-analysis.ts';
 import type { PathwayOrigin } from './components/ExperimentWorkspace.tsx';
+import { buildMapComparison } from './lib/map-comparison.ts';
+import type { MapComparison, MapComparisonCohort } from './lib/map-comparison.ts';
 
 const Galaxy = lazy(() => import('./components/Galaxy.tsx'));
 const ExperimentWorkspace = lazy(() => import('./components/ExperimentWorkspace.tsx'));
@@ -41,8 +44,10 @@ class SceneBoundary extends Component<{ children: ReactNode; onFail: () => void 
 
 export default function App() {
   let snapshots: Record<CollectionId, Snapshot>;
+  let mapComparison: MapComparison;
   try {
     snapshots = Object.fromEntries(COLLECTION_IDS.map((id) => [id, loadDataset(DISEASE_COLLECTIONS[id].data)])) as typeof snapshots;
+    mapComparison = buildMapComparison(snapshots);
   }
   catch (error) {
     return (
@@ -53,7 +58,7 @@ export default function App() {
       </main>
     );
   }
-  return <Explorer snapshots={snapshots} />;
+  return <Explorer snapshots={snapshots} mapComparison={mapComparison} />;
 }
 
 function defaultView(collectionId: CollectionId, view: ExplorerShareState['view'] = 'graph'): ExplorerShareState {
@@ -66,7 +71,7 @@ function readLocation(snapshots: Record<CollectionId, Snapshot>) {
   return { id, state: parseShareState(url, snapshots[id], id) ?? defaultView(id) };
 }
 
-function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) {
+function Explorer({ snapshots, mapComparison }: { snapshots: Record<CollectionId, Snapshot>; mapComparison: MapComparison }) {
   const [{ id: initialCollection, state: initialState }] = useState(() => readLocation(snapshots));
   const [collectionId, setCollectionId] = useState(initialCollection);
   const snapshot = snapshots[collectionId];
@@ -83,6 +88,7 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
   const [webglFailed, setWebglFailed] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [comparisonIds, setComparisonIds] = useState<[string, string] | null>(null);
+  const [mapComparisonOpen, setMapComparisonOpen] = useState(false);
   const [briefOpen, setBriefOpen] = useState(false);
   const [workspace, setWorkspace] = useState<'explore' | 'analysis'>('explore');
   const [analysisVisited, setAnalysisVisited] = useState(false);
@@ -204,28 +210,48 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
     window.location.hash = new URL(url).hash;
   }
 
+  const enterView = useCallback((id: CollectionId, next: ExplorerShareState) => {
+    setCollectionId(id);
+    setWorkspace('explore');
+    setShareOpen(false);
+    setComparisonIds(null);
+    setMapComparisonOpen(false);
+    setBriefOpen(false);
+    if (aboutRef.current?.open) aboutRef.current.close();
+    setGraphMode('focus');
+    setExpanded(false);
+    setTrail([]);
+    setQuery(next.query);
+    setFilter(next.filter);
+    setSelectedId(next.entityId);
+    setSelectedClaimId(next.claimId);
+    setView(webglFailed ? 'list' : next.view);
+  }, [webglFailed]);
+
+  function viewMapFinding(cohort: MapComparisonCohort) {
+    const next: ExplorerShareState = { ...defaultView(cohort.collection, view), entityId: mapComparison.geneId, claimId: cohort.claimId };
+    const url = new URL(buildShareUrl(new URL(window.location.href), next, snapshots[cohort.collection], cohort.collection));
+    // Explorer selection can change without rewriting the fragment. Save the
+    // actual starting selection so browser Back restores it after this jump.
+    if (shareUrl) window.history.replaceState(window.history.state, '', new URL(shareUrl).hash);
+    if (url.hash !== window.location.hash) window.history.pushState(null, '', url.hash);
+    enterView(cohort.collection, next);
+    requestAnimationFrame(() => {
+      const statement = inspectorRef.current?.querySelector<HTMLElement>('.finding-statement') ?? null;
+      if (pathwayOrigin?.fromFinding || !statement) openEvidence();
+      else moveTo(statement);
+    });
+  }
+
   useEffect(() => {
     const restore = () => {
       if (['#explorer', '#experiment-workspace'].includes(window.location.hash)) return;
       const { id, state: next } = readLocation(snapshots);
-      setCollectionId(id);
-      setWorkspace('explore');
-      setShareOpen(false);
-      setComparisonIds(null);
-      setBriefOpen(false);
-      if (aboutRef.current?.open) aboutRef.current.close();
-      setGraphMode('focus');
-      setExpanded(false);
-      setTrail([]);
-      setQuery(next.query);
-      setFilter(next.filter);
-      setSelectedId(next.entityId);
-      setSelectedClaimId(next.claimId);
-      setView(webglFailed ? 'list' : next.view);
+      enterView(id, next);
     };
     window.addEventListener('hashchange', restore);
     return () => window.removeEventListener('hashchange', restore);
-  }, [snapshots, webglFailed]);
+  }, [snapshots, enterView]);
 
   const graph = useMemo(() => buildExplorerGraph(snapshot, {
     selectedId, selectedClaimId: activeClaim?.id ?? null, mode: graphMode, expanded, query, filter,
@@ -449,6 +475,8 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
         <Inspector key={collectionId} snapshot={snapshot} selected={selected} selectedClaimId={selectedClaimId} onSelectClaim={selectClaim}
           visible={view === 'graph' ? graph.ids.has(selectedId) : matches.some(({ id }) => id === selectedId)}
           onShowSelected={clearFilters} onBack={backToGraph} panelRef={inspectorRef} onCompare={comparisonPartner ? openComparison : undefined} onFollow={followConnection}
+          onCompareAcrossMaps={selected.id === mapComparison.geneId && mapComparison.cohorts.some(({ collection }) => collection === collectionId)
+            ? () => setMapComparisonOpen(true) : undefined}
           pinnedClaimIds={research.brief.pinned_claim_ids} onPin={togglePin} liveSourcesEnabled={DISEASE_COLLECTIONS[collectionId].liveSources}
           pathwayOrigin={pathwayOrigin?.name} onBackToPathway={openAnalysis} showFindingFirst={pathwayOrigin?.fromFinding === true}
           experimentObservation={experiment && observation ? { comparison: experiment.comparison, context: experiment.context, isSynthetic: experiment.table.isSynthetic, row: observation, thresholds: experiment.thresholds,
@@ -465,6 +493,7 @@ function Explorer({ snapshots }: { snapshots: Record<CollectionId, Snapshot> }) 
       <ShareDialog open={shareOpen} onClose={() => setShareOpen(false)} snapshot={snapshot}
         selected={selected} claim={activeClaim} captureGraph={captureGraph} shareUrl={shareUrl} />
       <EvidenceComparison snapshot={snapshot} claimIds={comparisonIds} onChange={changeComparison} onClose={() => setComparisonIds(null)} onIncludeInBrief={includeComparison} />
+      <MapComparisonDialog comparison={mapComparison} open={mapComparisonOpen} onClose={() => setMapComparisonOpen(false)} onViewFinding={viewMapFinding} />
       <ResearchBrief snapshot={snapshot} brief={research.brief} open={briefOpen} onClose={closeBrief}
         status={research.status} error={research.error} selectedClaimId={activeClaim?.id ?? null} onChange={research.change} onSave={research.saveThisVersion}
         onViewFinding={viewBriefFinding} onCompare={(pair) => { setBriefOpen(false); setComparisonIds(pair); }} />

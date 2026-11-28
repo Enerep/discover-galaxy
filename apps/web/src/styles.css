@@ -265,6 +265,8 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .secondary-button:hover { background: var(--soft-accent); border-color: var(--selected-border); }
 .share-trigger { flex-shrink: 0; }
 .comparison-launch { width: 100%; justify-content: space-between; }
+.finding-comparisons { display: flex; flex-wrap: wrap; gap: 8px; }
+.finding-comparisons .comparison-launch { flex: 1 1 176px; width: auto; min-height: 44px; text-align: left; }
 .comparison-finding h3 .draft-label { display: inline-block; margin-left: 8px; vertical-align: middle; }
 .comparison-table .context-status { display: flex; width: fit-content; margin-top: 6px; }
 .scene-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 12px; color: #adc1b8; font-size: 13px; }
@@ -286,7 +288,7 @@ kbd { flex-shrink: 0; font: 11px ui-monospace, monospace; color: var(--muted); b
 .claim-button svg { color: var(--icon); }
 .finding-content { animation: panel-in 200ms var(--ease); }
 .draft-label { font-size: 11px; color: var(--tag-ink); background: var(--tag-surface); padding: 3px 7px; border-radius: 4px; }
-.finding-statement { font-size: 16px; line-height: 1.65; color: var(--ink); margin: 20px 0; }
+.finding-statement { font-size: 16px; line-height: 1.65; color: var(--ink); margin: 20px 0; scroll-margin-top: 16px; }
 .finding-summary { font-size: 13px; line-height: 1.75; color: var(--muted); margin: 8px 0 18px; }
 .source-card { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 17px 0 16px; }
 .source-card + .source-card { border-top: 0; }
