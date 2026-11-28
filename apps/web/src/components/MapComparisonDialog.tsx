@@ -57,42 +57,44 @@ export function MapComparisonDialog({ open, comparison, onClose, onViewFinding }
   const { source, controls, cohorts, review } = comparison;
   return <dialog className="data-dialog comparison-dialog map-comparison-dialog" ref={dialog} aria-labelledby={titleId}
     onCancel={(event) => { event.preventDefault(); onClose(); }}>
-    <button className="icon-button dialog-close" type="button" aria-label="Close map comparison" onClick={onClose}><Icon name="close" /></button>
-    <h2 id={titleId}>{comparison.title}</h2>
-    <div className="map-comparison-source">
-      <a href={source.url} target="_blank" rel="noreferrer">{sourceCitation(source)}<Icon name="external" size={14} /></a>
-      <span className="draft-label">Source-checked draft</span>
-    </div>
-    <p className="map-comparison-controls">Both estimates use the same <strong>{controls.count} autopsied controls</strong>, including {controls.carriers} ε4 carriers.</p>
-    <OddsRatios cohorts={cohorts} />
-    <p className="map-comparison-interpretation">{comparison.interpretation}</p>
+    {open && <>
+      <button className="icon-button dialog-close" type="button" aria-label="Close map comparison" onClick={onClose}><Icon name="close" /></button>
+      <h2 id={titleId}>{comparison.title}</h2>
+      <div className="map-comparison-source">
+        <a href={source.url} target="_blank" rel="noreferrer">{sourceCitation(source)}<Icon name="external" size={14} /></a>
+        <span className="draft-label">Source-checked draft</span>
+      </div>
+      <p className="map-comparison-controls">Both estimates use the same <strong>{controls.count} autopsied controls</strong>, including {controls.carriers} ε4 carriers.</p>
+      <OddsRatios cohorts={cohorts} />
+      <p className="map-comparison-interpretation">{comparison.interpretation}</p>
 
-    <div className="comparison-findings map-comparison-cohorts">
-      {cohorts.map((cohort) => <section className="comparison-finding map-cohort" key={cohort.claimId} aria-label={cohort.name}>
-        <h3>{cohort.name}</h3>
-        <p>{cohort.definition}</p>
-        <p className="map-cohort-counts"><strong>{cohort.count}</strong> cases · <strong>{cohort.carriers}</strong> ε4 carriers</p>
-        <button className="text-button" type="button" aria-label={`View ${cohort.name} finding`} onClick={() => onViewFinding(cohort)}>
-          View finding<Icon name="arrow" size={15} />
-        </button>
-      </section>)}
-    </div>
+      <div className="comparison-findings map-comparison-cohorts">
+        {cohorts.map((cohort) => <section className="comparison-finding map-cohort" key={cohort.claimId} aria-label={cohort.name}>
+          <h3>{cohort.name}</h3>
+          <p>{cohort.definition}</p>
+          <p className="map-cohort-counts"><strong>{cohort.count}</strong> cases · <strong>{cohort.carriers}</strong> ε4 carriers</p>
+          <button className="text-button" type="button" aria-label={`View ${cohort.name} finding`} onClick={() => onViewFinding(cohort)}>
+            View finding<Icon name="arrow" size={15} />
+          </button>
+        </section>)}
+      </div>
 
-    <details className="comparison-provenance map-comparison-context">
-      <summary>Study context and limits</summary>
-      <dl className="context-list">
-        <div><dt>Shared controls</dt><dd>{controls.definition}</dd></div>
-        <div><dt>Study population</dt><dd>{comparison.population}</dd></div>
-        <div><dt>Analysis</dt><dd>One or two ε4 alleles versus none. {comparison.model}.</dd></div>
-        <div><dt>Original results</dt><dd>Carrier counts were summed from Table 2 genotypes. Odds ratios and 95% intervals use the adjusted AD and pDLB rows of Table 3.</dd></div>
-        <div><dt>Source check</dt><dd>{review.reviewer} · {review.date}. {review.rationale}</dd></div>
-      </dl>
-      <p>The paper also reports separate Parkinson disease dementia and mixed high Alzheimer’s plus Lewy body pathology groups. The authors lacked ancestry-informative markers.</p>
-      <PublicationStatus source={source} />
-    </details>
-    <div className="comparison-actions">
-      {downloadUrl && <a className="primary-button" href={downloadUrl} download={`${comparison.version}.md`}
-        ><Icon name="download" size={17} />Download comparison</a>}
-    </div>
+      <details className="comparison-provenance map-comparison-context">
+        <summary>Study context and limits</summary>
+        <dl className="context-list">
+          <div><dt>Shared controls</dt><dd>{controls.definition}</dd></div>
+          <div><dt>Study population</dt><dd>{comparison.population}</dd></div>
+          <div><dt>Analysis</dt><dd>One or two ε4 alleles versus none. {comparison.model}.</dd></div>
+          <div><dt>Original results</dt><dd>Carrier counts were summed from Table 2 genotypes. Odds ratios and 95% intervals use the adjusted AD and pDLB rows of Table 3.</dd></div>
+          <div><dt>Source check</dt><dd>{review.reviewer} · {review.date}. {review.rationale}</dd></div>
+        </dl>
+        <p>The paper also reports separate Parkinson disease dementia and mixed high Alzheimer’s plus Lewy body pathology groups. The authors lacked ancestry-informative markers.</p>
+        <PublicationStatus source={source} />
+      </details>
+      <div className="comparison-actions">
+        {downloadUrl && <a className="primary-button" href={downloadUrl} download={`${comparison.version}.md`}
+          ><Icon name="download" size={17} />Download comparison</a>}
+      </div>
+    </>}
   </dialog>;
 }

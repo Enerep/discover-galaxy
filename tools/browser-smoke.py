@@ -2434,6 +2434,7 @@ def assert_map_comparison(browser, base_url: str, screenshots: Path) -> None:
             launcher = inspector.get_by_role('button', name='Compare across maps', exact=True)
             dialog = page.get_by_role('dialog', name='APOE ε4 across maps', exact=True)
             statement = inspector.locator('.finding-statement')
+            expect(page.locator('.map-comparison-dialog .publication-status')).to_have_count(0)
             if start == 'lewy-bodies':
                 picker.select_option(start)
                 expect(launcher).to_have_count(0)
